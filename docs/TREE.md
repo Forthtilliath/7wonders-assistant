@@ -1,0 +1,93 @@
+## App 7 Wonders Duel
+
+- Home
+  - Nouvelle partie
+  - Gestion des joueurs
+- Menu sur le coté
+  - Nouvelle partie
+  - Statistiques
+  - Historique des parties
+  - Gestion des joueurs
+  - Options
+  - Feedback & Support
+  - Rate Us
+  - About
+
+## App 7 Wonders
+
+- Home
+  - **Nouvelle partie**
+  - **Gestion des joueurs**
+    - Les joueurs archivés ne sont pas listés
+- Menu sur le coté
+  - **Nouvelle partie**
+    - Affichage de 8 box pour insérer les joueurs
+    - Dès 3 joueurs insérés, le bouton créer la partie s'affiche
+  - **Statistiques**
+    - Header : Bouton config
+      - Changement des extensions à affichées
+      - Ajout d'un date range
+    - Résultat des parties
+      - Affichage d'un graph montrant la répartition des points gagnées en fonction de la couleur
+      - Au centre, le nombre de partie jouées est affiché
+    - Liste des joueurs
+      - Avatar + Nom
+      - Taux de victoire
+      - Nombre de parties
+      - Possibilité de cliquer sur un nom pour afficher son profil
+        - Header : Nom du joueur
+        - Preview du profil
+          - Avatar + Nom
+          - Graph avec le taux de victoire
+          - Nombre de partie jouées
+          - Nombre de partie gagnées
+        - Score history
+          - Graph montrant le score pour chaque partie
+          - Score moyen par partie
+          - Plus gros score
+          - Plus petit score
+        - Score moyen par catégorie
+          - Graph en barre avec le score moyen pour chaque catégorie
+          - Graph camembert avec le taux moyen pour chaque catégorie
+        - Records
+        - Score history
+          - Tableau listant l'ensemble des adversaires
+            - Avatar + Nom
+            - Nombre de victoires
+            - Nombre de défaites
+  - **Historique des parties**
+    - Liste des parties
+      - Avatar + Nom
+      - Le gagnant
+      - Score du gagnant
+      - ... ????
+      - Possibilité de cliquer sur la partie
+        - Header :
+          - Possibilité d'ajouter une image ou un text en header
+          - Possibilité d'exporter la partie
+        - Liste des points etc
+  - **Gestion des joueurs**
+    - Grid qui affiche l'avatar + le nom du joueur
+    - En cliquant dessus, ouvre la page d'édition du joueur
+      - Header :
+        - Bouton ajouter aux favoris
+          - Ajoute automatiquement le joueur dans une partie crée
+        - Bouton archiver le joueur (le met à la fin de la liste des joueurs)
+        - Bouton valider les changements
+        - Bouton supprimer le joueur (comment gérer les parties jouées : default avatar ? )
+      - Possibilité de renommer
+      - Possibilité de changer l'avatar
+        - Possibilité de choisir dans nos images/photos
+        - Possibilité de prendre une photo
+        - Une fois choisi, possibilité de crop l'avatar
+  - **Options**
+    - Liste des extensions avec case à cocher pour activer/désactiver
+  - **Feedback & Support**
+    - Formulaire pour envoyer un message
+  - **Rate Us**
+    - Ouvre la page de l'App Store pour noter
+  - **About**
+    - Icone de l'app
+    - Nom de l'app
+    - Version de l'app
+    - Nom des développeurs
