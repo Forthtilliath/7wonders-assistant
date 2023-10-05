@@ -1,21 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
 
 import { AiOutlineArrowLeft, GiHamburgerMenu } from '@/components/shared/Icons';
-import { menuPages, otherPages } from '@/data/menu';
+import { routes } from '@/data/routes';
 
 import { ButtonIcon } from '../shared/ButtonIcon';
 import { openSidebar } from './SidebarGlobal';
-
-const NOT_FOUND_PAGE: PageItem = {
-  href: '/',
-  label: 'Page Not Found',
-};
+import { getLabelAndPrevious } from '@/helpers/array';
 
 export function Header() {
   const { pathname } = useLocation();
-  const pageDetails =
-    [...menuPages, ...otherPages].find((m) => m.href === pathname) ??
-    NOT_FOUND_PAGE;
+  const pageDetails = getLabelAndPrevious(pathname, routes);
 
   return (
     <header className="flex h-16 items-center bg-wonders-blue text-wonders-yellow">

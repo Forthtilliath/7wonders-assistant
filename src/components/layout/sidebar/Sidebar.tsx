@@ -1,7 +1,7 @@
 import { MenuItem } from '@/components/layout/sidebar/MenuItem';
 import { BiSolidPyramid } from '@/components/shared/Icons';
 import { METADATA } from '@/data/app';
-import { menuPages } from '@/data/menu';
+import { routesMenu } from '@/data/routes';
 import { cn } from '@/helpers/tailwind';
 import { useOutsideClick } from '@/hooks';
 
@@ -53,8 +53,8 @@ export function Sidebar({ isOpen }: Props) {
       </button>
       <div className="overflow-y-auto">
         <ul className="space-y-2 font-medium">
-          {menuPages.map((menuItem) => (
-            <MenuItem key={menuItem.href} {...menuItem} />
+          {routesMenu.map((route) => (
+            <MenuItem key={route.path} {...route} />
           ))}
         </ul>
       </div>
