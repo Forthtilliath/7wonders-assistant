@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import * as LS from '@/lib/storage';
@@ -11,12 +12,14 @@ import {
   ImStarEmpty,
   ImStarFull,
 } from '@/components/shared/Icons';
+import { assertsIsDefined } from '@/helpers/assets';
 import { generateUuidv4 } from '@/helpers/string';
 import { useToggle } from '@/hooks/useToggle';
 
 export default function NewPlayer() {
   const navigate = useNavigate();
   const [favorite, toggleFavorite] = useToggle(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const onSubmit: FormSubmitEventHandler = async (e) => {
     e.preventDefault();
@@ -29,6 +32,12 @@ export default function NewPlayer() {
 
     navigate('/players');
   };
+
+  useEffect(() => {
+    assertsIsDefined(inputRef.current);
+
+    inputRef.current.focus();
+  }, []);
 
   return (
     <main className="">
@@ -45,6 +54,7 @@ export default function NewPlayer() {
         <div className="relative mb-3 flex w-full flex-wrap items-stretch">
           <BsPencilFill className="absolute z-10 h-full w-8 items-center justify-center rounded py-3 pl-3 text-center text-base font-normal leading-snug text-slate-600" />
           <input
+            ref={inputRef}
             type="text"
             placeholder="Name"
             className="w-full p-4 pl-10 text-slate-600 placeholder-slate-300"
