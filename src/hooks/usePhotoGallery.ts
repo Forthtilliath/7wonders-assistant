@@ -29,7 +29,7 @@ export function usePhotoGallery() {
       const photosInPrefs: PhotoItem[] = value ? JSON.parse(value) : [];
 
       if (!Capacitor.isNativePlatform()) {
-        for (let photo of photosInPrefs) {
+        for (const photo of photosInPrefs) {
           const file = await Filesystem.readFile({
             path: photo.filePath,
             directory: Directory.Data,
