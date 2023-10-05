@@ -25,6 +25,7 @@
 - [ ] Ajouter hook pour header (pathname & label)
 - [ ] Générer router à partir de menu
 - [ ] Replacer framer-motion par react-spring : https://www.npmjs.com/package/react-spring
+- [ ] Afficher les joueurs par ordre alphabétique
 
 # ⚠️ A FIXER ⚠️
 
