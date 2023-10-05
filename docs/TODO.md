@@ -26,6 +26,7 @@
 - [ ] Générer router à partir de menu
 - [ ] Replacer framer-motion par react-spring : https://www.npmjs.com/package/react-spring
 - [ ] Afficher les joueurs par ordre alphabétique
+- [ ] Prendre compte les écrans un peu plus large tel que les tablettes
 
 # ⚠️ A FIXER ⚠️
 
