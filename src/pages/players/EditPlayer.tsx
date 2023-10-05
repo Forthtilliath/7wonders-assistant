@@ -58,7 +58,7 @@ export default function EditPlayer() {
           <ButtonIcon icon={BsCheckLg} type="submit" />
         </HeaderOptions>
 
-        <div className="relative mb-3 flex w-full flex-wrap items-stretch">
+        <div className="relative mb-3 flex w-full items-stretch">
           <BsPencilFill className="absolute z-10 h-full w-8 items-center justify-center rounded py-3 pl-3 text-center text-base font-normal leading-snug text-slate-600" />
           <input
             type="text"
