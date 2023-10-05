@@ -1,3 +1,5 @@
+import { NavLink, useNavigate } from 'react-router-dom';
+
 import * as LS from '@/lib/storage';
 import { HeaderOptions } from '@/components/layout/HeaderOptions';
 import { ButtonIcon } from '@/components/shared/ButtonIcon';
@@ -11,10 +13,9 @@ import {
 } from '@/components/shared/Icons';
 import { generateUuidv4 } from '@/helpers/string';
 import { useToggle } from '@/hooks/useToggle';
-import { NavLink, useNavigate } from 'react-router-dom';
 
 export default function NewPlayer() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [favorite, toggleFavorite] = useToggle(false);
 
   const onSubmit: FormSubmitEvent = async (e) => {
