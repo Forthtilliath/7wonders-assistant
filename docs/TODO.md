@@ -22,9 +22,14 @@
   - [ ] des parties
 - [ ] Possibilité de charger les données à partir d'un fichier
 
+- [ ] Ajouter hook pour header (pathname & label)
+- [ ] Générer router à partir de menu
+- [ ] Replacer framer-motion par react-spring : https://www.npmjs.com/package/react-spring
+
 # ⚠️ A FIXER ⚠️
 
 - [ ] Certains liens ne fonctionnent plus une fois build en static (cf new player)
+- [ ] Images des joueurs par défault ne s'affichent pas sur mobile
 
 # Tests Unitaires
 
