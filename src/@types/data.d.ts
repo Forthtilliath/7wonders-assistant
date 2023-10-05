@@ -18,8 +18,3 @@ type Route = {
   previous?: string;
   children?: Route[];
 };
-
-type Metadata = Readonly<{
-  title: string;
-  description: string;
-}>;
