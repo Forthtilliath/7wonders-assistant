@@ -12,12 +12,12 @@ declare global {
     params: T;
   };
 
-  type Callback = (...args: any[]) => void;
+  type Callback = (...args: unknown[]) => void;
   type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
 
-  type FormSubmitEvent = React.FormEventHandler<HTMLFormElement>;
-  type InputChangeEvent = React.ChangeEventHandler<HTMLInputElement>;
-  type ButtonClickEvent = React.MouseEventHandler<HTMLButtonElement>;
+  type FormSubmitEventHandler = React.FormEventHandler<HTMLFormElement>;
+  type InputChangeEventHandler = React.ChangeEventHandler<HTMLInputElement>;
+  type ButtonClickEventHandler = React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export {};

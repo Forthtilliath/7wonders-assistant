@@ -1,7 +1,7 @@
 type Props = React.ComponentPropsWithoutRef<'button'> & {
   icon: Icon;
   alternateIcon?: Icon;
-  onClick?: Callback;
+  onClick?: ButtonClickEventHandler;
 };
 
 export function ButtonIcon({ icon: Icon, onClick, ...buttonProps }: Props) {

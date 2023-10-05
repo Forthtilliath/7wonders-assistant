@@ -31,7 +31,7 @@ export default function EditPlayer() {
     navigate('/players');
   };
 
-  const onSubmit: FormSubmitEvent = async (e) => {
+  const onSubmit: FormSubmitEventHandler = async (e) => {
     e.preventDefault();
     assertsIsDefined(id);
 
