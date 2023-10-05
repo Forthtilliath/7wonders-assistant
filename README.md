@@ -25,25 +25,11 @@ L'application propose également une page de statistiques et une page d'historiq
 
 Nous sommes 2 sur le projet.
 
-<div style="display: flex; gap: 1rem">
-   <a href="https://github.com/Forthtilliath" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center; border: solid 2px; border-radius: 0.25rem; text-decoration-line: none; min-width: 7rem">
-      <img style="border-radius: 100%; border: 3px solid white" src="/src/assets/logo-forth.png" alt="Avatar Forth" width="120">
-      <h2 style="font-size: 1.125rem; line-height: 1.75rem; padding: 0; margin: 0">Forth</h2>
-   </a>
-   <p class="flex: 1">
-      « Grand fan du jeu de société 7 Wonders, je fais beaucoup de parties en famille, ce qui implique que les carnets de scores sont complétés depuis un moment. J'avais fait un tableur permettant d'enregistrer les scores et générer un graphe simpliste affichant les points gagnés pour chaque catégorie de cartes de chaque joueur. Les applications disponibles ne me conviennent pas (soit pas à jour, soit pas pratique à utiliser, etc).<br/>
-      Je joue aussi beaucoup à la version Duel pour laquelle j'ai trouvé une application super d'utilisation. C'est pourquoi, j'ai décider de faire une application similaire pour la version de base du jeu ! »
-   </p>
-</div>
-<div style="display: flex; gap: 1rem; margin-top: 2rem">
-   <p class="flex: 1">
-      « Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. »
-   </p>
-   <a href="https://github.com/mickaelrebeau" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center; border: solid 2px; border-radius: 0.25rem; text-decoration-line: none; min-width: 7rem;">
-      <img style="border-radius: 100%" src="/src/assets/logo-mike.png" alt="Avatar Mike_DreeMan" width="120">
-      <h2 style="font-size: 1.125rem; line-height: 1.75rem; padding: 0; margin: 0">Mike_DreeMan</h2>
-   </a>
-</div>
+|       |      |
+| :---: | :--- |
+| [![Avatar Forth](/src/assets/logo-forth.png)](https://github.com/Forthtilliath) | « Grand fan du jeu de société 7 Wonders, je fais beaucoup de parties en famille, ce qui implique que les carnets de scores sont complétés depuis un moment. J'avais fait un tableur permettant d'enregistrer les scores et générer un graphe simpliste affichant les points gagnés pour chaque catégorie de cartes de chaque joueur. Les applications disponibles ne me conviennent pas (soit pas à jour, soit pas pratique à utiliser, etc).<br/>Je joue aussi beaucoup à la version Duel pour laquelle j'ai trouvé une application super d'utilisation. C'est pourquoi, j'ai décider de faire une application similaire pour la version de base du jeu ! » |
+|       |      |
+| [![Avatar Mike_DreeMan](/src/assets/logo-mike.png)](https://github.com/mickaelrebeau) | « Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. » |
 
 ## Sur quels OS sera disponible l'application ?
 
