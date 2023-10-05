@@ -18,7 +18,7 @@ export default function NewPlayer() {
   const navigate = useNavigate();
   const [favorite, toggleFavorite] = useToggle(false);
 
-  const onSubmit: FormSubmitEvent = async (e) => {
+  const onSubmit: FormSubmitEventHandler = async (e) => {
     e.preventDefault();
     const player = new FormData(e.currentTarget);
     player.append('id', generateUuidv4());

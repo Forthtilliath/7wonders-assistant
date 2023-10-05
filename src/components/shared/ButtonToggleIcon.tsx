@@ -5,7 +5,7 @@ import { ButtonIcon } from './ButtonIcon';
 type Props = {
   condition: boolean;
   icons: [IconComponent, IconComponent];
-  onClick: ButtonClickEvent;
+  onClick: ButtonClickEventHandler;
 };
 
 export function ButtonToggleIcon({
