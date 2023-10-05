@@ -1,5 +1,11 @@
 # 7 Wonders: Assistant
 
+![GitHub stars](https://img.shields.io/github/stars/forthtilliath/7wonders-assistant?style=social)
+![Licence](https://badgen.net/github/license/forthtilliath/7wonders-assistant) ![Branches](https://badgen.net/github/branches/forthtilliath/7wonders-assistant) ![Checks](https://badgen.net/github/checks/forthtilliath/7wonders-assistant) ![Last-commit](https://badgen.net/github/last-commit/forthtilliath/7wonders-assistant) ![Commits](https://badgen.net/github/commits/forthtilliath/7wonders-assistant/dev)
+
+
+
+
 <p style="font-size: larger">7 Wonders: Assistant est une application qui aide les utilisateurs à gérer et à calculer les scores de leurs parties de 7 Wonders.</p>
 
 ## Qu'est-ce 7 Wonders ?
@@ -21,15 +27,24 @@ Le but de l'application sera de pouvoir enregistrer les scores d'une partie réa
 
 L'application propose également une page de statistiques et une page d'historique. La page de statistiques présente des graphiques pour chaque joueur, affichant leur taux de victoire et leurs points dans chaque catégorie. De même, la page d'historique offre un résumé des parties précédentes, permettant de consulter les scores des parties passées.
 
-## A propos de nous
+## Équipe de développement
 
-Nous sommes 2 sur le projet.
+Ce projet est développé par deux développeurs passionnés :
 
-|       |      |
-| :---: | :--- |
-| [![Avatar Forth](/src/assets/logo-forth.png)](https://github.com/Forthtilliath) | « Grand fan du jeu de société 7 Wonders, je fais beaucoup de parties en famille, ce qui implique que les carnets de scores sont complétés depuis un moment. J'avais fait un tableur permettant d'enregistrer les scores et générer un graphe simpliste affichant les points gagnés pour chaque catégorie de cartes de chaque joueur. Les applications disponibles ne me conviennent pas (soit pas à jour, soit pas pratique à utiliser, etc).<br/>Je joue aussi beaucoup à la version Duel pour laquelle j'ai trouvé une application super d'utilisation. C'est pourquoi, j'ai décider de faire une application similaire pour la version de base du jeu ! » |
-|       |      |
-| [![Avatar Mike_DreeMan](/src/assets/logo-mike.png)](https://github.com/mickaelrebeau) | « Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. » |
+| [<img src="/src/assets/logo-forth.png" width="50" />](https://github.com/Forthtilliath) | Forth |
+|:---:|:---:|
+
+> « Passionné par le jeu de société 7 Wonders, j'ai passé de nombreuses heures à jouer en famille. Cette passion a rapidement rempli nos carnets de scores. Pour faciliter le suivi, j'ai créé un tableur permettant d'enregistrer les scores et de générer un graphique simple montrant les points gagnés par chaque joueur dans chaque catégorie de cartes. Cependant, les applications existantes ne répondent pas à mes attentes, que ce soit en termes de mise à jour ou de facilité d'utilisation.
+> 
+> Par ailleurs, je suis un joueur assidu de la version Duel de 7 Wonders, pour laquelle j'ai trouvé une application extrêmement pratique. Inspiré par cette expérience, j'ai décidé de créer une application similaire pour la version de base du jeu, afin d'améliorer l'expérience de jeu pour tous les fans de 7 Wonders ! »
+
+
+| [<img src="/src/assets/logo-mike.png" width="50" />](https://github.com/mickaelrebeau) | Mike_DreeMan |
+|:---:|:---:|
+
+> « Mike est un développeur expérimenté qui apporte son expertise technique au projet. »
+
+Nous travaillons ensemble pour créer une application qui répond aux besoins des joueurs de 7 Wonders et qui offre une expérience utilisateur de qualité.
 
 ## Sur quels OS sera disponible l'application ?
 
