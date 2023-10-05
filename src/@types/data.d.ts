@@ -15,6 +15,6 @@ type Route = {
   element?: React.ReactNode | null;
   icon?: IconComponent;
   label?: string;
-  previous?: string;
+  previous?: boolean;
   children?: Route[];
 };
