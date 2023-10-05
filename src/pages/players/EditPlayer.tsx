@@ -15,8 +15,8 @@ import { assertsIsDefined } from '@/helpers/assets';
 import { usePlayer } from '@/hooks/usePlayer';
 
 export default function EditPlayer() {
-    const navigate = useNavigate();
-  
+  const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
 
@@ -76,12 +76,7 @@ export default function EditPlayer() {
         <NavLink className="mx-auto mt-3 block w-[200px]" to="/players/album">
           <div className="flex h-[200px] w-full items-center justify-center bg-wonders-blue">
             {avatar && (
-              <img
-                src={avatar}
-                alt="Avatar"
-                width={200}
-                height={200}
-              />
+              <img src={avatar} alt="Avatar" width={200} height={200} />
             )}
           </div>
           <div className="flex h-16 w-full items-center justify-center bg-wonders-blue-dark text-lg">
