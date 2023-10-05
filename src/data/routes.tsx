@@ -30,12 +30,12 @@ export const routes: Route[] = [
   {
     path: '/',
     element: <MainLayout />,
+    icon: FaPlus,
+    label: 'New Game',
     children: [
       {
         path: '/',
         element: <NewGame />,
-        icon: FaPlus,
-        label: 'New Game',
       },
       {
         path: '/statistics',
