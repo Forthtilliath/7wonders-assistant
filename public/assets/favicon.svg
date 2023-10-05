@@ -1,0 +1,22 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  version="1.1"
+  x="0px"
+  y="0px"
+  viewBox="0 0 100 100"
+  enable-background="new 0 0 100 100"
+  xml:space="preserve"
+  >
+  
+  <style>
+    polygon { fill: #202f54; }
+    @media (prefers-color-scheme: dark) {
+      polygon { fill: #f2f2f2; }
+    }
+  </style>
+  <polygon points="3.851,90.866 12.387,74.301 67.655,80.524 88.345,66.468 96.606,80.72 71.543,100 "></polygon>
+  <polygon points="15.184,68.561 66.465,74.709 86.154,62.069 77.618,47.176 62.656,55.544 23.919,51.435 "></polygon>
+  <polygon points="26.493,46.844 35.259,29.866 57.08,32.013 65.838,27.498 74.869,43.157 61.276,50.354 "></polygon>
+  <polygon points="37.398,25.43 55.96,27.498 63.504,23.69 50.327,0 "></polygon>
+</svg>
