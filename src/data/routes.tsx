@@ -1,6 +1,16 @@
-import { createBrowserRouter } from 'react-router-dom';
-
 import { MainLayout } from '@/components/layout/MainLayout';
+import {
+  AiFillClockCircle,
+  AiFillQuestionCircle,
+  BiSolidStarHalf,
+  BiSupport,
+  FaPlus,
+  GiCoffeeCup,
+  GiMeeple,
+  ImStatsBars,
+  IoMdSettings,
+} from '@/components/shared/Icons';
+import { flattenRoutes } from '@/helpers/array';
 import About from '@/pages/About';
 import Feedback from '@/pages/Feedback';
 import NewGame from '@/pages/games/NewGame';
@@ -16,7 +26,7 @@ import TestCrop from '@/pages/tests/TestCrop';
 import TestGallery from '@/pages/tests/TestGallery';
 import TestImport from '@/pages/tests/TestImport';
 
-export const router = createBrowserRouter([
+export const routes: Route[] = [
   {
     path: '/',
     element: <MainLayout />,
@@ -24,9 +34,25 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <NewGame />,
+        icon: FaPlus,
+        label: 'New Game',
+      },
+      {
+        path: '/statistics',
+        element: <Statistics />,
+        icon: ImStatsBars,
+        label: 'Statistics',
+      },
+      {
+        path: '/history',
+        element: <History />,
+        icon: AiFillClockCircle,
+        label: 'Games History',
       },
       {
         path: '/players',
+        icon: GiMeeple,
+        label: 'Players Management',
         children: [
           {
             path: '/players',
@@ -35,36 +61,45 @@ export const router = createBrowserRouter([
           {
             path: '/players/new',
             element: <NewPlayer />,
+            label: 'New Player',
+            previous: '/players'
           },
           {
             path: '/players/edit',
             element: <EditPlayer />,
+            label: 'Edit Player',
+            previous: '/players'
           },
         ],
       },
       {
-        path: '/statistics',
-        element: <Statistics />,
-      },
-      {
-        path: '/history',
-        element: <History />,
-      },
-      {
         path: '/settings',
         element: <Settings />,
+        icon: IoMdSettings,
+        label: 'Settings',
       },
       {
         path: '/feedback',
         element: <Feedback />,
+        icon: BiSupport,
+        label: 'Feedback & Support',
+      },
+      {
+        path: 'http://www.google.fr',
+        icon: BiSolidStarHalf,
+        label: 'Rate Us',
       },
       {
         path: '/about',
         element: <About />,
+        icon: AiFillQuestionCircle,
+        label: 'About',
       },
       {
         path: '/support',
         element: <Support />,
+        icon: GiCoffeeCup,
+        label: 'Support Us',
       },
       {
         path: '/test',
@@ -72,21 +107,31 @@ export const router = createBrowserRouter([
           {
             path: '/test/import',
             element: <TestImport />,
+            icon: GiCoffeeCup,
+            label: 'Import Image',
           },
           {
             path: '/test/crop',
             element: <TestCrop />,
+            icon: GiCoffeeCup,
+            label: 'Crop Image',
           },
           {
             path: '/test/camera',
             element: <TestCamera />,
+            icon: GiCoffeeCup,
+            label: 'Camera Image',
           },
           {
             path: '/test/gallery',
             element: <TestGallery />,
+            icon: GiCoffeeCup,
+            label: 'Gallery Images',
           },
         ],
       },
     ],
   },
-]);
+];
+
+export const routesMenu = flattenRoutes(routes);
