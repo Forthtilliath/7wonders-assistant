@@ -20,13 +20,13 @@ export function CardPlayerNewGame({
         alt={`Avatar ${name}`}
         className="h-full w-full object-fill"
       />
-      <h2 className="absolute bottom-0 w-full bg-black/50 py-1 text-center text-xl font-medium">
+      <h2 className="absolute bottom-0 w-full bg-black/50 p-1 text-center text-xl font-medium rounded truncate">
         {name}
       </h2>
       {inGame && (
         <GiCrossedSwords
           className="absolute left-1 top-1 text-red-500 shadow-sm"
-          size={'1.5rem'}
+          size={'20%'}
         />
       )}
     </button>
