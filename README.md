@@ -42,7 +42,9 @@ Ce projet est développé par deux développeurs passionnés :
 | [<img src="/src/assets/logo-mike.png" width="50" />](https://github.com/mickaelrebeau) | Mike_DreeMan |
 |:---:|:---:|
 
-> « Mike est un développeur expérimenté qui apporte son expertise technique au projet. »
+> « Passionné et créatif développeur avec moins de 2 ans d'expérience, je suis spécialisé dans le développement web avec une expertise en JavaScript (React, NestJs) et une connaissance approfondie des langages de programmation tels que Python. J'ai travaillé sur plusieurs projets, dont la création d'une application mobile en utilisant React et Capacitor. J'adore relever des défis techniques et je suis constamment à la recherche de nouvelles façons d'améliorer mes compétences en résolution de problèmes.
+>
+> Je suis également un streamer sur Twitch, où je partage mes progressions en programmation et interagis avec une communauté de développeurs passionnés. Lors de mes streams. J'apprends et partager mes connaisssances et mon objectif est de continuer à apprendre. Je suis ouvert aux opportunités de collaboration sur des projets intéressants et je suis toujours prêt à relever de nouveaux défis. Rejoignez-moi lors de mes streams sur Twitch pour en savoir plus sur mon parcours et pour discuter de programmation ensemble! »
 
 Nous travaillons ensemble pour créer une application qui répond aux besoins des joueurs de 7 Wonders et qui offre une expérience utilisateur de qualité.
 
