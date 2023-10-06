@@ -14,6 +14,7 @@ import { flattenRoutes } from '@/helpers/array';
 import About from '@/pages/About';
 import Feedback from '@/pages/Feedback';
 import NewGame from '@/pages/games/NewGame';
+import { Military } from '@/pages/games/scores/Military';
 import History from '@/pages/history/History';
 import EditPlayer from '@/pages/players/EditPlayer';
 import ListPlayers from '@/pages/players/ListPlayers';
@@ -36,6 +37,17 @@ export const routes: Route[] = [
       {
         path: '/',
         element: <NewGame />,
+      },
+      {
+        path: '/scores',
+        children: [
+          {
+            path: '/scores/military',
+            element: <Military />,
+            label: 'Military',
+            previous: true,
+          },
+        ],
       },
       {
         path: '/statistics',
