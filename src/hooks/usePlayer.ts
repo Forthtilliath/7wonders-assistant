@@ -8,6 +8,7 @@ export function usePlayer(id: Player['id'] | null) {
     id: '',
     name: '',
     isFavorite: 'false',
+    isArchived: 'false',
     avatar: '/assets/images/defaultAvatar.webp',
   });
 
@@ -23,6 +24,12 @@ export function usePlayer(id: Player['id'] | null) {
       ...p,
       isFavorite: p.isFavorite === 'true' ? 'false' : 'true',
     }));
+  
+  const toggleArchive = () =>
+    setPlayer((p) => ({
+      ...p,
+      isArchived: p.isArchived === 'true' ? 'false' : 'true',
+    }));
 
-  return [player, { toggleFavorite }] as const;
+  return [player, { toggleFavorite, toggleArchive }] as const;
 }

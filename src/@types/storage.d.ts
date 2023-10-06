@@ -3,4 +3,5 @@ type Player = {
   name: string;
   avatar: string;
   isFavorite: string;
+  isArchived: string;
 }
