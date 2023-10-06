@@ -90,7 +90,7 @@
       - [ ] Afficher la galerie de photos
       - [ ] Afficher l'image sélectionnée
     - [x] Supprimer le joueur
-    - [ ] Archiver le joueur
+    - [x] Archiver le joueur
     - [x] Redirection vers `/players`
 - [x] `/settings` ➡️ **Configurations**
 - [x] `/feedback` ➡️ **Contacter le support**
