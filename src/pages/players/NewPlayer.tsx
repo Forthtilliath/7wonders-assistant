@@ -34,7 +34,7 @@ export default function NewPlayer() {
 
     LS.addPlayer(Object.fromEntries(player) as Player);
 
-    navigate('/players');
+    navigate(-1);
   };
 
   useEffect(() => {
@@ -51,13 +51,19 @@ export default function NewPlayer() {
             condition={favorite}
             icons={[ImStarEmpty, ImStarFull]}
             onClick={toggleFavorite}
+            aria-label='Toggle Favorite'
           />
           <ButtonToggleIcon
             condition={archive}
             icons={[BiArchiveIn, BiSolidArchiveOut]}
-            onClick={toggleArchive}         
+            onClick={toggleArchive}
+            aria-label='Toggle Archive'
           />
-          <ButtonIcon icon={BsCheckLg} onClick={console.log} type="submit" />
+          <ButtonIcon
+            icon={BsCheckLg}
+            type="submit"
+            aria-label="Save the Player"
+          />
         </HeaderOptions>
 
         <div className="relative mb-3 flex w-full flex-wrap items-stretch">
