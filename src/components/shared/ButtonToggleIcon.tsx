@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { ButtonIcon } from './ButtonIcon';
 
-type Props = {
+type Props = React.ComponentPropsWithoutRef<'button'> & {
   condition: boolean;
   icons: [IconComponent, IconComponent];
   onClick: ButtonClickEventHandler;
@@ -11,7 +11,7 @@ type Props = {
 export function ButtonToggleIcon({
   condition,
   icons: [FirstIcon, SecondIcon],
-  onClick,
+  ...buttonProps
 }: Props) {
   return (
     <AnimatePresence mode="popLayout" initial={false}>
@@ -21,9 +21,9 @@ export function ButtonToggleIcon({
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0 }}>
         {condition ? (
-          <ButtonIcon icon={SecondIcon} onClick={onClick} />
+          <ButtonIcon icon={SecondIcon} {...buttonProps} />
         ) : (
-          <ButtonIcon icon={FirstIcon} onClick={onClick} />
+          <ButtonIcon icon={FirstIcon} {...buttonProps} />
         )}
       </motion.div>
     </AnimatePresence>
