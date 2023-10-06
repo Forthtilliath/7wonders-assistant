@@ -25,13 +25,18 @@
 - [ ] Ajouter hook pour header (pathname & label)
 - [ ] Générer router à partir de menu
 - [ ] Replacer framer-motion par react-spring : https://www.npmjs.com/package/react-spring
+  - [ ] Vérifier ``m`` de framer-motion : https://www.youtube.com/watch?v=gX4N44sPNHY (lazy motion)o
 - [ ] Afficher les joueurs par ordre alphabétique
 - [ ] Prendre compte les écrans un peu plus large tel que les tablettes
+- [ ] Possibilité du jeu en équipe
+- [ ] Check toutes les heights de page et scrolls
 
 # ⚠️ A FIXER ⚠️
 
 - [ ] Certains liens ne fonctionnent plus une fois build en static (cf new player)
 - [ ] Images des joueurs par défault ne s'affichent pas sur mobile
+- [ ] Responsivité About
+- [ ] Bouton Add player, icone taille dynamique
 
 # Tests Unitaires
 
