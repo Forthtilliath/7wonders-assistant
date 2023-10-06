@@ -4,7 +4,7 @@ import { usePhotoGallery } from '@/hooks/usePhotoGallery';
 
 
 export function PhotoGallery() {
-  const { photos, deletePhoto } = usePhotoGallery();
+  const { photos } = usePhotoGallery();
   return (
     <div className="mx-auto grid max-w-[800px] grid-cols-3 gap-2">
       {photos.map((photo: PhotoItem) => (
