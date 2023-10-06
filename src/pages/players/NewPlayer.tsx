@@ -6,6 +6,8 @@ import { HeaderOptions } from '@/components/layout/HeaderOptions';
 import { ButtonIcon } from '@/components/shared/ButtonIcon';
 import { ButtonToggleIcon } from '@/components/shared/ButtonToggleIcon';
 import {
+  BiArchiveIn,
+  BiSolidArchiveOut,
   BsCheckLg,
   BsPencilFill,
   GiMeeple,
@@ -19,6 +21,7 @@ import { useToggle } from '@/hooks/useToggle';
 export default function NewPlayer() {
   const navigate = useNavigate();
   const [favorite, toggleFavorite] = useToggle(false);
+  const [archive, toggleArchive] = useToggle(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onSubmit: FormSubmitEventHandler = async (e) => {
@@ -27,6 +30,7 @@ export default function NewPlayer() {
     player.append('id', generateUuidv4());
     player.append('avatar', '/assets/images/defaultAvatar.webp');
     player.append('isFavorite', favorite ? 'true' : 'false');
+    player.append('isArchived', archive ? 'true' : 'false');
 
     LS.addPlayer(Object.fromEntries(player) as Player);
 
@@ -48,6 +52,11 @@ export default function NewPlayer() {
             icons={[ImStarEmpty, ImStarFull]}
             onClick={toggleFavorite}
           />
+          <ButtonToggleIcon
+            condition={archive}
+            icons={[BiArchiveIn, BiSolidArchiveOut]}
+            onClick={toggleArchive}         
+          />
           <ButtonIcon icon={BsCheckLg} onClick={console.log} type="submit" />
         </HeaderOptions>
 
@@ -66,7 +75,7 @@ export default function NewPlayer() {
         {/* NOTE: Si on change de page, on perd le form ! */}
         {/* Solution possible : Sidebar / Modal */}
         <p className="mt-10 text-center text-lg">Avatar</p>
-        <NavLink className="mx-auto mt-3 block w-[200px]" to="/players/album">
+        <NavLink className="mx-auto mt-3 block w-[200px]" to="#">
           <div className="flex h-[200px] w-full items-center justify-center bg-wonders-blue">
             <GiMeeple size={'5rem'} />
           </div>
