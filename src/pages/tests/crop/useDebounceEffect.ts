@@ -5,6 +5,7 @@ export function useDebounceEffect(
   waitTime: number,
   deps: DependencyList = [],
 ) {
+  console.log(deps);
   // const callback = useCallback(fn, deps);
 
   useEffect(() => {
