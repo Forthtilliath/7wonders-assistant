@@ -1,14 +1,16 @@
 const defaultPlayers: Player[] = [
   {
-    id: '349a799f-a55d-44b3-1efa-e309e77d67ec',
     name: 'Mike',
+    id: '349a799f-a55d-44b3-1efa-e309e77d67ec',
     isFavorite: 'true',
+    isArchived: 'false',
     avatar: '/assets/images/logo-mike.png',
   },
   {
-    id: 'efbedc67-2ae7-4b4d-0980-ca7d7b858bd2',
     name: 'Forth',
+    id: 'efbedc67-2ae7-4b4d-0980-ca7d7b858bd2',
     isFavorite: 'false',
+    isArchived: 'false',
     avatar: '/assets/images/logo-forth.png',
   },
 ];

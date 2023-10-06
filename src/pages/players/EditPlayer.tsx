@@ -5,6 +5,8 @@ import { HeaderOptions } from '@/components/layout/HeaderOptions';
 import { ButtonIcon } from '@/components/shared/ButtonIcon';
 import { ButtonToggleIcon } from '@/components/shared/ButtonToggleIcon';
 import {
+  BiArchiveIn,
+  BiSolidArchiveOut,
   BsCheckLg,
   BsPencilFill,
   BsTrash3Fill,
@@ -20,9 +22,9 @@ export default function EditPlayer() {
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
 
-  const [player, { toggleFavorite }] = usePlayer(id);
+  const [player, { toggleFavorite, toggleArchive }] = usePlayer(id);
 
-  const { isFavorite, avatar, name } = player;
+  const { isArchived, isFavorite, avatar, name } = player;
 
   const deletePlayer = () => {
     assertsIsDefined(id);
@@ -39,6 +41,7 @@ export default function EditPlayer() {
     player.append('id', id);
     player.append('avatar', avatar);
     player.append('isFavorite', isFavorite);
+    player.append('isArchived', isArchived);
 
     LS.setPlayer(Object.fromEntries(player) as Player);
 
@@ -54,6 +57,11 @@ export default function EditPlayer() {
             condition={isFavorite === 'true'}
             icons={[ImStarEmpty, ImStarFull]}
             onClick={toggleFavorite}
+          />
+          <ButtonToggleIcon
+            condition={isArchived === 'true'}
+            icons={[BiArchiveIn, BiSolidArchiveOut]}
+            onClick={toggleArchive}         
           />
           <ButtonIcon icon={BsCheckLg} type="submit" />
         </HeaderOptions>
