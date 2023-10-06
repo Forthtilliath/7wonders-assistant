@@ -19,7 +19,7 @@ const PageWithAnimation = ({ children }: React.PropsWithChildren) => {
         //   stiffness: 260,
         //   damping: 20,
         // }}
-        className="flex-grow overflow-auto">
+        className="flex-grow">
         {children}
       </motion.div>
     </AnimatePresence>
