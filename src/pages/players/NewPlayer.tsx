@@ -34,7 +34,7 @@ export default function NewPlayer() {
 
     LS.addPlayer(Object.fromEntries(player) as Player);
 
-    navigate('/players');
+    navigate(-1);
   };
 
   useEffect(() => {
