@@ -7,6 +7,7 @@ import { ButtonIcon } from '@/components/shared/ButtonIcon';
 import { BsCheckLg, GiMeeple } from '@/components/shared/Icons';
 import { usePlayers } from '@/hooks/usePlayers';
 
+const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 7;
 
 export default function NewGame() {
@@ -34,6 +35,10 @@ export default function NewGame() {
     setPlayersInGame((p) => p.filter((player) => player.id !== playerId));
   };
 
+  const launchGame = () => {
+    console.log(playersInGame)
+  }
+
   const emptyPlayers = Array.from({
     length: MAX_PLAYERS - playersInGame.length,
   });
@@ -41,7 +46,7 @@ export default function NewGame() {
   return (
     <section className='overflow-y-auto h-full'>
       <HeaderOptions>
-        <ButtonIcon icon={BsCheckLg} type="submit" />
+        {playersInGame.length >= MIN_PLAYERS && <ButtonIcon icon={BsCheckLg} onClick={launchGame} type="button" />}
       </HeaderOptions>
       <header className="bg-wonders-blue">
         <main className="mx-auto grid max-w-[800px] grid-cols-4 gap-2 p-4">
