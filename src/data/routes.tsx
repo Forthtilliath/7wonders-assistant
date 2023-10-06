@@ -62,13 +62,13 @@ export const routes: Route[] = [
             path: '/players/new',
             element: <NewPlayer />,
             label: 'New Player',
-            previous: true
+            previous: true,
           },
           {
             path: '/players/edit',
             element: <EditPlayer />,
             label: 'Edit Player',
-            previous: true
+            previous: true,
           },
         ],
       },
