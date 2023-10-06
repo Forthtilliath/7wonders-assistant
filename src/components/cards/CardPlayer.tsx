@@ -14,7 +14,7 @@ export function CardPlayer({ id, avatar, name, isFavorite }: Props) {
         alt={`Avatar ${name}`}
         className='w-full h-full object-fill'
       />
-      <h2 className="absolute bottom-0 w-full bg-black/50 py-1 text-center text-xl font-medium">
+      <h2 className="absolute bottom-0 w-full bg-black/50 p-1 text-center text-xl font-medium truncate">
         {name}
       </h2>
       {isFavorite === 'true' && (

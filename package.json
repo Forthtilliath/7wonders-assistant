@@ -18,7 +18,8 @@
     "forth:merge": "git checkout dev && git merge dev-forth && git push origin dev:dev && git checkout dev-forth",
     "mike:merge": "git checkout dev && git merge dev-mike && git push origin dev:dev && git checkout dev-mike",
     "forth:pull": "git pull origin dev:dev-forth",
-    "mike:pull": "git pull origin dev:dev-mike"
+    "mike:pull": "git pull origin dev:dev-mike",
+    "pull": "git pull origin dev"
   },
   "dependencies": {
     "react": "^18.2.0",
