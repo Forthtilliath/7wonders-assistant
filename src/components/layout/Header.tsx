@@ -12,14 +12,14 @@ import { openSidebar } from './SidebarGlobal';
 const bg = {
   military:     'bg-red-800 text-white',
   treasury:     'bg-yellow-500 text-wonders-blue',
-  wonders:      'bg-yellow-800 text-white',
-  civilians:    'bg-yellow-800 text-white',
-  scientifics:  'bg-yellow-800 text-white',
-  commercials:  'bg-yellow-800 text-white',
-  guilds:       'bg-yellow-800 text-white',
-  armada:       'bg-yellow-800 text-white',
-  leaders:      'bg-yellow-800 text-white',
-  cities:       'bg-yellow-800 text-white',
+  wonders:      '',
+  civilians:    'bg-blue-600 text-white',
+  scientifics:  'bg-green-600 text-white',
+  commercials:  'bg-yellow-400 text-wonders-blue',
+  guilds:       'bg-purple-700 text-white',
+  armada:       'bg-sky-500 text-wonders-blue-dark',
+  leaders:      'bg-slate-200 text-wonders-blue',
+  cities:       'bg-black text-white',
 };
 
 export function Header() {
@@ -30,7 +30,7 @@ export function Header() {
   return (
     <header
       className={cn(
-        'flex h-16 items-center bg-wonders-blue text-wonders-yellow',
+        'flex h-16 items-center bg-wonders-blue text-wonders-yellow shadow-bottom',
         // prettier-ignore
         {
           [bg.military]:    pathname === '/scores/military',
@@ -47,17 +47,23 @@ export function Header() {
       )}>
       <div className="text-center">
         {pageDetails.previous ? (
-          <button
+          // <button
+          //   onClick={() => navigate(-1)}
+          //   className="m-4 block text-2xl font-medium"
+          //   aria-label="Go back">
+          //   <AiOutlineArrowLeft size={'1.5rem'} />
+          // </button>
+          <ButtonIcon
             onClick={() => navigate(-1)}
+            icon={AiOutlineArrowLeft}
             className="m-4 block text-2xl font-medium"
-            aria-label="Go back">
-            <AiOutlineArrowLeft size={'1.5rem'} />
-          </button>
+          />
         ) : (
           <ButtonIcon
             aria-controls="drawer-navigation"
             onClick={openSidebar}
-            icon={GiHamburgerMenu}
+              icon={GiHamburgerMenu}
+              className='ml-4'
           />
         )}
       </div>
