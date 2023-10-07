@@ -10,7 +10,7 @@ type Props = React.ComponentPropsWithoutRef<'button'> & {
 export function ButtonIcon({ icon: Icon, onClick, className, ...buttonProps }: Props) {
   return (
     <button
-      className={cn("m-4 text-2xl font-medium", className)}
+      className={cn("m-2 text-2xl font-medium", className)}
       onClick={onClick}
       type="button"
       {...buttonProps}>
