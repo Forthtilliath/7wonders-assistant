@@ -1,14 +1,17 @@
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 import { HeaderOptions } from '@/components/layout/HeaderOptions';
 import { ButtonIcon } from '@/components/shared/ButtonIcon';
 import { AiOutlineArrowRight } from '@/components/shared/Icons';
 import { GroupScoreInputs } from '@/components/ui/GroupScoreInputs';
 
-export function Military() {
-  const navigate = useNavigate();
+export function Cities() {
+  // const navigate = useNavigate();
 
-  const nextStep = () => navigate('/scores/treasury');
+  const nextStep = () => {
+    // END OF THE GAME
+    // SAVE SCORES !!!
+  };
 
   return (
     <section>
@@ -19,7 +22,7 @@ export function Military() {
           className="text-white"
         />
       </HeaderOptions>
-      <GroupScoreInputs step={'military'} />
+      <GroupScoreInputs step={'cities'} />
     </section>
   );
 }

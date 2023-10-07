@@ -5,10 +5,10 @@ import { ButtonIcon } from '@/components/shared/ButtonIcon';
 import { AiOutlineArrowRight } from '@/components/shared/Icons';
 import { GroupScoreInputs } from '@/components/ui/GroupScoreInputs';
 
-export function Military() {
+export function Leaders() {
   const navigate = useNavigate();
 
-  const nextStep = () => navigate('/scores/treasury');
+  const nextStep = () => navigate('/scores/cities');
 
   return (
     <section>
@@ -16,10 +16,10 @@ export function Military() {
         <ButtonIcon
           icon={AiOutlineArrowRight}
           onClick={nextStep}
-          className="text-white"
+          className="text-wonders-blue"
         />
       </HeaderOptions>
-      <GroupScoreInputs step={'military'} />
+      <GroupScoreInputs step={'leaders'} />
     </section>
   );
 }
