@@ -3,18 +3,17 @@
 - [x] Ajouter les headers de chaque page
 - [x] Mettre le header dans le layout et récupérer le title dans les data
 
-- [ ] Modifier les contexts en stores
+- [x] Modifier les contexts en stores
 - [ ] Remplacer framer-motion !
   - [ ] Back dans store pour inverser animation exit ?
-- [ ] Ajouter prettier/eslint
+- [x] Ajouter prettier/eslint
 - [ ] Ajouter husky
 - [x] Ajouter prettier sort
 - [ ] Ajouter des errors boundary
-- [ ] Vérifier utilité de sharp
-- [ ] Ajouter une icone pour l'app
+- [x] Ajouter une icone pour l'app
 - [ ] Ajouter une modal pour le delete joueur
 - [ ] Ajouter une bordure à l'icone Favorite
-- [ ] Les pages Settings, Feedback et About ont un bouton retour 
+- [x] Les pages Settings, Feedback et About ont un bouton retour 
 - [ ] Ajouter un gitaction pour les tests unitaires : https://docs.cypress.io/guides/continuous-integration/github-actions
 
 - [ ] Possibilité d'enregistrer les données dans un fichier
@@ -22,14 +21,18 @@
   - [ ] des parties
 - [ ] Possibilité de charger les données à partir d'un fichier
 
-- [ ] Ajouter hook pour header (pathname & label)
-- [ ] Générer router à partir de menu
+- [x] Ajouter hook pour header (pathname & label)
+- [x] Générer router à partir de menu
 - [ ] Replacer framer-motion par react-spring : https://www.npmjs.com/package/react-spring
   - [ ] Vérifier ``m`` de framer-motion : https://www.youtube.com/watch?v=gX4N44sPNHY (lazy motion)o
-- [ ] Afficher les joueurs par ordre alphabétique
+- [x] Afficher les joueurs par ordre alphabétique
 - [ ] Prendre compte les écrans un peu plus large tel que les tablettes
 - [ ] Possibilité du jeu en équipe
 - [ ] Check toutes les heights de page et scrolls
+- [ ] Quand on fait previous après la création de la partie, la partie est annulée
+- [ ] Quand on fait previous sur la création de la partie, on affiche une confirm box pour previous (ce qui supprime la partie)
+- [ ] Voir pour fixer le bouton next au changement de catégorie de score
+- [ ] Fixer width title en fonction des icones à droite
 
 # ⚠️ A FIXER ⚠️
 
@@ -53,12 +56,12 @@
 ### Router
 
 - [ ] `/` ➡️ **Nouvelle partie** 
-  - [ ] Etape 1 : *Création de la partie*
-    - [ ] Afficher la création de la partie
-    - [ ] Afficher la liste des joueurs
-    - [ ] Ajouter par défaut les favoris dans la partie
-    - [ ] Ajouter au clic un joueur dans la partie
-    - [ ] Bouton valider pour continuer
+  - [x] Etape 1 : *Création de la partie*
+    - [x] Afficher la création de la partie
+    - [x] Afficher la liste des joueurs
+    - [x] Ajouter par défaut les favoris dans la partie
+    - [x] Ajouter au clic un joueur dans la partie
+    - [x] Bouton valider pour continuer
   - [ ] Etape 2 : *Enregistrement des scores*
     - [ ] Enregistre les données
   - [ ] Etape 3 : *Affichage des scores*
