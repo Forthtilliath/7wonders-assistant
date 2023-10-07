@@ -1,3 +1,4 @@
+import { CATEGORIES } from '@/data/app';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
@@ -11,17 +12,7 @@ function produce<T>(cb: (state: T) => void) {
 
 type Score = Record<string, number>;
 
-type Category =
-  | 'military'
-  | 'treasury'
-  | 'wonders'
-  | 'civilians'
-  | 'scientifics'
-  | 'commercials'
-  | 'guilds'
-  | 'armada'
-  | 'leaders'
-  | 'cities';
+type Category = (typeof CATEGORIES)[number];
 
 interface State {
   players: Player[];
