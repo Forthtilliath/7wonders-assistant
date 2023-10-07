@@ -14,9 +14,16 @@ import { flattenRoutes } from '@/helpers/array';
 import About from '@/pages/About';
 import Feedback from '@/pages/Feedback';
 import NewGame from '@/pages/games/NewGame';
-import { Commercial } from '@/pages/games/scores/Commercial';
+import { Armada } from '@/pages/games/scores/Armada';
+import { Cities } from '@/pages/games/scores/Cities';
+import { Civilians } from '@/pages/games/scores/Civilians';
+import { Commercials } from '@/pages/games/scores/Commercials';
+import { Guilds } from '@/pages/games/scores/Guilds';
+import { Leaders } from '@/pages/games/scores/Leaders';
 import { Military } from '@/pages/games/scores/Military';
+import { Scientifics } from '@/pages/games/scores/Scientifics';
 import { Treasury } from '@/pages/games/scores/Treasury';
+import { Wonders } from '@/pages/games/scores/Wonders';
 import History from '@/pages/history/History';
 import EditPlayer from '@/pages/players/EditPlayer';
 import ListPlayers from '@/pages/players/ListPlayers';
@@ -57,49 +64,49 @@ export const routes: Route[] = [
           },
           {
             path: '/scores/wonders',
-            element: <Commercial />,
+            element: <Wonders />,
             label: 'Wonders',
             previous: true,
           },
           {
             path: '/scores/civilians',
-            element: <Commercial />,
+            element: <Civilians />,
             label: 'Civilians structures',
             previous: true,
           },
           {
             path: '/scores/scientifics',
-            element: <Commercial />,
+            element: <Scientifics />,
             label: 'Scientifics structures',
             previous: true,
           },
           {
             path: '/scores/commercials',
-            element: <Commercial />,
+            element: <Commercials />,
             label: 'Commercials structures',
             previous: true,
           },
           {
             path: '/scores/guilds',
-            element: <Commercial />,
+            element: <Guilds />,
             label: 'Guilds',
             previous: true,
           },
           {
             path: '/scores/armada',
-            element: <Commercial />,
+            element: <Armada />,
             label: 'Armada',
             previous: true,
           },
           {
             path: '/scores/leaders',
-            element: <Commercial />,
+            element: <Leaders />,
             label: 'Leaders',
             previous: true,
           },
           {
             path: '/scores/cities',
-            element: <Commercial />,
+            element: <Cities />,
             label: 'Cities',
             previous: true,
           },
