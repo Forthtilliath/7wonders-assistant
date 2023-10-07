@@ -31,3 +31,7 @@
 - [Modal](https://github.com/vercel-labs/nextgram/blob/main/src/app/%40modal/(.)photos/%5Bid%5D/page.tsx)
 - [Image crop](https://codesandbox.io/s/react-image-crop-demo-with-react-hooks-forked-qxr827?file=/src/App.tsx)
 - [Image crop 2](https://codesandbox.io/s/react-image-crop-demo-with-react-hooks-y831o?file=/src/App.tsx:4426-4429)
+
+## Outils
+
+- Conversion d'images : https://www.img2go.com/
