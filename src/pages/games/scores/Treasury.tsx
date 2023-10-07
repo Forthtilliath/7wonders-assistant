@@ -6,14 +6,14 @@ import { ButtonIcon } from '@/components/shared/ButtonIcon';
 import { AiOutlineArrowRight } from '@/components/shared/Icons';
 import { useGameStore } from '@/lib/gameStore';
 
-export function Military() {
+export function Treasury() {
   const navigate = useNavigate();
   const { players, scores, setScore } = useGameStore();
 
-  const nextStep = () => navigate('/scores/treasury');
+  const nextStep = () => navigate('/scores/wonders');
 
   const saveScore: SaveScoreEventHandler = (idPlayer: string) => (e) =>
-    setScore('military', idPlayer, e.currentTarget.valueAsNumber);
+    setScore('treasury', idPlayer, e.currentTarget.valueAsNumber);
 
   return (
     <section>
@@ -21,7 +21,7 @@ export function Military() {
         <ButtonIcon
           icon={AiOutlineArrowRight}
           onClick={nextStep}
-          className="text-white"
+          className="text-wonders-blue"
         />
       </HeaderOptions>
       <div className="flex flex-col gap-4 px-10 py-6">
@@ -30,7 +30,7 @@ export function Military() {
             <CardPlayerInGame {...player} className="w-[100px]" />
             <input
               type="number"
-              defaultValue={scores['military'][player.id] ?? 0}
+              defaultValue={scores['treasury'][player.id] ?? 0}
               onChange={saveScore(player.id)}
               className="border-wonders-dark w-full rounded border-2 bg-slate-900 p-3 text-center"
             />
