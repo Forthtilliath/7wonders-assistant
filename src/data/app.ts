@@ -1,5 +1,6 @@
-export const METADATA = {
+export const APP_CONST = {
   title: '7 Wonders: Assistant',
+  version: '0.1.0',
 };
 
 export const CATEGORIES = [

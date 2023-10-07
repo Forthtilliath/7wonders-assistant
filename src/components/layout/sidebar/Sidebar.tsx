@@ -1,6 +1,6 @@
 import { MenuItem } from '@/components/layout/sidebar/MenuItem';
 import { BiSolidPyramid } from '@/components/shared/Icons';
-import { METADATA } from '@/data/app';
+import { APP_CONST } from '@/data/app';
 import { routesMenu } from '@/data/routes';
 import { cn } from '@/helpers/tailwind';
 
@@ -26,7 +26,7 @@ export function Sidebar({ isOpen }: Props) {
           <h5
             id="drawer-navigation-label"
             className="text-base font-semibold uppercase text-gray-500 dark:text-gray-400">
-            {METADATA.title}
+            {APP_CONST.title}
           </h5>
         </header>
         <button
