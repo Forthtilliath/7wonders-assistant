@@ -14,16 +14,17 @@ const MAX_PLAYERS = 7;
 
 export default function NewGame() {
   const navigate = useNavigate();
-  const [players] = usePlayers();
+  const [lsPlayers] = usePlayers();
   const [playersInGame, setPlayersInGame] = useState<Player[]>([]);
-  const setPlayers = useGameStore(s => s.setPlayers)
+  const storePlayers = useGameStore((s) => s.players);
+  const setPlayers = useGameStore((s) => s.setPlayers);
 
   useEffect(() => {
-    const favoritePlayers = players
+    const players = storePlayers.length ? storePlayers : lsPlayers
       .filter((p) => p.isFavorite === 'true')
       .slice(0, MAX_PLAYERS);
-    setPlayersInGame(favoritePlayers);
-  }, [players]);
+    setPlayersInGame(players);
+  }, [lsPlayers, storePlayers]);
 
   const addPlayerIntoTheGame = (player: Player) => () => {
     if (playersInGame.includes(player)) {
@@ -39,10 +40,12 @@ export default function NewGame() {
     setPlayersInGame((p) => p.filter((player) => player.id !== playerId));
   };
 
-  const launchGame = () => {
-    // console.log(playersInGame);
-    setPlayers(playersInGame)
+  useEffect(() => {
+    if (playersInGame.length >= MIN_PLAYERS) setPlayers(playersInGame);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playersInGame]);
 
+  const launchGame = () => {
     navigate('/scores/military');
   };
 
@@ -54,7 +57,7 @@ export default function NewGame() {
     <section className="h-full overflow-y-auto">
       <HeaderOptions>
         {playersInGame.length >= MIN_PLAYERS && (
-          <ButtonIcon icon={BsCheckLg} onClick={launchGame} type="button" />
+          <ButtonIcon icon={BsCheckLg} onClick={launchGame} />
         )}
       </HeaderOptions>
       <header className="bg-wonders-blue">
@@ -77,7 +80,7 @@ export default function NewGame() {
       </header>
 
       <main className="mx-auto grid h-full max-w-[800px] auto-rows-min grid-cols-3 gap-2 overflow-y-auto p-4">
-        {players.map((player) => (
+        {lsPlayers.map((player) => (
           <CardPlayerNewGame
             key={player.id}
             {...player}
