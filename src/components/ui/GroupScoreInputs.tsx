@@ -2,6 +2,7 @@ import { CATEGORIES } from '@/data/app';
 import { useGameStore } from '@/lib/gameStore';
 
 import { CardPlayerInGame } from '../cards/CardPlayerInGame';
+import { DropdownScience } from './DropdownScience';
 
 type Props = {
   step: (typeof CATEGORIES)[number];
@@ -24,6 +25,8 @@ export function GroupScoreInputs({ step }: Props) {
             onChange={saveScore(player.id)}
             className="border-wonders-dark w-full rounded border-2 bg-slate-900 p-3 text-center"
           />
+          {step === 'scientifics' && <DropdownScience />}
+          {/* Ouvrir les sciences inputs ici, dans une div */}
         </div>
       ))}
     </div>
