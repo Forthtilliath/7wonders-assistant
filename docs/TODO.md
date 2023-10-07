@@ -31,6 +31,8 @@
 - [ ] Check toutes les heights de page et scrolls
 - [ ] Quand on fait previous après la création de la partie, la partie est annulée
 - [ ] Quand on fait previous sur la création de la partie, on affiche une confirm box pour previous (ce qui supprime la partie)
+- [ ] Voir pour fixer le bouton next au changement de catégorie de score
+- [ ] Fixer width title en fonction des icones à droite
 
 # ⚠️ A FIXER ⚠️
 
