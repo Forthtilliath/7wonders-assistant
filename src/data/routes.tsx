@@ -14,7 +14,9 @@ import { flattenRoutes } from '@/helpers/array';
 import About from '@/pages/About';
 import Feedback from '@/pages/Feedback';
 import NewGame from '@/pages/games/NewGame';
+import { Commercial } from '@/pages/games/scores/Commercial';
 import { Military } from '@/pages/games/scores/Military';
+import { Treasury } from '@/pages/games/scores/Treasury';
 import History from '@/pages/history/History';
 import EditPlayer from '@/pages/players/EditPlayer';
 import ListPlayers from '@/pages/players/ListPlayers';
@@ -44,7 +46,61 @@ export const routes: Route[] = [
           {
             path: '/scores/military',
             element: <Military />,
-            label: 'Military',
+            label: 'Military conflicts',
+            previous: true,
+          },
+          {
+            path: '/scores/treasury',
+            element: <Treasury />,
+            label: 'Treasury',
+            previous: true,
+          },
+          {
+            path: '/scores/wonders',
+            element: <Commercial />,
+            label: 'Wonders',
+            previous: true,
+          },
+          {
+            path: '/scores/civilians',
+            element: <Commercial />,
+            label: 'Civilians structures',
+            previous: true,
+          },
+          {
+            path: '/scores/scientifics',
+            element: <Commercial />,
+            label: 'Scientifics structures',
+            previous: true,
+          },
+          {
+            path: '/scores/commercials',
+            element: <Commercial />,
+            label: 'Commercials structures',
+            previous: true,
+          },
+          {
+            path: '/scores/guilds',
+            element: <Commercial />,
+            label: 'Guilds',
+            previous: true,
+          },
+          {
+            path: '/scores/armada',
+            element: <Commercial />,
+            label: 'Armada',
+            previous: true,
+          },
+          {
+            path: '/scores/leaders',
+            element: <Commercial />,
+            label: 'Leaders',
+            previous: true,
+          },
+          {
+            path: '/scores/cities',
+            element: <Commercial />,
+            label: 'Cities',
             previous: true,
           },
         ],
