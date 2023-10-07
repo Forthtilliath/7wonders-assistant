@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { ButtonIcon } from './ButtonIcon';
 
-type Props = React.ComponentPropsWithoutRef<'button'> & {
+type Props = Omit<Parameters<typeof ButtonIcon>[0], 'icon'> & {
   condition: boolean;
   icons: [IconComponent, IconComponent];
   onClick: ButtonClickEventHandler;
