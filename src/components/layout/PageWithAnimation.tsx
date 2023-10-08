@@ -1,9 +1,7 @@
-'use client';
-
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 
-const PageWithAnimation = ({ children }: React.PropsWithChildren) => {
+export const PageWithAnimation = ({ children }: React.PropsWithChildren) => {
   const location = useLocation();
 
   return (
@@ -25,5 +23,3 @@ const PageWithAnimation = ({ children }: React.PropsWithChildren) => {
     </AnimatePresence>
   );
 };
-
-export default PageWithAnimation;
