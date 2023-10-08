@@ -1,4 +1,4 @@
-const defaultPlayers: Player[] = [
+export const defaultPlayers: Player[] = [
   {
     name: 'Mike',
     id: '349a799f-a55d-44b3-1efa-e309e77d67ec',
@@ -18,7 +18,7 @@ const defaultPlayers: Player[] = [
 export function getPlayers(): Player[] {
   const LS = localStorage.getItem('players');
 
-  return LS ? JSON.parse(LS) : defaultPlayers;
+  return LS ? JSON.parse(LS) : defaultPlayers.slice();
 }
 
 export function addPlayer(player: Player) {
