@@ -13,6 +13,7 @@ export function ButtonIcon({
   onClick,
   className,
   size = '1.5rem',
+  children,
   ...buttonProps
 }: Props) {
   return (
@@ -22,6 +23,7 @@ export function ButtonIcon({
       type="button"
       {...buttonProps}>
       <Icon size={size} />
+      {children}
     </button>
   );
 }
