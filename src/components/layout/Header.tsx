@@ -6,7 +6,7 @@ import { getLabelAndPrevious } from '@/helpers/array';
 import { cn } from '@/helpers/tailwind';
 
 import { ButtonIcon } from '../shared/ButtonIcon';
-import { openSidebar } from './SidebarGlobal';
+import { openSidebar } from './Sidebar';
 
 // prettier-ignore
 const bg = {

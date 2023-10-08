@@ -1,10 +1,8 @@
-import { MenuItem } from '@/components/layout/sidebar/MenuItem';
+import { closeSidebar, MenuItem } from '@/components/layout/Sidebar';
 import { BiSolidPyramid } from '@/components/shared/Icons';
 import { APP_CONST } from '@/data/app';
 import { routesMenu } from '@/data/routes';
 import { cn } from '@/helpers/tailwind';
-
-import { closeSidebar } from '../SidebarGlobal';
 
 type Props = {
   isOpen: boolean;
