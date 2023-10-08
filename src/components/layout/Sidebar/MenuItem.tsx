@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 
-import { closeSidebar } from '../SidebarGlobal';
+import { closeSidebar } from '@/components/layout/Sidebar';
 
 export function MenuItem({ path, icon: Icon, label }: MenuItem) {
   return (

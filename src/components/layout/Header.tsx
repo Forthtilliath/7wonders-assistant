@@ -6,7 +6,7 @@ import { getLabelAndPrevious } from '@/helpers/array';
 import { cn } from '@/helpers/tailwind';
 
 import { ButtonIcon } from '../shared/ButtonIcon';
-import { openSidebar } from './SidebarGlobal';
+import { openSidebar } from './Sidebar';
 
 // prettier-ignore
 const bg = {
@@ -47,12 +47,6 @@ export function Header() {
       )}>
       <div className="text-center">
         {pageDetails.previous ? (
-          // <button
-          //   onClick={() => navigate(-1)}
-          //   className="m-4 block text-2xl font-medium"
-          //   aria-label="Go back">
-          //   <AiOutlineArrowLeft size={'1.5rem'} />
-          // </button>
           <ButtonIcon
             onClick={() => navigate(-1)}
             icon={AiOutlineArrowLeft}
@@ -62,9 +56,10 @@ export function Header() {
           <ButtonIcon
             aria-controls="drawer-navigation"
             onClick={openSidebar}
-              icon={GiHamburgerMenu}
-              className='ml-4'
-          />
+            icon={GiHamburgerMenu}
+            className="ml-4">
+            <span className="sr-only">Open menu</span>
+          </ButtonIcon>
         )}
       </div>
 
