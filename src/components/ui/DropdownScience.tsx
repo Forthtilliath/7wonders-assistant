@@ -1,7 +1,4 @@
-import compas from '@/assets/science/compas.webp';
-import most from '@/assets/science/most.webp';
-import roue from '@/assets/science/roue.webp';
-import tablette from '@/assets/science/tablette.webp';
+import { compas, most, roue, tablette } from '@/assets/science';
 import { cn } from '@/helpers/tailwind';
 import { useToggle } from '@/hooks/useToggle';
 import { scienceAnimation } from '@/lib/animations';
