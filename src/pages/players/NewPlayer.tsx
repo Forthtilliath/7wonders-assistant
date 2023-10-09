@@ -14,7 +14,6 @@ import {
   ImStarEmpty,
   ImStarFull,
 } from '@/components/shared/Icons';
-import { assertsIsDefined } from '@/helpers/assets';
 import { generateUuidv4 } from '@/helpers/string';
 import { useToggle } from '@/hooks/useToggle';
 
@@ -26,22 +25,20 @@ export default function NewPlayer() {
 
   const onSubmit: FormSubmitEventHandler = async (e) => {
     e.preventDefault();
+
     const player = new FormData(e.currentTarget);
     player.append('id', generateUuidv4());
     player.append('avatar', '/assets/images/defaultAvatar.webp');
-    player.append('isFavorite', favorite ? 'true' : 'false');
-    player.append('isArchived', archive ? 'true' : 'false');
+    player.append('isFavorite', favorite.toString());
+    player.append('isArchived', archive.toString());
 
-    LS.addPlayer(Object.fromEntries(player) as Player);
+    const playerData = Object.fromEntries(player) as Player;
+    LS.addPlayer(playerData);
 
     navigate(-1);
   };
 
-  useEffect(() => {
-    assertsIsDefined(inputRef.current);
-
-    inputRef.current.focus();
-  }, []);
+  useEffect(() => inputRef.current?.focus(), []);
 
   return (
     <main className="">
@@ -51,13 +48,13 @@ export default function NewPlayer() {
             condition={favorite}
             icons={[ImStarEmpty, ImStarFull]}
             onClick={toggleFavorite}
-            aria-label='Toggle Favorite'
+            aria-label="Toggle Favorite"
           />
           <ButtonToggleIcon
             condition={archive}
             icons={[BiArchiveIn, BiSolidArchiveOut]}
             onClick={toggleArchive}
-            aria-label='Toggle Archive'
+            aria-label="Toggle Archive"
           />
           <ButtonIcon
             icon={BsCheckLg}
