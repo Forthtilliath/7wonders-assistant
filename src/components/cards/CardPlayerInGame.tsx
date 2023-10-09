@@ -1,3 +1,4 @@
+import type { Player } from '@/@types/storage';
 import { cn } from '@/helpers/tailwind';
 
 type Props = PropsWithClassname<Player>;

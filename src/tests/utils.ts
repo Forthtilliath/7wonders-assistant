@@ -1,12 +1,5 @@
-import { LS_KEY } from "@/data/app";
-
-export type Player = {
-  id: string;
-  name: string;
-  avatar: string;
-  isFavorite: string;
-  isArchived: string;
-};
+import type { Player } from '@/@types/storage';
+import { LS_KEY } from '@/data/app';
 
 export function getPlayers(): Player[] {
   const LS = localStorage.getItem(LS_KEY.players);

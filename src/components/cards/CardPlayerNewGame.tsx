@@ -1,3 +1,5 @@
+import type { Player } from '@/@types/storage';
+
 import { GiCrossedSwords } from '../shared/Icons';
 
 type Props = Player & {
@@ -5,12 +7,7 @@ type Props = Player & {
   inGame?: boolean;
 };
 
-export function CardPlayerNewGame({
-  avatar,
-  name,
-  inGame,
-  onClick,
-}: Props) {
+export function CardPlayerNewGame({ avatar, name, inGame, onClick }: Props) {
   return (
     <button
       onClick={onClick}
@@ -20,7 +17,7 @@ export function CardPlayerNewGame({
         alt={`Avatar ${name}`}
         className="h-full w-full object-fill"
       />
-      <h2 className="absolute bottom-0 w-full bg-black/50 p-1 text-center text-xl font-medium rounded truncate">
+      <h2 className="absolute bottom-0 w-full truncate rounded bg-black/50 p-1 text-center text-xl font-medium">
         {name}
       </h2>
       {inGame && (

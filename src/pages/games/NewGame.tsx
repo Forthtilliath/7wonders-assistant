@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import type { Player } from '@/@types/storage';
 import { CardNewPlayer } from '@/components/cards/CardNewPlayer';
 import { CardPlayerNewGame } from '@/components/cards/CardPlayerNewGame';
 import { HeaderOptions } from '@/components/layout/HeaderOptions';
@@ -20,9 +21,9 @@ export default function NewGame() {
   const setPlayers = useGameStore((s) => s.setPlayers);
 
   useEffect(() => {
-    const players = storePlayers.length ? storePlayers : lsPlayers
-      .filter((p) => p.isFavorite === 'true')
-      .slice(0, MAX_PLAYERS);
+    const players = storePlayers.length
+      ? storePlayers
+      : lsPlayers.filter((p) => p.isFavorite === 'true').slice(0, MAX_PLAYERS);
     setPlayersInGame(players);
   }, [lsPlayers, storePlayers]);
 

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import * as LS from '@/lib/storage';
+import type { Player } from '@/@types/storage';
 import { HeaderOptions } from '@/components/layout/HeaderOptions';
 import { ButtonIcon } from '@/components/shared/ButtonIcon';
 import { ButtonToggleIcon } from '@/components/shared/ButtonToggleIcon';

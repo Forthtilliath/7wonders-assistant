@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 
+import type { Player } from '@/@types/storage';
+
 import { ImStarFull } from '../shared/Icons';
 
 type Props = Player;
@@ -12,9 +14,9 @@ export function CardPlayer({ id, avatar, name, isFavorite }: Props) {
       <img
         src={avatar}
         alt={`Avatar ${name}`}
-        className='w-full h-full object-fill'
+        className="h-full w-full object-fill"
       />
-      <h2 className="absolute bottom-0 w-full bg-black/50 p-1 text-center text-xl font-medium truncate">
+      <h2 className="absolute bottom-0 w-full truncate bg-black/50 p-1 text-center text-xl font-medium">
         {name}
       </h2>
       {isFavorite === 'true' && (
