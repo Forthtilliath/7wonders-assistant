@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { IconOnly } from '../shared/IconOnly';
 import { FaPlus } from '../shared/Icons';
 
-export function CardNewPlayer() {
+export function ButtonNewPlayer() {
   return (
     <Link
       to="/players/new"

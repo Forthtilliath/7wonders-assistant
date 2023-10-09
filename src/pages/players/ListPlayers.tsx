@@ -1,4 +1,4 @@
-import { CardNewPlayer } from '@/components/cards/CardNewPlayer';
+import { ButtonNewPlayer } from '@/components/cards/ButtonNewPlayer';
 import { CardPlayer } from '@/components/cards/CardPlayer';
 import { usePlayers } from '@/hooks/usePlayers';
 
@@ -18,7 +18,7 @@ export default function ListPlayers() {
         <CardPlayer key={player.id} {...player} />
       ))}
 
-      <CardNewPlayer />
+      <ButtonNewPlayer />
     </main>
   );
 }

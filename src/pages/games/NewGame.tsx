@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { Player } from '@/@types/storage';
-import { CardNewPlayer } from '@/components/cards/CardNewPlayer';
+import { ButtonNewPlayer } from '@/components/cards/ButtonNewPlayer';
 import { CardPlayerNewGame } from '@/components/cards/CardPlayerNewGame';
 import { HeaderOptions } from '@/components/layout/HeaderOptions';
 import { ButtonIcon } from '@/components/shared/ButtonIcon';
@@ -90,7 +90,7 @@ export default function NewGame() {
           />
         ))}
 
-        <CardNewPlayer />
+        <ButtonNewPlayer />
       </main>
     </section>
   );
