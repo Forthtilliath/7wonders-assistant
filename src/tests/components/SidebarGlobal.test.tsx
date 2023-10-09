@@ -17,34 +17,34 @@ beforeEach(() => {
   );
 });
 
-async function getSidebar() {
+function getSidebar() {
   return screen.getByText(APP_CONST.title).closest('div');
 }
 
 it('renders', async () => {
-  expect(await getSidebar()).toBeInTheDocument();
+  expect(getSidebar()).toBeInTheDocument();
 });
 
 it('openSidebar should open the sidebar', async () => {
-  expect(await getSidebar()).toHaveClass('-translate-x-full');
+  expect(getSidebar()).toHaveClass('-translate-x-full');
   await waitFor(openSidebar);
-  expect(await getSidebar()).not.toHaveClass('-translate-x-full');
+  expect(getSidebar()).not.toHaveClass('-translate-x-full');
 });
 
 it('closeSidebar should close the sidebar', async () => {
-  expect(await getSidebar()).toHaveClass('-translate-x-full');
+  expect(getSidebar()).toHaveClass('-translate-x-full');
   await waitFor(openSidebar);
-  expect(await getSidebar()).not.toHaveClass('-translate-x-full');
+  expect(getSidebar()).not.toHaveClass('-translate-x-full');
   await waitFor(closeSidebar);
-  expect(await getSidebar()).toHaveClass('-translate-x-full');
+  expect(getSidebar()).toHaveClass('-translate-x-full');
 });
 
 it('close button should close the sidebar', async () => {
-  expect(await getSidebar()).toHaveClass('-translate-x-full');
+  expect(getSidebar()).toHaveClass('-translate-x-full');
   await waitFor(openSidebar);
-  expect(await getSidebar()).not.toHaveClass('-translate-x-full');
+  expect(getSidebar()).not.toHaveClass('-translate-x-full');
   userEvent.click(screen.getByRole('button', { name: 'Close menu' }));
-  expect(await getSidebar()).not.toHaveClass('-translate-x-full');
+  expect(getSidebar()).not.toHaveClass('-translate-x-full');
 });
 
 it('menu should have all links', () => {
