@@ -1,4 +1,5 @@
 import * as LS from '@/lib/storage';
+import type { Player } from '@/@types/storage';
 import { LS_KEY } from '@/data/app';
 import { describe, expect, it } from 'vitest';
 

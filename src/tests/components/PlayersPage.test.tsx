@@ -2,10 +2,11 @@ import { BrowserRouter } from 'react-router-dom';
 
 import * as LS from '@/lib/storage';
 import { LS_KEY } from '@/data/app';
-import { act, fireEvent, render, screen } from '@/lib/tests-utils';
 import ListPlayers from '@/pages/players/ListPlayers';
 import NewPlayer from '@/pages/players/NewPlayer';
+import { act, fireEvent, render, screen } from '@/tests/tests-utils';
 import { describe } from 'vitest';
+
 import { getPlayers } from '../utils';
 
 /**
