@@ -1,7 +1,7 @@
 import { CATEGORIES } from '@/data/app';
 import { useGameStore } from '@/lib/gameStore';
 
-import { CardPlayerInGame } from '../cards/CardPlayerInGame';
+import { CardPlayer } from '../cards';
 import { DropdownScience } from './DropdownScience';
 
 type Props = {
@@ -18,7 +18,11 @@ export function GroupScoreInputs({ step }: Props) {
     <div className="flex flex-col gap-4 px-10 py-6">
       {players.map((player) => (
         <div key={player.id} className="flex items-center gap-8">
-          <CardPlayerInGame {...player} className="w-[100px]" />
+          <CardPlayer
+            {...player}
+            className="w-[100px]"
+            classNameH2="text-xs font-normal"
+          />
           <input
             type="number"
             defaultValue={scores[step][player.id] ?? 0}

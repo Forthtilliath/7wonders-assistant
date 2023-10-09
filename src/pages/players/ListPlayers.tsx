@@ -15,7 +15,12 @@ export default function ListPlayers() {
   return (
     <main className="mx-auto grid max-w-[800px] grid-cols-3 gap-2 p-4">
       {players.map((player) => (
-        <CardPlayer key={player.id} {...player} />
+        <CardPlayer
+          key={player.id}
+          {...player}
+          href={`/players/edit?id=${player.id}`}
+          showFavorite
+        />
       ))}
 
       <ButtonNewPlayer />

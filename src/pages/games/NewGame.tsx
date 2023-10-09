@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { Player } from '@/@types/storage';
+import { CardPlayer } from '@/components/cards';
 import { ButtonNewPlayer } from '@/components/cards/ButtonNewPlayer';
-import { CardPlayerNewGame } from '@/components/cards/CardPlayerNewGame';
 import { HeaderOptions } from '@/components/layout/HeaderOptions';
 import { ButtonIcon } from '@/components/shared/ButtonIcon';
 import { BsCheckLg, GiMeeple } from '@/components/shared/Icons';
@@ -28,7 +28,7 @@ export default function NewGame() {
   }, [lsPlayers, storePlayers]);
 
   const addPlayerIntoTheGame = (player: Player) => () => {
-    if (playersInGame.includes(player)) {
+    if (playersInGame.some((p) => p.id === player.id)) {
       removePlayerFromTheGame(player.id)();
       return;
     }
@@ -64,7 +64,7 @@ export default function NewGame() {
       <header className="bg-wonders-blue">
         <main className="mx-auto grid max-w-[800px] grid-cols-4 gap-2 p-4">
           {playersInGame.map((player) => (
-            <CardPlayerNewGame
+            <CardPlayer
               key={player.id}
               {...player}
               onClick={removePlayerFromTheGame(player.id)}
@@ -82,10 +82,10 @@ export default function NewGame() {
 
       <main className="mx-auto grid h-full max-w-[800px] auto-rows-min grid-cols-3 gap-2 overflow-y-auto p-4">
         {lsPlayers.map((player) => (
-          <CardPlayerNewGame
+          <CardPlayer
             key={player.id}
             {...player}
-            inGame={playersInGame.some((p) => p.id === player.id)}
+            showInGame={playersInGame.some((p) => p.id === player.id)}
             onClick={addPlayerIntoTheGame(player)}
           />
         ))}
