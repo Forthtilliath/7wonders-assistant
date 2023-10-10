@@ -1,7 +1,7 @@
 import { forth, mike } from '@/assets/devs';
 import { logo_mobile, logo_tablet } from '@/assets/logo';
 import { CardDev } from '@/components/cards/CardDev';
-import { APP_CONST } from '@/data/app';
+import { APP_CONST } from '@/constants/app';
 
 export default function About() {
   return (

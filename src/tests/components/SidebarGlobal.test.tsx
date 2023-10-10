@@ -1,12 +1,11 @@
 import { BrowserRouter } from 'react-router-dom';
-
 import {
   closeSidebar,
   openSidebar,
   SidebarGlobal,
 } from '@/components/layout/Sidebar';
-import { APP_CONST } from '@/data/app';
-import { routesMenu } from '@/data/routes';
+import { APP_CONST } from '@/constants/app';
+import { ROUTES_MENU } from '@/constants/routes';
 import { render, screen, userEvent, waitFor } from '@/tests/tests-utils';
 
 beforeEach(() => {
@@ -48,7 +47,7 @@ it('close button should close the sidebar', async () => {
 });
 
 it('menu should have all links', () => {
-  routesMenu.forEach((menuItem) => {
+  ROUTES_MENU.forEach((menuItem) => {
     expect(screen.getByText(menuItem.label)).toBeInTheDocument();
   });
 });

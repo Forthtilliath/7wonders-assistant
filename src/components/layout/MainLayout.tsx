@@ -1,8 +1,7 @@
 import { Outlet } from 'react-router-dom';
-
-import { Header } from '@/components/layout/Header';
-import { PageWithAnimation } from '@/components/layout/PageWithAnimation';
-import { SidebarGlobal } from '@/components/layout/Sidebar';
+import { Header } from './Header';
+import { PageWithAnimation } from './PageWithAnimation';
+import { SidebarGlobal } from './Sidebar';
 import '@/index.css';
 
 export function MainLayout() {

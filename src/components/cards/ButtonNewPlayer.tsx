@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
-
-import { IconOnly } from '../shared/IconOnly';
-import { FaPlus } from '../shared/Icons';
+import { IconOnly } from '@components/shared';
+import { FaPlus } from '@components/shared/Icons';
 
 export function ButtonNewPlayer() {
   return (

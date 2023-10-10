@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 // https://gist.github.com/Mon4ik/2636100f5b74ee14e35cf283700616fe
-export function useLocalStorage<T>(key: string, defaultValue: T):[value:T, setter:(value: T) => void, remove:() => void] {
+export function useLocalStorage<T>(
+  key: string,
+  defaultValue: T
+): [value: T, setter: (value: T) => void, remove: () => void] {
   const [value, _setValue] = useState(defaultValue);
 
   useEffect(() => {
@@ -16,12 +19,12 @@ export function useLocalStorage<T>(key: string, defaultValue: T):[value:T, sette
       _setValue(item ? JSON.parse(item) : defaultValue);
     }
 
-    window.addEventListener("storage", handler);
+    window.addEventListener('storage', handler);
 
-    window.dispatchEvent(new StorageEvent("storage", { key }));
+    window.dispatchEvent(new StorageEvent('storage', { key }));
 
     return () => {
-      window.removeEventListener("storage", handler);
+      window.removeEventListener('storage', handler);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -31,8 +34,8 @@ export function useLocalStorage<T>(key: string, defaultValue: T):[value:T, sette
       _setValue(value);
 
       localStorage.setItem(key, JSON.stringify(value));
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new StorageEvent("storage", { key }));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new StorageEvent('storage', { key }));
       }
     } catch (e) {
       console.error(e);
@@ -41,8 +44,8 @@ export function useLocalStorage<T>(key: string, defaultValue: T):[value:T, sette
 
   const removeStorage = () => {
     localStorage.removeItem(key);
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new StorageEvent("storage", { key }));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new StorageEvent('storage', { key }));
     }
   };
 

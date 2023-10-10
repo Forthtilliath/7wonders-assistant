@@ -1,10 +1,8 @@
 import { memo, PropsWithChildren } from 'react';
 import { Link } from 'react-router-dom';
-
-import type { Player } from '@/@types/storage';
-import { cn } from '@/helpers';
-
-import { GiCrossedSwords, ImStarFull } from '../shared/Icons';
+import type { Player } from '@types';
+import { GiCrossedSwords, ImStarFull } from '@components/shared/Icons';
+import { cn } from '@helpers';
 
 type Props = PropsWithClassname<
   ButtonLinkProps &

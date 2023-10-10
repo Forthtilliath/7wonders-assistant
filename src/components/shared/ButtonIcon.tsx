@@ -1,4 +1,4 @@
-import { cn } from '@/helpers/tailwind';
+import { cn } from '@helpers';
 
 type Props = React.ComponentPropsWithoutRef<'button'> & {
   icon: Icon;

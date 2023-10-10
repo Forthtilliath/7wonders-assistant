@@ -1,6 +1,5 @@
 import { PropsWithChildren } from 'react';
-
-import { cn } from '@/helpers/tailwind';
+import { cn } from '@helpers';
 
 type Props = PropsWithChildren<
   PropsWithClassname<{

@@ -1,6 +1,6 @@
 import * as LS from '@/lib/storage';
 import type { Player } from '@/@types/storage';
-import { LS_KEY } from '@/data/app';
+import { LS_KEY } from '@/constants/app';
 import { describe, expect, it } from 'vitest';
 
 const player: Player = {

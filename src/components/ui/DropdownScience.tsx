@@ -1,15 +1,14 @@
-import { compas, most, roue, tablette } from '@/assets/science';
-import { cn } from '@/helpers/tailwind';
-import { useToggle } from '@/hooks/useToggle';
-import { scienceAnimation } from '@/lib/animations';
 import { domAnimation, LazyMotion, m } from 'framer-motion';
-
-import { ButtonToggleIcon } from '../shared/ButtonToggleIcon';
+import { ButtonToggleIcon } from '@components/shared';
 import {
   BsFillFileArrowDownFill,
   BsFillFileArrowUpFill,
-} from '../shared/Icons';
+} from '@components/shared/Icons';
+import { cn } from '@helpers';
+import { scienceAnimation } from '@lib';
+import { useToggle } from '@hooks';
 import { InputScience } from './InputScience';
+import { compas, most, roue, tablette } from '@assets/science';
 
 export function DropdownScience() {
   const [open, toggleOpen] = useToggle(false);

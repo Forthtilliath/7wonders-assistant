@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from 'framer-motion';
-
 import { ButtonIcon } from './ButtonIcon';
 
 type Props = Omit<Parameters<typeof ButtonIcon>[0], 'icon'> & {

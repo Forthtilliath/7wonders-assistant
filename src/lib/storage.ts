@@ -1,4 +1,4 @@
-import type { Player } from '@/@types/storage';
+import type { Player } from '@types';
 
 export const defaultPlayers: Player[] = [
   {

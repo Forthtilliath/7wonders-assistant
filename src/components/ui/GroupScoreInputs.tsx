@@ -1,6 +1,5 @@
-import { CATEGORIES } from '@/data/app';
+import { CATEGORIES } from '@/constants/app';
 import { useGameStore } from '@/lib/gameStore';
-
 import { CardPlayer } from '../cards';
 import { DropdownScience } from './DropdownScience';
 
