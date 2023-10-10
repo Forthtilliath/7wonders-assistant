@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-
-import * as LS from '@/lib/storage';
-import { assertsIsDefined } from '@/helpers/assets';
+import type { Player } from '@types';
+import { assertsIsDefined } from '@helpers';
+import { LS } from '@lib';
 
 export function usePlayer(id: Player['id'] | null) {
   const [player, setPlayer] = useState<Player>({
@@ -24,7 +24,7 @@ export function usePlayer(id: Player['id'] | null) {
       ...p,
       isFavorite: p.isFavorite === 'true' ? 'false' : 'true',
     }));
-  
+
   const toggleArchive = () =>
     setPlayer((p) => ({
       ...p,

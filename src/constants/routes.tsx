@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { MainLayout } from '@/components/layout/MainLayout';
 import {
   AiFillClockCircle,
@@ -36,7 +37,7 @@ import TestCrop from '@/pages/tests/TestCrop';
 import TestGallery from '@/pages/tests/TestGallery';
 import TestImport from '@/pages/tests/TestImport';
 
-export const routes: Route[] = [
+export const ROUTES: Route[] = [
   {
     path: '/',
     element: <MainLayout />,
@@ -209,4 +210,4 @@ export const routes: Route[] = [
   },
 ];
 
-export const routesMenu = flattenRoutes(routes);
+export const ROUTES_MENU = flattenRoutes(ROUTES);

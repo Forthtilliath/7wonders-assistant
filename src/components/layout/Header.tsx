@@ -1,11 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-
-import { AiOutlineArrowLeft, GiHamburgerMenu } from '@/components/shared/Icons';
-import { routes } from '@/data/routes';
-import { getLabelAndPrevious } from '@/helpers/array';
-import { cn } from '@/helpers/tailwind';
-
-import { ButtonIcon } from '../shared/ButtonIcon';
+import { ButtonIcon } from '@components/shared';
+import { AiOutlineArrowLeft, GiHamburgerMenu } from '@components/shared/Icons';
+import { cn, getLabelAndPrevious } from '@helpers';
+import { ROUTES } from '@constants';
 import { openSidebar } from './Sidebar';
 
 // prettier-ignore
@@ -25,7 +22,7 @@ const bg = {
 export function Header() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const pageDetails = getLabelAndPrevious(pathname, routes);
+  const pageDetails = getLabelAndPrevious(pathname, ROUTES);
 
   return (
     <header

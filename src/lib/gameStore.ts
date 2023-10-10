@@ -1,4 +1,5 @@
-import { CATEGORIES } from '@/data/app';
+import type { Player } from '@/@types/storage';
+import { CATEGORIES } from '@/constants/app';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 

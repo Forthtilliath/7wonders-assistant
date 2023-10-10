@@ -1,8 +1,7 @@
-import { closeSidebar, MenuItem } from '@/components/layout/Sidebar';
-import { BiSolidPyramid } from '@/components/shared/Icons';
-import { APP_CONST } from '@/data/app';
-import { routesMenu } from '@/data/routes';
-import { cn } from '@/helpers/tailwind';
+import { cn } from '@/helpers';
+import { BiSolidPyramid } from '@components/shared/Icons';
+import { APP_CONST, ROUTES_MENU } from '@constants';
+import { closeSidebar, MenuItem } from './';
 
 type Props = {
   isOpen: boolean;
@@ -48,7 +47,7 @@ export function Sidebar({ isOpen }: Props) {
         </button>
         <div className="overflow-y-auto">
           <ul className="space-y-2 font-medium">
-            {routesMenu.map((route) => (
+            {ROUTES_MENU.map((route) => (
               <MenuItem key={route.path} {...route} />
             ))}
           </ul>

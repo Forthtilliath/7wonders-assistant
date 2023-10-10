@@ -15,3 +15,7 @@ export const CATEGORIES = [
   'leaders',
   'cities',
 ] as const;
+
+export const LS_KEY = {
+  players: "players",
+}

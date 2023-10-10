@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
-import { routes } from '@/data/routes';
+import { ROUTES } from '@/constants/routes';
 
 export const router = createBrowserRouter(
-  routes.map((route) => ({
+  ROUTES.map((route) => ({
     path: route.path,
     element: route.element,
     children: route.children,

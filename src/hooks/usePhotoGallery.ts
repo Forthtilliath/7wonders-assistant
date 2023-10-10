@@ -1,8 +1,6 @@
 // https://youtu.be/-wkA8ESciyg
 // https://capacitorjs.com/docs/apis/camera
 import { useEffect, useState } from 'react';
-
-import { assertsIsDefined } from '@/helpers/assets';
 import {
   Camera,
   CameraResultType,
@@ -12,6 +10,7 @@ import {
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
+import { assertsIsDefined } from '@helpers';
 
 const PHOTOS_PREF_KEY = 'photos';
 

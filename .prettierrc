@@ -6,11 +6,23 @@
   "bracketSameLine": true,
 
   "importOrder": [
-    "^react(.*)|next(.*)",
+    "^react(.*)",
     "<THIRD_PARTY_MODULES>",
-    "^[./]"
+    "^@types$",
+    "^@components/layout(.*)$",
+    "^@components/shared(.*)$",
+    "^@components(.*)$",
+    "^@helpers$",
+    "^@lib$",
+    "^@hooks$",
+    "^@constants$",
+    "^@/(.*)(!.css)$",
+
+    "^[./]",
+    "^@assets/(.*)$",
+    "^@/(.*).css$"
   ],
-  "importOrderSeparation": true,
+  "importOrderSeparation": false,
   "importOrderGroupNamespaceSpecifiers": true,
   "importOrderSortSpecifiers": true,
   "importOrderCaseInsensitive": true,

@@ -23,10 +23,17 @@
 
     /* Options */
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@types": ["./src/@types"],
+      "@helpers": ["./src/helpers"],
+      "@components/*": ["./src/components/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@constants": ["./src/constants"],
+      "@lib": ["./src/lib"],
+      "@hooks": ["./src/hooks"]
     },
     "types": ["vitest/globals"]
   },
-  "include": ["src"],
+  "include": ["src", "**/*.{test,spec}.{ts,tsx}"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
