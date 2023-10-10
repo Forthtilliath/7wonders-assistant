@@ -1,7 +1,7 @@
-import { CATEGORIES } from '@/constants/app';
-import { useGameStore } from '@/lib/gameStore';
-import { CardPlayer } from '../cards';
-import { DropdownScience } from './DropdownScience';
+import { CardPlayer } from '@components/cards';
+import { DropdownScience } from '@components/ui';
+import { useGameStore } from '@lib';
+import { CATEGORIES } from '@constants';
 
 type Props = {
   step: (typeof CATEGORIES)[number];
