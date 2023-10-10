@@ -1,7 +1,7 @@
-import type { Player } from '@/@types/storage';
-import { CATEGORIES } from '@/constants/app';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import type { Player } from '@types';
+import { CATEGORIES } from '@constants';
 
 function produce<T>(cb: (state: T) => void) {
   return (state: T) => {
