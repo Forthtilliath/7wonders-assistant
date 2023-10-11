@@ -40,21 +40,21 @@ export function CardPlayer({
       />
       <h2
         className={cn(
-          'absolute bottom-0 w-full truncate bg-black/50 p-1 text-center text-xl font-medium',
+          'text-xl/1 absolute bottom-0 w-full truncate bg-black/50 p-px text-center font-medium sm:p-1',
           classNameH2
         )}>
         {name}
       </h2>
       {showFavorite && (
         <ImStarFull
-          className="absolute right-1 top-1 text-wonders-yellow shadow-sm"
-          size={'1.5rem'}
+          className="absolute right-1 top-1 text-wonders-yellow sm:right-2 sm:top-2"
+          size="30%"
         />
       )}
       {showInGame && (
         <GiCrossedSwords
-          className="absolute left-1 top-1 text-red-500 shadow-sm"
-          size={'20%'}
+          className="absolute left-1 top-1 text-red-500 sm:left-2 sm:top-2"
+          size="20%"
         />
       )}
     </MemoizedConditionalButtonLink>

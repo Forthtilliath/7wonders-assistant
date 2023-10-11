@@ -6,7 +6,7 @@ import {
 } from '@/components/layout/Sidebar';
 import { APP_CONST } from '@/constants/app';
 import { ROUTES_MENU } from '@/constants/routes';
-import { render, screen, userEvent, waitFor } from '@/tests/tests-utils';
+import { render, screen, userEvent, waitFor } from '../tests-utils';
 
 beforeEach(() => {
   render(

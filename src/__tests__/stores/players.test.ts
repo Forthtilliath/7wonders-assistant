@@ -1,7 +1,7 @@
-import * as LS from '@/lib/storage';
-import type { Player } from '@/@types/storage';
-import { LS_KEY } from '@/constants/app';
 import { describe, expect, it } from 'vitest';
+import type { Player } from '@types';
+import { LS } from '@lib';
+import { LS_KEY } from '@constants';
 
 const player: Player = {
   id: '1',
