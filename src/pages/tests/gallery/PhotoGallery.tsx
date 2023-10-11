@@ -1,5 +1,3 @@
-"use client";
-
 import { usePhotoGallery } from '@/hooks/usePhotoGallery';
 
 
