@@ -48,13 +48,13 @@ export function CardPlayer({
       {showFavorite && (
         <ImStarFull
           className="absolute right-1 top-1 text-wonders-yellow shadow-sm"
-          size={'1.5rem'}
+          size="30%"
         />
       )}
       {showInGame && (
         <GiCrossedSwords
           className="absolute left-1 top-1 text-red-500 shadow-sm"
-          size={'20%'}
+          size="20%"
         />
       )}
     </MemoizedConditionalButtonLink>
