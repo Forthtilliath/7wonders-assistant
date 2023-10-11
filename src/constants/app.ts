@@ -3,6 +3,14 @@ export const APP_CONST = {
   version: '0.1.0',
 };
 
+export const EXTENSIONS = [
+  'Leaders',
+  'Cities',
+  'Babel',
+  'Armada',
+  'Edifice',
+] as const;
+
 export const CATEGORIES = [
   'military',
   'treasury',
@@ -17,5 +25,5 @@ export const CATEGORIES = [
 ] as const;
 
 export const LS_KEY = {
-  players: "players",
-}
+  players: 'players',
+};
