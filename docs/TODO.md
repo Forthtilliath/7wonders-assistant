@@ -40,6 +40,7 @@
 - [ ] Images des joueurs par défault ne s'affichent pas sur mobile
 - [ ] Responsivité About
 - [ ] Bouton Add player, icone taille dynamique
+- [ ] Speed click génère des doublons de composants sur les composants animés ⚠️
 
 # Tests Unitaires
 
