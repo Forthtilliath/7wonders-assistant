@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "allowJs": false,
     "module": "ESNext",
     "skipLibCheck": true,
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -22,14 +23,17 @@
 
     /* Options */
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"],
+      "@types": ["./src/@types"],
+      "@helpers": ["./src/helpers"],
+      "@components/*": ["./src/components/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@constants": ["./src/constants"],
+      "@lib": ["./src/lib"],
+      "@hooks": ["./src/hooks"]
     },
-    "types": [
-      "cypress"
-    ]
+    "types": ["vitest/globals"]
   },
-  "include": ["src"],
+  "include": ["src", "**/*.{test,spec}.{ts,tsx}"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

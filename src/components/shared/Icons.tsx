@@ -1,4 +1,4 @@
-import React, { SVGProps } from 'react';
+import { SVGProps } from 'react';
 
 export interface IconProps extends SVGProps<SVGSVGElement> {
   size?: string;
@@ -339,6 +339,41 @@ export function BsCheckLg({ size = '1rem', ...props }: IconProps) {
       xmlns="http://www.w3.org/2000/svg"
       {...props}>
       <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z" />
+    </svg>
+  );
+}
+
+export function BsFillFileArrowDownFill({
+  size = '1rem',
+  ...props
+}: IconProps) {
+  return (
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 16 16"
+      height={size}
+      width={size}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}>
+      <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8 5a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5A.5.5 0 0 1 8 5z" />
+    </svg>
+  );
+}
+
+export function BsFillFileArrowUpFill({ size = '1rem', ...props }: IconProps) {
+  return (
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 16 16"
+      height={size}
+      width={size}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}>
+      <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM7.5 6.707 6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707z" />
     </svg>
   );
 }

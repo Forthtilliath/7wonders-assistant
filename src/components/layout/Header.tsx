@@ -1,12 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-
-import { AiOutlineArrowLeft, GiHamburgerMenu } from '@/components/shared/Icons';
-import { routes } from '@/data/routes';
-import { getLabelAndPrevious } from '@/helpers/array';
-import { cn } from '@/helpers/tailwind';
-
-import { ButtonIcon } from '../shared/ButtonIcon';
-import { openSidebar } from './SidebarGlobal';
+import { ButtonIcon } from '@components/shared';
+import { AiOutlineArrowLeft, GiHamburgerMenu } from '@components/shared/Icons';
+import { cn, getLabelAndPrevious } from '@helpers';
+import { ROUTES } from '@constants';
+import { openSidebar } from './Sidebar';
 
 // prettier-ignore
 const bg = {
@@ -25,7 +22,7 @@ const bg = {
 export function Header() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const pageDetails = getLabelAndPrevious(pathname, routes);
+  const pageDetails = getLabelAndPrevious(pathname, ROUTES);
 
   return (
     <header
@@ -47,12 +44,6 @@ export function Header() {
       )}>
       <div className="text-center">
         {pageDetails.previous ? (
-          // <button
-          //   onClick={() => navigate(-1)}
-          //   className="m-4 block text-2xl font-medium"
-          //   aria-label="Go back">
-          //   <AiOutlineArrowLeft size={'1.5rem'} />
-          // </button>
           <ButtonIcon
             onClick={() => navigate(-1)}
             icon={AiOutlineArrowLeft}
@@ -62,9 +53,10 @@ export function Header() {
           <ButtonIcon
             aria-controls="drawer-navigation"
             onClick={openSidebar}
-              icon={GiHamburgerMenu}
-              className='ml-4'
-          />
+            icon={GiHamburgerMenu}
+            className="ml-4">
+            <span className="sr-only">Open menu</span>
+          </ButtonIcon>
         )}
       </div>
 

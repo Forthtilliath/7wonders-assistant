@@ -1,17 +1,19 @@
-import forth from '@/assets/logo-forth.png';
-import mike from '@/assets/logo-mike.png';
-import logo from '@/assets/logo-wonder.png';
+import { forth, mike } from '@/assets/devs';
+import { logo_mobile, logo_tablet } from '@/assets/logo';
 import { CardDev } from '@/components/cards/CardDev';
+import { APP_CONST } from '@/constants/app';
 
 export default function About() {
-  const version = '0.1.0';
-
   return (
     <main className="flex h-full flex-col content-center items-center justify-evenly">
       <section className="flex flex-col gap-4 px-4 text-center text-gray-400">
-        <img src={logo} alt="7 Wonders" className="max-w-[400px] w-full" />
+        <picture>
+          <source media="(max-width: 767px)" srcSet={logo_mobile} />
+          <source media="(min-width: 768px)" srcSet={logo_tablet} />
+          <img src={logo_mobile} alt="7 Wonders Logo" />
+        </picture>
         <h2>7 Wonders: Assistant</h2>
-        <p>Version {version}</p>
+        <p>Version {APP_CONST.version}</p>
       </section>
 
       <section>

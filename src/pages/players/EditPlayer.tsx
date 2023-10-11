@@ -1,6 +1,7 @@
 import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 
 import * as LS from '@/lib/storage';
+import type { Player } from '@/@types/storage';
 import { HeaderOptions } from '@/components/layout/HeaderOptions';
 import { ButtonIcon } from '@/components/shared/ButtonIcon';
 import { ButtonToggleIcon } from '@/components/shared/ButtonToggleIcon';
@@ -61,7 +62,7 @@ export default function EditPlayer() {
           <ButtonToggleIcon
             condition={isArchived === 'true'}
             icons={[BiArchiveIn, BiSolidArchiveOut]}
-            onClick={toggleArchive}         
+            onClick={toggleArchive}
           />
           <ButtonIcon icon={BsCheckLg} type="submit" />
         </HeaderOptions>

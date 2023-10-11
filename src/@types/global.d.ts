@@ -11,6 +11,10 @@ declare global {
   type PropsWithParams<T = unknown> = T & {
     params: T;
   };
+  type ButtonLinkProps = {
+    onClick?: ButtonClickEventHandler;
+    href?: string;
+  };
 
   type Callback = (...args: unknown[]) => void;
   type Setter<T> = React.Dispatch<React.SetStateAction<T>>;

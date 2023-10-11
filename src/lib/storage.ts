@@ -1,4 +1,6 @@
-const defaultPlayers: Player[] = [
+import type { Player } from '@types';
+
+export const defaultPlayers: Player[] = [
   {
     name: 'Mike',
     id: '349a799f-a55d-44b3-1efa-e309e77d67ec',
@@ -18,7 +20,7 @@ const defaultPlayers: Player[] = [
 export function getPlayers(): Player[] {
   const LS = localStorage.getItem('players');
 
-  return LS ? JSON.parse(LS) : defaultPlayers;
+  return LS ? JSON.parse(LS) : defaultPlayers.slice();
 }
 
 export function addPlayer(player: Player) {
@@ -36,7 +38,9 @@ export function getPlayer(id: Player['id']) {
 
 export function setPlayer(data: Player) {
   const players = getPlayers();
-  const playersSet = players.map((player) => player.id === data.id ? data : player);
+  const playersSet = players.map((player) =>
+    player.id === data.id ? data : player
+  );
 
   localStorage.setItem('players', JSON.stringify(playersSet));
 }
@@ -44,6 +48,6 @@ export function setPlayer(data: Player) {
 export function removePlayer(id: Player['id']) {
   const players = getPlayers();
   const playersSet = players.filter((player) => player.id !== id);
-  
+
   localStorage.setItem('players', JSON.stringify(playersSet));
 }
