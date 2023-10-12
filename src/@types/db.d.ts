@@ -1,9 +1,9 @@
 export type Player = {
-  id: number;
+  idPlayer: number;
   name: string;
   avatar: string;
-  isFavorite: string;
-  isArchived: string;
+  isFavorite: boolean;
+  isArchived: boolean;
 };
 
 export type Game = {
