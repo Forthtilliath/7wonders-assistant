@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import type { Player } from '@types';
-import { CATEGORIES } from '@constants';
 
 function produce<T>(cb: (state: T) => void) {
   return (state: T) => {
@@ -11,42 +10,45 @@ function produce<T>(cb: (state: T) => void) {
   };
 }
 
-type Score = Record<string, number>;
-
-type Category = (typeof CATEGORIES)[number];
-
 interface State {
+  extensions: Record<Extension, boolean>;
+  setExtensions: (extensions: Record<Extension, boolean>) => void;
+
   players: Player[];
   setPlayers: (players: Player[]) => void;
 
-  scores: Record<Category, Score>;
-  setScore: (category: Category, idPlayer: string, score: number) => void;
+  scores: Record<Player['idPlayer'], Record<Category, number>>;
+  setScore: (category: Category, idPlayer: number, score: number) => void;
 }
 
 export const useGameStore = create<State>()(
   devtools(
     persist(
       (set) => ({
+        extensions: {} as Record<Extension, boolean>,
+        setExtensions: (extensions) => set(() => ({ extensions })),
+
         players: [],
         setPlayers: (players) =>
           set(() => ({ players }), undefined, 'SET_PLAYERS'),
 
-        scores: {
-          military: {},
-          treasury: {},
-          wonders: {},
-          civilians: {},
-          scientifics: {},
-          commercials: {},
-          guilds: {},
-          armada: {},
-          leaders: {},
-          cities: {},
-        },
+        scores: {},
         setScore: (category, idPlayer, score) =>
           set(
             produce((state) => {
-              state.scores[category][idPlayer] = score;
+              state.scores[idPlayer] ||= {
+                military: 0,
+                treasury: 0,
+                wonders: 0,
+                civilians: 0,
+                scientifics: 0,
+                commercials: 0,
+                guilds: 0,
+                armada: 0,
+                leaders: 0,
+                cities: 0,
+              };
+              state.scores[idPlayer][category] = score;
             }),
             undefined,
             'SET_SCORE'
