@@ -33,6 +33,7 @@
 - [ ] Quand on fait previous sur la création de la partie, on affiche une confirm box pour previous (ce qui supprime la partie)
 - [ ] Voir pour fixer le bouton next au changement de catégorie de score
 - [ ] Fixer width title en fonction des icones à droite
+- [ ] Prendre en compte dans l'history si on ajoute des nouvelles extensions
 
 # ⚠️ A FIXER ⚠️
 
