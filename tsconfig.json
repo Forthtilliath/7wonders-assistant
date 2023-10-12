@@ -30,6 +30,7 @@
       "@assets/*": ["./src/assets/*"],
       "@constants": ["./src/constants"],
       "@lib": ["./src/lib"],
+      "@lib/*": ["./src/lib/*"],
       "@hooks": ["./src/hooks"]
     },
     "types": ["vitest/globals"]
