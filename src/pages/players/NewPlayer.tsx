@@ -1,5 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { getInputValue } from '@/helpers/element';
+import { createPlayer } from '@/lib/indexedDB/player';
+import { HeaderOptions } from '@components/layout/HeaderOptions';
+import { ButtonIcon, ButtonToggleIcon } from '@components/shared';
 import {
   BiArchiveIn,
   BiSolidArchiveOut,
@@ -7,32 +11,34 @@ import {
   GiMeeple,
   ImStarEmpty,
   ImStarFull,
-} from '@/components/shared/Icons';
-import type { Player } from '@types';
-import { HeaderOptions } from '@components/layout/HeaderOptions';
-import { ButtonIcon, ButtonToggleIcon } from '@components/shared';
+} from '@components/shared/Icons';
 import { InputPlayer } from '@components/ui';
-import { generateUuidv4 } from '@helpers';
-import { LS } from '@lib';
 import { useToggle } from '@hooks';
 
 export default function NewPlayer() {
   const navigate = useNavigate();
-  const [favorite, toggleFavorite] = useToggle(false);
-  const [archive, toggleArchive] = useToggle(false);
+  const [isFavorite, toggleFavorite] = useToggle(false);
+  const [isArchived, toggleArchived] = useToggle(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onSubmit: FormSubmitEventHandler = async (e) => {
     e.preventDefault();
 
-    const player = new FormData(e.currentTarget);
-    player.append('id', generateUuidv4());
-    player.append('avatar', '/assets/images/defaultAvatar.webp');
-    player.append('isFavorite', favorite.toString());
-    player.append('isArchived', archive.toString());
+    const name = getInputValue(e, 'name');
 
-    const playerData = Object.fromEntries(player) as Player;
-    LS.addPlayer(playerData);
+    if (!name) {
+      // ERROR Empty Name
+      return;
+    }
+
+    const player = {
+      name,
+      avatar: '/assets/images/defaultAvatar.webp',
+      isFavorite,
+      isArchived,
+    };
+
+    await createPlayer(player);
 
     navigate(-1);
   };
@@ -44,15 +50,15 @@ export default function NewPlayer() {
       <form onSubmit={onSubmit}>
         <HeaderOptions>
           <ButtonToggleIcon
-            condition={favorite}
+            condition={isFavorite}
             icons={[ImStarEmpty, ImStarFull]}
             onClick={toggleFavorite}
             aria-label="Toggle Favorite"
           />
           <ButtonToggleIcon
-            condition={archive}
+            condition={isArchived}
             icons={[BiArchiveIn, BiSolidArchiveOut]}
-            onClick={toggleArchive}
+            onClick={toggleArchived}
             aria-label="Toggle Archive"
           />
           <ButtonIcon
