@@ -18,3 +18,11 @@ export function generateUuidv4() {
     ).toString(16)
   );
 }
+
+export function convertToNumber(str: string | null): number | null {
+  let n: number | null = null;
+  if (str !== null) {
+    n = parseInt(str, 10);
+  }
+  return n;
+}
