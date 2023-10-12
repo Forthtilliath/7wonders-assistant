@@ -23,7 +23,7 @@ declare global {
   type InputChangeEventHandler = React.ChangeEventHandler<HTMLInputElement>;
   type ButtonClickEventHandler = React.MouseEventHandler<HTMLButtonElement>;
 
-  type SaveScoreEventHandler = (idPlayer: string) => InputChangeEventHandler;
+  type SaveScoreEventHandler = (idPlayer: number) => InputChangeEventHandler;
 
   type BooleanString = 'true' | 'false';
 }
