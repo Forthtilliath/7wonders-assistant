@@ -26,7 +26,7 @@ export function CardPlayer({
   className,
   classNameH2,
 }: Props) {
-  showFavorite &&= isFavorite === 'true';
+  showFavorite &&= isFavorite;
 
   return (
     <MemoizedConditionalButtonLink
