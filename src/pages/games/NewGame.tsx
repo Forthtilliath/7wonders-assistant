@@ -4,8 +4,7 @@ import type { Game, Player } from '@types';
 import { HeaderOptions } from '@components/layout/HeaderOptions';
 import { ButtonIcon } from '@components/shared/ButtonIcon';
 import { BsCheckLg, GiMeeple } from '@components/shared/Icons';
-import { CardPlayer } from '@components/cards';
-import { ButtonNewPlayer } from '@components/cards/ButtonNewPlayer';
+import { ButtonNewPlayer, CardPlayer } from '@components/cards';
 import { useGameStore } from '@lib';
 import { usePlayers } from '@hooks';
 import { EXTENSIONS } from '@constants';
@@ -49,10 +48,7 @@ export default function NewGame() {
 
   const launchGame = () => {
     const extensions = {
-      ...EXTENSIONS.reduce(
-        (a, e) => ({ ...a, [e]: false }),
-        {} as Game
-      ),
+      ...EXTENSIONS.reduce((a, e) => ({ ...a, [e]: false }), {} as Game),
       ...JSON.parse(localStorage.getItem('settings') ?? '{}'),
     };
     setExtensions(extensions);
@@ -94,7 +90,9 @@ export default function NewGame() {
           <CardPlayer
             key={player.idPlayer}
             {...player}
-            showInGame={playersInGame.some((p) => p.idPlayer === player.idPlayer)}
+            showInGame={playersInGame.some(
+              (p) => p.idPlayer === player.idPlayer
+            )}
             onClick={addPlayerIntoTheGame(player)}
           />
         ))}
