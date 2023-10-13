@@ -1,9 +1,8 @@
-import { GroupInputs } from '@/components/shared/GroupInputs';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { GroupInputs } from '@components/shared';
+import { useLocalStorage } from '@hooks';
+import { EXTENSIONS } from '@constants';
 
-const extensions = ['Armada', 'Cities', 'Edifice', 'Leaders'] as const;
-
-type Settings = Partial<Record<(typeof extensions)[number], string>>;
+type Settings = Partial<Record<Extension, boolean>>;
 
 const languages = [
   { label: 'English', value: 'en' },
@@ -15,7 +14,8 @@ export default function Settings() {
 
   const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const formData = new FormData(e.currentTarget.form!);
-    setSettings(Object.fromEntries(formData));
+    const arrSettings = Array.from(formData).map(([k, v]) => [k, Boolean(v)]);
+    setSettings(Object.fromEntries(arrSettings));
   };
 
   return (
@@ -23,16 +23,15 @@ export default function Settings() {
       <GroupInputs title="Extensions">
         <form>
           <ul className="mt-3 flex flex-col gap-2">
-            {extensions.map((extension) => (
+            {EXTENSIONS.map((extension) => (
               <li key={extension}>
                 <label className="flex items-center gap-3 p-2 text-white">
                   <input
                     type="checkbox"
                     className="h-4 w-4 accent-wonders-yellow"
                     name={extension}
-                    checked={settings[extension] === 'true'}
+                    defaultChecked={settings[extension]}
                     onChange={onChange}
-                    value={'true'}
                   />
                   {extension}
                 </label>

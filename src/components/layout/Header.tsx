@@ -27,7 +27,7 @@ export function Header() {
   return (
     <header
       className={cn(
-        'flex h-16 items-center bg-wonders-blue text-wonders-yellow shadow-bottom',
+        'flex h-16 min-h-[4rem] items-center bg-wonders-blue text-wonders-yellow shadow-bottom',
         // prettier-ignore
         {
           [bg.military]:    pathname === '/scores/military',

@@ -30,7 +30,16 @@ export const getLabelAndPrevious: GetLabelAndPrevious = (pathname, routes) => {
 
   const findLabelAndPrevious = (routes: Route[]): void => {
     for (const route of routes) {
-      if (route.path === pathname) {
+      // Échapper les caractères spéciaux de l'expression régulière
+      const escapedPath = route.path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+      // Remplacer les paramètres par des groupes de capture
+      const regexPath = escapedPath.replace(/:(\w+)/g, '([^/]+)');
+
+      // Ajouter des ancres pour correspondre à l'URL complète
+      const regex = new RegExp(`^${regexPath}$`);
+
+      if (regex.test(pathname)) {
         label = route.label;
         previous = route.previous;
         break;

@@ -1,35 +1,35 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import type { Player } from '@/@types/storage';
-import { CardPlayer } from '@/components/cards';
-import { ButtonNewPlayer } from '@/components/cards/ButtonNewPlayer';
-import { HeaderOptions } from '@/components/layout/HeaderOptions';
-import { ButtonIcon } from '@/components/shared/ButtonIcon';
-import { BsCheckLg, GiMeeple } from '@/components/shared/Icons';
-import { usePlayers } from '@/hooks/usePlayers';
-import { useGameStore } from '@/lib/gameStore';
+import type { Game, Player } from '@types';
+import { HeaderOptions } from '@components/layout/HeaderOptions';
+import { ButtonIcon } from '@components/shared/ButtonIcon';
+import { BsCheckLg, GiMeeple } from '@components/shared/Icons';
+import { ButtonNewPlayer, CardPlayer } from '@components/cards';
+import { useGameStore } from '@lib';
+import { usePlayers } from '@hooks';
+import { EXTENSIONS } from '@constants';
 
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 7;
 
 export default function NewGame() {
   const navigate = useNavigate();
-  const [lsPlayers] = usePlayers();
+  const [dbPlayers] = usePlayers();
   const [playersInGame, setPlayersInGame] = useState<Player[]>([]);
   const storePlayers = useGameStore((s) => s.players);
   const setPlayers = useGameStore((s) => s.setPlayers);
+  const setExtensions = useGameStore((s) => s.setExtensions);
 
   useEffect(() => {
     const players = storePlayers.length
       ? storePlayers
-      : lsPlayers.filter((p) => p.isFavorite === 'true').slice(0, MAX_PLAYERS);
+      : dbPlayers.filter((p) => p.isFavorite).slice(0, MAX_PLAYERS);
     setPlayersInGame(players);
-  }, [lsPlayers, storePlayers]);
+  }, [dbPlayers, storePlayers]);
 
   const addPlayerIntoTheGame = (player: Player) => () => {
-    if (playersInGame.some((p) => p.id === player.id)) {
-      removePlayerFromTheGame(player.id)();
+    if (playersInGame.some((p) => p.idPlayer === player.idPlayer)) {
+      removePlayerFromTheGame(player.idPlayer)();
       return;
     }
     if (playersInGame.length >= MAX_PLAYERS) return;
@@ -37,8 +37,8 @@ export default function NewGame() {
     setPlayersInGame((p) => [...p, player]);
   };
 
-  const removePlayerFromTheGame = (playerId: Player['id']) => () => {
-    setPlayersInGame((p) => p.filter((player) => player.id !== playerId));
+  const removePlayerFromTheGame = (playerId: Player['idPlayer']) => () => {
+    setPlayersInGame((p) => p.filter((player) => player.idPlayer !== playerId));
   };
 
   useEffect(() => {
@@ -47,6 +47,11 @@ export default function NewGame() {
   }, [playersInGame]);
 
   const launchGame = () => {
+    const extensions = {
+      ...EXTENSIONS.reduce((a, e) => ({ ...a, [e]: false }), {} as Game),
+      ...JSON.parse(localStorage.getItem('settings') ?? '{}'),
+    };
+    setExtensions(extensions);
     navigate('/scores/military');
   };
 
@@ -65,9 +70,9 @@ export default function NewGame() {
         <main className="mx-auto grid max-w-[800px] grid-cols-4 gap-2 p-4">
           {playersInGame.map((player) => (
             <CardPlayer
-              key={player.id}
+              key={player.idPlayer}
               {...player}
-              onClick={removePlayerFromTheGame(player.id)}
+              onClick={removePlayerFromTheGame(player.idPlayer)}
             />
           ))}
           {emptyPlayers.map((_, i) => (
@@ -81,11 +86,13 @@ export default function NewGame() {
       </header>
 
       <main className="mx-auto grid h-full max-w-[800px] auto-rows-min grid-cols-3 gap-2 overflow-y-auto p-4">
-        {lsPlayers.map((player) => (
+        {dbPlayers.map((player) => (
           <CardPlayer
-            key={player.id}
+            key={player.idPlayer}
             {...player}
-            showInGame={playersInGame.some((p) => p.id === player.id)}
+            showInGame={playersInGame.some(
+              (p) => p.idPlayer === player.idPlayer
+            )}
             onClick={addPlayerIntoTheGame(player)}
           />
         ))}

@@ -29,7 +29,8 @@ export function DropdownScience() {
           className="absolute right-0 top-14 z-[1] box-border w-[calc(100vw_-_5rem)] rounded-xl border-2 border-green-500 bg-wonders-blue-dark p-4"
           animate={open ? 'visible' : 'hidden'}
           variants={scienceAnimation}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}>
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          initial={false}>
           <InputScience img={roue} />
           <InputScience img={tablette} />
           <InputScience img={compas} />
