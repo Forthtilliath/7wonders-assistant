@@ -24,8 +24,6 @@ declare global {
   type ButtonClickEventHandler = React.MouseEventHandler<HTMLButtonElement>;
 
   type SaveScoreEventHandler = (idPlayer: number) => InputChangeEventHandler;
-
-  type BooleanString = 'true' | 'false';
 }
 
 export {};
