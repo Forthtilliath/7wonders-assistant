@@ -5,9 +5,11 @@ import type { GameHistoriesComplete, GameHistory } from '@types';
 import { CardPlayer } from '@/components/cards';
 import { PropsWithChildren } from 'react';
 import { cn } from '@/helpers';
+import { useHorizontalScroll } from '@/hooks/useHorizontalScroll';
 
 export function GameHistory() {
-  const {game, scores} = useLoaderData() as GameHistoriesComplete;
+  const { game, scores } = useLoaderData() as GameHistoriesComplete;
+  const ref = useHorizontalScroll<HTMLDivElement>();
   
   return (
     <main className="">
@@ -21,7 +23,7 @@ export function GameHistory() {
 
       <section className='p-4'>
         <div className="flex">
-          <ColumnHeader>
+          <ColumnLabels>
             <Cell className='h-16'>&nbsp;</Cell>
             <Cell className='bg-red-500/70'>Military</Cell>
             <Cell className='bg-yellow-500/70'>Treasury</Cell>
@@ -34,8 +36,8 @@ export function GameHistory() {
             <Cell className='bg-slate-200/70'>Leaders</Cell>
             <Cell className='bg-slate-800/70'>Cities</Cell>
             <Cell className='bg-orange-500/70'>Total</Cell>
-          </ColumnHeader>
-          <div className='flex overflow-x-auto '>
+          </ColumnLabels>
+          <div className='flex overflow-x-auto scrollbar-stable' ref={ref}>
             {scores.map(score => (
               <Column key={score.idPlayer}>
                 <Cell className='h-16 w-auto'>
@@ -65,10 +67,10 @@ function Cell({children,className}: PropsWithChildren<PropsWithClassname>) {
   return <div className={cn('h-12 w-full flex items-center justify-center p-2',className)}>{children}</div>
 }
 
-function ColumnHeader({ children }: PropsWithChildren) {
-  return <div className="w-[100px] flex flex-col justify-center">{children}</div>
+function ColumnLabels({ children }: PropsWithChildren) {
+  return <div className="w-[100px] min-w-[100px] flex flex-col justify-center self-start">{children}</div>
 }
 
 function Column({ children }: PropsWithChildren) {
-  return <div className="w-[100px] flex flex-col items-center justify-center odd:bg-white/10">{children}</div>
+  return <div className="w-[100px] min-w-[100px] flex flex-col items-center justify-center odd:rounded-t odd:bg-white/10">{children}</div>
 }
