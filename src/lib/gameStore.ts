@@ -19,6 +19,8 @@ interface State {
 
   scores: Record<Player['idPlayer'], Record<Category, number>>;
   setScore: (category: Category, idPlayer: number, score: number) => void;
+
+  resetGame: () => void;
 }
 
 export const useGameStore = create<State>()(
@@ -53,6 +55,12 @@ export const useGameStore = create<State>()(
             undefined,
             'SET_SCORE'
           ),
+
+        resetGame: () =>
+          set({
+            players: [],
+            scores: {},
+          }),
       }),
       { name: 'GAME_STORE' }
     )
