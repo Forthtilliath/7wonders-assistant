@@ -5,7 +5,7 @@ import { usePlayers } from '@hooks';
 export default function ListPlayers() {
   const [players] = usePlayers();
 
-  const sortedPlayed = players.toSorted((a, b) => {
+  const sortedPlayed = [...players].sort((a, b) => {
     if (a.isArchived === b.isArchived) {
       return a.name.localeCompare(b.name);
     }
