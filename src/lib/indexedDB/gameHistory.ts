@@ -1,14 +1,18 @@
-import { GameHistory } from '@types';
+import {
+  GameHistoriesComplete,
+  GameHistory,
+  GameHistoryWithPlayer,
+} from '@types';
 import { DB } from './dbUtils';
+import { getGame, TABLE_GAME } from './game';
+import { getPlayer, TABLE_PLAYER } from './player';
 
-const TABLE_NAME = 'game_history';
+const TABLE_GAME_HISTORY = 'game_history';
 
 export function createTableHistory(db: IDBDatabase) {
-  const objectStore = db.createObjectStore(TABLE_NAME, {
+  const objectStore = db.createObjectStore(TABLE_GAME_HISTORY, {
     keyPath: ['idGame', 'idPlayer'],
   });
-  objectStore.createIndex('idGame', 'idGame', { unique: false });
-  objectStore.createIndex('idPlayer', 'idPlayer', { unique: false });
   objectStore.createIndex('military', 'military', { unique: false });
   objectStore.createIndex('treasury', 'treasury', { unique: false });
   objectStore.createIndex('wonders', 'wonders', { unique: false });
@@ -21,12 +25,21 @@ export function createTableHistory(db: IDBDatabase) {
   objectStore.createIndex('cities', 'cities', { unique: false });
   objectStore.createIndex('total', 'total', { unique: false });
   objectStore.createIndex('ranking', 'ranking', { unique: false });
+
+  objectStore.createIndex('player', 'idPlayer', {
+    unique: false,
+    multiEntry: true,
+  });
+  objectStore.createIndex('game', 'idGame', {
+    unique: false,
+    multiEntry: true,
+  });
 }
 
 export async function createGameHistory(gameHistories: GameHistory[]) {
   const db = await DB.open();
-  const transaction = db.transaction([TABLE_NAME], 'readwrite');
-  const objectStore = transaction.objectStore(TABLE_NAME);
+  const transaction = db.transaction([TABLE_GAME_HISTORY], 'readwrite');
+  const objectStore = transaction.objectStore(TABLE_GAME_HISTORY);
   const promiseGameHistories = gameHistories.map(async (gameHistory) => {
     const request = objectStore.add(gameHistory);
 
@@ -42,18 +55,32 @@ export async function createGameHistory(gameHistories: GameHistory[]) {
 
 export async function getGameHistory(idGame: number) {
   const db = await DB.open();
-  const transaction = db.transaction([TABLE_NAME], 'readonly');
-  const objectStore = transaction.objectStore(TABLE_NAME);
-  const index = objectStore.index('idGame');
+  const transaction = db.transaction(
+    [TABLE_GAME_HISTORY, TABLE_GAME, TABLE_PLAYER],
+    'readonly'
+  );
+  const objectStore = transaction.objectStore(TABLE_GAME_HISTORY);
+  const index = objectStore.index('game');
   const request = index.getAll(idGame);
 
-  return DB.execute<GameHistory[]>(request, {
+  return DB.execute<GameHistory[], Promise<GameHistoriesComplete>>(request, {
     onError: (req) => {
       console.error(
         "Erreur lors de la récupération de l'historique de la partie",
         req.error
       );
       return req.error;
+    },
+    onSuccess: async (req) => {
+      const game = await getGame(req.result[0].idGame);
+      const scores = await Promise.all<GameHistoryWithPlayer>(
+        req.result.map(async (score) => {
+          const player = await getPlayer(score.idPlayer);
+          return { ...score, player };
+        })
+      );
+
+      return { game, scores };
     },
   });
 }
