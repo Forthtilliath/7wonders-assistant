@@ -132,6 +132,7 @@ export const ROUTES: Route[] = [
           {
             path: '/history/:idGame',
             element: <GameHistory />,
+            label: 'Games History',
           },
         ],
       },
@@ -151,7 +152,7 @@ export const ROUTES: Route[] = [
             previous: true,
           },
           {
-            path: '/players/edit',
+            path: '/players/edit/:idPlayer',
             element: <EditPlayer />,
             label: 'Edit Player',
             previous: true,
