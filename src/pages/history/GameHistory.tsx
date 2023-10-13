@@ -4,23 +4,34 @@ import type { GameHistoriesComplete } from '@types';
 import { HeaderOptions } from '@components/layout/HeaderOptions';
 import { ButtonIcon } from '@components/shared';
 import { CardPlayer } from '@components/cards';
+import { Badge } from '@components/ui/Badge';
 import { cn } from '@helpers';
 import { useHorizontalScroll } from '@hooks';
 
 export function GameHistory() {
   const { game, scores } = useLoaderData() as GameHistoriesComplete;
   const ref = useHorizontalScroll<HTMLDivElement>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id, ...extensions } = game;
+  {
+    Object.entries(extensions).map(([extension, active]) =>
+      active ? <Badge label={extension} /> : null
+    );
+  }
 
   return (
-    <main className="">
+    <main className="p-4 text-center">
       <HeaderOptions>
         <ButtonIcon icon={() => <></>} aria-label="" />
       </HeaderOptions>
 
-      <pre>{JSON.stringify(game, null, 2)}</pre>
+      {Object.entries(extensions).map(
+        ([extension, active]) =>
+          active && <Badge key={extension} label={extension} />
+      )}
 
-      <section className="p-4">
-        <div className="flex">
+      <section className="pt-4">
+        <div className="flex justify-center">
           <ColumnLabels>
             <Cell className="h-16">&nbsp;</Cell>
             <Cell className="bg-red-500/70">Military</Cell>
@@ -36,7 +47,7 @@ export function GameHistory() {
             <Cell className="bg-orange-500/70">Total</Cell>
           </ColumnLabels>
 
-          <div className="scrollbar-stable flex overflow-x-auto" ref={ref}>
+          <div className="flex overflow-x-auto" ref={ref}>
             {scores.map((score) => (
               <Column key={score.idPlayer}>
                 <Cell className="h-16 w-auto">
@@ -88,7 +99,7 @@ function ColumnLabels({ children }: PropsWithChildren) {
 
 function Column({ children }: PropsWithChildren) {
   return (
-    <div className="flex w-[100px] min-w-[100px] flex-col items-center justify-center odd:rounded-t odd:bg-white/10">
+    <div className="flex w-16 min-w-16 flex-col items-center justify-center odd:rounded-t odd:bg-white/10">
       {children}
     </div>
   );
