@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
-import { Player } from '@types';
+import { NavLink, useNavigate } from 'react-router-dom';
+import type { Player } from '@types';
 import { HeaderOptions } from '@components/layout/HeaderOptions';
 import { ButtonIcon } from '@components/shared/ButtonIcon';
 import { ButtonToggleIcon } from '@components/shared/ButtonToggleIcon';
@@ -13,14 +13,14 @@ import {
   ImStarEmpty,
   ImStarFull,
 } from '@components/shared/Icons';
-import { assertsIsDefined, convertToNumber } from '@helpers';
+import { assertsIsDefined } from '@helpers';
 import { deletePlayer, getPlayer, updatePlayer } from '@lib';
+import { useParamsInt } from '@hooks';
 
 export default function EditPlayer() {
   const [player, _setPlayer] = useState<Player | null>(null);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const idPlayer = convertToNumber(searchParams.get('id'));
+  const { idPlayer } = useParamsInt('idPlayer');
 
   const setPlayer = <Key extends keyof Player>(
     key: Key,

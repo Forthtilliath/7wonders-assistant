@@ -1,7 +1,7 @@
-import { useParams } from 'react-router-dom';
+import { useParamsInt } from '@/hooks/useParamsInt';
 
 export function GameHistory() {
-  const { idGame } = useParams();
+  const { idGame } = useParamsInt('idGame');
 
   return <>GameHistory : {idGame}</>;
 }

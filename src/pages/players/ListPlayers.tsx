@@ -18,7 +18,7 @@ export default function ListPlayers() {
         <CardPlayer
           key={player.idPlayer}
           {...player}
-          href={`/players/edit?id=${player.idPlayer}`}
+          href={`/players/edit/${player.idPlayer}`}
           showFavorite
         />
       ))}
