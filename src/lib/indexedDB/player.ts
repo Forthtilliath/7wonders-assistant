@@ -1,10 +1,10 @@
 import { Player } from '@/@types';
 import { DB } from './dbUtils';
 
-const TABLE_NAME = 'player';
+export const TABLE_PLAYER = 'player';
 
 export function createTablePlayer(db: IDBDatabase) {
-  const objectStore = db.createObjectStore(TABLE_NAME, {
+  const objectStore = db.createObjectStore(TABLE_PLAYER, {
     keyPath: 'idPlayer',
     autoIncrement: true,
   });
@@ -16,8 +16,8 @@ export function createTablePlayer(db: IDBDatabase) {
 
 export async function createPlayer(player: Omit<Player, 'idPlayer'>) {
   const db = await DB.open();
-  const transaction = db.transaction([TABLE_NAME], 'readwrite');
-  const objectStore = transaction.objectStore(TABLE_NAME);
+  const transaction = db.transaction([TABLE_PLAYER], 'readwrite');
+  const objectStore = transaction.objectStore(TABLE_PLAYER);
   const request = objectStore.add(player);
 
   return await DB.execute<{ idPlayer: number }>(request, {
@@ -30,9 +30,9 @@ export async function createPlayer(player: Omit<Player, 'idPlayer'>) {
 
 export async function getPlayers() {
   const db = await DB.open();
-  const transaction = db.transaction([TABLE_NAME], 'readonly');
-  const objectStore = transaction.objectStore(TABLE_NAME);
-  const request = objectStore.getAll() as IDBRequest<IDBValidKey>;
+  const transaction = db.transaction([TABLE_PLAYER], 'readonly');
+  const objectStore = transaction.objectStore(TABLE_PLAYER);
+  const request = objectStore.getAll();
 
   return DB.execute<Player[]>(request, {
     onError: (req) => {
@@ -44,9 +44,9 @@ export async function getPlayers() {
 
 export async function getPlayer(idPlayer: number) {
   const db = await DB.open();
-  const transaction = db.transaction([TABLE_NAME], 'readonly');
-  const objectStore = transaction.objectStore(TABLE_NAME);
-  const request = objectStore.get(idPlayer) as IDBRequest<IDBValidKey>;
+  const transaction = db.transaction([TABLE_PLAYER], 'readonly');
+  const objectStore = transaction.objectStore(TABLE_PLAYER);
+  const request = objectStore.get(idPlayer);
 
   return DB.execute<Player>(request, {
     onError: (req) => {
@@ -58,8 +58,8 @@ export async function getPlayer(idPlayer: number) {
 
 export async function updatePlayer(player: Player) {
   const db = await DB.open();
-  const transaction = db.transaction([TABLE_NAME], 'readwrite');
-  const objectStore = transaction.objectStore(TABLE_NAME);
+  const transaction = db.transaction([TABLE_PLAYER], 'readwrite');
+  const objectStore = transaction.objectStore(TABLE_PLAYER);
   const request = objectStore.put(player);
 
   return await DB.execute<{ idPlayer: number }>(request, {
@@ -72,8 +72,8 @@ export async function updatePlayer(player: Player) {
 
 export async function deletePlayer(idPlayer: number) {
   const db = await DB.open();
-  const transaction = db.transaction([TABLE_NAME], 'readwrite');
-  const objectStore = transaction.objectStore(TABLE_NAME);
+  const transaction = db.transaction([TABLE_PLAYER], 'readwrite');
+  const objectStore = transaction.objectStore(TABLE_PLAYER);
   objectStore.delete(idPlayer);
   // const request = objectStore.delete(idPlayer);
 

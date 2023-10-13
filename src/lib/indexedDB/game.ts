@@ -1,10 +1,10 @@
 import { Game } from '@types';
 import { DB } from './dbUtils';
 
-const TABLE_NAME = 'game';
+export const TABLE_GAME = 'game';
 
 export function createTableGame(db: IDBDatabase) {
-  const objectStore = db.createObjectStore(TABLE_NAME, {
+  const objectStore = db.createObjectStore(TABLE_GAME, {
     keyPath: 'idGame',
     autoIncrement: true,
   });
@@ -17,8 +17,8 @@ export function createTableGame(db: IDBDatabase) {
 
 export async function createGame(game: Omit<Game, 'id'>): Promise<{ idGame: number }> {
   const db = await DB.open();
-  const transaction = db.transaction([TABLE_NAME], 'readwrite');
-  const objectStore = transaction.objectStore(TABLE_NAME);
+  const transaction = db.transaction([TABLE_GAME], 'readwrite');
+  const objectStore = transaction.objectStore(TABLE_GAME);
   const request = objectStore.add(game);
 
   return await DB.execute<number, { idGame: number }>(request, {
@@ -30,6 +30,16 @@ export async function createGame(game: Omit<Game, 'id'>): Promise<{ idGame: numb
   });
 }
 
-// export function getGame(id: number) {
-//   //
-// }
+export async function getGame(idGame: number) {
+  const db = await DB.open();
+  const transaction = db.transaction([TABLE_GAME], 'readonly');
+  const objectStore = transaction.objectStore(TABLE_GAME);
+  const request = objectStore.get(idGame);
+
+  return DB.execute<Game>(request, {
+    onError: (req) => {
+      console.error('Erreur lors de la récupération du joueur', req.error);
+      return req.error;
+    },
+  });
+}
