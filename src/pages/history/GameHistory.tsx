@@ -1,10 +1,11 @@
 import { useLoaderData } from 'react-router-dom';
 import { HeaderOptions } from '@components/layout/HeaderOptions';
 import { ButtonIcon } from '@components/shared';
-import type { GameHistory } from '@types';
+import type { GameHistoriesComplete, GameHistory } from '@types';
 
 export function GameHistory() {
-  const scores = useLoaderData() as GameHistory[];
+  const {game, scores} = useLoaderData() as GameHistoriesComplete;
+  console.log(scores);
   /**
    * {
    *   game: {
@@ -30,6 +31,10 @@ export function GameHistory() {
       <HeaderOptions>
         <ButtonIcon icon={() => <></>} aria-label="" />
       </HeaderOptions>
+
+      <pre>
+        {JSON.stringify(game, null, 2)}
+      </pre>
 
       {/* Score des joueurs */}
       <section className='p-4'>
