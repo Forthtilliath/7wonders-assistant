@@ -47,13 +47,13 @@ export function CardPlayer({
       </h2>
       {showFavorite && (
         <ImStarFull
-          className="absolute right-1 top-1 text-wonders-yellow sm:right-2 sm:top-2"
+          className="absolute right-1 top-1 text-wonders-yellow sm:right-2 sm:top-2 drop-shadow-icon"
           size="30%"
         />
       )}
       {showInGame && (
         <GiCrossedSwords
-          className="absolute left-1 top-1 text-red-500 sm:left-2 sm:top-2"
+          className="absolute left-1 top-1 text-red-500 sm:left-2 sm:top-2 drop-shadow-icon"
           size="20%"
         />
       )}
