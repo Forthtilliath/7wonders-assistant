@@ -26,3 +26,12 @@ export type GameHistory = {
   total: number;
   ranking: number;
 };
+
+export type GameHistoryWithPlayer = GameHistory & {
+  player: Player;
+};
+
+export type GameHistoriesComplete = {
+  game: Game;
+  scores: GameHistoryWithPlayer[];
+};
