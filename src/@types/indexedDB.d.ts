@@ -12,7 +12,7 @@ interface IndexedDB {
     }
   ): Promise<TReturn>;
   execute<TResult = unknown>(
-    request: IDBRequest<IDBValidKey>,
+    request: IDBRequest<TResult> | IDBRequest<IDBValidKey>,
     {
       onError,
       onSuccess,
