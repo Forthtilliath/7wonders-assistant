@@ -34,6 +34,7 @@
 - [ ] Voir pour fixer le bouton next au changement de catégorie de score
 - [ ] Fixer width title en fonction des icones à droite
 - [ ] Prendre en compte dans l'history si on ajoute des nouvelles extensions
+- [ ] Constant des extensions en minuscules
 
 # ⚠️ A FIXER ⚠️
 
@@ -42,6 +43,7 @@
 - [ ] Responsivité About
 - [ ] Bouton Add player, icone taille dynamique
 - [ ] Speed click génère des doublons de composants sur les composants animés ⚠️
+- [ ] Corriger duplication page quand on scroll trop vite
 
 # Tests Unitaires
 
