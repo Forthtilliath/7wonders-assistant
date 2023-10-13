@@ -7,6 +7,8 @@ export function createTableHistory(db: IDBDatabase) {
   const objectStore = db.createObjectStore(TABLE_NAME, {
     keyPath: ['idGame', 'idPlayer'],
   });
+  objectStore.createIndex('idGame', 'idGame', { unique: false });
+  objectStore.createIndex('idPlayer', 'idPlayer', { unique: false });
   objectStore.createIndex('military', 'military', { unique: false });
   objectStore.createIndex('treasury', 'treasury', { unique: false });
   objectStore.createIndex('wonders', 'wonders', { unique: false });
@@ -38,6 +40,20 @@ export async function createGameHistory(gameHistories: GameHistory[]) {
   return await Promise.all(promiseGameHistories);
 }
 
-// export function getGameHistory(idGame: number) {
-//   //
-// }
+export async function getGameHistory(idGame: number) {
+  const db = await DB.open();
+  const transaction = db.transaction([TABLE_NAME], 'readonly');
+  const objectStore = transaction.objectStore(TABLE_NAME);
+  const index = objectStore.index('idGame');
+  const request = index.getAll(idGame);
+
+  return DB.execute<GameHistory[]>(request, {
+    onError: (req) => {
+      console.error(
+        "Erreur lors de la récupération de l'historique de la partie",
+        req.error
+      );
+      return req.error;
+    },
+  });
+}
