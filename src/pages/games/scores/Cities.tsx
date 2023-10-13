@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { GameHistory } from '@types';
 import { HeaderOptions } from '@components/layout/HeaderOptions';
 import { ButtonIcon } from '@components/shared/ButtonIcon';
@@ -8,7 +9,8 @@ import { createGame, createGameHistory, useGameStore } from '@lib';
 export function Cities() {
   const scores = useGameStore((s) => s.scores);
   const extensions = useGameStore((s) => s.extensions);
-  // const navigate = useNavigate();
+  const resetGame = useGameStore((s) => s.resetGame);
+  const navigate = useNavigate();
 
   const nextStep = async () => {
     const { idGame } = await createGame(extensions);
@@ -24,6 +26,9 @@ export function Cities() {
     );
 
     await createGameHistory(gameHistories);
+    resetGame();
+
+    navigate(`/history/${idGame}`)
   };
 
   return (
