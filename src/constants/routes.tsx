@@ -1,17 +1,4 @@
 /* eslint-disable react-refresh/only-export-components */
-import { MainLayout } from '@/components/layout/MainLayout';
-import {
-  AiFillClockCircle,
-  AiFillQuestionCircle,
-  BiSolidStarHalf,
-  BiSupport,
-  FaPlus,
-  GiCoffeeCup,
-  GiMeeple,
-  ImStatsBars,
-  IoMdSettings,
-} from '@/components/shared/Icons';
-import { flattenRoutes } from '@/helpers/array';
 import About from '@/pages/About';
 import Feedback from '@/pages/Feedback';
 import NewGame from '@/pages/games/NewGame';
@@ -25,6 +12,7 @@ import { Military } from '@/pages/games/scores/Military';
 import { Scientifics } from '@/pages/games/scores/Scientifics';
 import { Treasury } from '@/pages/games/scores/Treasury';
 import { Wonders } from '@/pages/games/scores/Wonders';
+import { GameHistory } from '@/pages/history/GameHistory';
 import History from '@/pages/history/History';
 import EditPlayer from '@/pages/players/EditPlayer';
 import ListPlayers from '@/pages/players/ListPlayers';
@@ -36,6 +24,19 @@ import TestCamera from '@/pages/tests/TestCamera';
 import TestCrop from '@/pages/tests/TestCrop';
 import TestGallery from '@/pages/tests/TestGallery';
 import TestImport from '@/pages/tests/TestImport';
+import { MainLayout } from '@components/layout/MainLayout';
+import {
+  AiFillClockCircle,
+  AiFillQuestionCircle,
+  BiSolidStarHalf,
+  BiSupport,
+  FaPlus,
+  GiCoffeeCup,
+  GiMeeple,
+  ImStatsBars,
+  IoMdSettings,
+} from '@components/shared/Icons';
+import { flattenRoutes } from '@helpers';
 
 export const ROUTES: Route[] = [
   {
@@ -121,9 +122,18 @@ export const ROUTES: Route[] = [
       },
       {
         path: '/history',
-        element: <History />,
         icon: AiFillClockCircle,
         label: 'Games History',
+        children: [
+          {
+            path: '/history',
+            element: <History />,
+          },
+          {
+            path: '/history/:idGame',
+            element: <GameHistory />,
+          },
+        ],
       },
       {
         path: '/players',
