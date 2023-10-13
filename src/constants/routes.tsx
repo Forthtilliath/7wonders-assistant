@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import { Params } from 'react-router-dom';
 import About from '@/pages/About';
 import Feedback from '@/pages/Feedback';
 import NewGame from '@/pages/games/NewGame';
@@ -37,6 +38,7 @@ import {
   IoMdSettings,
 } from '@components/shared/Icons';
 import { flattenRoutes } from '@helpers';
+import { getGameHistory } from '@lib';
 
 export const ROUTES: Route[] = [
   {
@@ -133,6 +135,13 @@ export const ROUTES: Route[] = [
             path: '/history/:idGame',
             element: <GameHistory />,
             label: 'Games History',
+            loader: async ({ params }: { params: Params<'idGame'> }) => {
+              if (!params.idGame) {
+                throw new Error('Game history not found');
+              }
+              const idGame = parseInt(params.idGame, 10);
+              return await getGameHistory(idGame);
+            },
           },
         ],
       },
