@@ -7,7 +7,7 @@ export type Player = {
 };
 
 export type Game = {
-  id: number;
+  idGame: number;
   createdAt: number;
 } & Record<Extension, boolean>;
 
