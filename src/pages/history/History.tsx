@@ -1,5 +1,5 @@
 import ReactJson from 'react-json-view';
-import { useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router-dom';
 import type { GameHistoriesComplete } from '@types';
 import { HeaderOptions, Section } from '@components/layout';
 import { ButtonIcon } from '@components/shared';
@@ -22,7 +22,8 @@ export default function History() {
             <header>
               <h2>
                 {gameHistories.game.idGame} -{' '}
-                {formatDate(gameHistories.game.createdAt)}
+                {formatDate(gameHistories.game.createdAt)} -{' '}
+                <Link to={'/history/' + gameHistories.game.idGame}>Show the game</Link>
               </h2>
             </header>
             <main className="flex">
@@ -44,6 +45,7 @@ export default function History() {
           src={games}
           theme={'bright'}
           iconStyle="square"
+          collapsed={true}
           displayDataTypes={false}
           displayObjectSize={false}
         />
