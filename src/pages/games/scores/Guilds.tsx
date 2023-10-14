@@ -18,7 +18,7 @@ export function Guilds() {
           className="text-white"
         />
       </HeaderOptions>
-      
+
       <Section>
         <GroupScoreInputs step={'guilds'} />
       </Section>
