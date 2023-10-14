@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameHistory } from '@types';
 import { HeaderOptions, Section } from '@components/layout';
@@ -12,6 +13,11 @@ export function Cities() {
   const extensions = useGameStore((s) => s.extensions);
   const resetGame = useGameStore((s) => s.resetGame);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!extensions?.Cities) nextStep();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const nextStep = async () => {
     const game = { ...extensions, createdAt: Date.now() };
