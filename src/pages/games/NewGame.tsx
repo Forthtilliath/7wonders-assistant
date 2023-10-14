@@ -20,6 +20,13 @@ export default function NewGame() {
   const setPlayers = useGameStore((s) => s.setPlayers);
   const setExtensions = useGameStore((s) => s.setExtensions);
 
+  const sortedPlayed = [...dbPlayers].sort((a, b) => {
+    if (a.isArchived === b.isArchived) {
+      return a.name.localeCompare(b.name);
+    }
+    return a.isArchived ? 1 : -1;
+  });
+
   useEffect(() => {
     const players = storePlayers.length
       ? storePlayers
@@ -86,7 +93,7 @@ export default function NewGame() {
       </header>
 
       <main className="mx-auto grid h-full max-w-[800px] auto-rows-min grid-cols-3 gap-2 overflow-y-auto p-4">
-        {dbPlayers.map((player) => (
+        {sortedPlayed.map((player) => (
           <CardPlayer
             key={player.idPlayer}
             {...player}
