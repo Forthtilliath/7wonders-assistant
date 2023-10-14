@@ -27,7 +27,7 @@ export function Header() {
   return (
     <header
       className={cn(
-        'flex h-16 min-h-[4rem] items-center bg-wonders-blue text-wonders-yellow shadow-bottom',
+        'h-16 min-h-[4rem] bg-wonders-blue text-wonders-yellow shadow-bottom',
         // prettier-ignore
         {
           [bg.military]:    pathname === '/scores/military',
@@ -42,27 +42,29 @@ export function Header() {
           [bg.cities]:      pathname === '/scores/cities',
         }
       )}>
-      <div className="text-center">
-        {pageDetails.previous ? (
-          <ButtonIcon
-            onClick={() => navigate(-1)}
-            icon={AiOutlineArrowLeft}
-            className="m-4 block text-2xl font-medium"
-          />
-        ) : (
-          <ButtonIcon
-            aria-controls="drawer-navigation"
-            onClick={openSidebar}
-            icon={GiHamburgerMenu}
-            className="ml-4">
-            <span className="sr-only">Open menu</span>
-          </ButtonIcon>
-        )}
-      </div>
+      <div className="flex w-full h-full max-w-app items-center mx-auto">
+        <div className="text-center">
+          {pageDetails.previous ? (
+            <ButtonIcon
+              onClick={() => navigate(-1)}
+              icon={AiOutlineArrowLeft}
+              className="m-4 block text-2xl font-medium"
+            />
+          ) : (
+            <ButtonIcon
+              aria-controls="drawer-navigation"
+              onClick={openSidebar}
+              icon={GiHamburgerMenu}
+              className="ml-4">
+              <span className="sr-only">Open menu</span>
+            </ButtonIcon>
+          )}
+        </div>
 
-      <h1 className="ml-2 flex-grow text-xl font-semibold">
-        {pageDetails?.label}
-      </h1>
+        <h1 className="ml-2 flex-grow text-xl font-semibold">
+          {pageDetails?.label}
+        </h1>
+      </div>
     </header>
   );
 }

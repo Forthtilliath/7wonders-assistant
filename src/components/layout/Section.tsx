@@ -4,7 +4,7 @@ import { cn } from '@/helpers';
 type Props = PropsWithChildren<PropsWithClassname>;
 export function Section({ children, className }: Props) {
   return (
-    <section className={cn('h-section overflow-y-auto p-4', className)}>
+    <section className={cn('h-section overflow-y-auto p-4 max-w-app mx-auto', className)}>
       {children}
     </section>
   );
