@@ -38,7 +38,7 @@ import {
   IoMdSettings,
 } from '@components/shared/Icons';
 import { flattenRoutes } from '@helpers';
-import { getGameHistory } from '@lib';
+import { getGameHistory, getGames } from '@lib';
 
 export const ROUTES: Route[] = [
   {
@@ -130,6 +130,7 @@ export const ROUTES: Route[] = [
           {
             path: '/history',
             element: <History />,
+            loader: getGames,
           },
           {
             path: '/history/:idGame',
