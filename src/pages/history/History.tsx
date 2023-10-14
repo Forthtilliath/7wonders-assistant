@@ -1,12 +1,13 @@
+import ReactJson from 'react-json-view';
 import { useLoaderData } from 'react-router-dom';
 import type { GameHistoriesComplete } from '@types';
 import { HeaderOptions, Section } from '@components/layout';
 import { ButtonIcon } from '@components/shared';
-import { DisplayObject } from '@components/dev/DisplayObject';
+import { CardPlayer } from '@components/cards';
+import { formatDate } from '@helpers';
 
 export default function History() {
   const games = useLoaderData() as GameHistoriesComplete[];
-  console.log(games);
 
   return (
     <main>
@@ -15,23 +16,37 @@ export default function History() {
       </HeaderOptions>
 
       <Section>
-        <DisplayObject data={games} />
+        {games.length === 0 && <p>No game found</p>}
         {games.map((gameHistories) => (
           <div key={gameHistories.game.idGame}>
             <header>
               <h2>
-                {gameHistories.game.idGame} - {gameHistories.game.createdAt}
+                {gameHistories.game.idGame} -{' '}
+                {formatDate(gameHistories.game.createdAt)}
               </h2>
             </header>
-            <main>
+            <main className="flex">
               {gameHistories.scores.map((score) => (
                 <div key={score.idPlayer}>
-                  {score.idPlayer} - {score.total}
+                  <CardPlayer
+                    {...score.player}
+                    className="w-12"
+                    classNameH2="text-xs p-0"
+                  />
+                  <div className="text-center">{score.total}</div>
                 </div>
               ))}
             </main>
           </div>
         ))}
+        {/* bright / monokai / pop */}
+        <ReactJson
+          src={games}
+          theme={'bright'}
+          iconStyle="square"
+          displayDataTypes={false}
+          displayObjectSize={false}
+        />
       </Section>
     </main>
   );
