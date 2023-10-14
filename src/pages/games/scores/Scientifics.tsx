@@ -7,7 +7,7 @@ import { GroupScoreInputs } from '@components/ui';
 export function Scientifics() {
   const navigate = useNavigate();
 
-  const nextStep = () => navigate('/scores/commercials');
+  const nextStep = () => navigate('/scores/guilds');
 
   return (
     <main>
