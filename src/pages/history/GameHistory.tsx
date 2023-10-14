@@ -33,7 +33,7 @@ export function GameHistory() {
           )}
         </div>
 
-        <div className="flex justify-center mt-4">
+        <div className="mt-4 flex justify-center">
           <ColumnLabels>
             <Cell className="h-16">&nbsp;</Cell>
             <Cell className="bg-red-500/70">Military</Cell>
@@ -43,9 +43,15 @@ export function GameHistory() {
             <Cell className="bg-green-500/70">Scientifics</Cell>
             <Cell className="bg-yellow-500/70">Commercials</Cell>
             <Cell className="bg-purple-500/70">Guilds</Cell>
-            <Cell className="bg-cyan-500/70">Armada</Cell>
-            <Cell className="bg-slate-200/70">Leaders</Cell>
-            <Cell className="bg-slate-800/70">Cities</Cell>
+            {extensions.Armada && (
+              <Cell className="bg-cyan-500/70">Armada</Cell>
+            )}
+            {extensions.Leaders && (
+              <Cell className="bg-slate-200/70">Leaders</Cell>
+            )}
+            {extensions.Cities && (
+              <Cell className="bg-slate-800/70">Cities</Cell>
+            )}
             <Cell className="bg-orange-500/70">Total</Cell>
           </ColumnLabels>
 
@@ -66,9 +72,15 @@ export function GameHistory() {
                 <Cell className="bg-green-500/70">{score.scientifics}</Cell>
                 <Cell className="bg-yellow-500/70">{score.commercials}</Cell>
                 <Cell className="bg-purple-500/70">{score.guilds}</Cell>
-                <Cell className="bg-cyan-500/70">{score.armada}</Cell>
-                <Cell className="bg-slate-200/70">{score.leaders}</Cell>
-                <Cell className="bg-slate-800/70">{score.cities}</Cell>
+                {extensions.Armada && (
+                  <Cell className="bg-cyan-500/70">{score.armada}</Cell>
+                )}
+                {extensions.Leaders && (
+                  <Cell className="bg-slate-200/70">{score.leaders}</Cell>
+                )}
+                {extensions.Cities && (
+                  <Cell className="bg-slate-800/70">{score.cities}</Cell>
+                )}
                 <Cell className="bg-orange-500/70">{score.total}</Cell>
               </Column>
             ))}
