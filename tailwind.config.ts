@@ -5,7 +5,10 @@ const config: Config = {
   theme: {
     extend: {
       height: {
-        section: 'calc(100vh - 4rem)'
+        section: 'calc(100vh - 4rem)',
+      },
+      maxWidth: {
+        app: '700px',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -19,12 +22,12 @@ const config: Config = {
         },
       },
       boxShadow: {
-        'bottom': '0 0 6px 1px rgba(255, 255, 255, 0.4)',
+        bottom: '0 0 6px 1px rgba(255, 255, 255, 0.4)',
         // 'bottom': '0 0 6px 1px rgba(255, 255, 255, 0.1), 0 0 4px 1px rgba(255, 255, 255, 0.06)',
       },
       dropShadow: {
-        'icon': "3px 5px 2px rgb(0 0 0 / 0.4)"
-      }
+        icon: '3px 5px 2px rgb(0 0 0 / 0.4)',
+      },
     },
   },
   plugins: [],
