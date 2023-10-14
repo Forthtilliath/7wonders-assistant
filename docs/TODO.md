@@ -35,6 +35,8 @@
 - [ ] Fixer width title en fonction des icones à droite
 - [ ] Prendre en compte dans l'history si on ajoute des nouvelles extensions
 - [ ] Constant des extensions en minuscules
+- [ ] Voir pour charger les données du joueur dans editPlayer via le loader
+- [ ] Voir pour charger les données des joueurs dans ListPlayer et NewGame via le loader
 
 # ⚠️ A FIXER ⚠️
 
