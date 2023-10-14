@@ -12,7 +12,7 @@ export function MainLayout() {
       <SidebarGlobal />
 
       <Header />
-      <PageWithAnimation>
+      <PageWithAnimation className="flex-grow">
         <Outlet />
       </PageWithAnimation>
     </>
