@@ -136,6 +136,7 @@ export const ROUTES: Route[] = [
             path: '/history/:idGame',
             element: <GameHistory />,
             label: 'Games History',
+            previous: true,
             loader: async ({ params }: { params: Params<'idGame'> }) => {
               if (!params.idGame) {
                 throw new Error('Game history not found');
