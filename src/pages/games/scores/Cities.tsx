@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { sum } from '@/helpers';
 import { GameHistory } from '@types';
 import { HeaderOptions } from '@components/layout/HeaderOptions';
 import { ButtonIcon } from '@components/shared/ButtonIcon';
@@ -20,7 +21,7 @@ export function Cities() {
         ...scores,
         idPlayer: parseInt(idPlayer, 10),
         idGame,
-        total: 0,
+        total: sum(Object.values(scores)),
         ranking: 1,
       })
     );
@@ -28,7 +29,7 @@ export function Cities() {
     await createGameHistory(gameHistories);
     resetGame();
 
-    navigate(`/history/${idGame}`)
+    navigate(`/history/${idGame}`);
   };
 
   return (
