@@ -14,7 +14,8 @@ export function Cities() {
   const navigate = useNavigate();
 
   const nextStep = async () => {
-    const { idGame } = await createGame(extensions);
+    const game = {...extensions, createdAt: Date.now()};
+    const { idGame } = await createGame(game);
 
     const gameHistories = Object.entries(scores).map<GameHistory>(
       ([idPlayer, scores]) => ({

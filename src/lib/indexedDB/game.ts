@@ -8,6 +8,7 @@ export function createTableGame(db: IDBDatabase) {
     keyPath: 'idGame',
     autoIncrement: true,
   });
+  objectStore.createIndex('createdAt', 'createdAt', { unique: false });
   objectStore.createIndex('leaders', 'leaders', { unique: false });
   objectStore.createIndex('cities', 'cities', { unique: false });
   objectStore.createIndex('babel', 'babel', { unique: false });
@@ -15,7 +16,9 @@ export function createTableGame(db: IDBDatabase) {
   objectStore.createIndex('edifice', 'edifice', { unique: false });
 }
 
-export async function createGame(game: Omit<Game, 'id'>): Promise<{ idGame: number }> {
+export async function createGame(
+  game: Omit<Game, 'id'>
+): Promise<{ idGame: number }> {
   const db = await DB.open();
   const transaction = db.transaction([TABLE_GAME], 'readwrite');
   const objectStore = transaction.objectStore(TABLE_GAME);
