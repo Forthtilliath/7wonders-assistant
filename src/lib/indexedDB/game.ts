@@ -1,5 +1,6 @@
-import { Game } from '@types';
+import { Game, GameHistoriesComplete } from '@types';
 import { DB } from './dbUtils';
+import { getGameHistory } from './gameHistory';
 
 export const TABLE_GAME = 'game';
 
@@ -17,7 +18,7 @@ export function createTableGame(db: IDBDatabase) {
 }
 
 export async function createGame(
-  game: Omit<Game, 'id'>
+  game: Omit<Game, 'idGame'>
 ): Promise<{ idGame: number }> {
   const db = await DB.open();
   const transaction = db.transaction([TABLE_GAME], 'readwrite');
@@ -43,6 +44,27 @@ export async function getGame(idGame: number) {
     onError: (req) => {
       console.error('Erreur lors de la récupération du joueur', req.error);
       return req.error;
+    },
+  });
+}
+
+export async function getGames() {
+  const db = await DB.open();
+  const transaction = db.transaction([TABLE_GAME], 'readonly');
+  const objectStore = transaction.objectStore(TABLE_GAME);
+  const request = objectStore.getAll();
+
+  return DB.execute<Game[], Promise<GameHistoriesComplete[]>>(request, {
+    onError: (req) => {
+      console.error('Erreur lors de la récupération du joueur', req.error);
+      return req.error;
+    },
+    onSuccess: async (req) => {
+      const games = await Promise.all<Promise<GameHistoriesComplete>>(
+        req.result.map((game) => getGameHistory(game.idGame))
+      );
+
+      return games;
     },
   });
 }
