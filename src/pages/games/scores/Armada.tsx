@@ -1,9 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-
-import { HeaderOptions } from '@/components/layout/HeaderOptions';
-import { ButtonIcon } from '@/components/shared/ButtonIcon';
-import { AiOutlineArrowRight } from '@/components/shared/Icons';
-import { GroupScoreInputs } from '@/components/ui/GroupScoreInputs';
+import { HeaderOptions, Section } from '@components/layout';
+import { ButtonIcon } from '@components/shared';
+import { AiOutlineArrowRight } from '@components/shared/Icons';
+import { GroupScoreInputs } from '@components/ui';
 
 export function Armada() {
   const navigate = useNavigate();
@@ -11,7 +10,7 @@ export function Armada() {
   const nextStep = () => navigate('/scores/leaders');
 
   return (
-    <section>
+    <main>
       <HeaderOptions>
         <ButtonIcon
           icon={AiOutlineArrowRight}
@@ -19,7 +18,10 @@ export function Armada() {
           className="text-wonders-blue-dark"
         />
       </HeaderOptions>
-      <GroupScoreInputs step={'armada'} />
-    </section>
+
+      <Section>
+        <GroupScoreInputs step={'armada'} />
+      </Section>
+    </main>
   );
 }

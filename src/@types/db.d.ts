@@ -7,25 +7,16 @@ export type Player = {
 };
 
 export type Game = {
-  id: number;
+  idGame: number;
+  createdAt: number;
 } & Record<Extension, boolean>;
 
 export type GameHistory = {
   idGame: number;
   idPlayer: number;
-  military: number;
-  treasury: number;
-  wonders: number;
-  civilians: number;
-  scientifics: number;
-  commercials: number;
-  guilds: number;
-  armada: number;
-  leaders: number;
-  cities: number;
   total: number;
   ranking: number;
-};
+} & Scores;
 
 export type GameHistoryWithPlayer = GameHistory & {
   player: Player;
@@ -35,3 +26,5 @@ export type GameHistoriesComplete = {
   game: Game;
   scores: GameHistoryWithPlayer[];
 };
+
+export type Scores = Record<Category, number>;

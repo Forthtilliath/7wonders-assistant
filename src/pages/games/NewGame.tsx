@@ -60,7 +60,7 @@ export default function NewGame() {
   });
 
   return (
-    <section className="h-full overflow-y-auto">
+    <section>
       <HeaderOptions>
         {playersInGame.length >= MIN_PLAYERS && (
           <ButtonIcon icon={BsCheckLg} onClick={launchGame} />

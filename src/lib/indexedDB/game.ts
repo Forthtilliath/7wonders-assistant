@@ -1,5 +1,6 @@
-import { Game } from '@types';
+import { Game, GameHistoriesComplete } from '@types';
 import { DB } from './dbUtils';
+import { getGameHistory } from './gameHistory';
 
 export const TABLE_GAME = 'game';
 
@@ -8,6 +9,7 @@ export function createTableGame(db: IDBDatabase) {
     keyPath: 'idGame',
     autoIncrement: true,
   });
+  objectStore.createIndex('createdAt', 'createdAt', { unique: false });
   objectStore.createIndex('leaders', 'leaders', { unique: false });
   objectStore.createIndex('cities', 'cities', { unique: false });
   objectStore.createIndex('babel', 'babel', { unique: false });
@@ -15,7 +17,9 @@ export function createTableGame(db: IDBDatabase) {
   objectStore.createIndex('edifice', 'edifice', { unique: false });
 }
 
-export async function createGame(game: Omit<Game, 'id'>): Promise<{ idGame: number }> {
+export async function createGame(
+  game: Omit<Game, 'idGame'>
+): Promise<{ idGame: number }> {
   const db = await DB.open();
   const transaction = db.transaction([TABLE_GAME], 'readwrite');
   const objectStore = transaction.objectStore(TABLE_GAME);
@@ -40,6 +44,27 @@ export async function getGame(idGame: number) {
     onError: (req) => {
       console.error('Erreur lors de la récupération du joueur', req.error);
       return req.error;
+    },
+  });
+}
+
+export async function getGames() {
+  const db = await DB.open();
+  const transaction = db.transaction([TABLE_GAME], 'readonly');
+  const objectStore = transaction.objectStore(TABLE_GAME);
+  const request = objectStore.getAll();
+
+  return DB.execute<Game[], Promise<GameHistoriesComplete[]>>(request, {
+    onError: (req) => {
+      console.error('Erreur lors de la récupération du joueur', req.error);
+      return req.error;
+    },
+    onSuccess: async (req) => {
+      const games = await Promise.all<Promise<GameHistoriesComplete>>(
+        req.result.map((game) => getGameHistory(game.idGame))
+      );
+
+      return games;
     },
   });
 }
