@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { getInputValue } from '@/helpers/element';
-import { createPlayer } from '@/lib/indexedDB/player';
-import { HeaderOptions } from '@components/layout/HeaderOptions';
+import { HeaderOptions, Section } from '@components/layout';
 import { ButtonIcon, ButtonToggleIcon } from '@components/shared';
 import {
   BiArchiveIn,
@@ -13,6 +11,8 @@ import {
   ImStarFull,
 } from '@components/shared/Icons';
 import { InputPlayer } from '@components/ui';
+import { getInputValue } from '@helpers';
+import { createPlayer } from '@lib';
 import { useToggle } from '@hooks';
 
 export default function NewPlayer() {
@@ -46,7 +46,7 @@ export default function NewPlayer() {
   useEffect(() => inputRef.current?.focus(), []);
 
   return (
-    <main className="">
+    <main>
       <form onSubmit={onSubmit}>
         <HeaderOptions>
           <ButtonToggleIcon
@@ -68,19 +68,21 @@ export default function NewPlayer() {
           />
         </HeaderOptions>
 
-        <InputPlayer ref={inputRef} />
+        <Section className="p-0">
+          <InputPlayer ref={inputRef} />
 
-        {/* NOTE: Si on change de page, on perd le form ! */}
-        {/* Solution possible : Sidebar / Modal */}
-        <p className="mt-10 text-center text-lg">Avatar</p>
-        <NavLink className="mx-auto mt-3 block w-[200px]" to="#">
-          <div className="flex h-[200px] w-full items-center justify-center bg-wonders-blue">
-            <GiMeeple size="5rem" />
-          </div>
-          <div className="flex h-16 w-full items-center justify-center bg-wonders-blue-dark text-lg">
-            Change
-          </div>
-        </NavLink>
+          {/* NOTE: Si on change de page, on perd le form ! */}
+          {/* Solution possible : Sidebar / Modal */}
+          <p className="mt-10 text-center text-lg">Avatar</p>
+          <NavLink className="mx-auto mt-3 block w-[200px]" to="#">
+            <div className="flex h-[200px] w-full items-center justify-center bg-wonders-blue">
+              <GiMeeple size="5rem" />
+            </div>
+            <div className="flex h-16 w-full items-center justify-center bg-wonders-blue-dark text-lg">
+              Change
+            </div>
+          </NavLink>
+        </Section>
       </form>
     </main>
   );

@@ -1,5 +1,5 @@
-import { ButtonNewPlayer } from '@components/cards/ButtonNewPlayer';
-import { CardPlayer } from '@components/cards/CardPlayer';
+import { Section } from '@components/layout';
+import { ButtonNewPlayer, CardPlayer } from '@components/cards';
 import { usePlayers } from '@hooks';
 
 export default function ListPlayers() {
@@ -13,17 +13,21 @@ export default function ListPlayers() {
   });
 
   return (
-    <main className="mx-auto grid max-w-[800px] grid-cols-3 gap-2 p-4">
-      {sortedPlayed.map((player) => (
-        <CardPlayer
-          key={player.idPlayer}
-          {...player}
-          href={`/players/edit/${player.idPlayer}`}
-          showFavorite
-        />
-      ))}
+    <main>
+      <Section>
+        <div className="mx-auto grid max-w-[800px] grid-cols-3 gap-2">
+          {sortedPlayed.map((player) => (
+            <CardPlayer
+              key={player.idPlayer}
+              {...player}
+              href={`/players/edit/${player.idPlayer}`}
+              showFavorite
+            />
+          ))}
 
-      <ButtonNewPlayer />
+          <ButtonNewPlayer />
+        </div>
+      </Section>
     </main>
   );
 }

@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { sum } from '@/helpers';
 import { GameHistory } from '@types';
-import { HeaderOptions } from '@components/layout/HeaderOptions';
-import { ButtonIcon } from '@components/shared/ButtonIcon';
+import { HeaderOptions, Section } from '@components/layout';
+import { ButtonIcon } from '@components/shared';
 import { AiOutlineArrowRight } from '@components/shared/Icons';
-import { GroupScoreInputs } from '@components/ui/GroupScoreInputs';
+import { GroupScoreInputs } from '@components/ui';
+import { sum } from '@helpers';
 import { createGame, createGameHistory, useGameStore } from '@lib';
 
 export function Cities() {
@@ -14,7 +14,7 @@ export function Cities() {
   const navigate = useNavigate();
 
   const nextStep = async () => {
-    const game = {...extensions, createdAt: Date.now()};
+    const game = { ...extensions, createdAt: Date.now() };
     const { idGame } = await createGame(game);
 
     const gameHistories = Object.entries(scores).map<GameHistory>(
@@ -34,7 +34,7 @@ export function Cities() {
   };
 
   return (
-    <section>
+    <main>
       <HeaderOptions>
         <ButtonIcon
           icon={AiOutlineArrowRight}
@@ -42,7 +42,10 @@ export function Cities() {
           className="text-white"
         />
       </HeaderOptions>
-      <GroupScoreInputs step={'cities'} />
-    </section>
+
+      <Section>
+        <GroupScoreInputs step={'cities'} />
+      </Section>
+    </main>
   );
 }

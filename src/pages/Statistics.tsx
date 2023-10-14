@@ -1,3 +1,9 @@
+import { Section } from '@components/layout';
+
 export default function Statistics() {
-  return <main className="p-4">Statistics</main>;
+  return (
+    <main>
+      <Section>Statistics</Section>
+    </main>
+  );
 }

@@ -1,3 +1,4 @@
+import { Section } from '@components/layout';
 import { GroupInputs } from '@components/shared';
 import { useLocalStorage } from '@hooks';
 import { EXTENSIONS } from '@constants';
@@ -19,43 +20,45 @@ export default function Settings() {
   };
 
   return (
-    <main className="p-4">
-      <GroupInputs title="Extensions">
-        <form>
+    <main>
+      <Section>
+        <GroupInputs title="Extensions">
+          <form>
+            <ul className="mt-3 flex flex-col gap-2">
+              {EXTENSIONS.map((extension) => (
+                <li key={extension}>
+                  <label className="flex items-center gap-3 p-2 text-white">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-wonders-yellow"
+                      name={extension}
+                      defaultChecked={settings[extension]}
+                      onChange={onChange}
+                    />
+                    {extension}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </form>
+        </GroupInputs>
+        <GroupInputs title="Languages" className="mt-8">
           <ul className="mt-3 flex flex-col gap-2">
-            {EXTENSIONS.map((extension) => (
-              <li key={extension}>
-                <label className="flex items-center gap-3 p-2 text-white">
+            {languages.map((item, index) => (
+              <li key={index}>
+                <label className="flex items-center gap-3 p-2">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 accent-wonders-yellow"
-                    name={extension}
-                    defaultChecked={settings[extension]}
-                    onChange={onChange}
+                    className="h-4 w-4 accent-blue-500"
+                    value={item.value}
                   />
-                  {extension}
+                  {item.label}
                 </label>
               </li>
             ))}
           </ul>
-        </form>
-      </GroupInputs>
-      <GroupInputs title="Languages" className="mt-8">
-        <ul className="mt-3 flex flex-col gap-2">
-          {languages.map((item, index) => (
-            <li key={index}>
-              <label className="flex items-center gap-3 p-2">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 accent-blue-500"
-                  value={item.value}
-                />
-                {item.label}
-              </label>
-            </li>
-          ))}
-        </ul>
-      </GroupInputs>
+        </GroupInputs>
+      </Section>
     </main>
   );
 }

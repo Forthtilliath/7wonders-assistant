@@ -1,9 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-
-import { HeaderOptions } from '@/components/layout/HeaderOptions';
-import { ButtonIcon } from '@/components/shared/ButtonIcon';
-import { AiOutlineArrowRight } from '@/components/shared/Icons';
-import { GroupScoreInputs } from '@/components/ui/GroupScoreInputs';
+import { HeaderOptions, Section } from '@components/layout';
+import { ButtonIcon } from '@components/shared';
+import { AiOutlineArrowRight } from '@components/shared/Icons';
+import { GroupScoreInputs } from '@components/ui';
 
 export function Leaders() {
   const navigate = useNavigate();
@@ -11,7 +10,7 @@ export function Leaders() {
   const nextStep = () => navigate('/scores/cities');
 
   return (
-    <section>
+    <main>
       <HeaderOptions>
         <ButtonIcon
           icon={AiOutlineArrowRight}
@@ -19,7 +18,10 @@ export function Leaders() {
           className="text-wonders-blue"
         />
       </HeaderOptions>
-      <GroupScoreInputs step={'leaders'} />
-    </section>
+
+      <Section>
+        <GroupScoreInputs step={'leaders'} />
+      </Section>
+    </main>
   );
 }
