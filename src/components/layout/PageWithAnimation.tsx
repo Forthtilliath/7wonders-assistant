@@ -1,7 +1,11 @@
+import { PropsWithChildren } from 'react';
 import { useLocation } from 'react-router-dom';
+import { cn } from '@/helpers';
 import { domAnimation, LazyMotion, m } from 'framer-motion';
 
-export const PageWithAnimation = ({ children }: React.PropsWithChildren) => {
+type Props = PropsWithChildren<PropsWithClassname>;
+
+export const PageWithAnimation = ({ className, children }: Props) => {
   const location = useLocation();
 
   return (
@@ -12,7 +16,7 @@ export const PageWithAnimation = ({ children }: React.PropsWithChildren) => {
         animate={{ opacity: 1, x: '0' }}
         exit={{ opacity: 0, x: '-100%' }}
         transition={{ duration: 0.3 }}
-        className="flex-grow">
+        className={cn(className)}>
         {children}
       </m.div>
     </LazyMotion>
