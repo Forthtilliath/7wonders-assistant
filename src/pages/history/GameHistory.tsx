@@ -89,8 +89,8 @@ export function GameHistory() {
             <Cell className="bg-yellow-500/70">Treasury</Cell>
             <Cell className="bg-stone-500/70">Wonders</Cell>
             <Cell className="bg-blue-500/70">Civilians</Cell>
-            <Cell className="bg-green-500/70">Scientifics</Cell>
             <Cell className="bg-yellow-500/70">Commercials</Cell>
+            <Cell className="bg-green-500/70">Scientifics</Cell>
             <Cell className="bg-purple-500/70">Guilds</Cell>
             {extensions.Armada && (
               <Cell className="bg-cyan-500/70">Armada</Cell>
@@ -118,8 +118,8 @@ export function GameHistory() {
                 <Cell className="bg-yellow-500/70">{score.treasury}</Cell>
                 <Cell className="bg-stone-500/70">{score.wonders}</Cell>
                 <Cell className="bg-blue-500/70">{score.civilians}</Cell>
-                <Cell className="bg-green-500/70">{score.scientifics}</Cell>
                 <Cell className="bg-yellow-500/70">{score.commercials}</Cell>
+                <Cell className="bg-green-500/70">{score.scientifics}</Cell>
                 <Cell className="bg-purple-500/70">{score.guilds}</Cell>
                 {extensions.Armada && (
                   <Cell className="bg-cyan-500/70">{score.armada}</Cell>
