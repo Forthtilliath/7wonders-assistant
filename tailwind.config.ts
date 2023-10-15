@@ -8,7 +8,7 @@ const config: Config = {
         section: 'calc(100vh - 4rem)',
       },
       maxWidth: {
-        app: '700px',
+        app: '768px',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
