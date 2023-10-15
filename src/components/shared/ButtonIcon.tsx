@@ -18,7 +18,7 @@ export function ButtonIcon({
 }: Props) {
   return (
     <button
-      className={cn('m-2 text-2xl font-medium', className)}
+      className={cn('m-2 text-2xl font-medium pointer-events-auto', className)}
       onClick={onClick}
       type="button"
       {...buttonProps}>
