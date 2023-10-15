@@ -4,7 +4,7 @@
 - [x] Mettre le header dans le layout et récupérer le title dans les data
 
 - [x] Modifier les contexts en stores
-- [ ] Remplacer framer-motion !
+- [x] Remplacer framer-motion !
   - [ ] Back dans store pour inverser animation exit ?
 - [x] Ajouter prettier/eslint
 - [ ] Ajouter husky
@@ -12,7 +12,7 @@
 - [ ] Ajouter des errors boundary
 - [x] Ajouter une icone pour l'app
 - [ ] Ajouter une modal pour le delete joueur
-- [ ] Ajouter une bordure à l'icone Favorite
+- [x] Ajouter une bordure à l'icone Favorite
 - [x] Les pages Settings, Feedback et About ont un bouton retour 
 - [ ] Ajouter un gitaction pour les tests unitaires : https://docs.cypress.io/guides/continuous-integration/github-actions
 
@@ -23,16 +23,16 @@
 
 - [x] Ajouter hook pour header (pathname & label)
 - [x] Générer router à partir de menu
-- [ ] Replacer framer-motion par react-spring : https://www.npmjs.com/package/react-spring
-  - [ ] Vérifier ``m`` de framer-motion : https://www.youtube.com/watch?v=gX4N44sPNHY (lazy motion)o
+- [x] Replacer framer-motion par react-spring : https://www.npmjs.com/package/react-spring
+  - [x] Vérifier ``m`` de framer-motion : https://www.youtube.com/watch?v=gX4N44sPNHY (lazy motion)o
 - [x] Afficher les joueurs par ordre alphabétique
-- [ ] Prendre compte les écrans un peu plus large tel que les tablettes
+- [x] Prendre en compte les écrans un peu plus large tel que les tablettes
 - [ ] Possibilité du jeu en équipe
-- [ ] Check toutes les heights de page et scrolls
-- [ ] Quand on fait previous après la création de la partie, la partie est annulée
-- [ ] Quand on fait previous sur la création de la partie, on affiche une confirm box pour previous (ce qui supprime la partie)
-- [ ] Voir pour fixer le bouton next au changement de catégorie de score
-- [ ] Fixer width title en fonction des icones à droite
+- [x] Check toutes les heights de page et scrolls
+- [x] Quand on fait previous après la création de la partie, la partie est annulée
+- [x] Quand on fait previous sur la création de la partie, on affiche une confirm box pour previous (ce qui supprime la partie)
+- [x] Voir pour fixer le bouton next au changement de catégorie de score
+- [x] Fixer width title en fonction des icones à droite
 - [ ] Prendre en compte dans l'history si on ajoute des nouvelles extensions
 - [ ] Constant des extensions en minuscules
 - [ ] Voir pour charger les données du joueur dans editPlayer via le loader
@@ -68,15 +68,15 @@
     - [x] Ajouter par défaut les favoris dans la partie
     - [x] Ajouter au clic un joueur dans la partie
     - [x] Bouton valider pour continuer
-  - [ ] Etape 2 : *Enregistrement des scores*
-    - [ ] Enregistre les données
-  - [ ] Etape 3 : *Affichage des scores*
-    - [ ] Redirection vers `/games/history/:idGame`
+  - [x] Etape 2 : *Enregistrement des scores*
+    - [x] Enregistre les données
+  - [x] Etape 3 : *Affichage des scores*
+    - [x] Redirection vers `/games/history/:idGame`
 - [ ] `/statistics` ➡️ **Statistique de l'ensemble des parties** 
   - [ ] `/statistics/:idUser` ➡️ **Statisique d'un joueur**
-- [ ] `/history` ➡️ **Gestion des parties**
-  - [ ] `/history` ➡️ **Historique des parties**
-  - [ ] `/history/:idGame` ➡️ **Historique d'une partie**
+- [x] `/history` ➡️ **Gestion des parties**
+  - [x] `/history` ➡️ **Historique des parties**
+  - [x] `/history/:idGame` ➡️ **Historique d'une partie**
   - [ ] `/history/:idGame/save` ➡️ **Enregistrer la partie** (image/note)
   - [ ] `/history/:idGame/share` ➡️ **Partager une partie**
 - [ ] `/players` ➡️ **Gestion des joueurs**
