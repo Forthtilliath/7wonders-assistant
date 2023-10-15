@@ -75,39 +75,41 @@ export default function NewGame() {
         )}
       </HeaderOptions>
 
-      <header className="bg-wonders-blue">
-        <main className="max-w-app mx-auto grid grid-cols-4 gap-2 p-4">
-          {playersInGame.map((player) => (
+      <div className='h-section flex flex-col'>
+        <header className="bg-wonders-blue">
+          <main className="mx-auto grid max-w-app grid-cols-4 gap-2 p-4">
+            {playersInGame.map((player) => (
+              <CardPlayer
+                key={player.idPlayer}
+                {...player}
+                onClick={removePlayerFromTheGame(player.idPlayer)}
+              />
+            ))}
+            {emptyPlayers.map((_, i) => (
+              <div
+                key={i}
+                className="flex aspect-square w-full items-center justify-center bg-wonders-blue-dark transition-all">
+                <GiMeeple size={'60%'} />
+              </div>
+            ))}
+          </main>
+        </header>
+
+        <Section className="grid auto-rows-min grid-cols-3 gap-2 flex-grow">
+          {sortedPlayed.map((player) => (
             <CardPlayer
               key={player.idPlayer}
               {...player}
-              onClick={removePlayerFromTheGame(player.idPlayer)}
+              showInGame={playersInGame.some(
+                (p) => p.idPlayer === player.idPlayer
+              )}
+              onClick={addPlayerIntoTheGame(player)}
             />
           ))}
-          {emptyPlayers.map((_, i) => (
-            <div
-              key={i}
-              className="flex aspect-square w-full items-center justify-center bg-wonders-blue-dark transition-all">
-              <GiMeeple size={'60%'} />
-            </div>
-          ))}
-        </main>
-      </header>
 
-      <Section className="grid auto-rows-min grid-cols-3 gap-2">
-        {sortedPlayed.map((player) => (
-          <CardPlayer
-            key={player.idPlayer}
-            {...player}
-            showInGame={playersInGame.some(
-              (p) => p.idPlayer === player.idPlayer
-            )}
-            onClick={addPlayerIntoTheGame(player)}
-          />
-        ))}
-
-        <ButtonNewPlayer />
-      </Section>
+          <ButtonNewPlayer />
+        </Section>
+      </div>
     </main>
   );
 }
