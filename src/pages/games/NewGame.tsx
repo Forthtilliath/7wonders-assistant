@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Section } from '@/components/layout';
 import type { Game, Player } from '@types';
 import { HeaderOptions } from '@components/layout/HeaderOptions';
 import { ButtonIcon } from '@components/shared/ButtonIcon';
@@ -67,14 +68,15 @@ export default function NewGame() {
   });
 
   return (
-    <section>
+    <main>
       <HeaderOptions>
         {playersInGame.length >= MIN_PLAYERS && (
           <ButtonIcon icon={BsCheckLg} onClick={launchGame} />
         )}
       </HeaderOptions>
+
       <header className="bg-wonders-blue">
-        <main className="mx-auto grid max-w-[800px] grid-cols-4 gap-2 p-4">
+        <main className="max-w-app mx-auto grid grid-cols-4 gap-2 p-4">
           {playersInGame.map((player) => (
             <CardPlayer
               key={player.idPlayer}
@@ -92,7 +94,7 @@ export default function NewGame() {
         </main>
       </header>
 
-      <main className="mx-auto grid h-full max-w-[800px] auto-rows-min grid-cols-3 gap-2 overflow-y-auto p-4">
+      <Section className="grid auto-rows-min grid-cols-3 gap-2">
         {sortedPlayed.map((player) => (
           <CardPlayer
             key={player.idPlayer}
@@ -105,7 +107,7 @@ export default function NewGame() {
         ))}
 
         <ButtonNewPlayer />
-      </main>
-    </section>
+      </Section>
+    </main>
   );
 }
