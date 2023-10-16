@@ -7,6 +7,7 @@ import { FaDownload, FaImage } from '@components/shared/Icons';
 import { Badge } from '@components/ui/Badge';
 import { useSave } from '@hooks';
 import { TableScores } from '@/components/charts/TableScores';
+import { ChartPie } from '@/components/charts/ChartPie';
 
 export function GameHistory() {
   const data = useLoaderData() as GameHistoriesComplete;
@@ -38,10 +39,16 @@ export function GameHistory() {
           )}
         </div>
 
-        <div className="flex justify-center py-4" ref={sectionRef}>
+        <div className="flex justify-center flex-col py-4 gap-4" ref={sectionRef}>
           <TableScores data={data} />
 
-          
+          {data.scores.map((score) => (
+            <ChartPie
+              key={"pie" + score.idPlayer}
+              data={[score.military, score.civilians, score.commercials, score.scientifics, score.guilds, score.treasury]}
+              labels={['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']}
+            />
+          ))}
         </div>
       </Section>
     </main>
