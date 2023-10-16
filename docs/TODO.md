@@ -2,7 +2,6 @@
 - [x] Faire le routage
 - [x] Ajouter les headers de chaque page
 - [x] Mettre le header dans le layout et récupérer le title dans les data
-
 - [x] Modifier les contexts en stores
 - [x] Remplacer framer-motion !
   - [ ] Back dans store pour inverser animation exit ?
@@ -37,6 +36,18 @@
 - [ ] Constant des extensions en minuscules
 - [ ] Voir pour charger les données du joueur dans editPlayer via le loader
 - [ ] Voir pour charger les données des joueurs dans ListPlayer et NewGame via le loader
+
+# TODO Next Session
+- [x] Ajouter Traductions
+- [ ] Ajouter Possibilité de Save/Load les data dans les options
+- [ ] Ajouter les premiers graphiques
+- [ ] Ajouter de nouveaux TU pour véirifer chaque liens/pages
+- [ ] Revoir la façon dont sont enregistrées les extensions dans la page
+  - [ ] DB : Passer de 1 attribut par extension à un array d'extensions
+  - [ ] LS : Passer d'un objet à un array d'extensions
+  - [ ] Enregistrement de la partie
+  - [ ] Affichage des tags de la partie
+  - [ ] Affichage de la colonne d'extension
 
 # ⚠️ A FIXER ⚠️
 
