@@ -11,7 +11,7 @@ export function TableScores({ data: { game, scores } }: Props) {
   const { idGame, createdAt, ...extensions } = game;
 
   return (
-    <>
+    <div className='flex justify-center'>
       <ColumnLabels>
         <Cell className="h-16">&nbsp;</Cell>
         <Cell className="bg-red-500/70">Military</Cell>
@@ -57,6 +57,6 @@ export function TableScores({ data: { game, scores } }: Props) {
           </Column>
         ))}
       </div>
-    </>
+    </div>
   );
 }
