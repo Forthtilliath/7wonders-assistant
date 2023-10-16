@@ -1,3 +1,3 @@
-export { CardDev } from './CardDev';
-export { ButtonNewPlayer } from './ButtonNewPlayer';
-export { CardPlayer } from './CardPlayer';
+export * from './ButtonNewPlayer';
+export * from './CardDev';
+export * from './CardPlayer';
