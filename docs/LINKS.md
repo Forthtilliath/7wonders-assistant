@@ -35,3 +35,6 @@
 ## Outils
 
 - Conversion d'images : https://www.img2go.com/
+
+- PROMISE DATA : https://reactrouter.com/en/main/guides/deferred
+- Lazy :  https://stackoverflow.com/questions/73984257/how-to-use-suspense-with-routerprovider-in-react-router-dom-v6-4
