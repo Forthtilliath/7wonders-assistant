@@ -58,6 +58,7 @@
 - [ ] Bouton Add player, icone taille dynamique
 - [ ] Speed click génère des doublons de composants sur les composants animés ⚠️
 - [ ] Corriger duplication page quand on scroll trop vite
+- [ ] Des games ont été crée je ne sais quand, mais ca faisait un bug dans le loader de GameHistory
 
 # Tests Unitaires
 
