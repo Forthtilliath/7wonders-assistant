@@ -64,5 +64,12 @@
     "vite": "^4.4.11",
     "vitest": "^0.34.6",
     "zustand": "^4.4.3"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "react-json-view>react": "17"
+      }
+    }
   }
 }
