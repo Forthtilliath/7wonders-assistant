@@ -1,3 +1,8 @@
 {
-  "title": "EN"
+  "title": "EN",
+
+  "support": {
+    "buy_coffee": "Buy Us a Coffee",
+    "buy_coffee_2": "or Buy Us a Lambo"
+  }
 }
