@@ -1,14 +1,13 @@
 import { PropsWithChildren, useRef } from 'react';
 import { useLoaderData } from 'react-router-dom';
-import html2canvas from 'html2canvas';
 import type { GameHistoriesComplete } from '@types';
 import { HeaderOptions, Section } from '@components/layout';
 import { ButtonIcon } from '@components/shared';
 import { FaDownload, FaImage } from '@components/shared/Icons';
 import { CardPlayer } from '@components/cards';
 import { Badge } from '@components/ui/Badge';
-import { assertsIsDefined, cn } from '@helpers';
-import { useHorizontalScroll } from '@hooks';
+import { cn } from '@helpers';
+import { useHorizontalScroll, useSave } from '@hooks';
 
 export function GameHistory() {
   const { game, scores } = useLoaderData() as GameHistoriesComplete;
@@ -16,48 +15,7 @@ export function GameHistory() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { idGame, createdAt, ...extensions } = game;
   const sectionRef = useRef<HTMLDivElement>(null);
-
-  const download = () => {
-    try {
-      const data = { game, scores };
-      const json = JSON.stringify(data);
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'partie.json';
-
-      if (typeof link.download === 'undefined') {
-        // Fallback for browsers that do not support the download attribute
-        window.open(url);
-      } else {
-        link.click();
-      }
-
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Error during JSON.stringify:', error);
-      // Handle the error or show an error message to the user
-    }
-  };
-
-  const saveAsImage = () => {
-    assertsIsDefined(sectionRef.current);
-
-    const options = {
-      backgroundColor: '#1d1e22',
-    };
-
-    html2canvas(sectionRef.current, options).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-
-      link.href = imgData;
-      link.download = 'image.png';
-      link.click();
-    });
-  };
+  const { download, saveAsImage } = useSave();
 
   return (
     <main>
@@ -65,12 +23,12 @@ export function GameHistory() {
         <ButtonIcon
           icon={FaDownload}
           aria-label="Download As File"
-          onClick={download}
+          onClick={() => download({ game, scores }, 'game.json')}
         />
         <ButtonIcon
           icon={FaImage}
           aria-label="Download As Image"
-          onClick={saveAsImage}
+          onClick={() => saveAsImage(sectionRef.current, 'game.png')}
         />
       </HeaderOptions>
 
