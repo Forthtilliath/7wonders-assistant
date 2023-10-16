@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import { Suspense } from 'react';
 import { Params } from 'react-router-dom';
 import About from '@/pages/About';
 import Feedback from '@/pages/Feedback';
@@ -43,7 +44,11 @@ import { getGameHistory, getGames } from '@lib';
 export const ROUTES: Route[] = [
   {
     path: '/',
-    element: <MainLayout />,
+    element: (
+      <Suspense fallback={<>Loading...</>}>
+        <MainLayout />
+      </Suspense>
+    ),
     icon: FaPlus,
     label: 'New Game',
     children: [
