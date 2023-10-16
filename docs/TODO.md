@@ -48,6 +48,7 @@
   - [ ] Enregistrement de la partie
   - [ ] Affichage des tags de la partie
   - [ ] Affichage de la colonne d'extension
+  - [ ] Score d'une extension off doit etre NULL
 
 # ⚠️ A FIXER ⚠️
 
