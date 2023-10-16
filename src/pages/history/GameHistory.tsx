@@ -1,13 +1,15 @@
 import { useRef } from 'react';
 import { useLoaderData } from 'react-router-dom';
+import { PieScorePlayer } from '@/components/charts/PieScorePlayer';
+import { TableScores } from '@/components/charts/TableScores';
+import { CATEGORIES } from '@/constants';
+import { filterKeys } from '@/helpers/object';
 import type { GameHistoriesComplete } from '@types';
 import { HeaderOptions, Section } from '@components/layout';
 import { ButtonIcon } from '@components/shared';
 import { FaDownload, FaImage } from '@components/shared/Icons';
 import { Badge } from '@components/ui/Badge';
 import { useSave } from '@hooks';
-import { TableScores } from '@/components/charts/TableScores';
-import { ChartPie } from '@/components/charts/ChartPie';
 
 export function GameHistory() {
   const data = useLoaderData() as GameHistoriesComplete;
@@ -39,14 +41,18 @@ export function GameHistory() {
           )}
         </div>
 
-        <div className="flex justify-center flex-col py-4 gap-4" ref={sectionRef}>
+        <div
+          className="flex flex-col justify-center gap-4 py-4"
+          ref={sectionRef}>
           <TableScores data={data} />
 
-          {data.scores.map((score) => (
-            <ChartPie
-              key={"pie" + score.idPlayer}
-              data={[score.military, score.civilians, score.commercials, score.scientifics, score.guilds, score.treasury]}
-              labels={['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']}
+          {data.scores.map((scores) => (
+            <PieScorePlayer
+              key={'pie' + scores.idPlayer}
+              scores={filterKeys(scores, [...CATEGORIES])}
+              extensions={Object.entries(extensions)
+                .filter(([, v]) => v)
+                .map(([k]) => k)}
             />
           ))}
         </div>
