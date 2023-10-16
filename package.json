@@ -70,7 +70,9 @@
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
-        "react-json-view>react": "17"
+        "react-json-view>react": "18",
+        "react-json-view>react-dom": "18",
+        "flux>react": "18"
       }
     }
   }

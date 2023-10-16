@@ -2694,7 +2694,7 @@ packages:
   /flux@4.0.4(react@18.2.0):
     resolution: {integrity: sha512-NCj3XlayA2UsapRpM7va6wU1+9rE5FIL7qoMcmxWHRzbp0yujihMBm9BBHZ1MDIk5h5o2Bl6eGiCe8rYELAmYw==}
     peerDependencies:
-      react: ^15.0.2 || ^16.0.0 || ^17.0.0
+      react: ^15.0.2 || ^16.0.0 || ^17.0.0 || 18
     dependencies:
       fbemitter: 3.0.0
       fbjs: 3.0.5
@@ -4253,8 +4253,8 @@ packages:
   /react-json-view@1.21.3(@types/react@18.2.28)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-13p8IREj9/x/Ye4WI/JpjhoIwuzEgUAtgJZNBJckfzJt1qyh24BdTm6UQNGnyTq9dapQdrqvquZTo3dz1X6Cjw==}
     peerDependencies:
-      react: ^17.0.0 || ^16.3.0 || ^15.5.4 || 17
-      react-dom: ^17.0.0 || ^16.3.0 || ^15.5.4
+      react: ^17.0.0 || ^16.3.0 || ^15.5.4 || 18
+      react-dom: ^17.0.0 || ^16.3.0 || ^15.5.4 || 18
     dependencies:
       flux: 4.0.4(react@18.2.0)
       react: 18.2.0
