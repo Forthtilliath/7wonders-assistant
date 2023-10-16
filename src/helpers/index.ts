@@ -1,5 +1,5 @@
 export * from './array';
-export * from './assets';
+export * from './asserts';
 export * from './string';
 export * from './tailwind';
 export * from './element';
