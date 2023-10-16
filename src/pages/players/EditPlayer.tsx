@@ -1,97 +1,120 @@
-import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
-
-import * as LS from '@/lib/storage';
-import type { Player } from '@/@types/storage';
-import { HeaderOptions } from '@/components/layout/HeaderOptions';
-import { ButtonIcon } from '@/components/shared/ButtonIcon';
-import { ButtonToggleIcon } from '@/components/shared/ButtonToggleIcon';
+import { useEffect, useRef, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import type { Player } from '@types';
+import { HeaderOptions, Section } from '@components/layout';
+import { ButtonIcon, ButtonToggleIcon } from '@components/shared';
 import {
   BiArchiveIn,
   BiSolidArchiveOut,
   BsCheckLg,
-  BsPencilFill,
   BsTrash3Fill,
   ImStarEmpty,
   ImStarFull,
-} from '@/components/shared/Icons';
-import { assertsIsDefined } from '@/helpers/assets';
-import { usePlayer } from '@/hooks/usePlayer';
+} from '@components/shared/Icons';
+import { InputPlayer } from '@components/ui';
+import { assertsIsDefined } from '@helpers';
+import { deletePlayer, getPlayer, updatePlayer } from '@lib';
+import { useParamsInt } from '@hooks';
 
 export default function EditPlayer() {
+  const [player, _setPlayer] = useState<Player | null>(null);
   const navigate = useNavigate();
+  const { idPlayer } = useParamsInt('idPlayer');
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const [searchParams] = useSearchParams();
-  const id = searchParams.get('id');
+  const setPlayer = <Key extends keyof Player>(
+    key: Key,
+    cb: (currentValue: Player[Key]) => Player[Key]
+  ) => {
+    _setPlayer((p) => {
+      if (!p) return null;
 
-  const [player, { toggleFavorite, toggleArchive }] = usePlayer(id);
+      return {
+        ...p,
+        [key]: cb(p[key]),
+      };
+    });
+  };
 
-  const { isArchived, isFavorite, avatar, name } = player;
+  useEffect(() => {
+    if (!idPlayer) return;
+    const loadPlayer = async () => {
+      const player = await getPlayer(idPlayer);
+      _setPlayer(player);
+    };
+    loadPlayer();
+  }, [idPlayer]);
 
-  const deletePlayer = () => {
-    assertsIsDefined(id);
+  const removePlayer = () => {
+    assertsIsDefined(player);
+    deletePlayer(player.idPlayer);
 
-    LS.removePlayer(id);
     navigate('/players');
   };
 
   const onSubmit: FormSubmitEventHandler = async (e) => {
     e.preventDefault();
-    assertsIsDefined(id);
+    assertsIsDefined(player);
 
-    const player = new FormData(e.currentTarget);
-    player.append('id', id);
-    player.append('avatar', avatar);
-    player.append('isFavorite', isFavorite);
-    player.append('isArchived', isArchived);
+    // TODO
+    if (player.name.trim() === '') {
+      // ERROR Empty Name
+      return;
+    }
 
-    LS.setPlayer(Object.fromEntries(player) as Player);
+    await updatePlayer(player);
 
     navigate('/players');
   };
 
+  if (!player) {
+    return <>No player</>;
+  }
+
   return (
-    <main className="">
+    <main>
       <form onSubmit={onSubmit}>
         <HeaderOptions>
-          <ButtonIcon icon={BsTrash3Fill} onClick={deletePlayer} />
+          <ButtonIcon icon={BsTrash3Fill} onClick={removePlayer} />
           <ButtonToggleIcon
-            condition={isFavorite === 'true'}
+            condition={player.isFavorite}
             icons={[ImStarEmpty, ImStarFull]}
-            onClick={toggleFavorite}
+            onClick={() => setPlayer('isFavorite', (t) => !t)}
           />
           <ButtonToggleIcon
-            condition={isArchived === 'true'}
+            condition={player.isArchived}
             icons={[BiArchiveIn, BiSolidArchiveOut]}
-            onClick={toggleArchive}
+            onClick={() => setPlayer('isArchived', (t) => !t)}
           />
           <ButtonIcon icon={BsCheckLg} type="submit" />
         </HeaderOptions>
 
-        <div className="relative mb-3 flex w-full items-stretch">
-          <BsPencilFill className="absolute z-10 h-full w-8 items-center justify-center rounded py-3 pl-3 text-center text-base font-normal leading-snug text-slate-600" />
-          <input
-            type="text"
-            placeholder="Name"
-            className="w-full p-4 pl-10 text-slate-600 placeholder-slate-300"
-            name="name"
-            defaultValue={name}
-            required
+        <Section className="p-0">
+          <InputPlayer
+            ref={inputRef}
+            value={player.name}
+            onChange={(e) => setPlayer('name', () => e.target.value)}
           />
-        </div>
 
-        {/* NOTE: Si on change de page, on perd le form ! */}
-        {/* Solution possible : Sidebar / Modal */}
-        <p className="mt-10 text-center text-lg">Avatar</p>
-        <NavLink className="mx-auto mt-3 block w-[200px]" to="/players/album">
-          <div className="flex h-[200px] w-full items-center justify-center bg-wonders-blue">
-            {avatar && (
-              <img src={avatar} alt="Avatar" width={200} height={200} />
-            )}
-          </div>
-          <div className="flex h-16 w-full items-center justify-center bg-wonders-blue-dark text-lg">
-            Change
-          </div>
-        </NavLink>
+          {/* NOTE: Si on change de page, on perd le form ! */}
+          {/* Solution possible : Sidebar / Modal */}
+          <p className="mt-10 text-center text-lg">Avatar</p>
+          <NavLink className="mx-auto mt-3 block w-[200px]" to="/players/album">
+            <div className="flex h-[200px] w-full items-center justify-center bg-wonders-blue">
+              {player.avatar && (
+                <img
+                  src={player.avatar}
+                  alt="Avatar"
+                  width={200}
+                  height={200}
+                />
+              )}
+            </div>
+            <div className="flex h-16 w-full items-center justify-center bg-wonders-blue-dark text-lg">
+              Change
+            </div>
+          </NavLink>
+        </Section>
       </form>
     </main>
   );

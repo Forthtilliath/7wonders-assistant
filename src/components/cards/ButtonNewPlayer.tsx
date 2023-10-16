@@ -7,7 +7,7 @@ export function ButtonNewPlayer() {
     <Link
       to="/players/new"
       className="flex aspect-square h-auto max-w-[250px] items-center justify-center rounded bg-slate-700">
-      <IconOnly icon={FaPlus} size="90%" label="Add a player" />
+      <IconOnly icon={FaPlus} size="70%" label="Add a player" />
     </Link>
   );
 }

@@ -1,17 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-
-import { HeaderOptions } from '@/components/layout/HeaderOptions';
-import { ButtonIcon } from '@/components/shared/ButtonIcon';
-import { AiOutlineArrowRight } from '@/components/shared/Icons';
-import { GroupScoreInputs } from '@/components/ui/GroupScoreInputs';
+import { HeaderOptions, Section } from '@components/layout';
+import { ButtonIcon } from '@components/shared';
+import { AiOutlineArrowRight } from '@components/shared/Icons';
+import { GroupScoreInputs } from '@components/ui';
 
 export function Civilians() {
   const navigate = useNavigate();
 
-  const nextStep = () => navigate('/scores/scientifics');
+  const nextStep = () => navigate('/scores/commercials');
 
   return (
-    <section>
+    <main>
       <HeaderOptions>
         <ButtonIcon
           icon={AiOutlineArrowRight}
@@ -19,7 +18,10 @@ export function Civilians() {
           className="text-white"
         />
       </HeaderOptions>
-      <GroupScoreInputs step={'civilians'} />
-    </section>
+
+      <Section>
+        <GroupScoreInputs step={'civilians'} />
+      </Section>
+    </main>
   );
 }

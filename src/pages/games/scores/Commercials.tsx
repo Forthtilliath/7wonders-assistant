@@ -1,17 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-
-import { HeaderOptions } from '@/components/layout/HeaderOptions';
-import { ButtonIcon } from '@/components/shared/ButtonIcon';
-import { AiOutlineArrowRight } from '@/components/shared/Icons';
-import { GroupScoreInputs } from '@/components/ui/GroupScoreInputs';
+import { HeaderOptions, Section } from '@components/layout';
+import { ButtonIcon } from '@components/shared';
+import { AiOutlineArrowRight } from '@components/shared/Icons';
+import { GroupScoreInputs } from '@components/ui';
 
 export function Commercials() {
   const navigate = useNavigate();
 
-  const nextStep = () => navigate('/scores/guilds');
+  const nextStep = () => navigate('/scores/scientifics');
 
   return (
-    <section>
+    <main>
       <HeaderOptions>
         <ButtonIcon
           icon={AiOutlineArrowRight}
@@ -19,7 +18,10 @@ export function Commercials() {
           className="text-wonders-blue"
         />
       </HeaderOptions>
-      <GroupScoreInputs step={'commercials'} />
-    </section>
+
+      <Section>
+        <GroupScoreInputs step={'commercials'} />
+      </Section>
+    </main>
   );
 }

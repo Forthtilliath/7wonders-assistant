@@ -1,17 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-
-import { HeaderOptions } from '@/components/layout/HeaderOptions';
-import { ButtonIcon } from '@/components/shared/ButtonIcon';
-import { AiOutlineArrowRight } from '@/components/shared/Icons';
-import { GroupScoreInputs } from '@/components/ui/GroupScoreInputs';
+import { HeaderOptions, Section } from '@components/layout';
+import { ButtonIcon } from '@components/shared';
+import { AiOutlineArrowRight } from '@components/shared/Icons';
+import { GroupScoreInputs } from '@components/ui';
 
 export function Scientifics() {
   const navigate = useNavigate();
 
-  const nextStep = () => navigate('/scores/commercials');
+  const nextStep = () => navigate('/scores/guilds');
 
   return (
-    <section>
+    <main>
       <HeaderOptions>
         <ButtonIcon
           icon={AiOutlineArrowRight}
@@ -19,7 +18,10 @@ export function Scientifics() {
           className="text-white"
         />
       </HeaderOptions>
-      <GroupScoreInputs step={'scientifics'} />
-    </section>
+
+      <Section>
+        <GroupScoreInputs step={'scientifics'} />
+      </Section>
+    </main>
   );
 }

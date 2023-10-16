@@ -1,20 +1,27 @@
-type MenuItem =  {
-  label: string;
-  path: string;
-  icon: IconComponent;
-};
+import { LoaderFunction } from 'react-router-dom';
 
-type HeaderTitle = {
-  label: string;
-  path: string;
-  previous?: string;
-};
+declare global {
+  type MenuItem = {
+    label: string;
+    path: string;
+    icon: IconComponent;
+  };
 
-type Route = {
-  path: string;
-  element?: React.ReactNode | null;
-  icon?: IconComponent;
-  label?: string;
-  previous?: boolean;
-  children?: Route[];
-};
+  type HeaderTitle = {
+    label: string;
+    path: string;
+    previous?: string;
+  };
+
+  type Route = {
+    path: string;
+    element?: React.ReactNode | null;
+    icon?: IconComponent;
+    label?: string;
+    previous?: boolean;
+    children?: Route[];
+    loader?: LoaderFunction;
+  };
+}
+
+export {};

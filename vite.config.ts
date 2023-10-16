@@ -9,7 +9,6 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve('./src'),
       '@types': path.resolve('./src/@types'),
       '@helpers': path.resolve('./src/helpers'),
       '@components': path.resolve('./src/components'),
@@ -17,6 +16,7 @@ export default defineConfig({
       '@constants': path.resolve('./src/constants'),
       '@lib': path.resolve('./src/lib'),
       '@hooks': path.resolve('./src/hooks'),
+      '@': path.resolve('./src'),
     },
   },
   test: {

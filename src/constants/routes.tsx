@@ -1,17 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { MainLayout } from '@/components/layout/MainLayout';
-import {
-  AiFillClockCircle,
-  AiFillQuestionCircle,
-  BiSolidStarHalf,
-  BiSupport,
-  FaPlus,
-  GiCoffeeCup,
-  GiMeeple,
-  ImStatsBars,
-  IoMdSettings,
-} from '@/components/shared/Icons';
-import { flattenRoutes } from '@/helpers/array';
+import { Params } from 'react-router-dom';
 import About from '@/pages/About';
 import Feedback from '@/pages/Feedback';
 import NewGame from '@/pages/games/NewGame';
@@ -25,6 +13,7 @@ import { Military } from '@/pages/games/scores/Military';
 import { Scientifics } from '@/pages/games/scores/Scientifics';
 import { Treasury } from '@/pages/games/scores/Treasury';
 import { Wonders } from '@/pages/games/scores/Wonders';
+import { GameHistory } from '@/pages/history/GameHistory';
 import History from '@/pages/history/History';
 import EditPlayer from '@/pages/players/EditPlayer';
 import ListPlayers from '@/pages/players/ListPlayers';
@@ -36,6 +25,20 @@ import TestCamera from '@/pages/tests/TestCamera';
 import TestCrop from '@/pages/tests/TestCrop';
 import TestGallery from '@/pages/tests/TestGallery';
 import TestImport from '@/pages/tests/TestImport';
+import { MainLayout } from '@components/layout/MainLayout';
+import {
+  AiFillClockCircle,
+  AiFillQuestionCircle,
+  BiSolidStarHalf,
+  BiSupport,
+  FaPlus,
+  GiCoffeeCup,
+  GiMeeple,
+  ImStatsBars,
+  IoMdSettings,
+} from '@components/shared/Icons';
+import { flattenRoutes } from '@helpers';
+import { getGameHistory, getGames } from '@lib';
 
 export const ROUTES: Route[] = [
   {
@@ -121,9 +124,28 @@ export const ROUTES: Route[] = [
       },
       {
         path: '/history',
-        element: <History />,
         icon: AiFillClockCircle,
         label: 'Games History',
+        children: [
+          {
+            path: '/history',
+            element: <History />,
+            loader: getGames,
+          },
+          {
+            path: '/history/:idGame',
+            element: <GameHistory />,
+            label: 'Games History',
+            previous: true,
+            loader: async ({ params }: { params: Params<'idGame'> }) => {
+              if (!params.idGame) {
+                throw new Error('Game history not found');
+              }
+              const idGame = parseInt(params.idGame, 10);
+              return await getGameHistory(idGame);
+            },
+          },
+        ],
       },
       {
         path: '/players',
@@ -141,7 +163,7 @@ export const ROUTES: Route[] = [
             previous: true,
           },
           {
-            path: '/players/edit',
+            path: '/players/edit/:idPlayer',
             element: <EditPlayer />,
             label: 'Edit Player',
             previous: true,
