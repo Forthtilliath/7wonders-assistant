@@ -1,4 +1,5 @@
-export { DropdownScience } from './DropdownScience';
-export { GroupScoreInputs } from './GroupScoreInputs';
-export { InputScience } from './InputScience';
-export { InputPlayer } from './InputPlayer';
+export * from './Badge';
+export * from './DropdownScience';
+export * from './GroupScoreInputs';
+export * from './InputPlayer';
+export * from './InputScience';
