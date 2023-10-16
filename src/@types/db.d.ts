@@ -31,4 +31,3 @@ export type Scores = PickPartial<
   Record<Category, number>,
   'armada' | 'cities' | 'leaders'
 >;
-// export type Scores = Record<Category, number>;
