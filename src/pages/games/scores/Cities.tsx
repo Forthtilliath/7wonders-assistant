@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameHistory } from '@types';
 import { HeaderOptions, Section } from '@components/layout';
@@ -10,16 +10,21 @@ import { createGame, createGameHistory, useGameStore } from '@lib';
 
 export function Cities() {
   const scores = useGameStore((s) => s.scores);
+  const players = useGameStore((s) => s.players);
   const extensions = useGameStore((s) => s.extensions);
   const resetGame = useGameStore((s) => s.resetGame);
   const navigate = useNavigate();
+  const isCreated = useRef(false);
 
   useEffect(() => {
+    if (players.length === 0) navigate('/');
     if (!extensions?.Cities) nextStep();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const nextStep = async () => {
+    if (isCreated.current) return;
+    isCreated.current = true;
     const game = { ...extensions, createdAt: Date.now() };
     const { idGame } = await createGame(game);
 
@@ -36,7 +41,7 @@ export function Cities() {
     await createGameHistory(gameHistories);
     resetGame();
 
-    navigate(`/history/${idGame}`);
+    navigate(`/history/${idGame}`, { state: { from: '/history' } });
   };
 
   return (

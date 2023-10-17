@@ -24,6 +24,9 @@ declare global {
   type ButtonClickEventHandler = React.MouseEventHandler<HTMLButtonElement>;
 
   type SaveScoreEventHandler = (idPlayer: number) => InputChangeEventHandler;
+
+  type PickPartial<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+  type PartialExcept<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
 }
 
 export {};

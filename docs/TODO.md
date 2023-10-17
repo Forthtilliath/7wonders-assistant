@@ -2,7 +2,6 @@
 - [x] Faire le routage
 - [x] Ajouter les headers de chaque page
 - [x] Mettre le header dans le layout et récupérer le title dans les data
-
 - [x] Modifier les contexts en stores
 - [x] Remplacer framer-motion !
   - [ ] Back dans store pour inverser animation exit ?
@@ -38,6 +37,19 @@
 - [ ] Voir pour charger les données du joueur dans editPlayer via le loader
 - [ ] Voir pour charger les données des joueurs dans ListPlayer et NewGame via le loader
 
+# TODO Next Session
+- [x] Ajouter Traductions
+- [ ] Ajouter Possibilité de Save/Load les data dans les options
+- [x] Ajouter les premiers graphiques
+- [ ] Ajouter de nouveaux TU pour vérifier chaque liens/pages
+- [ ] Revoir la façon dont sont enregistrées les extensions dans la page
+  - [ ] DB : Passer de 1 attribut par extension à un array d'extensions
+  - [ ] LS : Passer d'un objet à un array d'extensions
+  - [ ] Enregistrement de la partie
+  - [ ] Affichage des tags de la partie
+  - [ ] Affichage de la colonne d'extension
+  - [ ] Score d'une extension off doit etre NULL
+
 # ⚠️ A FIXER ⚠️
 
 - [ ] Certains liens ne fonctionnent plus une fois build en static (cf new player)
@@ -46,6 +58,7 @@
 - [ ] Bouton Add player, icone taille dynamique
 - [ ] Speed click génère des doublons de composants sur les composants animés ⚠️
 - [ ] Corriger duplication page quand on scroll trop vite
+- [ ] Des games ont été crée je ne sais quand, mais ca faisait un bug dans le loader de GameHistory
 
 # Tests Unitaires
 

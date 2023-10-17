@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ButtonIcon } from '@components/shared';
 import { AiOutlineArrowLeft, GiHamburgerMenu } from '@components/shared/Icons';
@@ -23,6 +24,8 @@ export function Header() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const pageDetails = getLabelAndPrevious(pathname, ROUTES);
+  const location = useLocation();
+  const { t } = useTranslation();
 
   return (
     <header
@@ -42,11 +45,11 @@ export function Header() {
           [bg.cities]:      pathname === '/scores/cities',
         }
       )}>
-      <div className="flex w-full h-full max-w-app items-center mx-auto">
+      <div className="mx-auto flex h-full w-full max-w-app items-center">
         <div className="text-center">
           {pageDetails.previous ? (
             <ButtonIcon
-              onClick={() => navigate(-1)}
+              onClick={() => navigate(location.state?.from ?? -1)}
               icon={AiOutlineArrowLeft}
               className="m-4 block text-2xl font-medium"
             />
@@ -62,7 +65,7 @@ export function Header() {
         </div>
 
         <h1 className="ml-2 flex-grow text-xl font-semibold">
-          {pageDetails?.label}
+          {pageDetails?.label ? t(pageDetails.label) : ''}
         </h1>
       </div>
     </header>

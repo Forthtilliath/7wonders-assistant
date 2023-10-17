@@ -28,7 +28,8 @@ export const useGameStore = create<State>()(
     persist(
       (set) => ({
         extensions: {} as Record<Extension, boolean>,
-        setExtensions: (extensions) => set(() => ({ extensions })),
+        setExtensions: (extensions) =>
+          set(() => ({ extensions }), undefined, 'SET_EXTENSIONS'),
 
         players: [],
         setPlayers: (players) =>
@@ -57,10 +58,14 @@ export const useGameStore = create<State>()(
           ),
 
         resetGame: () =>
-          set({
-            players: [],
-            scores: {},
-          }),
+          set(
+            {
+              players: [],
+              scores: {},
+            },
+            undefined,
+            'RESET_GAME'
+          ),
       }),
       { name: 'GAME_STORE' }
     )

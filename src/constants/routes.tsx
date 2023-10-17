@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import { Suspense } from 'react';
 import { Params } from 'react-router-dom';
 import About from '@/pages/About';
 import Feedback from '@/pages/Feedback';
@@ -43,9 +44,13 @@ import { getGameHistory, getGames } from '@lib';
 export const ROUTES: Route[] = [
   {
     path: '/',
-    element: <MainLayout />,
+    element: (
+      <Suspense fallback={<>Loading...</>}>
+        <MainLayout />
+      </Suspense>
+    ),
     icon: FaPlus,
-    label: 'New Game',
+    label: 'route.new_game',
     children: [
       {
         path: '/',
@@ -57,61 +62,61 @@ export const ROUTES: Route[] = [
           {
             path: '/scores/military',
             element: <Military />,
-            label: 'Military conflicts',
+            label: 'route.military',
             previous: true,
           },
           {
             path: '/scores/treasury',
             element: <Treasury />,
-            label: 'Treasury',
+            label: 'route.treasury',
             previous: true,
           },
           {
             path: '/scores/wonders',
             element: <Wonders />,
-            label: 'Wonders',
+            label: 'route.wonders',
             previous: true,
           },
           {
             path: '/scores/civilians',
             element: <Civilians />,
-            label: 'Civilians structures',
+            label: 'route.civilians',
             previous: true,
           },
           {
             path: '/scores/scientifics',
             element: <Scientifics />,
-            label: 'Scientifics structures',
+            label: 'route.scientifics',
             previous: true,
           },
           {
             path: '/scores/commercials',
             element: <Commercials />,
-            label: 'Commercials structures',
+            label: 'route.commercials',
             previous: true,
           },
           {
             path: '/scores/guilds',
             element: <Guilds />,
-            label: 'Guilds',
+            label: 'route.guilds',
             previous: true,
           },
           {
             path: '/scores/armada',
             element: <Armada />,
-            label: 'Armada',
+            label: 'route.armada',
             previous: true,
           },
           {
             path: '/scores/leaders',
             element: <Leaders />,
-            label: 'Leaders',
+            label: 'route.leaders',
             previous: true,
           },
           {
             path: '/scores/cities',
             element: <Cities />,
-            label: 'Cities',
+            label: 'route.cities',
             previous: true,
           },
         ],
@@ -120,12 +125,12 @@ export const ROUTES: Route[] = [
         path: '/statistics',
         element: <Statistics />,
         icon: ImStatsBars,
-        label: 'Statistics',
+        label: 'route.statistics',
       },
       {
         path: '/history',
         icon: AiFillClockCircle,
-        label: 'Games History',
+        label: 'route.histories',
         children: [
           {
             path: '/history',
@@ -135,7 +140,7 @@ export const ROUTES: Route[] = [
           {
             path: '/history/:idGame',
             element: <GameHistory />,
-            label: 'Games History',
+            label: 'route.history',
             previous: true,
             loader: async ({ params }: { params: Params<'idGame'> }) => {
               if (!params.idGame) {
@@ -150,7 +155,7 @@ export const ROUTES: Route[] = [
       {
         path: '/players',
         icon: GiMeeple,
-        label: 'Players Management',
+        label: 'route.players',
         children: [
           {
             path: '/players',
@@ -159,13 +164,13 @@ export const ROUTES: Route[] = [
           {
             path: '/players/new',
             element: <NewPlayer />,
-            label: 'New Player',
+            label: 'route.new_player',
             previous: true,
           },
           {
             path: '/players/edit/:idPlayer',
             element: <EditPlayer />,
-            label: 'Edit Player',
+            label: 'route.edit_player',
             previous: true,
           },
         ],
@@ -174,30 +179,30 @@ export const ROUTES: Route[] = [
         path: '/settings',
         element: <Settings />,
         icon: IoMdSettings,
-        label: 'Settings',
+        label: 'route.settings',
       },
       {
         path: '/feedback',
         element: <Feedback />,
         icon: BiSupport,
-        label: 'Feedback & Support',
+        label: 'route.feedback',
       },
       {
         path: 'http://www.google.fr',
         icon: BiSolidStarHalf,
-        label: 'Rate Us',
+        label: 'route.rate',
       },
       {
         path: '/about',
         element: <About />,
         icon: AiFillQuestionCircle,
-        label: 'About',
+        label: 'route.about',
       },
       {
         path: '/support',
         element: <Support />,
         icon: GiCoffeeCup,
-        label: 'Support Us',
+        label: 'route.support',
       },
       {
         path: '/test',

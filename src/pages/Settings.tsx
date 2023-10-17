@@ -1,19 +1,17 @@
+import { useTranslation } from 'react-i18next';
 import { Section } from '@components/layout';
 import { GroupInputs } from '@components/shared';
+import { cn } from '@helpers';
 import { useLocalStorage } from '@hooks';
 import { EXTENSIONS } from '@constants';
 
 type Settings = Partial<Record<Extension, boolean>>;
 
-const languages = [
-  { label: 'English', value: 'en' },
-  { label: 'Français', value: 'fr' },
-];
-
 export default function Settings() {
+  const { i18n, t } = useTranslation();
   const [settings, setSettings] = useLocalStorage<Settings>('settings', {});
 
-  const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const onChange: InputChangeEventHandler = (e) => {
     const formData = new FormData(e.currentTarget.form!);
     const arrSettings = Array.from(formData).map(([k, v]) => [k, Boolean(v)]);
     setSettings(Object.fromEntries(arrSettings));
@@ -22,7 +20,7 @@ export default function Settings() {
   return (
     <main>
       <Section>
-        <GroupInputs title="Extensions">
+        <GroupInputs title={t('settings.extensions')}>
           <form>
             <ul className="mt-3 flex flex-col gap-2">
               {EXTENSIONS.map((extension) => (
@@ -42,21 +40,23 @@ export default function Settings() {
             </ul>
           </form>
         </GroupInputs>
-        <GroupInputs title="Languages" className="mt-8">
-          <ul className="mt-3 flex flex-col gap-2">
-            {languages.map((item, index) => (
-              <li key={index}>
-                <label className="flex items-center gap-3 p-2">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 accent-blue-500"
-                    value={item.value}
-                  />
-                  {item.label}
-                </label>
-              </li>
-            ))}
-          </ul>
+        <GroupInputs title={t('settings.language')} className="mt-8">
+          <div className="mt-3 flex justify-center gap-2">
+            <button
+              onClick={() => i18n.changeLanguage('en')}
+              className={cn('border-b border-transparent px-10 py-2', {
+                'border-wonders-yellow': i18n.language === 'en',
+              })}>
+              {t('settings.english')}
+            </button>
+            <button
+              onClick={() => i18n.changeLanguage('fr')}
+              className={cn('border-b border-transparent px-10 py-2', {
+                'border-wonders-yellow': i18n.language === 'fr',
+              })}>
+              {t('settings.french')}
+            </button>
+          </div>
         </GroupInputs>
       </Section>
     </main>
