@@ -14,8 +14,8 @@ export default function ListPlayers() {
 
   return (
     <main>
-      <Section>
-        <div className="mx-auto grid max-w-[800px] grid-cols-3 gap-2">
+      <Section className="@container">
+        <div className="@[450px]:grid-cols-4 grid grid-cols-3 gap-2">
           {sortedPlayed.map((player) => (
             <CardPlayer
               key={player.idPlayer}

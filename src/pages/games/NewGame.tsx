@@ -75,7 +75,7 @@ export default function NewGame() {
         )}
       </HeaderOptions>
 
-      <div className='h-section flex flex-col'>
+      <div className="flex h-section flex-col">
         <header className="bg-wonders-blue">
           <main className="mx-auto grid max-w-app grid-cols-4 gap-2 p-4">
             {playersInGame.map((player) => (
@@ -95,19 +95,21 @@ export default function NewGame() {
           </main>
         </header>
 
-        <Section className="grid auto-rows-min grid-cols-3 gap-2 flex-grow">
-          {sortedPlayed.map((player) => (
-            <CardPlayer
-              key={player.idPlayer}
-              {...player}
-              showInGame={playersInGame.some(
-                (p) => p.idPlayer === player.idPlayer
-              )}
-              onClick={addPlayerIntoTheGame(player)}
-            />
-          ))}
+        <Section className="@container w-full">
+          <div className="@[450px]:grid-cols-4 grid grid-cols-3 gap-2">
+            {sortedPlayed.map((player) => (
+              <CardPlayer
+                key={player.idPlayer}
+                {...player}
+                showInGame={playersInGame.some(
+                  (p) => p.idPlayer === player.idPlayer
+                )}
+                onClick={addPlayerIntoTheGame(player)}
+              />
+            ))}
 
-          <ButtonNewPlayer />
+            <ButtonNewPlayer />
+          </div>
         </Section>
       </div>
     </main>
