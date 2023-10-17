@@ -40,8 +40,8 @@
 # TODO Next Session
 - [x] Ajouter Traductions
 - [ ] Ajouter Possibilité de Save/Load les data dans les options
-- [ ] Ajouter les premiers graphiques
-- [ ] Ajouter de nouveaux TU pour véirifer chaque liens/pages
+- [x] Ajouter les premiers graphiques
+- [ ] Ajouter de nouveaux TU pour vérifier chaque liens/pages
 - [ ] Revoir la façon dont sont enregistrées les extensions dans la page
   - [ ] DB : Passer de 1 attribut par extension à un array d'extensions
   - [ ] LS : Passer d'un objet à un array d'extensions
