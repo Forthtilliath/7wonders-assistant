@@ -1,4 +1,4 @@
-export function formatDate(timestamp: number) {
+export function formatDate(timestamp: number, locale?: string) {
   const date = new Date(timestamp);
 
   const options: Intl.DateTimeFormatOptions = {
@@ -7,5 +7,5 @@ export function formatDate(timestamp: number) {
     day: 'numeric',
   };
 
-  return date.toLocaleDateString(undefined, options);
+  return date.toLocaleDateString(locale, options);
 }
