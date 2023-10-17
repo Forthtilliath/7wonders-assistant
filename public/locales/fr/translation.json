@@ -1,6 +1,48 @@
 {
   "title": "FR",
 
+  "route": {
+    "new_game": "Nouvelle Partie",
+    "military": "Militaire",
+    "treasury": "Trésor",
+    "wonders": "Merveilles",
+    "civilians": "Civils",
+    "scientifics": "Scientifiques",
+    "commercials": "Commerciaux",
+    "guilds": "Guildes",
+    "armada": "Armada",
+    "leaders": "Leaders",
+    "cities": "Cities",
+    "statistics": "Statistiques",
+    "histories": "Historique des parties",
+    "history": "Historique de la partie",
+    "players": "Gestion des joueurs",
+    "new_player": "Nouveau joueur",
+    "edit_player": "Edition joueur",
+    "settings": "Paramètres",
+    "feedback": "Contactez-nous",
+    "rate": "Notez-nous",
+    "about": "À Propos",
+    "support": "Soutenez-nous"
+  },
+
+  "settings": {
+    "extensions": "Extensions",
+    "language": "Langues",
+    "english": "Anglais",
+    "french": "Français"
+  },
+
+  "feedback": {
+    "subject": "Sujet",
+    "message": "Message",
+    "send": "Envoyer"
+  },
+
+  "about": {
+    "developers": "Nos Développeurs"
+  },
+
   "support": {
     "buy_coffee": "Achetez-nous un café",
     "buy_coffee_2": "ou achetez-nous une Lambo"

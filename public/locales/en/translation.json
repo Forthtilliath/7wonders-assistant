@@ -1,6 +1,48 @@
 {
   "title": "EN",
 
+  "route": {
+    "new_game": "New Game",
+    "military": "Military",
+    "treasury": "Treasury",
+    "wonders": "Wonders",
+    "civilians": "Civilians",
+    "scientifics": "Scientifics",
+    "commercials": "Commercials",
+    "guilds": "Guilds",
+    "armada": "Armada",
+    "leaders": "Leaders",
+    "cities": "Cities",
+    "statistics": "Statistics",
+    "histories": "Game History",
+    "history": "Game History",
+    "players": "Players Management",
+    "new_player": "New Player",
+    "edit_player": "Edit Player",
+    "settings": "Settings",
+    "feedback": "Feedback & Support",
+    "rate": "Rate Us",
+    "about": "About",
+    "support": "Support Us"
+  },
+
+  "settings": {
+    "extensions": "Extensions",
+    "language": "Languages",
+    "english": "English",
+    "french": "French"
+  },
+
+  "feedback": {
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send"
+  },
+
+  "about": {
+    "developers": "Our Developers"
+  },
+
   "support": {
     "buy_coffee": "Buy Us a Coffee",
     "buy_coffee_2": "or Buy Us a Lambo"
