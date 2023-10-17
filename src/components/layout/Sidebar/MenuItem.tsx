@@ -1,8 +1,11 @@
 import { NavLink } from 'react-router-dom';
 import { cn } from '@/helpers';
 import { closeSidebar } from './';
+import { useTranslation } from 'react-i18next';
 
 export function MenuItem({ path, icon: Icon, label }: MenuItem) {
+  const { t } = useTranslation();
+
   return (
     <li>
       <NavLink
@@ -17,7 +20,7 @@ export function MenuItem({ path, icon: Icon, label }: MenuItem) {
         }
         onClick={closeSidebar}>
         <Icon />
-        <span className="ml-3">{label}</span>
+        <span className="ml-3">{t(label)}</span>
       </NavLink>
     </li>
   );
