@@ -15,7 +15,7 @@ function downloadFile(url: string, filename: string) {
 }
 
 export function useSave() {
-  const download = (data: unknown, filename = 'file.json') => {
+  const downloadAsJson = (data: unknown, filename = 'file.json') => {
     try {
       const json = JSON.stringify(data);
       const blob = new Blob([json], { type: 'application/json' });
@@ -50,5 +50,5 @@ export function useSave() {
     });
   };
 
-  return { download, saveAsImage } as const;
+  return { downloadAsJson, saveAsImage } as const;
 }

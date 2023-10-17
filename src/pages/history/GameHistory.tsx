@@ -16,7 +16,7 @@ export function GameHistory() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { idGame, createdAt, ...extensions } = data.game;
   const sectionRef = useRef<HTMLDivElement>(null);
-  const { download, saveAsImage } = useSave();
+  const { downloadAsJson, saveAsImage } = useSave();
 
   return (
     <main>
@@ -24,7 +24,7 @@ export function GameHistory() {
         <ButtonIcon
           icon={FaDownload}
           aria-label="Download As File"
-          onClick={() => download(data, 'game.json')}
+          onClick={() => downloadAsJson(data, 'game.json')}
         />
         <ButtonIcon
           icon={FaImage}
