@@ -3,8 +3,10 @@ import { logo_mobile, logo_tablet } from '@/assets/logo';
 import { CardDev } from '@/components/cards/CardDev';
 import { Section } from '@/components/layout';
 import { APP_CONST } from '@/constants/app';
+import { useTranslation } from 'react-i18next';
 
 export default function About() {
+  const { t } = useTranslation();
   return (
     <main>
       <Section className="flex h-full flex-col content-center items-center justify-evenly">
@@ -19,7 +21,7 @@ export default function About() {
         </div>
 
         <div>
-          <h2 className="my-4 text-center text-lg">Nos Développeurs</h2>
+          <h2 className="my-4 text-center text-lg">{t('about.developers')}</h2>
           <div className="flex justify-between gap-4">
             <CardDev
               href="https://github.com/Forthtilliath"
