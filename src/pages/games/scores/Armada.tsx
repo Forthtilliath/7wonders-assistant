@@ -11,7 +11,7 @@ export function Armada() {
   const extensions = useGameStore((s) => s.extensions);
 
   useEffect(() => {
-    if (!extensions.includes('Armada')) nextStep();
+    if (!extensions.includes('armada')) nextStep();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
