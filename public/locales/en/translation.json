@@ -30,7 +30,8 @@
     "extensions": "Extensions",
     "language": "Languages",
     "english": "English",
-    "french": "French"
+    "french": "French",
+    "saves": "Saves"
   },
 
   "feedback": {
