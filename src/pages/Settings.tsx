@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import { Section } from '@components/layout';
 import { GroupInputs } from '@components/shared';
 import { cn } from '@helpers';
@@ -38,7 +39,7 @@ export default function Settings() {
                         // === Base ===
                         'peer h-6 w-11 rounded-full',
                         // === After ===
-                        "after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:transition-all after:content-['']",
+                        "after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:transition-all after:content-['']",
                         // === Unchecked ===
                         'border after:border-wonders-blue after:bg-[#F2E257] dark:border-[#F2E257] dark:bg-[#151E36]',
                         // === Checked ===
@@ -61,17 +62,29 @@ export default function Settings() {
           <div className="mt-3 flex justify-center gap-2">
             <button
               onClick={() => i18n.changeLanguage('en')}
-              className={cn('border-b border-transparent px-10 py-2', {
-                'border-wonders-yellow': i18n.language === 'en',
+              className={cn('relative border-b border-transparent px-10 py-2', {
+                // 'border-wonders-yellow': i18n.language === 'en',
               })}>
               {t('settings.english')}
+              {i18n.language === 'en' && (
+                <motion.div
+                  layoutId="underline"
+                  className="absolute left-0 top-full h-1 w-full bg-wonders-yellow"
+                />
+              )}
             </button>
             <button
               onClick={() => i18n.changeLanguage('fr')}
-              className={cn('border-b border-transparent px-10 py-2', {
-                'border-wonders-yellow': i18n.language === 'fr',
+              className={cn('relative border-b border-transparent px-10 py-2', {
+                // 'border-wonders-yellow': i18n.language === 'fr',
               })}>
               {t('settings.french')}
+              {i18n.language === 'fr' && (
+                <motion.div
+                  layoutId="underline"
+                  className="absolute left-0 top-full h-1 w-full bg-wonders-yellow"
+                />
+              )}
             </button>
           </div>
         </GroupInputs>
