@@ -5,11 +5,11 @@ export const APP_CONST = {
 };
 
 export const EXTENSIONS = [
-  'Leaders',
-  'Cities',
-  'Babel',
-  'Armada',
-  'Edifice',
+  'leaders',
+  'cities',
+  'babel',
+  'armada',
+  'edifice',
 ] as const;
 
 export const CATEGORIES = [

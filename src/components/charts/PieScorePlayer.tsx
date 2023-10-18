@@ -14,6 +14,7 @@ export function PieScorePlayer({ scores, extensions }: Props) {
     scores
   ).reduce(
     (acc, [key, score]) => {
+      console.log(key, CATEG[key as Category].isExtension, !extensions.includes(key))
       if (CATEG[key as Category].isExtension && !extensions.includes(key)) {
         return acc;
       }

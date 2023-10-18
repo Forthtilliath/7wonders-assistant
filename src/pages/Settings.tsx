@@ -9,12 +9,12 @@ type Settings = Partial<Record<Extension, boolean>>;
 
 export default function Settings() {
   const { i18n, t } = useTranslation();
-  const [settings, setSettings] = useLocalStorage<Settings>('settings', {});
+  const [settings, setSettings] = useLocalStorage<Extension[]>('settings', []);
 
   const onChange: InputChangeEventHandler = (e) => {
     const formData = new FormData(e.currentTarget.form!);
-    const arrSettings = Array.from(formData).map(([k, v]) => [k, Boolean(v)]);
-    setSettings(Object.fromEntries(arrSettings));
+    const arrSettings = Array.from(formData).map(([k]) => k as Extension);
+    setSettings(arrSettings);
   };
 
   return (
@@ -28,9 +28,9 @@ export default function Settings() {
                   <label className="flex items-center gap-3 p-2 text-white">
                     <input
                       type="checkbox"
-                      className="h-4 w-4 accent-wonders-yellow"
+                      className="peer sr-only"
                       name={extension}
-                      defaultChecked={settings[extension]}
+                      checked={settings.includes(extension)}
                       onChange={onChange}
                     />
                     {extension}
@@ -40,6 +40,7 @@ export default function Settings() {
             </ul>
           </form>
         </GroupInputs>
+
         <GroupInputs title={t('settings.language')} className="mt-8">
           <div className="mt-3 flex justify-center gap-2">
             <button
@@ -58,6 +59,8 @@ export default function Settings() {
             </button>
           </div>
         </GroupInputs>
+
+        <GroupInputs title={t('settings.saves')} className="mt-8"></GroupInputs>
       </Section>
     </main>
   );

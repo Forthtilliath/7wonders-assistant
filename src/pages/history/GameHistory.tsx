@@ -13,8 +13,6 @@ import { useSave } from '@hooks';
 
 export function GameHistory() {
   const data = useLoaderData() as GameHistoriesComplete;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { idGame, createdAt, ...extensions } = data.game;
   const sectionRef = useRef<HTMLDivElement>(null);
   const { downloadAsJson, saveAsImage } = useSave();
 
@@ -35,10 +33,9 @@ export function GameHistory() {
 
       <Section>
         <div className="text-center">
-          {Object.entries(extensions).map(
-            ([extension, active]) =>
-              active && <Badge key={extension} label={extension} />
-          )}
+          {data.game.extensions.map((extension) => (
+            <Badge key={extension} label={extension} />
+          ))}
         </div>
 
         <div
@@ -50,9 +47,7 @@ export function GameHistory() {
             <PieScorePlayer
               key={'pie' + scores.idPlayer}
               scores={filterKeys(scores, [...CATEGORIES])}
-              extensions={Object.entries(extensions)
-                .filter(([, v]) => v)
-                .map(([k]) => k)}
+              extensions={data.game.extensions}
             />
           ))}
         </div>

@@ -10,11 +10,7 @@ export function createTableGame(db: IDBDatabase) {
     autoIncrement: true,
   });
   objectStore.createIndex('createdAt', 'createdAt', { unique: false });
-  objectStore.createIndex('leaders', 'leaders', { unique: false });
-  objectStore.createIndex('cities', 'cities', { unique: false });
-  objectStore.createIndex('babel', 'babel', { unique: false });
-  objectStore.createIndex('armada', 'armada', { unique: false });
-  objectStore.createIndex('edifice', 'edifice', { unique: false });
+  objectStore.createIndex('extensions', 'extensions', { unique: false });
 }
 
 export async function createGame(

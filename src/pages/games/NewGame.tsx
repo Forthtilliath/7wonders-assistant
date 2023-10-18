@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Section } from '@/components/layout';
-import type { Game, Player } from '@types';
+import type { Player } from '@types';
 import { HeaderOptions } from '@components/layout/HeaderOptions';
 import { ButtonIcon } from '@components/shared/ButtonIcon';
 import { BsCheckLg, GiMeeple } from '@components/shared/Icons';
 import { ButtonNewPlayer, CardPlayer } from '@components/cards';
 import { useGameStore } from '@lib';
 import { usePlayers } from '@hooks';
-import { EXTENSIONS } from '@constants';
 
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 7;
@@ -55,10 +54,11 @@ export default function NewGame() {
   }, [playersInGame]);
 
   const launchGame = () => {
-    const extensions = {
-      ...EXTENSIONS.reduce((a, e) => ({ ...a, [e]: false }), {} as Game),
-      ...JSON.parse(localStorage.getItem('settings') ?? '{}'),
-    };
+    // const extensions = {
+    //   ...EXTENSIONS.reduce((a, e) => ({ ...a, [e]: false }), {} as Game),
+    //   ...JSON.parse(localStorage.getItem('settings') ?? '{}'),
+    // };
+    const extensions = JSON.parse(localStorage.getItem('settings') ?? '[]')
     setExtensions(extensions);
     navigate('/scores/military');
   };

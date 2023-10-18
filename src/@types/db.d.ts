@@ -9,7 +9,8 @@ export type Player = {
 export type Game = {
   idGame: number;
   createdAt: number;
-} & Record<Extension, boolean>;
+  extensions: Extension[];
+};
 
 export type GameHistory = {
   idGame: number;
