@@ -40,7 +40,8 @@
   },
 
   "about": {
-    "developers": "Nos Développeurs"
+    "developers": "Nos Développeurs",
+    "version": "Version"
   },
 
   "support": {
