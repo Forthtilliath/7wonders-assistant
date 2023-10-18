@@ -45,6 +45,7 @@
 
   "support": {
     "buy_coffee": "Buy Us a Coffee",
-    "buy_coffee_2": "or Buy Us a Lambo"
+    "buy_coffee_2": "or Buy Us a Lambo",
+    "buy_coffee_aria_label": "Support by buying a coffee"
   }
 }
