@@ -14,6 +14,8 @@
 - [x] Ajouter une bordure à l'icone Favorite
 - [x] Les pages Settings, Feedback et About ont un bouton retour 
 - [ ] Ajouter un gitaction pour les tests unitaires : https://docs.cypress.io/guides/continuous-integration/github-actions
+- [ ] Supprimer un joueur ne le supprime pas vraiment
+  - [ ] Ajouter un état (idem que favorite & archived)
 
 - [ ] Possibilité d'enregistrer les données dans un fichier
   - [ ] des joueurs
@@ -59,6 +61,8 @@
 - [ ] Speed click génère des doublons de composants sur les composants animés ⚠️
 - [ ] Corriger duplication page quand on scroll trop vite
 - [ ] Des games ont été crée je ne sais quand, mais ca faisait un bug dans le loader de GameHistory
+- [ ] Bouton download ne fonctionne pas sur mobile (permissions ???)
+- [ ] Fix la size des titles dans le header
 
 # Tests Unitaires
 
