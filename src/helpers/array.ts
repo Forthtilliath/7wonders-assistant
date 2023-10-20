@@ -19,12 +19,10 @@ export const flattenRoutes = (routes: Route[]): MenuItem[] => {
   return flattenedRoutes;
 };
 
-type GetLabelAndPrevious = (
+export const getLabelAndPrevious = (
   pathname: string,
   routes: Route[]
-) => { label?: string; previous?: boolean };
-
-export const getLabelAndPrevious: GetLabelAndPrevious = (pathname, routes) => {
+): { label: string | undefined; previous: boolean | undefined } => {
   let label: string | undefined;
   let previous: boolean | undefined;
 
