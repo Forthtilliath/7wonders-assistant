@@ -20,6 +20,15 @@ i18n
     fallbackLng: 'en',
     debug: true,
     load: 'languageOnly',
+    detection: {
+      htmlTag: document.documentElement,
+      convertDetectedLanguage: (lng) => lng.split('-')[0],
+      lookupLocalStorage: 'language',
+    },
   });
+
+i18n.on('languageChanged', (lng) => {
+  document.documentElement.setAttribute('lang', lng);
+});
 
 export default i18n;
