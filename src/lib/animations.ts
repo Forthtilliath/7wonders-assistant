@@ -12,3 +12,27 @@ export const scienceAnimation = {
     },
   },
 };
+
+export const modalAnimation = {
+  visible: {
+    opacity: 1,
+    y: 0,
+  },
+  hidden: {
+    opacity: 0,
+    y: -100,
+  },
+};
+
+export const overlayAnimation = {
+  visible: {
+    opacity: 1,
+    display: 'flex',
+  },
+  hidden: {
+    opacity: 0,
+    transitionEnd: {
+      display: 'none',
+    },
+  },
+};
