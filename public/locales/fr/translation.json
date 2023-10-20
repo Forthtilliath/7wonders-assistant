@@ -31,7 +31,14 @@
     "language": "Langues",
     "english": "Anglais",
     "french": "Français",
-    "saves": "Sauvegardes"
+    "saves": "Sauvegardes",
+    "save_data": "Sauvegarder les données",
+    "load_data": "Charger les données",
+    "import": "Importer les données",
+    "confirm_load_data": "Confirmer",
+    "nb_players": "Nombre de joueurs ",
+    "nb_games": "Nombre de parties ",
+    "preview_data": "Aperçu des données"
   },
 
   "feedback": {
