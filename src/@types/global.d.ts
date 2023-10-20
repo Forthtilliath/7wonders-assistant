@@ -22,6 +22,7 @@ declare global {
   type FormSubmitEventHandler = React.FormEventHandler<HTMLFormElement>;
   type InputChangeEventHandler = React.ChangeEventHandler<HTMLInputElement>;
   type ButtonClickEventHandler = React.MouseEventHandler<HTMLButtonElement>;
+  type DivClickEventHandler = React.MouseEventHandler<HTMLDivElement>;
 
   type SaveScoreEventHandler = (idPlayer: number) => InputChangeEventHandler;
 
