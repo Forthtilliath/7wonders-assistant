@@ -1,7 +1,8 @@
-import { cn } from '@/helpers';
 import { BiSolidPyramid } from '@components/shared/Icons';
+import { cn } from '@helpers';
 import { APP_CONST, ROUTES_MENU } from '@constants';
-import { closeSidebar, MenuItem } from './';
+import { closeSidebar } from './';
+import { MenuItem } from './MenuItem';
 
 type Props = {
   isOpen: boolean;

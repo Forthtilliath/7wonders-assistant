@@ -1,7 +1,6 @@
 import { useState } from 'react';
-
+import { sidebarActions } from './';
 import { Sidebar } from './Sidebar';
-import { sidebarActions } from './sidebarActions';
 
 export const SidebarGlobal = () => {
   const [isOpen, setIsOpen] = useState(false);
