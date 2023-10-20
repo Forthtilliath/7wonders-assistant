@@ -28,3 +28,20 @@ export function capitalize(str: string): string {
   const remainingChars = str.slice(1);
   return firstChar + remainingChars;
 }
+
+
+/**
+ * Generates a VersionObject from a version string.
+ * 
+ * @param version - The input string representing a version number in the format "major.minor.patch".
+ * @returns An object with `major`, `minor`, and `patch` properties representing the version number.
+ * 
+ * @example
+ * const versionString = "1.2.3";
+ * const versionObject = generateVersionObject(versionString);
+ * console.log(versionObject); // { major: 1, minor: 2, patch: 3 }
+ */
+export function generateVersionObject(version: string) {
+  const [major, minor, patch] = version.split('.').map(Number);
+  return { major, minor, patch };
+}
