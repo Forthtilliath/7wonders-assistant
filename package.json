@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "forth:merge": "tsc && git checkout dev && git merge dev-forth && git push origin dev:dev && git checkout dev-forth",
-    "mike:merge": "tsc && git checkout dev && git merge dev-mike && git push origin dev:dev && git checkout dev-mike",
+    "mike:merge": "git checkout dev && git merge dev-mike && git push origin dev:dev && git checkout dev-mike",
     "pull": "git pull origin dev",
     "test": "vitest --ui",
     "tsc": "tsc --watch",
