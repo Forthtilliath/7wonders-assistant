@@ -32,10 +32,9 @@
     "english": "English",
     "french": "French",
     "saves": "Saves",
-    "save_data": "Save data",
-    "load_data": "Load data",
-    "import": "Import data",
-    "confirm_load_data": "Confirm",
+    "save_data": "Export data",
+    "load_data": "Import data",
+    "confirm_load_data": "Confirm import",
     "nb_players": "Number of players",
     "nb_games": "Number of games",
     "preview_data": "Aperçu des données"

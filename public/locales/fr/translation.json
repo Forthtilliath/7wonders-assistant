@@ -32,10 +32,9 @@
     "english": "Anglais",
     "french": "Français",
     "saves": "Sauvegardes",
-    "save_data": "Sauvegarder les données",
-    "load_data": "Charger les données",
-    "import": "Importer les données",
-    "confirm_load_data": "Confirmer",
+    "save_data": "Exporter les données",
+    "load_data": "Importer les données",
+    "confirm_load_data": "Confirmer l'importation",
     "nb_players": "Nombre de joueurs ",
     "nb_games": "Nombre de parties ",
     "preview_data": "Aperçu des données"
