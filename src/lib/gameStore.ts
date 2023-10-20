@@ -11,8 +11,8 @@ function produce<T>(cb: (state: T) => void) {
 }
 
 interface State {
-  extensions: Record<Extension, boolean>;
-  setExtensions: (extensions: Record<Extension, boolean>) => void;
+  extensions: Extension[];
+  setExtensions: (extensions: Extension[]) => void;
 
   players: Player[];
   setPlayers: (players: Player[]) => void;
@@ -27,7 +27,7 @@ export const useGameStore = create<State>()(
   devtools(
     persist(
       (set) => ({
-        extensions: {} as Record<Extension, boolean>,
+        extensions: [],
         setExtensions: (extensions) =>
           set(() => ({ extensions }), undefined, 'SET_EXTENSIONS'),
 

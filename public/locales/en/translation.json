@@ -30,7 +30,8 @@
     "extensions": "Extensions",
     "language": "Languages",
     "english": "English",
-    "french": "French"
+    "french": "French",
+    "saves": "Saves"
   },
 
   "feedback": {
@@ -40,11 +41,13 @@
   },
 
   "about": {
-    "developers": "Our Developers"
+    "developers": "Our Developers",
+    "version": "Version"
   },
 
   "support": {
     "buy_coffee": "Buy Us a Coffee",
-    "buy_coffee_2": "or Buy Us a Lambo"
+    "buy_coffee_2": "or Buy Us a Lambo",
+    "buy_coffee_aria_label": "Support by buying a coffee"
   }
 }

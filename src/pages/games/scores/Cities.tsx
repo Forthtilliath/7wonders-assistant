@@ -18,14 +18,14 @@ export function Cities() {
 
   useEffect(() => {
     if (players.length === 0) navigate('/');
-    if (!extensions?.Cities) nextStep();
+    if (!extensions.includes('cities')) nextStep();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const nextStep = async () => {
     if (isCreated.current) return;
     isCreated.current = true;
-    const game = { ...extensions, createdAt: Date.now() };
+    const game = { extensions, createdAt: Date.now() };
     const { idGame } = await createGame(game);
 
     const gameHistories = Object.entries(scores).map<GameHistory>(

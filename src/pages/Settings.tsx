@@ -9,12 +9,12 @@ type Settings = Partial<Record<Extension, boolean>>;
 
 export default function Settings() {
   const { i18n, t } = useTranslation();
-  const [settings, setSettings] = useLocalStorage<Settings>('settings', {});
+  const [settings, setSettings] = useLocalStorage<Extension[]>('settings', []);
 
   const onChange: InputChangeEventHandler = (e) => {
     const formData = new FormData(e.currentTarget.form!);
-    const arrSettings = Array.from(formData).map(([k, v]) => [k, Boolean(v)]);
-    setSettings(Object.fromEntries(arrSettings));
+    const arrSettings = Array.from(formData).map(([k]) => k as Extension);
+    setSettings(arrSettings);
   };
 
   return (
@@ -25,21 +25,38 @@ export default function Settings() {
             <ul className="mt-3 flex flex-col gap-2">
               {EXTENSIONS.map((extension) => (
                 <li key={extension}>
-                  <label className="flex items-center gap-3 p-2 text-white">
+                  <label className="relative mb-4 inline-flex cursor-pointer items-center">
                     <input
                       type="checkbox"
-                      className="h-4 w-4 accent-wonders-yellow"
+                      className="peer sr-only"
                       name={extension}
-                      defaultChecked={settings[extension]}
+                      checked={settings.includes(extension)}
                       onChange={onChange}
                     />
-                    {extension}
+                    <div
+                      className={cn(
+                        // === Base ===
+                        'peer h-6 w-11 rounded-full',
+                        // === After ===
+                        "after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:transition-all after:content-['']",
+                        // === Unchecked ===
+                        'border after:border-wonders-blue after:bg-[#F2E257] dark:border-[#F2E257] dark:bg-[#151E36]',
+                        // === Checked ===
+                        'peer-checked:bg-[#235782] peer-checked:after:translate-x-full peer-checked:after:border-[#235782]',
+                        // === Focused ===
+                        'peer-focus:ring-2 peer-focus:ring-[#F2E257]'
+                      )}
+                    />
+                    <span className="ml-3 text-sm font-medium capitalize text-gray-900 dark:text-gray-300">
+                      {extension}
+                    </span>
                   </label>
                 </li>
               ))}
             </ul>
           </form>
         </GroupInputs>
+
         <GroupInputs title={t('settings.language')} className="mt-8">
           <div className="mt-3 flex justify-center gap-2">
             <button
@@ -58,6 +75,8 @@ export default function Settings() {
             </button>
           </div>
         </GroupInputs>
+
+        <GroupInputs title={t('settings.saves')} className="mt-8"></GroupInputs>
       </Section>
     </main>
   );

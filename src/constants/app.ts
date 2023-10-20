@@ -1,14 +1,15 @@
 export const APP_CONST = {
   title: '7 Wonders: Assistant',
   version: '0.1.0',
+  tips_link: 'https://streamlabs.com/mike_dreeman/tip'
 };
 
 export const EXTENSIONS = [
-  'Leaders',
-  'Cities',
-  'Babel',
-  'Armada',
-  'Edifice',
+  'leaders',
+  'cities',
+  'babel',
+  'armada',
+  'edifice',
 ] as const;
 
 export const CATEGORIES = [

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import ReactJson from 'react-json-view';
 import { Link, useLoaderData } from 'react-router-dom';
 import type { GameHistoriesComplete } from '@types';
@@ -8,6 +9,7 @@ import { formatDate } from '@helpers';
 
 export default function History() {
   const games = useLoaderData() as GameHistoriesComplete[];
+  const { i18n } = useTranslation();
 
   return (
     <main>
@@ -19,12 +21,16 @@ export default function History() {
         {games.length === 0 && <p>No game found</p>}
         {games.map((gameHistories) => (
           <div key={gameHistories.game.idGame}>
-            <header>
+            <header className="flex justify-between">
               <h2>
                 {gameHistories.game.idGame} -{' '}
-                {formatDate(gameHistories.game.createdAt)} -{' '}
-                <Link to={'/history/' + gameHistories.game.idGame}>Show the game</Link>
+                <Link to={'/history/' + gameHistories.game.idGame}>
+                  Show the game
+                </Link>
               </h2>
+              <span>
+                {formatDate(gameHistories.game.createdAt, i18n.language)}
+              </span>
             </header>
             <main className="flex">
               {gameHistories.scores.map((score) => (

@@ -40,7 +40,7 @@ export function CardPlayer({
       />
       <h2
         className={cn(
-          'text-xl/1 absolute bottom-0 w-full truncate bg-black/50 p-px text-center font-medium sm:p-1',
+          'text-xl/1 absolute bottom-0 w-full truncate bg-black/50 p-px text-center font-medium',
           classNameH2
         )}>
         {name}
