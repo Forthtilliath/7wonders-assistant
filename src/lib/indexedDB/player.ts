@@ -1,4 +1,4 @@
-import { Player } from '@/@types';
+import { Player } from '@types';
 import { DB } from './dbUtils';
 
 export const TABLE_PLAYER = 'player';

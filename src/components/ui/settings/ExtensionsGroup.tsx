@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { GroupInputs } from '@/components/shared';
+import { GroupInputs } from '@components/shared';
 import { cn } from '@helpers';
 import { useLocalStorage } from '@hooks';
 import { EXTENSIONS } from '@constants';

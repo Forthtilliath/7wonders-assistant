@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Section } from '@/components/layout';
 import type { Player } from '@types';
+import { Section } from '@components/layout';
 import { HeaderOptions } from '@components/layout/HeaderOptions';
 import { ButtonIcon } from '@components/shared/ButtonIcon';
 import { BsCheckLg, GiMeeple } from '@components/shared/Icons';
@@ -58,7 +58,7 @@ export default function NewGame() {
     //   ...EXTENSIONS.reduce((a, e) => ({ ...a, [e]: false }), {} as Game),
     //   ...JSON.parse(localStorage.getItem('settings') ?? '{}'),
     // };
-    const extensions = JSON.parse(localStorage.getItem('settings') ?? '[]')
+    const extensions = JSON.parse(localStorage.getItem('settings') ?? '[]');
     setExtensions(extensions);
     navigate('/scores/military');
   };
@@ -95,8 +95,8 @@ export default function NewGame() {
           </main>
         </header>
 
-        <Section className="@container w-full">
-          <div className="@[450px]:grid-cols-4 grid grid-cols-3 gap-2">
+        <Section className="w-full @container">
+          <div className="grid grid-cols-3 gap-2 @[450px]:grid-cols-4">
             {sortedPlayed.map((player) => (
               <CardPlayer
                 key={player.idPlayer}

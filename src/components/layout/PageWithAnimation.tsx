@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import { useLocation } from 'react-router-dom';
-import { cn } from '@/helpers';
 import { domAnimation, LazyMotion, m } from 'framer-motion';
+import { cn } from '@helpers';
 
 type Props = PropsWithChildren<PropsWithClassname>;
 

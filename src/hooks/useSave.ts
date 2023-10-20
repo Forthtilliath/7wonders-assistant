@@ -1,5 +1,5 @@
-import { assertsIsDefined } from '@/helpers';
 import html2canvas, { Options } from 'html2canvas';
+import { assertsIsDefined } from '@helpers';
 
 function downloadFile(url: string, filename: string) {
   const link = document.createElement('a');

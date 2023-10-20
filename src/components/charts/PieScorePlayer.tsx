@@ -1,8 +1,8 @@
 import { Pie } from 'react-chartjs-2';
-import { CATEG } from '@/constants';
-import { capitalize } from '@/helpers';
 import 'chart.js/auto';
 import { Scores } from '@types';
+import { capitalize } from '@helpers';
+import { CATEG } from '@constants';
 
 type Props = {
   scores: Scores;
@@ -14,7 +14,11 @@ export function PieScorePlayer({ scores, extensions }: Props) {
     scores
   ).reduce(
     (acc, [key, score]) => {
-      console.log(key, CATEG[key as Category].isExtension, !extensions.includes(key))
+      console.log(
+        key,
+        CATEG[key as Category].isExtension,
+        !extensions.includes(key)
+      );
       if (CATEG[key as Category].isExtension && !extensions.includes(key)) {
         return acc;
       }

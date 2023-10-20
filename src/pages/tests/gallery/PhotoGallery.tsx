@@ -1,5 +1,4 @@
-import { usePhotoGallery } from '@/hooks/usePhotoGallery';
-
+import { usePhotoGallery } from '@hooks';
 
 export function PhotoGallery() {
   const { photos } = usePhotoGallery();

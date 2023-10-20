@@ -1,15 +1,15 @@
 import { useRef } from 'react';
 import { useLoaderData } from 'react-router-dom';
-import { PieScorePlayer } from '@/components/charts/PieScorePlayer';
-import { TableScores } from '@/components/charts/TableScores';
-import { CATEGORIES } from '@/constants';
-import { filterKeys } from '@/helpers/object';
 import type { GameHistoriesComplete } from '@types';
 import { HeaderOptions, Section } from '@components/layout';
 import { ButtonIcon } from '@components/shared';
 import { FaDownload, FaImage } from '@components/shared/Icons';
+import { PieScorePlayer } from '@components/charts/PieScorePlayer';
+import { TableScores } from '@components/charts/TableScores';
 import { Badge } from '@components/ui/Badge';
+import { filterKeys } from '@helpers';
 import { useSave } from '@hooks';
+import { CATEGORIES } from '@constants';
 
 export function GameHistory() {
   const data = useLoaderData() as GameHistoriesComplete;

@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGameStore } from '@/lib';
 import { HeaderOptions, Section } from '@components/layout';
 import { ButtonIcon } from '@components/shared';
 import { AiOutlineArrowRight } from '@components/shared/Icons';
 import { GroupScoreInputs } from '@components/ui';
+import { useGameStore } from '@lib';
 
 export function Armada() {
   const navigate = useNavigate();

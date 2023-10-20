@@ -3,9 +3,8 @@ import {
   closeSidebar,
   openSidebar,
   SidebarGlobal,
-} from '@/components/layout/Sidebar';
-import { APP_CONST } from '@/constants/app';
-import { ROUTES_MENU } from '@/constants/routes';
+} from '@components/layout/Sidebar';
+import { APP_CONST, ROUTES_MENU } from '@constants';
 import { render, screen, userEvent, waitFor } from '../tests-utils';
 
 beforeEach(() => {

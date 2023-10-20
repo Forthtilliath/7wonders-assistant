@@ -1,4 +1,4 @@
-import { IconProps } from '@/components/shared/Icons';
+import { IconProps } from '@components/shared/Icons';
 
 declare global {
   type Icon = (props: IconProps) => React.JSX.Element;

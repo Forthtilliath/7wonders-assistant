@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { cn } from '@/helpers';
+import { cn } from '@helpers';
 
 export function Cell({
   children,

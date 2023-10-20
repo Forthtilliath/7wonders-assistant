@@ -1,6 +1,6 @@
-import { Section } from '@/components/layout';
-import { generateURL } from '@/helpers/string';
 import { useTranslation } from 'react-i18next';
+import { Section } from '@components/layout';
+import { generateURL } from '@helpers';
 
 export default function Feedback() {
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {

@@ -1,7 +1,7 @@
-import { cn } from '@/helpers';
+import { cn } from '@helpers';
 
 type Props = PropsWithClassname<{
-  label: string
+  label: string;
 }>;
 
 export function Badge({ label, className }: Props) {
