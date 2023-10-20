@@ -1,21 +1,45 @@
 import { useTranslation } from 'react-i18next';
+import { ModalLoadSave } from '@/components/ui/ModalLoadSave';
 import { motion } from 'framer-motion';
 import { Section } from '@components/layout';
 import { GroupInputs } from '@components/shared';
 import { cn } from '@helpers';
-import { useLocalStorage } from '@hooks';
-import { EXTENSIONS } from '@constants';
+import { getGames, getPlayers } from '@lib';
+import { useLocalStorage, useSave } from '@hooks';
+import { APP_CONST, EXTENSIONS } from '@constants';
 
 type Settings = Partial<Record<Extension, boolean>>;
 
 export default function Settings() {
   const { i18n, t } = useTranslation();
-  const [settings, setSettings] = useLocalStorage<Extension[]>('settings', []);
+  const [extensions, setExtensions] = useLocalStorage<Extension[]>(
+    'extensions',
+    []
+  );
+  const { downloadAsJson } = useSave();
 
   const onChange: InputChangeEventHandler = (e) => {
     const formData = new FormData(e.currentTarget.form!);
-    const arrSettings = Array.from(formData).map(([k]) => k as Extension);
-    setSettings(arrSettings);
+    const arrExtensions = Array.from(formData).map(([k]) => k as Extension);
+    setExtensions(arrExtensions);
+  };
+
+  const saveData = async () => {
+    const data = {
+      settings: {
+        extensions,
+        language: i18n.language,
+        version: APP_CONST.version,
+      },
+      players: await getPlayers(),
+      history: await getGames(),
+    };
+    console.log(data);
+    downloadAsJson(data, 'save-7wonders.json');
+  };
+
+  const loadData: FormSubmitEventHandler = (e) => {
+    e.preventDefault();
   };
 
   return (
@@ -31,7 +55,7 @@ export default function Settings() {
                       type="checkbox"
                       className="peer sr-only"
                       name={extension}
-                      checked={settings.includes(extension)}
+                      checked={extensions.includes(extension)}
                       onChange={onChange}
                     />
                     <div
@@ -41,11 +65,11 @@ export default function Settings() {
                         // === After ===
                         "after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:transition-all after:content-['']",
                         // === Unchecked ===
-                        'border after:border-wonders-blue after:bg-[#F2E257] dark:border-[#F2E257] dark:bg-[#151E36]',
+                        'border after:border-wonders-blue after:bg-wonders-yellow dark:border-wonders-yellow dark:bg-[#151E36]',
                         // === Checked ===
                         'peer-checked:bg-[#235782] peer-checked:after:translate-x-full peer-checked:after:border-[#235782]',
                         // === Focused ===
-                        'peer-focus:ring-2 peer-focus:ring-[#F2E257]'
+                        'peer-focus:ring-2 peer-focus:ring-wonders-yellow'
                       )}
                     />
                     <span className="ml-3 text-sm font-medium capitalize text-gray-900 dark:text-gray-300">
@@ -89,7 +113,10 @@ export default function Settings() {
           </div>
         </GroupInputs>
 
-        <GroupInputs title={t('settings.saves')} className="mt-8"></GroupInputs>
+        <GroupInputs title={t('settings.saves')} className="mt-8">
+          <button onClick={saveData}>{t('settings.save_data')}</button>
+          <ModalLoadSave loadData={loadData} />
+        </GroupInputs>
       </Section>
     </main>
   );
