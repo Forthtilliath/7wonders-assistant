@@ -1,16 +1,42 @@
-import { GameHistoriesComplete, Player } from "@types";
-
 type Data_0_1_0 = {
   settings: {
-    extensions: Extension[];
+    extensions: ('leaders' | 'cities' | 'babel' | 'armada' | 'edifice')[];
     language: string;
     version: string;
   };
-  players: Player[];
-  history: GameHistoriesComplete[];
+  players: {
+    idPlayer: number;
+    name: string;
+    avatar: string;
+    isFavorite: boolean;
+    isArchived: boolean;
+  }[];
+  history: {
+    game: {
+      idGame: number;
+      createdAt: number;
+      extensions: ('leaders' | 'cities' | 'babel' | 'armada' | 'edifice')[];
+    };
+    scores: {
+      idGame: number;
+      idPlayer: number;
+      total: number;
+      ranking: number;
+      military: number;
+      treasury: number;
+      wonders: number;
+      civilians: number;
+      scientifics: number;
+      commercials: number;
+      guilds: number;
+      leaders?: number;
+      cities?: number;
+      armada?: number;
+    }[];
+  }[];
 };
 
-export type DataVersion = Data_0_1_0
+export type DataVersion = Data_0_1_0;
 
 export type DataLastVersion = Data_0_1_0;
 
