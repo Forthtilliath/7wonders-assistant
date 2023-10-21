@@ -1,6 +1,9 @@
-import { createTableGame } from './game';
-import { createTableHistory as createTableGameHistory } from './gameHistory';
-import { createTablePlayer } from './player';
+import { clearGames, createTableGame } from './game';
+import {
+  clearGamesHistory,
+  createTableHistory as createTableGameHistory,
+} from './gameHistory';
+import { clearPlayers, createTablePlayer } from './player';
 
 const DATABASE = '7Wonders-Assistant';
 
@@ -58,19 +61,9 @@ function execute<TResult = unknown, TReturn = TResult>(
 }
 
 async function clear() {
-  const db = await DB.open();
-
-  const transaction = db.transaction(DATABASE, 'readwrite');
-  const objectStore = transaction.objectStore(DATABASE);
-  const request = objectStore.clear();
-
-  return await DB.execute<undefined, void>(request, {
-    onError: (req) => {
-      console.error('Erreur lors de la suppression des données', req.error);
-      return req.error;
-    },
-    onSuccess: () => console.log('Base de données vidée avec succès'),
-  });
+  clearGamesHistory();
+  clearGames();
+  clearPlayers();
 }
 
 export const DB: IndexedDB = {
