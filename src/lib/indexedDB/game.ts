@@ -38,7 +38,7 @@ export async function getGame(idGame: number) {
 
   return DB.execute<Game>(request, {
     onError: (req) => {
-      console.error('Erreur lors de la récupération du joueur', req.error);
+      console.error('Erreur lors de la récupération de la partie', req.error);
       return req.error;
     },
   });
@@ -52,7 +52,7 @@ export async function getGames() {
 
   return DB.execute<Game[], Promise<GameHistoriesComplete[]>>(request, {
     onError: (req) => {
-      console.error('Erreur lors de la récupération du joueur', req.error);
+      console.error('Erreur lors de la récupération des parties', req.error);
       return req.error;
     },
     onSuccess: async (req) => {
@@ -62,5 +62,20 @@ export async function getGames() {
 
       return games;
     },
+  });
+}
+
+export async function clearGames() {
+  const db = await DB.open();
+  const transaction = db.transaction(TABLE_GAME, 'readwrite');
+  const objectStore = transaction.objectStore(TABLE_GAME);
+  const request = objectStore.clear();
+
+  return await DB.execute(request, {
+    onError: (req) => {
+      console.error('Erreur lors de la suppression des parties', req.error);
+      return req.error;
+    },
+    onSuccess: () => console.log('Store des parties vidé avec succès'),
   });
 }
