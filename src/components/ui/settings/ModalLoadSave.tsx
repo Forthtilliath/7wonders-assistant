@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { domAnimation, LazyMotion, m } from 'framer-motion';
-import { assertsIsDefined } from '@helpers';
+import { assertsIsDefined, cn } from '@helpers';
 import { DataVersion, modalAnimation, overlayAnimation } from '@lib';
 import { useLoadFile } from '@hooks';
+import { APP_CONST } from '@constants';
 
 type Props = {
   loadData: (data: DataVersion) => void;
@@ -85,6 +86,18 @@ function Modal({ loadData, close, isOpen }: ModalProps) {
             <div>
               <h3>{t('settings.preview_data')}</h3>
               <ul>
+                <li className="pl-2">
+                  - {t('settings.version')}:{' '}
+                  <span
+                    className={cn('', {
+                      'text-red-700':
+                        data?.settings.version !== APP_CONST.version,
+                      'text-green-700':
+                        data?.settings.version === APP_CONST.version,
+                    })}>
+                    {data?.settings.version ?? '-'}
+                  </span>
+                </li>
                 <li className="pl-2">
                   - {t('settings.nb_players')}: {data?.players.length ?? '-'}
                 </li>
