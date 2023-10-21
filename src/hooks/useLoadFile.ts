@@ -22,6 +22,7 @@ export function useLoadFile() {
         const data = JSON.parse(content);
         // Conversion data to last version
         // if (data.s)
+        // TODO: Version si le type correspond
         setData(data);
       }
     };
