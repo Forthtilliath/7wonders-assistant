@@ -17,7 +17,7 @@ const config: Config = {
       },
       colors: {
         wonders: {
-          blue: { DEFAULT: '#202f54', dark: '#151e36' },
+          blue: { light: '#235782', DEFAULT: '#202f54', dark: '#151e36' },
           yellow: { DEFAULT: '#fde504' },
         },
       },
