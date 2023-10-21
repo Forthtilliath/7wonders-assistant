@@ -34,6 +34,7 @@
     "saves": "Saves",
     "save_data": "Export data",
     "load_data": "Import data",
+    "clear_data": "Clear data",
     "confirm_load_data": "Confirm import",
     "version": "Version",
     "nb_players": "Number of players",
