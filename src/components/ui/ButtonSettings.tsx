@@ -18,9 +18,10 @@ export function ButtonSettings({
       className={cn(
         'rounded border-2 px-4 py-2 text-sm font-bold uppercase shadow outline-none transition-all duration-150 ease-linear focus:outline-none',
         {
-          'border-blue-950 bg-wonders-blue active:bg-wonders-blue-light': color === 'primary',
+          'active:bg-wonders-blue-light border-blue-950 bg-wonders-blue':
+            color === 'primary',
           'border-red-950 bg-red-800 active:bg-red-600': color === 'warning',
-          '': buttonProps.disabled,
+          'bg-transparent active:bg-transparent/10': buttonProps.disabled,
         },
         className
       )}
