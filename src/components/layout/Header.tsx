@@ -64,7 +64,7 @@ export function Header() {
           )}
         </div>
 
-        <h1 className="ml-2 flex-grow text-xl font-semibold">
+        <h1 className="-mt-1 ml-2 flex-grow text-xl font-semibold">
           {pageDetails?.label ? t(pageDetails.label) : ''}
         </h1>
       </div>
