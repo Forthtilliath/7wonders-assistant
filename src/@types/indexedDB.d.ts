@@ -21,4 +21,6 @@ interface IndexedDB {
       onSuccess?: (req: IDBRequest<TResult>) => TResult;
     }
   ): Promise<TResult>;
+  
+  clear: () => Promise<void>; 
 }

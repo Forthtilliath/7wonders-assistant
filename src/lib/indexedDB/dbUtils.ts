@@ -57,7 +57,24 @@ function execute<TResult = unknown, TReturn = TResult>(
   });
 }
 
+async function clear() {
+  const db = await DB.open();
+
+  const transaction = db.transaction(DATABASE, 'readwrite');
+  const objectStore = transaction.objectStore(DATABASE);
+  const request = objectStore.clear();
+
+  return await DB.execute<undefined, void>(request, {
+    onError: (req) => {
+      console.error('Erreur lors de la suppression des données', req.error);
+      return req.error;
+    },
+    onSuccess: () => console.log('Base de données vidée avec succès'),
+  });
+}
+
 export const DB: IndexedDB = {
   open,
   execute,
+  clear,
 };
