@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { DB } from '@lib/indexedDB/dbUtils';
 import { GroupInputs } from '@components/shared';
 import { getLocalStorage } from '@helpers';
 import type { DataLastVersion, DataVersion } from '@lib';
@@ -33,6 +34,11 @@ export function SavesGroup() {
     console.log(data);
   };
 
+  const clearData = () => {
+    // TODO: Open modal to confirm
+    DB.clear();
+  };
+
   return (
     <GroupInputs title={t('settings.saves')} className="mt-8">
       <ButtonSettings color="primary" onClick={saveData}>
@@ -43,7 +49,7 @@ export function SavesGroup() {
           {t('settings.load_data')}
         </ButtonSettings>
       </ModalLoadSave>
-      <ButtonSettings color="warning" onClick={console.log}>
+      <ButtonSettings color="warning" onClick={clearData}>
         {t('settings.clear_data')}
       </ButtonSettings>
     </GroupInputs>
