@@ -85,3 +85,18 @@ export async function deletePlayer(idPlayer: number) {
   //   },
   // });
 }
+
+export async function clearPlayers() {
+  const db = await DB.open();
+  const transaction = db.transaction(TABLE_PLAYER, 'readwrite');
+  const objectStore = transaction.objectStore(TABLE_PLAYER);
+  const request = objectStore.clear();
+
+  return await DB.execute(request, {
+    onError: (req) => {
+      console.error('Erreur lors de la suppression des joueurs', req.error);
+      return req.error;
+    },
+    onSuccess: () => console.log('Store des joueurs vidé avec succès'),
+  });
+}
