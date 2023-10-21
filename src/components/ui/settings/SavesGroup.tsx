@@ -3,7 +3,13 @@ import { DB } from '@lib/indexedDB/dbUtils';
 import { GroupInputs } from '@components/shared';
 import { getLocalStorage } from '@helpers';
 import type { DataLastVersion, DataVersion } from '@lib';
-import { getGames, getPlayers } from '@lib';
+import {
+  createGame,
+  createGameHistory,
+  createPlayer,
+  getGames,
+  getPlayers,
+} from '@lib';
 import { useSave } from '@hooks';
 import { APP_CONST } from '@constants';
 import { ButtonSettings } from '../ButtonSettings';
@@ -31,7 +37,12 @@ export function SavesGroup() {
     if (APP_CONST.version !== data.settings.version) {
       console.log('different version');
     }
-    console.log(data);
+    
+    data.players.forEach((player) => createPlayer(player));
+    data.history.forEach((gameDetail) => {
+      createGame(gameDetail.game);
+      createGameHistory(gameDetail.scores);
+    });
   };
 
   const clearData = () => {
