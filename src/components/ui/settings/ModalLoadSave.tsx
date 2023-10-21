@@ -1,4 +1,10 @@
-import { useState } from 'react';
+import {
+  cloneElement,
+  ComponentPropsWithoutRef,
+  isValidElement,
+  PropsWithChildren,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { domAnimation, LazyMotion, m } from 'framer-motion';
@@ -6,18 +12,24 @@ import { assertsIsDefined, cn } from '@helpers';
 import { DataVersion, modalAnimation, overlayAnimation } from '@lib';
 import { useLoadFile } from '@hooks';
 import { APP_CONST } from '@constants';
+import { ButtonSettings } from '../ButtonSettings';
 
 type Props = {
   loadData: (data: DataVersion) => void;
 };
 
-export function ModalLoadSave({ loadData }: Props) {
-  const { t } = useTranslation();
+export function ModalLoadSave({
+  loadData,
+  children,
+}: PropsWithChildren<Props>) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <button onClick={() => setOpen(true)}>{t('settings.load_data')}</button>
+      {isValidElement<ComponentPropsWithoutRef<'button'>>(children) &&
+        cloneElement(children, {
+          onClick: () => setOpen(true),
+        })}
 
       <Modal loadData={loadData} close={() => setOpen(false)} isOpen={open} />
     </>
@@ -115,9 +127,9 @@ function Modal({ loadData, close, isOpen }: ModalProps) {
               onChange={onChange}
             />
 
-            <button type="submit" disabled={!data}>
+            <ButtonSettings color="primary" type="submit" disabled={!data}>
               {t('settings.confirm_load_data')}
-            </button>
+            </ButtonSettings>
           </form>
         </m.div>
       </m.div>

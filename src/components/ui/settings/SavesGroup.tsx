@@ -5,6 +5,7 @@ import type { DataLastVersion, DataVersion } from '@lib';
 import { getGames, getPlayers } from '@lib';
 import { useSave } from '@hooks';
 import { APP_CONST } from '@constants';
+import { ButtonSettings } from '../ButtonSettings';
 import { ModalLoadSave } from './ModalLoadSave';
 
 export function SavesGroup() {
@@ -34,8 +35,17 @@ export function SavesGroup() {
 
   return (
     <GroupInputs title={t('settings.saves')} className="mt-8">
-      <button onClick={saveData}>{t('settings.save_data')}</button>
-      <ModalLoadSave loadData={loadData} />
+      <ButtonSettings color="primary" onClick={saveData}>
+        {t('settings.save_data')}
+      </ButtonSettings>
+      <ModalLoadSave loadData={loadData}>
+        <ButtonSettings color="primary">
+          {t('settings.load_data')}
+        </ButtonSettings>
+      </ModalLoadSave>
+      <ButtonSettings color="warning" onClick={console.log}>
+        {t('settings.clear_data')}
+      </ButtonSettings>
     </GroupInputs>
   );
 }
