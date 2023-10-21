@@ -84,3 +84,23 @@ export async function getGameHistory(idGame: number) {
     },
   });
 }
+
+export async function clearGamesHistory() {
+  const db = await DB.open();
+  const transaction = db.transaction(TABLE_GAME_HISTORY, 'readwrite');
+  const objectStore = transaction.objectStore(TABLE_GAME_HISTORY);
+  const request = objectStore.clear();
+
+  return await DB.execute(request, {
+    onError: (req) => {
+      console.error(
+        'Erreur lors de la suppression des historiques de parties',
+        req.error
+      );
+      return req.error;
+    },
+    onSuccess: () => {
+      console.log('Store des historiques de parties vidé avec succès');
+    },
+  });
+}
