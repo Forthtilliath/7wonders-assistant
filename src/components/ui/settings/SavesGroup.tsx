@@ -4,9 +4,7 @@ import { GroupInputs } from '@components/shared';
 import { getLocalStorage } from '@helpers';
 import type { DataLastVersion, DataVersion } from '@lib';
 import {
-  createGame,
-  createGameHistory,
-  createPlayer,
+  convertDataVersion,
   getGames,
   getPlayers,
 } from '@lib';
@@ -23,7 +21,7 @@ export function SavesGroup() {
     const data: DataLastVersion = {
       settings: {
         extensions: getLocalStorage('extensions', []) as Extension[],
-        language: i18n.language,
+        language: i18n.resolvedLanguage as 'fr' | 'en',
         version: APP_CONST.version,
       },
       players: await getPlayers(),
@@ -37,12 +35,18 @@ export function SavesGroup() {
     if (APP_CONST.version !== data.settings.version) {
       console.log('different version');
     }
-    
-    data.players.forEach((player) => createPlayer(player));
-    data.history.forEach((gameDetail) => {
-      createGame(gameDetail.game);
-      createGameHistory(gameDetail.scores);
-    });
+    console.log(data)
+    const result = convertDataVersion(data);
+
+    if (!result.success) {
+      //
+    }
+
+    // data.players.forEach((player) => createPlayer(player));
+    // data.history.forEach((gameDetail) => {
+    //   createGame(gameDetail.game);
+    //   createGameHistory(gameDetail.scores);
+    // });
   };
 
   const clearData = () => {
