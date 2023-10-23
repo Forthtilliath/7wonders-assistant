@@ -1,13 +1,16 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
+// https://capacitorjs.com/docs/config
 const config: CapacitorConfig = {
   appId: 'com.example.app',
-  appName: 'Scoring 7 Wonders',
+  appName: '7 Wonders: Assistant',
   webDir: 'dist',
   server: {
-    // url: 'http://192.168.x.xx:3000',
-    androidScheme: 'https'
-  }
+    hostname: 'localhost',
+    androidScheme: 'https',
+  },
+  backgroundColor:'',
+  loggingBehavior: 'debug',
 };
 
 export default config;
