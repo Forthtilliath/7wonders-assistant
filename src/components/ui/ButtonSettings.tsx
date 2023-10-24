@@ -1,5 +1,5 @@
 import { ComponentPropsWithoutRef, PropsWithChildren } from 'react';
-import { cn } from '@/helpers';
+import { cn } from '@helpers';
 
 type Props = PropsWithChildren<
   ComponentPropsWithoutRef<'button'> & {
