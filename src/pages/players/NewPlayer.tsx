@@ -36,6 +36,7 @@ export default function NewPlayer() {
       avatar: '/assets/images/defaultAvatar.webp',
       isFavorite,
       isArchived,
+      isDeleted: false,
     };
 
     await createPlayer(player);
