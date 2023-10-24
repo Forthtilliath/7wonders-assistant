@@ -4,6 +4,7 @@ export type Player = {
   avatar: string;
   isFavorite: boolean;
   isArchived: boolean;
+  isDeleted: boolean;
 };
 
 export type Game = {
