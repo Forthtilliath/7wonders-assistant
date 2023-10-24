@@ -13,7 +13,7 @@ import {
 } from '@components/shared/Icons';
 import { InputPlayer } from '@components/ui';
 import { assertsIsDefined } from '@helpers';
-import { deletePlayer, getPlayer, updatePlayer } from '@lib';
+import { getPlayer, updatePlayer } from '@lib';
 import { useParamsInt } from '@hooks';
 
 export default function EditPlayer() {
@@ -45,9 +45,11 @@ export default function EditPlayer() {
     loadPlayer();
   }, [idPlayer]);
 
-  const removePlayer = () => {
+  const removePlayer = async () => {
     assertsIsDefined(player);
-    deletePlayer(player.idPlayer);
+
+    player.isDeleted = true;
+    await updatePlayer(player);
 
     navigate('/players');
   };
