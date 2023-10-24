@@ -12,6 +12,7 @@ export function createTablePlayer(db: IDBDatabase) {
   objectStore.createIndex('avatar', 'avatar', { unique: false });
   objectStore.createIndex('isFavorite', 'isFavorite', { unique: false });
   objectStore.createIndex('isArchived', 'isArchived', { unique: false });
+  objectStore.createIndex('isDeleted', 'isDeleted', { unique: false });
 }
 
 export async function createPlayer(player: Omit<Player, 'idPlayer'>) {
