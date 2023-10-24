@@ -20,12 +20,14 @@ export default function NewGame() {
   const setPlayers = useGameStore((s) => s.setPlayers);
   const setExtensions = useGameStore((s) => s.setExtensions);
 
-  const sortedPlayed = [...dbPlayers].sort((a, b) => {
-    if (a.isArchived === b.isArchived) {
-      return a.name.localeCompare(b.name);
-    }
-    return a.isArchived ? 1 : -1;
-  });
+  const sortedPlayed = [...dbPlayers]
+    .filter((p) => !p.isDeleted)
+    .sort((a, b) => {
+      if (a.isArchived === b.isArchived) {
+        return a.name.localeCompare(b.name);
+      }
+      return a.isArchived ? 1 : -1;
+    });
 
   useEffect(() => {
     const players = storePlayers.length

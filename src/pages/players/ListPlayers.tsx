@@ -5,17 +5,19 @@ import { usePlayers } from '@hooks';
 export default function ListPlayers() {
   const [players] = usePlayers();
 
-  const sortedPlayed = [...players].sort((a, b) => {
-    if (a.isArchived === b.isArchived) {
-      return a.name.localeCompare(b.name);
-    }
-    return a.isArchived ? 1 : -1;
-  });
+  const sortedPlayed = [...players]
+    .filter((p) => !p.isDeleted)
+    .sort((a, b) => {
+      if (a.isArchived === b.isArchived) {
+        return a.name.localeCompare(b.name);
+      }
+      return a.isArchived ? 1 : -1;
+    });
 
   return (
     <main>
       <Section className="@container">
-        <div className="@[450px]:grid-cols-4 grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 @[450px]:grid-cols-4">
           {sortedPlayed.map((player) => (
             <CardPlayer
               key={player.idPlayer}
