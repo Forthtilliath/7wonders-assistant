@@ -2,9 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { DB } from '@lib/indexedDB/dbUtils';
 import { GroupInputs } from '@components/shared';
 import { getLocalStorage } from '@helpers';
-import type { DataLastVersion, DataVersion } from '@lib';
+import type { DataVersion } from '@lib';
 import {
   convertDataVersion,
+  createGame,
+  createGameHistory,
+  createPlayer,
   getGames,
   getPlayers,
 } from '@lib';
@@ -18,7 +21,7 @@ export function SavesGroup() {
   const { downloadAsJson } = useSave();
 
   const saveData = async () => {
-    const data: DataLastVersion = {
+    const data: CurrentVersion = {
       settings: {
         extensions: getLocalStorage('extensions', []) as Extension[],
         language: i18n.resolvedLanguage as 'fr' | 'en',
@@ -31,27 +34,29 @@ export function SavesGroup() {
     downloadAsJson(data, 'save-7wonders.json');
   };
 
-  const loadData = (data: DataVersion) => {
+  const loadData = async (data: DataVersion) => {
     if (APP_CONST.version !== data.settings.version) {
       console.log('different version');
     }
-    console.log(data)
     const result = convertDataVersion(data);
 
     if (!result.success) {
-      //
+      console.error(result.error);
+      return;
     }
 
-    // data.players.forEach((player) => createPlayer(player));
-    // data.history.forEach((gameDetail) => {
-    //   createGame(gameDetail.game);
-    //   createGameHistory(gameDetail.scores);
-    // });
+    await DB.clear();
+
+    result.data.players.forEach((player) => createPlayer(player));
+    result.data.history.forEach(async (gameDetail) => {
+      await createGame(gameDetail.game);
+      await createGameHistory(gameDetail.scores);
+    });
   };
 
-  const clearData = () => {
+  const clearData = async () => {
     // TODO: Open modal to confirm
-    DB.clear();
+    await DB.clear();
   };
 
   return (
