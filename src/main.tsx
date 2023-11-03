@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { ROUTES } from '@constants';
+import { ConfirmContextProvider } from '@lib/confirmContext';
 import '@lib/i18next';
+import { ROUTES } from '@constants';
 
 export const router = createBrowserRouter(
   ROUTES.map((route) => ({
@@ -14,6 +15,8 @@ export const router = createBrowserRouter(
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ConfirmContextProvider>
+      <RouterProvider router={router} />
+    </ConfirmContextProvider>
   </React.StrictMode>
 );
