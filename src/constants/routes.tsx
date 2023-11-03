@@ -22,10 +22,10 @@ import NewPlayer from '@/pages/players/NewPlayer';
 import Settings from '@/pages/Settings';
 import Statistics from '@/pages/Statistics';
 import Support from '@/pages/Support';
-import TestCamera from '@/pages/tests/TestCamera';
-import TestCrop from '@/pages/tests/TestCrop';
-import TestGallery from '@/pages/tests/TestGallery';
-import TestImport from '@/pages/tests/TestImport';
+// import TestCamera from '@/pages/tests/TestCamera';
+// import TestCrop from '@/pages/tests/TestCrop';
+// import TestGallery from '@/pages/tests/TestGallery';
+// import TestImport from '@/pages/tests/TestImport';
 import { MainLayout } from '@components/layout/MainLayout';
 import {
   AiFillClockCircle,
@@ -204,35 +204,35 @@ export const ROUTES: Route[] = [
         icon: GiCoffeeCup,
         label: 'route.support',
       },
-      {
-        path: '/test',
-        children: [
-          {
-            path: '/test/import',
-            element: <TestImport />,
-            icon: GiCoffeeCup,
-            label: 'Import Image',
-          },
-          {
-            path: '/test/crop',
-            element: <TestCrop />,
-            icon: GiCoffeeCup,
-            label: 'Crop Image',
-          },
-          {
-            path: '/test/camera',
-            element: <TestCamera />,
-            icon: GiCoffeeCup,
-            label: 'Camera Image',
-          },
-          {
-            path: '/test/gallery',
-            element: <TestGallery />,
-            icon: GiCoffeeCup,
-            label: 'Gallery Images',
-          },
-        ],
-      },
+      // {
+      //   path: '/test',
+      //   children: [
+      //     {
+      //       path: '/test/import',
+      //       element: <TestImport />,
+      //       icon: GiCoffeeCup,
+      //       label: 'Import Image',
+      //     },
+      //     {
+      //       path: '/test/crop',
+      //       element: <TestCrop />,
+      //       icon: GiCoffeeCup,
+      //       label: 'Crop Image',
+      //     },
+      //     {
+      //       path: '/test/camera',
+      //       element: <TestCamera />,
+      //       icon: GiCoffeeCup,
+      //       label: 'Camera Image',
+      //     },
+      //     {
+      //       path: '/test/gallery',
+      //       element: <TestGallery />,
+      //       icon: GiCoffeeCup,
+      //       label: 'Gallery Images',
+      //     },
+      //   ],
+      // },
     ],
   },
 ];
