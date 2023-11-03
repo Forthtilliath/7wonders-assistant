@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { DB } from '@lib/indexedDB/dbUtils';
 import { GroupInputs } from '@components/shared';
-import { getLocalStorage } from '@helpers';
+import { getLocalStorage, setLocalStorage } from '@helpers';
 import type { DataVersion } from '@lib';
 import {
   convertDataVersion,
@@ -12,7 +12,7 @@ import {
   getPlayers,
 } from '@lib';
 import { useSave } from '@hooks';
-import { APP_CONST } from '@constants';
+import { APP_CONST, LS_KEY } from '@constants';
 import { ButtonSettings } from '../ButtonSettings';
 import { ModalLoadSave } from './ModalLoadSave';
 
@@ -52,6 +52,9 @@ export function SavesGroup() {
       await createGame(gameDetail.game);
       await createGameHistory(gameDetail.scores);
     });
+
+    i18n.changeLanguage(result.data.settings.language);
+    setLocalStorage(LS_KEY.extensions, result.data.settings.extensions);
   };
 
   const clearData = async () => {
