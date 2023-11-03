@@ -2,12 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { GroupInputs } from '@components/shared';
 import { cn } from '@helpers';
 import { useLocalStorage } from '@hooks';
-import { EXTENSIONS } from '@constants';
+import { EXTENSIONS, LS_KEY } from '@constants';
 
 export function ExtensionsGroup() {
   const { t } = useTranslation();
   const [extensions, setExtensions] = useLocalStorage<Extension[]>(
-    'extensions',
+    LS_KEY.extensions,
     []
   );
 

@@ -26,7 +26,7 @@ export const CATEGORIES = [
 ] as const;
 
 export const LS_KEY = {
-  players: 'players',
+  extensions: 'extensions',
 };
 
 export const CATEG: Record<Category, CategoryProperties> = {
