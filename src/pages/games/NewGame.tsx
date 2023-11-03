@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Player } from '@types';
 import { Section } from '@components/layout';
@@ -15,10 +14,16 @@ const MAX_PLAYERS = 7;
 export default function NewGame() {
   const navigate = useNavigate();
   const [dbPlayers] = usePlayers();
-  const [playersInGame, setPlayersInGame] = useState<Player[]>([]);
+
   const storePlayers = useGameStore((s) => s.players);
-  const setPlayers = useGameStore((s) => s.setPlayers);
+  const setStorePlayers = useGameStore((s) => s.setPlayers);
   const setExtensions = useGameStore((s) => s.setExtensions);
+
+  const playersInGame = storePlayers.length
+    ? storePlayers.filter((p) => !p.isDeleted)
+    : dbPlayers
+        .filter((p) => p.isFavorite && !p.isDeleted)
+        .slice(0, MAX_PLAYERS);
 
   const sortedPlayed = [...dbPlayers]
     .filter((p) => !p.isDeleted)
@@ -29,13 +34,6 @@ export default function NewGame() {
       return a.isArchived ? 1 : -1;
     });
 
-  useEffect(() => {
-    const players = storePlayers.length
-      ? storePlayers
-      : dbPlayers.filter((p) => p.isFavorite).slice(0, MAX_PLAYERS);
-    setPlayersInGame(players);
-  }, [dbPlayers, storePlayers]);
-
   const addPlayerIntoTheGame = (player: Player) => () => {
     if (playersInGame.some((p) => p.idPlayer === player.idPlayer)) {
       removePlayerFromTheGame(player.idPlayer)();
@@ -43,23 +41,16 @@ export default function NewGame() {
     }
     if (playersInGame.length >= MAX_PLAYERS) return;
 
-    setPlayersInGame((p) => [...p, player]);
+    setStorePlayers([...playersInGame, player]);
   };
 
   const removePlayerFromTheGame = (playerId: Player['idPlayer']) => () => {
-    setPlayersInGame((p) => p.filter((player) => player.idPlayer !== playerId));
+    setStorePlayers(
+      playersInGame.filter((player) => player.idPlayer !== playerId)
+    );
   };
 
-  useEffect(() => {
-    if (playersInGame.length >= MIN_PLAYERS) setPlayers(playersInGame);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playersInGame]);
-
   const launchGame = () => {
-    // const extensions = {
-    //   ...EXTENSIONS.reduce((a, e) => ({ ...a, [e]: false }), {} as Game),
-    //   ...JSON.parse(localStorage.getItem('settings') ?? '{}'),
-    // };
     const extensions = JSON.parse(localStorage.getItem('settings') ?? '[]');
     setExtensions(extensions);
     navigate('/scores/military');
