@@ -52,6 +52,7 @@ export default function NewGame() {
 
   const launchGame = () => {
     const extensions = JSON.parse(localStorage.getItem('settings') ?? '[]');
+    setStorePlayers(playersInGame);
     setExtensions(extensions);
     navigate('/scores/military');
   };
