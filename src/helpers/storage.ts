@@ -12,3 +12,16 @@ export function getLocalStorage(key: string, defaultValue: unknown) {
   }
   return JSON.parse(JSON.stringify(defaultValue));
 }
+
+/**
+ * Sets a value in the browser's local storage based on a given key. It
+ * also call a dispatch event to update everywhere it's listening.
+ *
+ * @param key - The key used to identify the value in the local storage.
+ * @param value - The value to be stored in the local storage.
+ * @returns None.
+ */
+export function setLocalStorage(key: string, value: unknown) {
+  localStorage.setItem(key, JSON.stringify(value));
+  window.dispatchEvent(new StorageEvent('storage', { key }));
+}
