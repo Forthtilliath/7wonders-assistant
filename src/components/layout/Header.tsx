@@ -51,8 +51,9 @@ export function Header() {
             <ButtonIcon
               onClick={() => navigate(location.state?.from ?? -1)}
               icon={AiOutlineArrowLeft}
-              className="m-4 block text-2xl font-medium"
-            />
+              className="m-4 block text-2xl font-medium">
+              <span className="sr-only">Go previous page</span>
+            </ButtonIcon>
           ) : (
             <ButtonIcon
               aria-controls="drawer-navigation"
