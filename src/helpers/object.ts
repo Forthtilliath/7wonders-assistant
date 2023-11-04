@@ -5,10 +5,10 @@
  * @param keys - The keys to filter the object.
  * @returns The filtered object that contains only the key-value pairs from the original object that match the provided keys.
  */
-export function filterKeys<T extends Record<string, unknown>, K extends keyof T>(
-  obj: T,
-  keys: K[]
-): Pick<T, K> {
+export function filterKeys<
+  T extends Record<string, unknown>,
+  K extends keyof T,
+>(obj: T, keys: K[]): Pick<T, K> {
   const result: Partial<Pick<T, K>> = {};
 
   for (const key of keys) {
