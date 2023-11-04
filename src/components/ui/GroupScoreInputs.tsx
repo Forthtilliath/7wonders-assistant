@@ -100,7 +100,7 @@ export function GroupScoreInputs({ step }: Props) {
     return Math.max(scoreBySolo, scoreByTriplet);
   };
 
-  const handleSubmit: (i: number) => FormSubmitEventHandler =
+  const handleSubmit: (iPlayer: number) => FormSubmitEventHandler =
     (iPlayer: number) => (e) => {
       e.preventDefault();
       const sciencesObj = Object.fromEntries(new FormData(e.currentTarget));
@@ -113,6 +113,7 @@ export function GroupScoreInputs({ step }: Props) {
       const input = refsByKey[iPlayer];
       assertsIsDefined(input);
       input.valueAsNumber = bestScore;
+      setScore(step, players[iPlayer].idPlayer, bestScore);
     };
 
   return (
