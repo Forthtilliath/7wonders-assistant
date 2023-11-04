@@ -19,6 +19,11 @@ function getScoresPaths(routes: Route[]) {
   return paths;
 }
 
+/**
+ * Resets the game state when the current pathname changes.
+ * If the previous pathname was a scores path and the current pathname is not a scores path,
+ * it calls the `resetGame` function from the game store to reset the game state.
+ */
 export function ResetGame() {
   const resetGame = useGameStore((s) => s.resetGame);
   const { pathname } = useLocation();
