@@ -2,11 +2,14 @@ export const scienceAnimation = {
   visible: {
     opacity: 1,
     y: 0,
+    height: 'auto',
     display: 'block',
   },
+
   hidden: {
     opacity: 0,
-    y: 50,
+    y: 100,
+    height: 0,
     transitionEnd: {
       display: 'none',
     },
