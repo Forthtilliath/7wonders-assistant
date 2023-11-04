@@ -1,42 +1,34 @@
+import { scienceAnimation } from '@/lib';
 import { domAnimation, LazyMotion, m } from 'framer-motion';
-import { ButtonToggleIcon } from '@components/shared';
-import {
-  BsFillFileArrowDownFill,
-  BsFillFileArrowUpFill,
-} from '@components/shared/Icons';
-import { cn } from '@helpers';
-import { scienceAnimation } from '@lib';
-import { useToggle } from '@hooks';
 import { InputScience } from './InputScience';
-import { compas, most, roue, tablette } from '@assets/science';
+import { all, compass, most, tablet, wheel } from '@assets/science';
 
-export function DropdownScience() {
-  const [open, toggleOpen] = useToggle(false);
+type Props = {
+  open: boolean;
+};
 
+export function DropdownScience({ open }: Props) {
   return (
-    <div className="relative">
-      <ButtonToggleIcon
-        condition={open}
-        icons={[BsFillFileArrowDownFill, BsFillFileArrowUpFill]}
-        onClick={toggleOpen}
-        className={cn('m-0 text-slate-200', { 'text-green-500': open })}
-        aria-label={open ? 'Close the box' : 'Open the box'}
-        size="2rem"
-      />
-
-      <LazyMotion features={domAnimation}>
-        <m.div
-          className="absolute right-0 top-14 z-[1] box-border w-[calc(100vw_-_5rem)] rounded-xl border-2 border-green-500 bg-wonders-blue-dark p-4"
-          animate={open ? 'visible' : 'hidden'}
-          variants={scienceAnimation}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
-          initial={false}>
-          <InputScience img={roue} />
-          <InputScience img={tablette} />
-          <InputScience img={compas} />
-          <InputScience img={most} />
-        </m.div>
-      </LazyMotion>
-    </div>
+    <LazyMotion features={domAnimation}>
+      <m.div
+        animate={open ? 'visible' : 'hidden'}
+        variants={scienceAnimation}
+        transition={{ duration: 0.5, ease: 'easeInOut' }}
+        initial={false}
+        className="overflow-hidden">
+        <div className="box-border w-full rounded-xl border-2 border-green-500 bg-wonders-blue-dark p-4">
+          <InputScience img={wheel} name="wheel" />
+          <InputScience img={tablet} name="tablet" />
+          <InputScience img={compass} name="compass" />
+          <InputScience img={most} name="most" />
+          <InputScience img={all} name="all" />
+          {/* TODO: Comment gérer les masques ??? */}
+          {/* 
+            TODO: Add score par triplet : 7 par défaut
+            - Boutons radios 7 / 10 / 13 ???
+          */}
+        </div>
+      </m.div>
+    </LazyMotion>
   );
 }
