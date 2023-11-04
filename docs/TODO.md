@@ -5,6 +5,7 @@
 - [ ] Ajouter husky
 - [ ] Ajouter des errors boundary
 - [ ] Ajouter un gitaction pour les tests unitaires : https://docs.cypress.io/guides/continuous-integration/github-actions
+- [ ] Refacto vers [Capacitor SQLite](https://github.com/capacitor-community/sqlite)
 
 ## Nouvelle partie
 
