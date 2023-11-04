@@ -61,3 +61,47 @@ export function sum(arr: number[]): number {
 export function avg(arr: number[]): number {
   return sum(arr) / arr.length;
 }
+
+/**
+ * Adds a value to the minimum value in an array.
+ *
+ * @param arr - The input array of numbers.
+ * @param value - The value to be added to the minimum value in the array.
+ * @returns The modified array with the minimum value incremented by the input value.
+ */
+export function addValueIntoMin(arr: number[], value: number): number[] {
+  const arrRes = arr.slice();
+
+  const min = Math.min(...arrRes);
+  const indexMin = arrRes.indexOf(min);
+  arrRes[indexMin] += value;
+
+  return arrRes;
+}
+
+/**
+ * Adds a value to the maximum value in an array.
+ *
+ * @param arr - The input array of numbers.
+ * @param value - The value to be added to the maximum value in the array.
+ * @returns The modified array with the maximum value incremented by the input value.
+ */
+export function addValueIntoMax(arr: number[], value: number): number[] {
+  const arrRes = arr.slice();
+
+  const max = Math.max(...arrRes);
+  const indexMax = arrRes.indexOf(max);
+  arrRes[indexMax] += value;
+
+  return arrRes;
+}
+
+
+export function countScienceScore(wheel:number, tablet:number, compass: number, scoreTriple: number): number {
+  return (
+    Math.pow(wheel, 2) +
+    Math.pow(tablet, 2) +
+    Math.pow(compass, 2) +
+    Math.min(wheel, tablet, compass) * scoreTriple
+  );
+}
