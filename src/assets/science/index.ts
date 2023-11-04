@@ -1,6 +1,7 @@
-import compas from './compas.webp';
+import all from './all3.webp';
+import compass from './compas.webp';
 import most from './most.webp';
-import roue from './roue.webp';
-import tablette from './tablette.webp';
+import wheel from './roue.webp';
+import tablet from './tablette.webp';
 
-export { compas, roue, tablette, most };
+export { all, compass, wheel, tablet, most };
