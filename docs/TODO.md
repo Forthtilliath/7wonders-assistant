@@ -1,56 +1,34 @@
-- [x] Faire le menu
-- [x] Faire le routage
-- [x] Ajouter les headers de chaque page
-- [x] Mettre le header dans le layout et récupérer le title dans les data
-- [x] Modifier les contexts en stores
-- [x] Remplacer framer-motion !
-  - [ ] Back dans store pour inverser animation exit ?
-- [x] Ajouter prettier/eslint
+# TODO List par section
+
+## Global
+
 - [ ] Ajouter husky
-- [x] Ajouter prettier sort
 - [ ] Ajouter des errors boundary
-- [x] Ajouter une icone pour l'app
-- [ ] Ajouter une modal pour le delete joueur
-- [x] Ajouter une bordure à l'icone Favorite
-- [x] Les pages Settings, Feedback et About ont un bouton retour 
 - [ ] Ajouter un gitaction pour les tests unitaires : https://docs.cypress.io/guides/continuous-integration/github-actions
-- [ ] Supprimer un joueur ne le supprime pas vraiment
-  - [ ] Ajouter un état (idem que favorite & archived)
 
-- [ ] Possibilité d'enregistrer les données dans un fichier
-  - [ ] des joueurs
-  - [ ] des parties
-- [ ] Possibilité de charger les données à partir d'un fichier
+## Nouvelle partie
 
-- [x] Ajouter hook pour header (pathname & label)
-- [x] Générer router à partir de menu
-- [x] Replacer framer-motion par react-spring : https://www.npmjs.com/package/react-spring
-  - [x] Vérifier ``m`` de framer-motion : https://www.youtube.com/watch?v=gX4N44sPNHY (lazy motion)o
-- [x] Afficher les joueurs par ordre alphabétique
-- [x] Prendre en compte les écrans un peu plus large tel que les tablettes
+- [x] Gestion de la partie scientifique
+- [ ] Inverser animation retour
+  - [ ] Back dans store ?
 - [ ] Possibilité du jeu en équipe
-- [x] Check toutes les heights de page et scrolls
-- [x] Quand on fait previous après la création de la partie, la partie est annulée
-- [x] Quand on fait previous sur la création de la partie, on affiche une confirm box pour previous (ce qui supprime la partie)
-- [x] Voir pour fixer le bouton next au changement de catégorie de score
-- [x] Fixer width title en fonction des icones à droite
-- [ ] Prendre en compte dans l'history si on ajoute des nouvelles extensions
-- [ ] Constant des extensions en minuscules
-- [ ] Voir pour charger les données du joueur dans editPlayer via le loader
-- [ ] Voir pour charger les données des joueurs dans ListPlayer et NewGame via le loader
+- [ ] Voir pour charger les données des joueurs dans NewGame via le loader
 
-# TODO Next Session
-- [x] Ajouter Traductions
-- [ ] Ajouter Possibilité de Save/Load les data dans les options
-- [x] Ajouter les premiers graphiques
-- [ ] Ajouter de nouveaux TU pour vérifier chaque liens/pages
-- [ ] Revoir la façon dont sont enregistrées les extensions dans la page
-  - [ ] DB : Passer de 1 attribut par extension à un array d'extensions
-  - [ ] LS : Passer d'un objet à un array d'extensions
-  - [ ] Enregistrement de la partie
-  - [ ] Affichage des tags de la partie
-  - [ ] Affichage de la colonne d'extension
-  - [ ] Score d'une extension off doit etre NULL
+## Statistiques
+
+## Historique des parties
+
+- [ ] Revoir l'affichage des parties
+- [ ] Limite la taille des graphes pie
+- [ ] Prendre en compte dans l'history si on ajoute des nouvelles extensions
+
+## Gestion des joueurs
+
+- [ ] Ajouter une modal pour le delete joueur
+- [ ] Voir pour charger les données du joueur dans editPlayer via le loader
+- [ ] Voir pour charger les données des joueurs dans ListPlayer via le loader
+
+## TODO Next Session
 
 # ⚠️ A FIXER ⚠️
 
@@ -94,7 +72,7 @@
 - [x] `/history` ➡️ **Gestion des parties**
   - [x] `/history` ➡️ **Historique des parties**
   - [x] `/history/:idGame` ➡️ **Historique d'une partie**
-  - [ ] `/history/:idGame/save` ➡️ **Enregistrer la partie** (image/note)
+  - [x] `/history/:idGame/save` ➡️ **Enregistrer la partie** (image/note)
   - [ ] `/history/:idGame/share` ➡️ **Partager une partie**
 - [ ] `/players` ➡️ **Gestion des joueurs**
   - [ ] `/players/new` ➡️ **Nouveau joueur**
