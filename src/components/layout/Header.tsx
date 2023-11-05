@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { usePageAnimationStore } from '@lib';
 import { ButtonIcon } from '@components/shared';
 import { AiOutlineArrowLeft, GiHamburgerMenu } from '@components/shared/Icons';
 import { cn, getLabelAndPrevious } from '@helpers';
@@ -26,6 +27,12 @@ export function Header() {
   const pageDetails = getLabelAndPrevious(pathname, ROUTES);
   const location = useLocation();
   const { t } = useTranslation();
+  const setPrevious = usePageAnimationStore((s) => s.setIsPrevious);
+
+  const handlePrevious = () => {
+    setPrevious(true);
+    navigate(location.state?.from ?? -1);
+  };
 
   return (
     <header
@@ -49,7 +56,7 @@ export function Header() {
         <div className="text-center">
           {pageDetails.previous ? (
             <ButtonIcon
-              onClick={() => navigate(location.state?.from ?? -1)}
+              onClick={handlePrevious}
               icon={AiOutlineArrowLeft}
               className="m-4 block text-2xl font-medium">
               <span className="sr-only">Go previous page</span>
