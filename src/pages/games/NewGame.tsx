@@ -7,6 +7,8 @@ import { BsCheckLg, GiMeeple } from '@components/shared/Icons';
 import { ButtonNewPlayer, CardPlayer } from '@components/cards';
 import { useGameStore } from '@lib';
 import { usePlayers } from '@hooks';
+import { LS_KEY } from '@/constants';
+import { getLocalStorage } from '@/helpers';
 
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 7;
@@ -51,7 +53,7 @@ export default function NewGame() {
   };
 
   const launchGame = () => {
-    const extensions = JSON.parse(localStorage.getItem('settings') ?? '[]');
+    const extensions = getLocalStorage<Extension[]>(LS_KEY.extensions, []);
     setStorePlayers(playersInGame);
     setExtensions(extensions);
     navigate('/scores/military');
