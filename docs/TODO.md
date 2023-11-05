@@ -7,6 +7,7 @@
 - [ ] Ajouter un gitaction pour les tests unitaires : https://docs.cypress.io/guides/continuous-integration/github-actions
 - [ ] Refacto vers [Capacitor SQLite](https://github.com/capacitor-community/sqlite)
 - [ ] Fix la size des titles dans le header
+- [ ] Bloquer l'orientation pour les mobiles
 
 ## Nouvelle partie
 
@@ -22,6 +23,9 @@
 - [ ] Corriger duplication page quand on scroll trop vite
 
 ## Statistiques
+
+- [ ] Ajouter Suspense
+- [ ] Ajouter un message si aucune donnée
 
 ## Historique des parties
 
