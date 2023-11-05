@@ -5,12 +5,12 @@
  * @param defaultValue - The default value to be returned if the key is not found in the local storage.
  * @returns The value stored in the local storage with the given key, or the provided default value if the key is not found.
  */
-export function getLocalStorage(key: string, defaultValue: unknown) {
+export function getLocalStorage<T = unknown>(key: string, defaultValue: unknown) {
   const storedValue = localStorage.getItem(key);
   if (storedValue !== null) {
-    return JSON.parse(storedValue);
+    return JSON.parse(storedValue) as T;
   }
-  return JSON.parse(JSON.stringify(defaultValue));
+  return JSON.parse(JSON.stringify(defaultValue)) as T;
 }
 
 /**
