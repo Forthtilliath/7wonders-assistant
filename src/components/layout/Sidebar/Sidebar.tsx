@@ -19,7 +19,7 @@ export function Sidebar({ isOpen }: Props) {
         )}
         tabIndex={-1}
         aria-labelledby="drawer-navigation-label">
-        <header className="flex items-center gap-4 pb-6">
+        <header className="flex items-center gap-4 pb-6 pt-4">
           <BiSolidPyramid size="2rem" />
           <h5
             id="drawer-navigation-label"
