@@ -1,23 +1,15 @@
-import { ButtonSettings } from '@/components/ui/ButtonSettings';
-import { Directory, Filesystem, Encoding } from '@capacitor/filesystem';
+import { useLoaderData } from 'react-router-dom';
 import { Section } from '@components/layout';
-
+import { ScorePerCategory } from '@components/ui/statistics/ScorePerCategory';
+import { GameHistoriesComplete } from '@types';
 
 export default function Statistics() {
- const saveFile = async (fileName: string, data: string) => {
-   await Filesystem.writeFile({
-     path: fileName,
-     data: data,
-     directory: Directory.Documents,
-     encoding: Encoding.UTF8,
-   });
- };
-  
+  const games = useLoaderData() as GameHistoriesComplete[];
+
   return (
     <main>
-      <Section>
-        <h1>Statistics</h1>
-        <ButtonSettings onClick={() => saveFile('users.json', JSON.stringify({"name": "John"}))}>Save</ButtonSettings>
+      <Section className="flex flex-col gap-4">
+        <ScorePerCategory games={games} />
       </Section>
     </main>
   );
