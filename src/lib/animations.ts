@@ -39,3 +39,17 @@ export const overlayAnimation = {
     },
   },
 };
+
+export const headerOptionsAnimation = {
+  visible: {
+    opacity: 1,
+    display: 'flex',
+    
+  },
+  hidden: {
+    opacity: 0,
+    transitionEnd: {
+      display: 'none',
+    },
+  },
+}
