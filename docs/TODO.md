@@ -6,14 +6,20 @@
 - [ ] Ajouter des errors boundary
 - [ ] Ajouter un gitaction pour les tests unitaires : https://docs.cypress.io/guides/continuous-integration/github-actions
 - [ ] Refacto vers [Capacitor SQLite](https://github.com/capacitor-community/sqlite)
+- [ ] Fix la size des titles dans le header
 
 ## Nouvelle partie
 
 - [x] Gestion de la partie scientifique
-- [ ] Inverser animation retour
-  - [ ] Back dans store ?
+- [x] Inverser animation retour
 - [ ] Possibilité du jeu en équipe
 - [ ] Voir pour charger les données des joueurs dans NewGame via le loader
+- [ ] Ajouter bouton decrement/increment
+
+- [ ] Fixer l'affichage du 0
+- [ ] Fixer si un joueur n'a pas de score (lock btn submit)
+- [ ] Speed click génère des doublons de composants sur les composants animés ⚠️
+- [ ] Corriger duplication page quand on scroll trop vite
 
 ## Statistiques
 
@@ -29,19 +35,9 @@
 - [ ] Voir pour charger les données du joueur dans editPlayer via le loader
 - [ ] Voir pour charger les données des joueurs dans ListPlayer via le loader
 
-## TODO Next Session
+## Options
 
-# ⚠️ A FIXER ⚠️
-
-- [ ] Certains liens ne fonctionnent plus une fois build en static (cf new player)
-- [ ] Images des joueurs par défault ne s'affichent pas sur mobile
-- [ ] Responsivité About
-- [ ] Bouton Add player, icone taille dynamique
-- [ ] Speed click génère des doublons de composants sur les composants animés ⚠️
-- [ ] Corriger duplication page quand on scroll trop vite
-- [ ] Des games ont été crée je ne sais quand, mais ca faisait un bug dans le loader de GameHistory
 - [ ] Bouton download ne fonctionne pas sur mobile (permissions ???)
-- [ ] Fix la size des titles dans le header
 
 # Tests Unitaires
 
