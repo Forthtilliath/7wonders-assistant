@@ -127,7 +127,7 @@ export const ROUTES: Route[] = [
         element: <Statistics />,
         icon: ImStatsBars,
         label: 'route.statistics',
-        // TODO: Add loader
+        loader: getGames,
       },
       {
         path: '/history',
