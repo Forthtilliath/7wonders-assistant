@@ -42,7 +42,7 @@
           - Nombre de partie jouées
           - Nombre de partie gagnées
         - Score history
-          - Graph montrant le score pour chaque partie
+          - Graph montrant le score pour chaque partie : Line Chart
           - Score moyen par partie
           - Plus gros score
           - Plus petit score
