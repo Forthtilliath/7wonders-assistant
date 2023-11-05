@@ -26,6 +26,11 @@
     "support": "Soutenez-nous"
   },
 
+  "history": {
+    "game": "Partie",
+    "show": "Afficher la partie"
+  },
+
   "settings": {
     "extensions": "Extensions",
     "language": "Langues",

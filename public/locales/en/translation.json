@@ -26,6 +26,11 @@
     "support": "Support Us"
   },
 
+  "history": {
+    "game": "Game",
+    "show": "Show the game"
+  },
+
   "settings": {
     "extensions": "Extensions",
     "language": "Languages",
