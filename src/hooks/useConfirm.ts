@@ -1,5 +1,5 @@
 import { useCallback, useContext } from 'react';
-import { ConfirmContext, ConfirmParams } from '@lib/confirmContext';
+import { ConfirmContext, ConfirmParams } from '@lib';
 
 export function useConfirm() {
   const { confirmRef } = useContext(ConfirmContext);

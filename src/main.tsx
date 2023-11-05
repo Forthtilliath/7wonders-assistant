@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { ConfirmContextProvider } from '@lib/confirmContext';
+import { ConfirmContextProvider } from '@lib';
 import '@lib/i18next';
 import { ROUTES } from '@constants';
 
