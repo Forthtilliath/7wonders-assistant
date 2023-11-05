@@ -21,17 +21,17 @@ export function CardDev({
     <a
       href={href}
       className={cn(
-        'flex flex-col items-center justify-center gap-4 rounded border-2 p-5 text-center',
+        'p-5 flex items-center justify-between text-center bg-wonders-blue-dark gap-4 rounded-md',
         className
       )}
       rel="noopener noreferrer"
       target="_blank">
       <img
-        className={cn('rounded-full w-full', classNameImg)}
+        className={cn('rounded-full w-20', classNameImg)}
         src={avatar}
         alt={`Avatar ${name}`}
       />
-      <h2 className={cn('text-lg', classNameH2)}>{name}</h2>
+      <h2 className={cn('text-lg w-full', classNameH2)}>{name}</h2>
     </a>
   );
 }
