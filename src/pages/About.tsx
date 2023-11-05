@@ -24,19 +24,17 @@ export default function About() {
 
         <div>
           <h2 className="my-4 text-center text-lg">{t('about.developers')}</h2>
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-col justify-center gap-4">
             <CardDev
               href="https://github.com/Forthtilliath"
               avatar={forth}
               name="Forth"
-              className="w-2/5"
-              classNameImg="border-4"
+              classNameImg="border-2"
             />
             <CardDev
               href="https://github.com/mickaelrebeau"
               avatar={mike}
               name="Mike_DreeMan"
-              className="w-2/5"
             />
           </div>
         </div>
