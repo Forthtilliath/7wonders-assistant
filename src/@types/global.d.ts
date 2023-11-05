@@ -1,4 +1,5 @@
 import { IconProps } from '@components/shared/Icons';
+import { Params } from 'react-router-dom';
 
 declare global {
   type Icon = (props: IconProps) => React.JSX.Element;
@@ -28,6 +29,10 @@ declare global {
 
   type PickPartial<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
   type PartialExcept<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
+
+  type LoaderParams<T extends string = string> = {
+    params: Params<T>
+  }
 }
 
 export {};
