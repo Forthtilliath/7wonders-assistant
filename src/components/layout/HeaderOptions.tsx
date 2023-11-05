@@ -1,15 +1,22 @@
 import { PropsWithChildren } from 'react';
+import { m } from 'framer-motion';
 import { cn } from '@helpers';
+import { headerOptionsAnimation } from '@lib';
+
 
 export function HeaderOptions({ children }: PropsWithChildren) {
   return (
-    <div
+    <m.div
       className={cn(
-        'fixed top-0 left-1/2 mx-auto -translate-x-1/2 pr-2',
+        'fixed left-1/2 top-0 mx-auto -translate-x-1/2 pr-2',
         'flex h-16 w-full max-w-app items-center justify-end',
-        'pointer-events-none text-wonders-yellow z-1'
-      )}>
+        'z-1 pointer-events-none text-wonders-yellow'
+      )}
+      variants={headerOptionsAnimation}
+      initial="hidden"
+      animate="visible"
+      transition={{ delay: 0.3, duration: 0.2, ease: 'easeInOut' }}>
       {children}
-    </div>
+    </m.div>
   );
 }
