@@ -26,6 +26,10 @@
     "support": "Support Us"
   },
 
+  "statistics": {
+    "avg_score_per_categ": "Average score per category"
+  },
+
   "history": {
     "game": "Game",
     "show": "Show the game"

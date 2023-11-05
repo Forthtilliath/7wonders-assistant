@@ -26,6 +26,10 @@
     "support": "Soutenez-nous"
   },
 
+  "statistics": {
+    "avg_score_per_categ": "Moyenne des scores par catégorie"
+  },
+
   "history": {
     "game": "Partie",
     "show": "Afficher la partie"
