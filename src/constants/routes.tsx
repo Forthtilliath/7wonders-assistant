@@ -1,6 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Suspense } from 'react';
-import { Params } from 'react-router-dom';
 import About from '@/pages/About';
 import Feedback from '@/pages/Feedback';
 import NewGame from '@/pages/games/NewGame';
@@ -39,7 +38,8 @@ import {
   IoMdSettings,
 } from '@components/shared/Icons';
 import { flattenRoutes } from '@helpers';
-import { getGameHistory, getGames } from '@lib';
+import {  getGames } from '@lib';
+import { loaderGameHistory } from '@/lib/loaders';
 
 export const ROUTES: Route[] = [
   {
@@ -55,6 +55,7 @@ export const ROUTES: Route[] = [
       {
         path: '/',
         element: <NewGame />,
+        // TODO: add loader
       },
       {
         path: '/scores',
@@ -126,6 +127,7 @@ export const ROUTES: Route[] = [
         element: <Statistics />,
         icon: ImStatsBars,
         label: 'route.statistics',
+        // TODO: Add loader
       },
       {
         path: '/history',
@@ -142,13 +144,7 @@ export const ROUTES: Route[] = [
             element: <GameHistory />,
             label: 'route.history',
             previous: true,
-            loader: async ({ params }: { params: Params<'idGame'> }) => {
-              if (!params.idGame) {
-                throw new Error('Game history not found');
-              }
-              const idGame = parseInt(params.idGame, 10);
-              return await getGameHistory(idGame);
-            },
+            loader: loaderGameHistory,
           },
         ],
       },
@@ -160,6 +156,7 @@ export const ROUTES: Route[] = [
           {
             path: '/players',
             element: <ListPlayers />,
+            // TODO: Add loader
           },
           {
             path: '/players/new',
@@ -172,6 +169,7 @@ export const ROUTES: Route[] = [
             element: <EditPlayer />,
             label: 'route.edit_player',
             previous: true,
+            // TODO: Add loader
           },
         ],
       },
@@ -188,7 +186,7 @@ export const ROUTES: Route[] = [
         label: 'route.feedback',
       },
       {
-        path: 'http://www.google.fr',
+        path: '/rate',
         icon: BiSolidStarHalf,
         label: 'route.rate',
       },
