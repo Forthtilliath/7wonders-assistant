@@ -39,7 +39,7 @@ import {
 } from '@components/shared/Icons';
 import { flattenRoutes } from '@helpers';
 import {  getGames } from '@lib';
-import { loaderGameHistory } from '@/lib/loaders';
+import { loaderGameHistory, loaderStatistics } from '@/lib/loaders';
 
 export const ROUTES: Route[] = [
   {
@@ -127,7 +127,7 @@ export const ROUTES: Route[] = [
         element: <Statistics />,
         icon: ImStatsBars,
         label: 'route.statistics',
-        loader: getGames,
+        loader: loaderStatistics,
       },
       {
         path: '/history',
