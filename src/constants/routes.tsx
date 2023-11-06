@@ -25,7 +25,7 @@ import Support from '@/pages/Support';
 // import TestCrop from '@/pages/tests/TestCrop';
 // import TestGallery from '@/pages/tests/TestGallery';
 // import TestImport from '@/pages/tests/TestImport';
-import { MainLayout } from '@components/layout/MainLayout';
+import { MainLayout } from '@components/layout';
 import {
   AiFillClockCircle,
   AiFillQuestionCircle,
