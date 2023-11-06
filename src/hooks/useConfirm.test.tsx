@@ -1,6 +1,6 @@
 import { useConfirm } from '@/hooks/useConfirm';
 import { ConfirmContextProvider, ConfirmParams } from '@lib';
-import { render } from '../tests-utils';
+import { render } from '../__tests__/tests-utils';
 
 describe('Hook: useConfirm', () => {
   it("should return an object with a 'confirm' function", () => {
