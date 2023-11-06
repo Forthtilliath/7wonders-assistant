@@ -59,6 +59,7 @@ export function ScorePerCategory({ games }: Props) {
           ))}
         </ul>
       </form>
+      {/* Sur n parties */}
 
       <PieScorePlayer scores={gamesScores} extensions={extensions} />
     </>
