@@ -24,6 +24,8 @@
 //  *  - [ ] Supprimer un joueur
 //  */
 
+it('should remove error', () => {})
+
 // describe('default render', () => {
 //   beforeEach(() => {
 //     render(
