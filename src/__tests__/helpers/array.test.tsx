@@ -29,7 +29,7 @@ describe('Arrays methods', () => {
       expect(flattenRoutes([])).toStrictEqual([]);
     });
 
-    it('should return all routes if the array has no children routes', () => {
+    it(' flatten a simple route with icon, label, and path', () => {
       const routes: Route[] = [
         {
           path: '/',
@@ -84,7 +84,7 @@ describe('Arrays methods', () => {
       expect(flattenRoutes(routes)).toStrictEqual(expectedRoutes);
     });
 
-    it('should not return children routes', () => {
+    it('should flatten a route with nested children', () => {
       const routes: Route[] = [
         {
           path: '/',
@@ -109,6 +109,7 @@ describe('Arrays methods', () => {
             },
             {
               path: '/players/new',
+              icon: GiMeeple,
               element: <NewPlayer />,
               label: 'route.new_player',
               previous: true,
@@ -126,9 +127,120 @@ describe('Arrays methods', () => {
       const expectedRoutes: MenuItem[] = [
         { icon: FaPlus, label: 'route.new_game', path: '/' },
         { icon: GiMeeple, label: 'route.players', path: '/players' },
+        { icon: GiMeeple, label: 'route.new_player', path: '/players/new' },
       ];
 
       expect(flattenRoutes(routes)).toStrictEqual(expectedRoutes);
+    });
+
+    it('should flatten a route with nested children', () => {
+      const routes: Route[] = [
+        {
+          path: '/',
+          element: <MainLayout />,
+          icon: FaPlus,
+          label: 'route.new_game',
+          children: [
+            {
+              path: '/',
+              element: <NewGame />,
+            },
+          ],
+        },
+        {
+          path: '/players',
+          icon: GiMeeple,
+          label: 'route.players',
+          children: [
+            {
+              path: '/players',
+              element: <ListPlayers />,
+            },
+            {
+              path: '/players/new',
+              icon: GiMeeple,
+              element: <NewPlayer />,
+              label: 'route.new_player',
+              previous: true,
+            },
+            {
+              path: '/players/edit/:idPlayer',
+              element: <EditPlayer />,
+              label: 'route.edit_player',
+              previous: true,
+            },
+          ],
+        },
+      ];
+
+      const expectedRoutes: MenuItem[] = [
+        { icon: FaPlus, label: 'route.new_game', path: '/' },
+        { icon: GiMeeple, label: 'route.players', path: '/players' },
+        { icon: GiMeeple, label: 'route.new_player', path: '/players/new' },
+      ];
+
+      expect(flattenRoutes(routes)).toStrictEqual(expectedRoutes);
+    });
+
+    it('should flatten multiple routes with different depths and structures', () => {
+      const routes: Route[] = [
+        {
+          path: '/',
+          element: <MainLayout />,
+          icon: FaPlus,
+          label: 'route.new_game',
+          children: [
+            {
+              path: '/',
+              element: <NewGame />,
+            },
+          ],
+        },
+        {
+          path: '/players',
+          icon: GiMeeple,
+          label: 'route.players',
+          children: [
+            {
+              path: '/players',
+              element: <ListPlayers />,
+            },
+            {
+              path: '/players/new',
+              icon: GiMeeple,
+              element: <NewPlayer />,
+              label: 'route.new_player',
+              previous: true,
+            },
+            {
+              path: '/players/edit/:idPlayer',
+              element: <EditPlayer />,
+              label: 'route.edit_player',
+              previous: true,
+            },
+          ],
+        },
+      ];
+
+      const expectedRoutes: MenuItem[] = [
+        { icon: FaPlus, label: 'route.new_game', path: '/' },
+        { icon: GiMeeple, label: 'route.players', path: '/players' },
+        { icon: GiMeeple, label: 'route.new_player', path: '/players/new' },
+      ];
+
+      expect(flattenRoutes(routes)).toStrictEqual(expectedRoutes);
+    });
+
+    it('should ignore a route without icon, label, or path', () => {
+      const routes: Route[] = [
+        {
+          path: '/settings',
+          element: <Settings />,
+          label: 'route.settings',
+        },
+      ];
+
+      expect(flattenRoutes(routes)).toEqual([]);
     });
   });
 
@@ -295,15 +407,31 @@ describe('Arrays methods', () => {
     });
 
     it('should return the sum of an array of positive number', () => {
-      expect(sum([1, 2, 3])).toBe(6);
+      expect(sum([1, 2, 3, 4, 5])).toBe(15);
     });
 
     it('should return the sum of an array of negative number', () => {
-      expect(sum([-1, -2, -3])).toBe(-6);
+      expect(sum([-1, -2, -3, -4, -5])).toBe(-15);
     });
-    
+
     it('should a close number of an array of float numbers', () => {
       expect(sum([0.0001, 0.0002, 0.0003])).toBeCloseTo(0.0006, 3);
+    });
+
+    it('should return 0 when array contains only zeros', () => {
+      expect(sum([0, 0, 0, 0, 0])).toBe(0);
+    });
+
+    it('should return the correct sum for an array with a large number of elements', () => {
+      const numbers = Array.from({ length: 100000 }, (_, i) => i + 1);
+      const result = sum(numbers);
+      expect(result).toBe(5000050000);
+    });
+
+    it('should return the correct sum for an array with very large numbers', () => {
+      const numbers = [Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER];
+      const result = sum(numbers);
+      expect(result).toBe(2 * Number.MAX_SAFE_INTEGER);
     });
   });
 
@@ -312,16 +440,34 @@ describe('Arrays methods', () => {
       expect(avg([])).toBe(0);
     });
 
-    it('should return the avg of an array of positive number', () => {
-      expect(avg([1, 2, 3])).toBe(2);
+    it('should return the correct average for an array of positive integers', () => {
+      expect(avg([1, 2, 3, 4, 5])).toBe(3);
     });
 
-    it('should return the avg of an array of negative number', () => {
-      expect(avg([-1, -2, -3])).toBe(-2);
+    it('should return the correct average for an array of negative integers', () => {
+      expect(avg([-1, -2, -3, -4, -5])).toBe(-3);
+    });
+
+    it('should return the correct average for an array of mixed positive and negative integers', () => {
+      expect(avg([-1, 2, -3, 4, -5])).toBe(-0.6);
+    });
+
+    it('should return the correct average for an array with only one element', () => {
+      expect(avg([5])).toBe(5);
     });
 
     it('should a close number of an array of float numbers', () => {
       expect(avg([0.0001, 0.0002, 0.0003])).toBeCloseTo(0.0002, 3);
+    });
+
+    it('should handle very large arrays without crashing or slowing down significantly', () => {
+      const numbers = Array.from({ length: 1000000 }, (_, i) => i + 1);
+      expect(avg(numbers)).toBe(500000.5);
+    });
+
+    it('should handle very large numbers without overflowing or returning NaN', () => {
+      const numbers = [Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER];
+      expect(avg(numbers)).toBe(Number.MAX_SAFE_INTEGER);
     });
   });
 
@@ -330,16 +476,35 @@ describe('Arrays methods', () => {
       expect(addValueIntoMin([], 3)).toStrictEqual([]);
     });
 
-    it('should return an equal array of the mod is equal to 0', () => {
-      expect(addValueIntoMin([1, 3, 2], 0)).toStrictEqual([1, 3, 2]);
+    it('should return the input array with the minimum value incremented by the input value', () => {
+      expect(addValueIntoMin([1, 3, 2, 4], 1)).toStrictEqual([2, 3, 2, 4]);
     });
 
-    it('should increment the minimal number', () => {
-      expect(addValueIntoMin([0, 10, 5], 3)).toStrictEqual([3, 10, 5]);
+    it('should return the input array with the minimum value incremented by the input value, even if the minimum value is negative', () => {
+      expect(addValueIntoMin([-4, -3, -2, -1], 1)).toEqual([-3, -3, -2, -1]);
     });
 
-    it('should increment the first minimal number', () => {
-      expect(addValueIntoMin([0, 0, 5], 3)).toStrictEqual([3, 0, 5]);
+    it('should return the input array with the minimum value incremented by the input value', () => {
+      expect(addValueIntoMin([0, 10, 5, 4], 3)).toStrictEqual([3, 10, 5, 4]);
+    });
+
+    it('should return a new array with the same values as the input array, if the input array has duplicate minimum values', () => {
+      expect(addValueIntoMin([0, 0, 5, 4], 3)).toStrictEqual([3, 0, 5, 4]);
+    });
+
+    it('should return a new array with the same values as the input array, if the input array is not modified', () => {
+      expect(addValueIntoMin([1, 2, 3, 4], 0)).toStrictEqual([1, 2, 3, 4]);
+    });
+
+    it('should return a new array with the same values as the input array, if the input array is modified', () => {
+      const arr = [1, 2, 3, 4, 5];
+      const mod = 1;
+      const expected = [2, 2, 3, 4, 5];
+
+      const result = addValueIntoMin(arr, mod);
+
+      expect(result).toEqual(expected);
+      expect(result).not.toBe(arr);
     });
   });
 
@@ -348,18 +513,57 @@ describe('Arrays methods', () => {
       expect(addValueIntoMax([], 3)).toStrictEqual([]);
     });
 
-    it('should return an equal array of the mod is equal to 0', () => {
-      expect(addValueIntoMax([1, 3, 2], 0)).toStrictEqual([1, 3, 2]);
+    it('should return the input array with the maximum value incremented by the input value', () => {
+      expect(addValueIntoMax([1, 3, 2, 4], 1)).toStrictEqual([1, 3, 2, 5]);
     });
 
-    it('should increment the maximal number', () => {
-      expect(addValueIntoMax([0, 10, 5], 3)).toStrictEqual([0, 13, 5]);
+    it('should return the input array with the maximum value incremented by the input value, even if the maximum value is negative', () => {
+      expect(addValueIntoMax([-4, -3, -2, -1], 1)).toEqual([-4, -3, -2, 0]);
     });
 
-    it('should increment the first maximal number', () => {
-      expect(addValueIntoMax([0, 10, 10], 3)).toStrictEqual([0, 13, 10]);
+    it('should return the input array with the maximum value incremented by the input value', () => {
+      expect(addValueIntoMax([0, -10, -5, -4], 3)).toStrictEqual([
+        3, -10, -5, -4,
+      ]);
+    });
+
+    it('should return a new array with the same values as the input array, if the input array has duplicate maximum values', () => {
+      expect(addValueIntoMax([0, 1, 4, 4], 3)).toStrictEqual([0, 1, 7, 4]);
+    });
+
+    it('should return a new array with the same values as the input array, if the input array is not modified', () => {
+      expect(addValueIntoMax([1, 2, 3, 4], 0)).toStrictEqual([1, 2, 3, 4]);
+    });
+
+    it('should return a new array with the same values as the input array, if the input array is modified', () => {
+      const arr = [1, 2, 3, 4, 5];
+      const mod = 1;
+      const expected = [1, 2, 3, 4, 6];
+
+      const result = addValueIntoMax(arr, mod);
+
+      expect(result).toEqual(expected);
+      expect(result).not.toBe(arr);
     });
   });
+
+  // describe('Method: addValueIntoMax()', () => {
+  //   it('should return an empty array of the input is an empty array', () => {
+  //     expect(addValueIntoMax([], 3)).toStrictEqual([]);
+  //   });
+
+  //   it('should return an equal array of the mod is equal to 0', () => {
+  //     expect(addValueIntoMax([1, 3, 2], 0)).toStrictEqual([1, 3, 2]);
+  //   });
+
+  //   it('should increment the maximal number', () => {
+  //     expect(addValueIntoMax([0, 10, 5], 3)).toStrictEqual([0, 13, 5]);
+  //   });
+
+  //   it('should increment the first maximal number', () => {
+  //     expect(addValueIntoMax([0, 10, 10], 3)).toStrictEqual([0, 13, 10]);
+  //   });
+  // });
 
   describe('Method: countScienceScore()', () => {
     it('should return 0 if the player has not scientific symbol', () => {
