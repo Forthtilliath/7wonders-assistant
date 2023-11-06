@@ -11,7 +11,7 @@
     "forth:merge": "tsc && git checkout dev && git merge dev-forth && git push origin dev:dev && git checkout dev-forth",
     "mike:merge": "git checkout dev && git merge dev-mike && git push origin dev:dev && git checkout dev-mike",
     "pull": "git pull origin dev",
-    "test": "vitest --ui",
+    "test": "vitest --ui --root src/",
     "tsc": "tsc --watch",
     "android:add": "npx cap add android",
     "android:copy": "npx cap copy android",
