@@ -33,6 +33,7 @@ declare global {
   type LoaderParams<T extends string = string> = {
     params: Params<T>
   }
+  type LoaderData<Loader extends (...args: LoaderParams) => unknown> = Awaited<ReturnType<Loader>>;
 }
 
 export {};
