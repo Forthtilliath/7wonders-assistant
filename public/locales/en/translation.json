@@ -27,7 +27,11 @@
   },
 
   "statistics": {
-    "avg_score_per_categ": "Average score per category"
+    "avg_score_per_categ": "Average score per category",
+    "players": "Players",
+    "name": "Name",
+    "win_rate": "Win Rate",
+    "games": "Games"
   },
 
   "history": {

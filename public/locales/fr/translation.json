@@ -27,7 +27,11 @@
   },
 
   "statistics": {
-    "avg_score_per_categ": "Moyenne des scores par catégorie"
+    "avg_score_per_categ": "Moyenne des scores par catégorie",
+    "players": "Joueurs",
+    "name": "Nom",
+    "win_rate": "Taux Vic.",
+    "games": "Parties"
   },
 
   "history": {
