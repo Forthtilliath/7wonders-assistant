@@ -1,6 +1,6 @@
-import { saveFile } from '@/helpers';
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
 import indexeddb from 'fake-indexeddb';
+import { saveFile } from '@helpers';
 
 globalThis.indexedDB = indexeddb;
 const fileName = 'test.txt';

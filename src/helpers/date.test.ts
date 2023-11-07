@@ -1,4 +1,4 @@
-import { formatDate } from '@/helpers';
+import { formatDate } from '@helpers';
 
 describe('Date methods', () => {
   describe('Method: formatDate', () => {

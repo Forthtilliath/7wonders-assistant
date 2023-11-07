@@ -1,4 +1,4 @@
-import { assertsIsDefined } from '@/helpers';
+import { assertsIsDefined } from '@helpers';
 
 describe('Arrays methods', () => {
   describe('Method: assertsIsDefined()', () => {

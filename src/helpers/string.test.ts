@@ -1,4 +1,4 @@
-import { capitalize, generateURL, generateVersionObject } from '@/helpers';
+import { capitalize, generateURL, generateVersionObject } from '@helpers';
 
 describe('String methods', () => {
   describe('Method: generateURL()', () => {

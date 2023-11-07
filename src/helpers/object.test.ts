@@ -1,4 +1,4 @@
-import { filterKeys } from '@/helpers';
+import { filterKeys } from '@helpers';
 
 describe('Object methods', () => {
   describe('Method: filterKeys()', () => {
