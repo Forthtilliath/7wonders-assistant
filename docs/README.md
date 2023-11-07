@@ -65,3 +65,8 @@ git merge dev-forth
 # Push sur la branche origin/dev la branche locale/dev
 git push origin dev:dev
 ```
+
+```bash
+# Genérer les assets capacitor
+pnpx capacitor-assets generate --assetPath ./public/assets
+```
