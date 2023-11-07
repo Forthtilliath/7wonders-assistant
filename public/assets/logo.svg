@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <style>
+    polygon { fill: #202f54; }
+    @media (prefers-color-scheme: dark) {
+      polygon { fill: #f2f2f2; }
+    }
+  </style>
+  </defs>
+  <polygon points="23.578 73.282 28.441 63.844 59.928 67.39 71.716 59.383 76.422 67.502 62.143 78.486" style="" transform="matrix(1, 0, 0, 1, 0, -4.440892098500626e-16)"/>
+  <polygon points="30.035 60.574 59.251 64.077 70.467 56.876 65.604 48.391 57.08 53.158 35.011 50.817" style="" transform="matrix(1, 0, 0, 1, 0, -4.440892098500626e-16)"/>
+  <polygon points="36.477 48.202 41.471 38.529 53.904 39.752 58.894 37.18 64.038 46.102 56.294 50.202" style="" transform="matrix(1, 0, 0, 1, 0, -4.440892098500626e-16)"/>
+  <polygon points="42.691 36.001 53.266 37.18 57.564 35.011 50.056 21.514" style="" transform="matrix(1, 0, 0, 1, 0, -4.440892098500626e-16)"/>
+</svg>
