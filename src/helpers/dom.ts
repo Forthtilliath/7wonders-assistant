@@ -14,5 +14,5 @@ export function getInputValue(
     elementName
   ) as HTMLInputElement;
 
-  return inputElement.value.trim();
+  return inputElement?.value?.trim() ?? null;
 }
