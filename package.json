@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@capacitor/android": "^5.5.0",
+    "@capacitor/assets": "^3.0.1",
     "@capacitor/camera": "^5.0.7",
     "@capacitor/cli": "^5.5.0",
     "@capacitor/core": "^5.5.0",
