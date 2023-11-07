@@ -2,7 +2,7 @@
 
 ## Global
 
-- [ ] Ajouter husky
+- [x] Ajouter husky
 - [ ] Ajouter des errors boundary
 - [ ] Ajouter un gitaction pour les tests unitaires : https://docs.cypress.io/guides/continuous-integration/github-actions
 - [ ] Refacto vers [Capacitor SQLite](https://github.com/capacitor-community/sqlite)
@@ -57,18 +57,18 @@
 
 ### Router
 
-- [ ] `/` ➡️ **Nouvelle partie** 
-  - [x] Etape 1 : *Création de la partie*
+- [ ] `/` ➡️ **Nouvelle partie**
+  - [x] Etape 1 : _Création de la partie_
     - [x] Afficher la création de la partie
     - [x] Afficher la liste des joueurs
     - [x] Ajouter par défaut les favoris dans la partie
     - [x] Ajouter au clic un joueur dans la partie
     - [x] Bouton valider pour continuer
-  - [x] Etape 2 : *Enregistrement des scores*
+  - [x] Etape 2 : _Enregistrement des scores_
     - [x] Enregistre les données
-  - [x] Etape 3 : *Affichage des scores*
+  - [x] Etape 3 : _Affichage des scores_
     - [x] Redirection vers `/games/history/:idGame`
-- [ ] `/statistics` ➡️ **Statistique de l'ensemble des parties** 
+- [ ] `/statistics` ➡️ **Statistique de l'ensemble des parties**
   - [ ] `/statistics/:idUser` ➡️ **Statisique d'un joueur**
 - [x] `/history` ➡️ **Gestion des parties**
   - [x] `/history` ➡️ **Historique des parties**
