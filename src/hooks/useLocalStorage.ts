@@ -34,9 +34,7 @@ export function useLocalStorage<T>(
       _setValue(value);
 
       localStorage.setItem(key, JSON.stringify(value));
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new StorageEvent('storage', { key }));
-      }
+      window.dispatchEvent(new StorageEvent('storage', { key }));
     } catch (e) {
       console.error(e);
     }
@@ -44,9 +42,7 @@ export function useLocalStorage<T>(
 
   const removeStorage = () => {
     localStorage.removeItem(key);
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new StorageEvent('storage', { key }));
-    }
+    window.dispatchEvent(new StorageEvent('storage', { key }));
   };
 
   return [value, setValue, removeStorage];
