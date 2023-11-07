@@ -1,7 +1,7 @@
 {
   "name": "7wonders-assistant",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,14 +11,16 @@
     "forth:merge": "tsc && git checkout dev && git merge dev-forth && git push origin dev:dev && git checkout dev-forth",
     "mike:merge": "git checkout dev && git merge dev-mike && git push origin dev:dev && git checkout dev-mike",
     "pull": "git pull origin dev",
-    "test": "vitest --ui --root src/",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
     "tsc": "tsc --watch",
     "android:add": "npx cap add android",
     "android:copy": "npx cap copy android",
     "android:sync": "npx cap sync android",
     "android:open": "npx cap open android",
     "android:build": "pnpm build && pnpm android:add && pnpm android:copy && pnpm android:open",
-    "android:update": "pnpm build && pnpm android:sync && pnpm android:open"
+    "android:update": "pnpm build && pnpm android:sync && pnpm android:open",
+    "prepare": "husky install"
   },
   "dependencies": {
     "i18next": "^23.6.0",
@@ -60,8 +62,10 @@
     "framer-motion": "^10.16.4",
     "happy-dom": "^12.9.1",
     "html2canvas": "^1.4.1",
+    "husky": "^8.0.0",
     "i18next-browser-languagedetector": "^7.1.0",
     "i18next-http-backend": "^2.2.2",
+    "lint-staged": "^15.0.2",
     "postcss": "^8.4.31",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.6",
