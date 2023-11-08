@@ -60,6 +60,7 @@ export const useGameStore = create<State>()(
         resetGame: () =>
           set(
             {
+              extensions: [],
               players: [],
               scores: {},
             },
