@@ -9,10 +9,14 @@ const lastSchemaVersion = dataSchema[APP_CONST.version];
 export function convertDataVersion<T extends DataVersion>(
   dataIn: T
 ): ReturnType<typeof lastSchemaVersion.safeParse> {
-  const result = dataSchema[dataIn.settings.version].safeParse(dataIn);
+  try {
+    const result = dataSchema[dataIn.settings.version].safeParse(dataIn);
 
-  if (!result.success) {
-    return result;
+    if (!result.success) {
+      return result;
+    }
+  } catch (err) {
+    if (err instanceof Error) console.error(err.message);
   }
 
   let dataOut: DataVersion = dataIn;
