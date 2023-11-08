@@ -1,26 +1,29 @@
+import { FC } from 'react';
 import { useConfirm } from '@/hooks/useConfirm';
 import { ConfirmContextProvider, ConfirmParams } from '@lib';
 import { render } from '../__tests__/tests-utils';
 
+const renderComp = (Comp: FC) =>
+  render(
+    <ConfirmContextProvider>
+      <Comp />
+    </ConfirmContextProvider>
+  );
+
 describe('Hook: useConfirm', () => {
   it("should return an object with a 'confirm' function", () => {
-    const Comp = () => {
+    renderComp(() => {
       const hook = useConfirm();
       expectTypeOf(hook).toEqualTypeOf<{
         confirm: (p: ConfirmParams) => Promise<boolean>;
       }>();
 
       return null;
-    };
-    render(
-      <ConfirmContextProvider>
-        <Comp />
-      </ConfirmContextProvider>
-    );
+    });
   });
 
   it("should call the 'confirmRef' function with the provided parameters", () => {
-    const Comp = () => {
+    renderComp(() => {
       const hook = useConfirm();
       const spy = vi.spyOn(hook, 'confirm');
       const params: ConfirmParams = {
@@ -32,11 +35,6 @@ describe('Hook: useConfirm', () => {
       expect(spy).toHaveBeenCalledTimes(1);
 
       return null;
-    };
-    render(
-      <ConfirmContextProvider>
-        <Comp />
-      </ConfirmContextProvider>
-    );
+    });
   });
 });
