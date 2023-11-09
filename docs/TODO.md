@@ -14,7 +14,7 @@
 - [x] Gestion de la partie scientifique
 - [x] Inverser animation retour
 - [ ] Possibilité du jeu en équipe
-- [ ] Voir pour charger les données des joueurs dans NewGame via le loader
+- [x] Voir pour charger les données des joueurs dans NewGame via le loader
 - [ ] Ajouter bouton decrement/increment
 
 - [ ] Fixer l'affichage du 0
@@ -36,8 +36,8 @@
 ## Gestion des joueurs
 
 - [ ] Ajouter une modal pour le delete joueur
-- [ ] Voir pour charger les données du joueur dans editPlayer via le loader
-- [ ] Voir pour charger les données des joueurs dans ListPlayer via le loader
+- [x] Voir pour charger les données du joueur dans editPlayer via le loader
+- [x] Voir pour charger les données des joueurs dans ListPlayer via le loader
 
 ## Options
 
