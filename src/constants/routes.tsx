@@ -60,7 +60,7 @@ export const ROUTES: Route[] = [
       {
         path: '/',
         element: <NewGame />,
-        loader: loaderGames,
+        loader: loaderPlayers,
       },
       {
         path: '/scores',
