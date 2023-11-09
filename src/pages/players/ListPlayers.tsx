@@ -1,9 +1,10 @@
+import { useLoaderData } from 'react-router-dom';
+import { Player } from '@types';
 import { Section } from '@components/layout';
 import { ButtonNewPlayer, CardPlayer } from '@components/cards';
-import { usePlayers } from '@hooks';
 
 export default function ListPlayers() {
-  const [players] = usePlayers();
+  const players = useLoaderData() as Player[];
 
   const sortedPlayed = [...players]
     .filter((p) => !p.isDeleted)

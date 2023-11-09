@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useRef, useState } from 'react';
+import { NavLink, useLoaderData, useNavigate } from 'react-router-dom';
 import { useConfirm } from '@/hooks/useConfirm';
 import type { Player } from '@types';
 import { HeaderOptions, Section } from '@components/layout';
@@ -14,13 +14,12 @@ import {
 } from '@components/shared/Icons';
 import { InputPlayer } from '@components/ui';
 import { assertsIsDefined } from '@helpers';
-import { getPlayer, updatePlayer } from '@lib';
-import { useParamsInt } from '@hooks';
+import { updatePlayer } from '@lib';
 
 export default function EditPlayer() {
-  const [player, _setPlayer] = useState<Player | null>(null);
   const navigate = useNavigate();
-  const { idPlayer } = useParamsInt('idPlayer');
+  const playerData = useLoaderData() as Player;
+  const [player, _setPlayer] = useState<Player>(playerData);
   const inputRef = useRef<HTMLInputElement>(null);
   const { confirm } = useConfirm();
 
@@ -28,24 +27,11 @@ export default function EditPlayer() {
     key: Key,
     cb: (currentValue: Player[Key]) => Player[Key]
   ) => {
-    _setPlayer((p) => {
-      if (!p) return null;
-
-      return {
-        ...p,
-        [key]: cb(p[key]),
-      };
-    });
+    _setPlayer((p) => ({
+      ...p,
+      [key]: cb(p[key]),
+    }));
   };
-
-  useEffect(() => {
-    if (!idPlayer) return;
-    const loadPlayer = async () => {
-      const player = await getPlayer(idPlayer);
-      _setPlayer(player);
-    };
-    loadPlayer();
-  }, [idPlayer]);
 
   const removePlayer = async () => {
     assertsIsDefined(player);

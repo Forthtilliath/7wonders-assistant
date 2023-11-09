@@ -21,6 +21,12 @@ import NewPlayer from '@/pages/players/NewPlayer';
 import Settings from '@/pages/Settings';
 import Statistics from '@/pages/Statistics';
 import Support from '@/pages/Support';
+import {
+  loaderGameHistory,
+  loaderPlayer,
+  loaderPlayers,
+  loaderStatistics,
+} from '@lib/loaders';
 // import TestCamera from '@/pages/tests/TestCamera';
 // import TestCrop from '@/pages/tests/TestCrop';
 // import TestGallery from '@/pages/tests/TestGallery';
@@ -38,8 +44,7 @@ import {
   IoMdSettings,
 } from '@components/shared/Icons';
 import { flattenRoutes } from '@helpers';
-import {  getGames } from '@lib';
-import { loaderGameHistory, loaderStatistics } from '@/lib/loaders';
+import { getGames } from '@lib';
 
 export const ROUTES: Route[] = [
   {
@@ -55,7 +60,7 @@ export const ROUTES: Route[] = [
       {
         path: '/',
         element: <NewGame />,
-        // TODO: add loader
+        loader: loaderPlayers,
       },
       {
         path: '/scores',
@@ -156,7 +161,7 @@ export const ROUTES: Route[] = [
           {
             path: '/players',
             element: <ListPlayers />,
-            // TODO: Add loader
+            loader: loaderPlayers,
           },
           {
             path: '/players/new',
@@ -169,7 +174,7 @@ export const ROUTES: Route[] = [
             element: <EditPlayer />,
             label: 'route.edit_player',
             previous: true,
-            // TODO: Add loader
+            loader: loaderPlayer,
           },
         ],
       },

@@ -1,21 +1,20 @@
-import { useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import type { Player } from '@types';
 import { Section } from '@components/layout';
 import { HeaderOptions } from '@components/layout/HeaderOptions';
 import { ButtonIcon } from '@components/shared/ButtonIcon';
 import { BsCheckLg, GiMeeple } from '@components/shared/Icons';
 import { ButtonNewPlayer, CardPlayer } from '@components/cards';
+import { getLocalStorage } from '@helpers';
 import { useGameStore } from '@lib';
-import { usePlayers } from '@hooks';
-import { LS_KEY } from '@/constants';
-import { getLocalStorage } from '@/helpers';
+import { LS_KEY } from '@constants';
 
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 7;
 
 export default function NewGame() {
   const navigate = useNavigate();
-  const [dbPlayers] = usePlayers();
+  const dbPlayers = useLoaderData() as Player[];
 
   const storePlayers = useGameStore((s) => s.players);
   const setStorePlayers = useGameStore((s) => s.setPlayers);
