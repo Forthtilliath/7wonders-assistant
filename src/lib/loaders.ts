@@ -8,6 +8,10 @@ export function loaderGameHistory({ params }: LoaderParams<'idGame'>) {
   return getGameHistory(idGame);
 }
 
+export function loaderGames() {
+  return getGames();
+}
+
 export async function loaderStatistics() {
   const games = await getGames();
   const players = await getPlayers();
