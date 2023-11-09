@@ -1,11 +1,11 @@
-import { getGameHistory, getGames, getPlayers } from '@lib';
+import { getGameHistory, getGames, getPlayer, getPlayers } from '@lib';
 
-export async function loaderGameHistory({ params }: LoaderParams<'idGame'>) {
+export function loaderGameHistory({ params }: LoaderParams<'idGame'>) {
   if (!params.idGame) {
     throw new Error('Game history not found');
   }
   const idGame = parseInt(params.idGame, 10);
-  return await getGameHistory(idGame);
+  return getGameHistory(idGame);
 }
 
 export async function loaderStatistics() {
@@ -13,4 +13,16 @@ export async function loaderStatistics() {
   const players = await getPlayers();
 
   return { games, players };
+}
+
+export function loaderPlayers() {
+  return getPlayers();
+}
+
+export function loaderPlayer({ params }: LoaderParams<'idPlayer'>) {
+  if (!params.idPlayer) {
+    throw new Error('Player not found');
+  }
+  const idPlayer = parseInt(params.idPlayer, 10);
+  return getPlayer(idPlayer);
 }
