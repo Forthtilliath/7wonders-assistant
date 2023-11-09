@@ -21,16 +21,17 @@ import NewPlayer from '@/pages/players/NewPlayer';
 import Settings from '@/pages/Settings';
 import Statistics from '@/pages/Statistics';
 import Support from '@/pages/Support';
+import TestCamera from '@/pages/tests/TestCamera';
+import TestCrop from '@/pages/tests/TestCrop';
+import TestGallery from '@/pages/tests/TestGallery';
+import TestImport from '@/pages/tests/TestImport';
 import {
   loaderGameHistory,
+  loaderGames,
   loaderPlayer,
   loaderPlayers,
   loaderStatistics,
 } from '@lib/loaders';
-// import TestCamera from '@/pages/tests/TestCamera';
-// import TestCrop from '@/pages/tests/TestCrop';
-// import TestGallery from '@/pages/tests/TestGallery';
-// import TestImport from '@/pages/tests/TestImport';
 import { MainLayout } from '@components/layout';
 import {
   AiFillClockCircle,
@@ -44,7 +45,6 @@ import {
   IoMdSettings,
 } from '@components/shared/Icons';
 import { flattenRoutes } from '@helpers';
-import { getGames } from '@lib';
 
 export const ROUTES: Route[] = [
   {
@@ -60,7 +60,7 @@ export const ROUTES: Route[] = [
       {
         path: '/',
         element: <NewGame />,
-        loader: loaderPlayers,
+        loader: loaderGames,
       },
       {
         path: '/scores',
@@ -142,7 +142,7 @@ export const ROUTES: Route[] = [
           {
             path: '/history',
             element: <History />,
-            loader: getGames,
+            loader: loaderGames,
           },
           {
             path: '/history/:idGame',
@@ -207,35 +207,35 @@ export const ROUTES: Route[] = [
         icon: GiCoffeeCup,
         label: 'route.support',
       },
-      // {
-      //   path: '/test',
-      //   children: [
-      //     {
-      //       path: '/test/import',
-      //       element: <TestImport />,
-      //       icon: GiCoffeeCup,
-      //       label: 'Import Image',
-      //     },
-      //     {
-      //       path: '/test/crop',
-      //       element: <TestCrop />,
-      //       icon: GiCoffeeCup,
-      //       label: 'Crop Image',
-      //     },
-      //     {
-      //       path: '/test/camera',
-      //       element: <TestCamera />,
-      //       icon: GiCoffeeCup,
-      //       label: 'Camera Image',
-      //     },
-      //     {
-      //       path: '/test/gallery',
-      //       element: <TestGallery />,
-      //       icon: GiCoffeeCup,
-      //       label: 'Gallery Images',
-      //     },
-      //   ],
-      // },
+      {
+        path: '/test',
+        children: [
+          {
+            path: '/test/import',
+            element: <TestImport />,
+            // icon: GiCoffeeCup,
+            label: 'Import Image',
+          },
+          {
+            path: '/test/crop',
+            element: <TestCrop />,
+            // icon: GiCoffeeCup,
+            label: 'Crop Image',
+          },
+          {
+            path: '/test/camera',
+            element: <TestCamera />,
+            // icon: GiCoffeeCup,
+            label: 'Camera Image',
+          },
+          {
+            path: '/test/gallery',
+            element: <TestGallery />,
+            // icon: GiCoffeeCup,
+            label: 'Gallery Images',
+          },
+        ],
+      },
     ],
   },
 ];
