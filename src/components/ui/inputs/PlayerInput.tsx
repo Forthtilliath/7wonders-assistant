@@ -1,13 +1,13 @@
 import { forwardRef } from 'react';
-import { BsPencilFill } from '../shared/Icons';
+import { BsPencilFill } from '../../shared/Icons';
 
 type Props = {
-  value?: string,
-  onChange?: InputChangeEventHandler
+  value?: string;
+  onChange?: InputChangeEventHandler;
 };
 
-export const InputPlayer = forwardRef<HTMLInputElement, Props>(
-  function InputPlayer({ ...inputProps }, ref) {
+export const PlayerInput = forwardRef<HTMLInputElement, Props>(
+  function PlayerInput({ ...inputProps }, ref) {
     return (
       <div className="relative mb-3 flex w-full flex-wrap items-stretch border-b-4 border-transparent text-slate-600 focus-within:border-wonders-yellow focus-within:text-wonders-blue-dark">
         <BsPencilFill className="absolute z-10 h-full w-8 items-center justify-center rounded py-3 pl-3 text-center text-base font-normal leading-snug" />

@@ -10,7 +10,7 @@ import {
   ImStarEmpty,
   ImStarFull,
 } from '@components/shared/Icons';
-import { InputPlayer } from '@components/ui';
+import { PlayerInput } from '@components/ui';
 import { getInputValue } from '@helpers';
 import { createPlayer } from '@lib';
 import { useToggle } from '@hooks';
@@ -70,7 +70,7 @@ export default function NewPlayer() {
         </HeaderOptions>
 
         <Section className="p-0">
-          <InputPlayer ref={inputRef} />
+          <PlayerInput ref={inputRef} />
 
           {/* NOTE: Si on change de page, on perd le form ! */}
           {/* Solution possible : Sidebar / Modal */}

@@ -12,7 +12,7 @@ import {
   ImStarEmpty,
   ImStarFull,
 } from '@components/shared/Icons';
-import { InputPlayer } from '@components/ui';
+import { PlayerInput } from '@components/ui';
 import { assertsIsDefined } from '@helpers';
 import { updatePlayer } from '@lib';
 
@@ -105,7 +105,7 @@ export default function EditPlayer() {
         </HeaderOptions>
 
         <Section className="p-0">
-          <InputPlayer
+          <PlayerInput
             ref={inputRef}
             value={player.name}
             onChange={(e) => setPlayer('name', () => e.target.value)}
