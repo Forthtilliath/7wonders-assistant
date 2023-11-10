@@ -21,9 +21,10 @@ type Props = {
   step: (typeof CATEGORIES)[number];
 };
 
-//wheel, tablet, compass
 type Science = 'wheel' | 'tablet' | 'compass' | 'all';
 type Science2 = 'wheel' | 'tablet' | 'compass' | 'most' | 'all';
+
+const DROPDOWN_CLOSED = -1;
 
 const SCORE_TRIPLET = 7;
 
@@ -32,7 +33,7 @@ export function GroupScoreInputs({ step }: Props) {
   const scores = useGameStore((s) => s.scores);
   const setScore = useGameStore((s) => s.setScore);
 
-  const [panelIndexOpen, setPanelIndexOpen] = useState<number>(-1);
+  const [panelIndexOpen, setPanelIndexOpen] = useState<number>(DROPDOWN_CLOSED);
   const [refsByKey, setRef] = useRefs<HTMLInputElement>();
 
   const saveScore: SaveScoreEventHandler = (idPlayer) => (e) =>
@@ -108,7 +109,6 @@ export function GroupScoreInputs({ step }: Props) {
       const bestScore = calculateScores(
         sciencesObj as Record<Science2, string>
       );
-      console.log({ bestScore });
 
       const input = refsByKey[iPlayer];
       assertsIsDefined(input);
@@ -120,28 +120,26 @@ export function GroupScoreInputs({ step }: Props) {
     <div className="flex flex-col gap-4 px-10 py-6">
       {players.map((player, i) => (
         <form key={player.idPlayer} onSubmit={handleSubmit(i)}>
-          <div className="flex items-center gap-8">
+          <div className="flex h-[50px] items-center gap-3 sm:gap-8">
             <CardPlayer
               {...player}
-              className="w-[100px]"
+              className="w-[60px]"
               classNameH2="text-xs font-normal"
             />
             <input
               ref={setRef(i)}
               type="number"
-              // name="score"
               defaultValue={scores[player.idPlayer]?.[step] ?? 0}
               onChange={saveScore(player.idPlayer)}
-              className="border-wonders-dark w-full rounded border-2 bg-slate-900 p-3 text-center disabled:border-slate-700"
-              disabled={panelIndexOpen === i}
+              className="w-full rounded bg-slate-900 p-3 text-center outline-none ring-1 ring-slate-400 transition-shadow duration-100 focus:ring-2 focus:ring-slate-50 disabled:ring-slate-700"
+              disabled={panelIndexOpen !== DROPDOWN_CLOSED}
             />
             {step === 'scientifics' && (
               <ButtonToggleIcon
                 condition={panelIndexOpen === i}
                 icons={[BsFillFileArrowDownFill, BsFillFileArrowUpFill]}
-                // onClick={handleToggleDropdown(i)}
                 onClick={() => setPanelIndexOpen((v) => (v !== i ? i : -1))}
-                className={cn('m-0 text-slate-200', {
+                className={cn('m-0 flex text-slate-200', {
                   'text-green-500': panelIndexOpen === i,
                 })}
                 type={panelIndexOpen === i ? 'submit' : 'button'}
