@@ -120,10 +120,10 @@ export function GroupScoreInputs({ step }: Props) {
     <div className="flex flex-col gap-4 px-10 py-6">
       {players.map((player, i) => (
         <form key={player.idPlayer} onSubmit={handleSubmit(i)}>
-          <div className="flex h-[50px] items-center gap-3 sm:gap-8">
+          <div className="grid h-[50px] grid-cols-[50px_1fr_30px] items-center gap-3 sm:gap-8">
             <CardPlayer
               {...player}
-              className="w-[60px]"
+              className=""
               classNameH2="text-xs font-normal"
             />
             <input
