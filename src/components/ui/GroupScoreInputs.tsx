@@ -133,6 +133,7 @@ export function GroupScoreInputs({ step }: Props) {
               onChange={saveScore(player.idPlayer)}
               className="w-full rounded bg-slate-900 p-3 text-center outline-none ring-1 ring-slate-400 transition-shadow duration-100 focus:ring-2 focus:ring-slate-50 disabled:ring-slate-700"
               disabled={panelIndexOpen !== DROPDOWN_CLOSED}
+              inputMode="numeric"
             />
             {step === 'scientifics' && (
               <ButtonToggleIcon
