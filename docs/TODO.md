@@ -15,12 +15,11 @@
 - [x] Inverser animation retour
 - [ ] Possibilité du jeu en équipe
 - [x] Voir pour charger les données des joueurs dans NewGame via le loader
-- [ ] Ajouter bouton decrement/increment
+- [x] Ajouter bouton decrement/increment
 
-- [ ] Fixer l'affichage du 0
+- [x] Fixer l'affichage du 0
 - [ ] Fixer si un joueur n'a pas de score (lock btn submit)
 - [ ] Speed click génère des doublons de composants sur les composants animés ⚠️
-- [ ] Corriger duplication page quand on scroll trop vite
 
 ## Statistiques
 
@@ -32,6 +31,8 @@
 - [ ] Revoir l'affichage des parties
 - [ ] Limite la taille des graphes pie
 - [ ] Prendre en compte dans l'history si on ajoute des nouvelles extensions
+- [ ] Ajouter un bouton scroll to top
+- [ ] Ajouter un smooth scroll sur les avatars vers le graph du joueur
 
 ## Gestion des joueurs
 
@@ -42,6 +43,10 @@
 ## Options
 
 - [ ] Bouton download ne fonctionne pas sur mobile (permissions ???)
+
+## Dépendances
+
+- [ ] Fixer formidable qui vient de @capacitor/assets
 
 # Tests Unitaires
 
@@ -54,6 +59,7 @@
   - [ ] Vérifier l'order des joueurs
   - [ ] Vérifier que les joueurs favoris aient l'étoile
   - [ ] Vérifier que les joueurs non favoris n'aient pas l'étoile
+- [ ] Valeur science doivent être positives
 
 ### Router
 
