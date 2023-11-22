@@ -1,4 +1,5 @@
 import { Pie } from 'react-chartjs-2';
+import { TypedChartComponent } from 'react-chartjs-2/dist/types';
 import 'chart.js/auto';
 import { Scores } from '@types';
 import { capitalize } from '@helpers';
@@ -8,6 +9,8 @@ type Props = {
   scores: Scores;
   extensions: string[];
 };
+
+type PieParameters = Parameters<TypedChartComponent<'pie'>>['0'];
 
 export function PieScorePlayer({ scores, extensions }: Props) {
   const [labels, data, backgroundColor, borderColor] = Object.entries(
@@ -27,7 +30,7 @@ export function PieScorePlayer({ scores, extensions }: Props) {
     [[], [], [], []] as [string[], number[], string[], string[]]
   );
 
-  const pieData = {
+  const pieData: PieParameters['data'] = {
     labels: labels.map(capitalize),
     datasets: [
       {
@@ -40,5 +43,13 @@ export function PieScorePlayer({ scores, extensions }: Props) {
     ],
   };
 
-  return <Pie data={pieData} />;
+  const pieOptions: PieParameters['options'] = {
+    plugins: {
+      legend: {
+        position: 'bottom',
+      },
+    },
+  };
+
+  return <Pie data={pieData} options={pieOptions} />;
 }
