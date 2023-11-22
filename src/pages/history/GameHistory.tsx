@@ -39,16 +39,18 @@ export function GameHistory() {
         </div>
 
         <div
-          className="flex flex-col justify-center gap-4 py-4"
+          className="mb-8 flex flex-col justify-center gap-5 py-4"
           ref={sectionRef}>
           <TableScores data={data} />
 
           {data.scores.map((scores) => (
-            <PieScorePlayer
-              key={'pie' + scores.idPlayer}
-              scores={filterKeys(scores, [...CATEGORIES])}
-              extensions={data.game.extensions}
-            />
+            <div key={'pie' + scores.idPlayer}>
+              <h2 className="mb-4 text-center">{scores.player.name}</h2>
+              <PieScorePlayer
+                scores={filterKeys(scores, [...CATEGORIES])}
+                extensions={data.game.extensions}
+              />
+            </div>
           ))}
         </div>
       </Section>
