@@ -4,13 +4,10 @@ import { cn } from '@helpers';
 type Props = ComponentPropsWithRef<'input'> & {
   min?: number;
   max?: number;
-  value?: number;
-  setValue?: (newScore: number) => void;
+  score?: number;
+  setScore?: (newScore: number) => void;
 };
 
-/**
- * TODO Invert score & value
- */
 export const ScoreInput = forwardRef<HTMLInputElement, Props>(
   function ScoreInput(
     {
@@ -18,29 +15,22 @@ export const ScoreInput = forwardRef<HTMLInputElement, Props>(
       disabled,
       min = -Infinity,
       max = Infinity,
-      value = 0,
-      setValue = () => {},
+      score = 0,
+      setScore = () => {},
       ...inputProps
     },
     ref
   ) {
-    const [score, setScore] = useState(value);
+    const [value, setValue] = useState(score);
 
     const handleChange: InputChangeEventHandler = (e) => {
-      setScore(e.currentTarget.valueAsNumber);
+      setValue(e.currentTarget.valueAsNumber);
     };
 
-    const decrement = () => {
-      setScore((v) => v - 1);
-    };
+    const decrement = () => setValue((v) => v - 1);
+    const increment = () => setValue((v) => v + 1);
 
-    const increment = () => {
-      setScore((v) => v + 1);
-    };
-
-    useEffect(() => {
-      setValue(score);
-    }, [score, setValue]);
+    useEffect(() => setScore(value), [value, setScore]);
 
     return (
       <div className="group relative h-[50px]">
@@ -55,19 +45,19 @@ export const ScoreInput = forwardRef<HTMLInputElement, Props>(
           inputMode="numeric"
           disabled={disabled}
           {...inputProps}
-          value={score}
+          value={value}
           onChange={handleChange}
         />
         <button
           className="absolute left-0 top-0 h-[calc(100%_-_2px)] w-7 overflow-hidden rounded-s bg-slate-500 text-slate-950 disabled:bg-slate-700 group-focus-within:bg-slate-50"
-          disabled={disabled || score === min}
+          disabled={disabled || value === min}
           type="button"
           onClick={decrement}>
           -
         </button>
         <button
           className="absolute right-0 top-0 h-[calc(100%_-_2px)] w-7 overflow-hidden rounded-e bg-slate-500 text-slate-950 disabled:bg-slate-700 group-focus-within:bg-slate-50"
-          disabled={disabled || score === max}
+          disabled={disabled || value === max}
           type="button"
           onClick={increment}>
           +

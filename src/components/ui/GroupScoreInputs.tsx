@@ -18,6 +18,8 @@ type Props = {
 };
 
 const DROPDOWN_CLOSED = -1;
+const DEFAULT_MIN = undefined;
+const NEGATIVE_CATEGORIES: Category[] = ['military', 'treasury', 'wonders'];
 
 export function GroupScoreInputs({ step }: Props) {
   const players = useGameStore((s) => s.players);
@@ -59,10 +61,10 @@ export function GroupScoreInputs({ step }: Props) {
             <ScoreInput
               key={player.idPlayer}
               ref={setRef(i)}
-              value={scores[player.idPlayer]?.[step] ?? 0}
-              setValue={saveScore(player.idPlayer)}
+              score={scores[player.idPlayer]?.[step] ?? 0}
+              setScore={saveScore(player.idPlayer)}
               disabled={panelIndexOpen !== DROPDOWN_CLOSED}
-              min={0}
+              min={NEGATIVE_CATEGORIES.includes(step) ? DEFAULT_MIN : 0}
             />
 
             {step === 'scientifics' && (
