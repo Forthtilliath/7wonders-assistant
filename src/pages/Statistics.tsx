@@ -5,15 +5,13 @@ import { Section } from '@components/layout';
 import { ScorePerCategory } from '@components/ui/statistics/ScorePerCategory';
 
 export default function Statistics() {
-  const { games, players } = useLoaderData() as LoaderData<
-    typeof loaderStatistics
-  >;
+  const { games } = useLoaderData() as LoaderData<typeof loaderStatistics>;
 
   return (
     <main>
       <Section className="flex flex-col gap-4">
         <ScorePerCategory games={games} />
-        <ListPlayers players={players} />
+        <ListPlayers />
       </Section>
     </main>
   );
