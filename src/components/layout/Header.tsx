@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { usePageAnimationStore } from '@lib';
 import { ButtonIcon } from '@components/shared';
 import { AiOutlineArrowLeft, GiHamburgerMenu } from '@components/shared/Icons';
 import { cn, getLabelAndPrevious } from '@helpers';
+import { usePageAnimationStore } from '@lib';
 import { ROUTES } from '@constants';
 import { openSidebar } from './Sidebar';
 
@@ -28,6 +28,13 @@ export function Header() {
   const location = useLocation();
   const { t } = useTranslation();
   const setPrevious = usePageAnimationStore((s) => s.setIsPrevious);
+
+  // const data = useLoaderData();
+
+  // if (pathname.startsWith('/statistics/')) {
+  //   console.log("statistics", data)
+  //   //
+  // }
 
   const handlePrevious = () => {
     setPrevious(true);
