@@ -1,17 +1,54 @@
-import * as React from 'react';
+import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Player } from '@types';
+import { useLoaderData } from 'react-router-dom';
+import { loaderStatistics } from '@/lib/loaders';
 
-type Props = {
-  players: Player[];
-};
-
-export function TablePlayersWinRate({ players }: Props) {
+export function TablePlayersWinRate() {
+  const { games, players } = useLoaderData() as LoaderData<
+    typeof loaderStatistics
+  >;
   const { t } = useTranslation(undefined, { keyPrefix: 'statistics' });
 
   /**
+   * {
+   *   idPlayer: {
+   *     wins: number,
+   *     played: number
+   *   }
+   * }
+   */
+
+  const playersStat = games.reduce(
+    (stats, { scores }) => {
+      //
+      console.log(scores); //array : idPlayer & ranking
+      scores.forEach(({ idPlayer, ranking }) => {
+        if (!stats[idPlayer]) {
+          stats[idPlayer] = {
+            wins: 0,
+            played: 0,
+          };
+        }
+        if (ranking) {
+          stats[idPlayer].wins++;
+        }
+        stats[idPlayer].played++;
+      });
+
+      return stats;
+    },
+    {} as Record<number, { wins: number; played: number }>
+  );
+  console.log(playersStat);
+
+  // useEffect(() => {
+  //   console.log(players)
+  //   console.log(games)
+  // }, [games, players])
+
+  /**
    * TODO :
-   * - [ ] Récupérer les parties
+   * - [x] Récupérer les parties
    * - [ ] Les rassembler par joueur
    * - [ ] Compter le nombre de parties que chaque joueur a fini premier
    * - [ ] Compter le nombre de parties que chaque joueur a joué
@@ -24,12 +61,12 @@ export function TablePlayersWinRate({ players }: Props) {
       <div>{t('games')}</div>
 
       {players.map((player) => (
-        <React.Fragment key={player.idPlayer}>
+        <Fragment key={player.idPlayer}>
           <div></div>
           <div>{player.name}</div>
-          <div>15%</div>
+          <div>100%</div>
           <div>15</div>
-        </React.Fragment>
+        </Fragment>
       ))}
     </div>
   );
