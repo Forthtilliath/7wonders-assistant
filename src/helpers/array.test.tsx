@@ -3,7 +3,7 @@ import EditPlayer from '@/pages/players/EditPlayer';
 import ListPlayers from '@/pages/players/ListPlayers';
 import NewPlayer from '@/pages/players/NewPlayer';
 import Settings from '@/pages/Settings';
-import Statistics from '@/pages/Statistics';
+import Statistics from '@/pages/statistics/Statistics';
 import { loaderStatistics } from '@lib/loaders';
 import { MainLayout } from '@components/layout';
 import {
