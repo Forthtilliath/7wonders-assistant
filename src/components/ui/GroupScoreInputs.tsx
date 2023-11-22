@@ -16,6 +16,7 @@ import {
   BsFillFileArrowUpFill,
 } from '../shared/Icons';
 import { DropdownScience } from './DropdownScience';
+import { ScoreInput } from './inputs/ScoreInput';
 
 type Props = {
   step: (typeof CATEGORIES)[number];
@@ -36,8 +37,9 @@ export function GroupScoreInputs({ step }: Props) {
   const [panelIndexOpen, setPanelIndexOpen] = useState<number>(DROPDOWN_CLOSED);
   const [refsByKey, setRef] = useRefs<HTMLInputElement>();
 
-  const saveScore: SaveScoreEventHandler = (idPlayer) => (e) =>
-    setScore(step, idPlayer, e.currentTarget.valueAsNumber);
+  const saveScore = (idPlayer: number) => (newScore: number) => {
+    setScore(step, idPlayer, newScore);
+  };
 
   const calculateScoreSolo = ({
     wheel,
@@ -126,7 +128,7 @@ export function GroupScoreInputs({ step }: Props) {
               className=""
               classNameH2="text-xs font-normal"
             />
-            <input
+            {/* <input
               ref={setRef(i)}
               type="number"
               defaultValue={scores[player.idPlayer]?.[step] ?? 0}
@@ -134,7 +136,17 @@ export function GroupScoreInputs({ step }: Props) {
               className="w-full rounded bg-slate-900 p-3 text-center outline-none ring-1 ring-slate-400 transition-shadow duration-100 focus:ring-2 focus:ring-slate-50 disabled:ring-slate-700"
               disabled={panelIndexOpen !== DROPDOWN_CLOSED}
               inputMode="numeric"
+            /> */}
+            <ScoreInput
+              // key={`${player.idPlayer}:${scores[player.idPlayer]?.[step] ?? 0}`}
+              key={player.idPlayer}
+              ref={setRef(i)}
+              value={scores[player.idPlayer]?.[step] ?? 0}
+              setValue={saveScore(player.idPlayer)}
+              disabled={panelIndexOpen !== DROPDOWN_CLOSED}
+              min={0}
             />
+
             {step === 'scientifics' && (
               <ButtonToggleIcon
                 condition={panelIndexOpen === i}
