@@ -1,4 +1,5 @@
 import { ComponentPropsWithRef, forwardRef, useEffect, useState } from 'react';
+import { removeLandingZero } from '@/helpers/number';
 import { cn } from '@helpers';
 
 type Props = ComponentPropsWithRef<'input'> & {
@@ -24,7 +25,8 @@ export const ScoreInput = forwardRef<HTMLInputElement, Props>(
     const [value, setValue] = useState(score);
 
     const handleChange: InputChangeEventHandler = (e) => {
-      setValue(e.currentTarget.valueAsNumber);
+      console.log('handleChange', e.currentTarget.valueAsNumber);
+      setValue(e.currentTarget.valueAsNumber || 0);
     };
 
     const decrement = () => setValue((v) => v - 1);
@@ -45,7 +47,7 @@ export const ScoreInput = forwardRef<HTMLInputElement, Props>(
           inputMode="numeric"
           disabled={disabled}
           {...inputProps}
-          value={value}
+          value={removeLandingZero(value)}
           onChange={handleChange}
         />
         <button
