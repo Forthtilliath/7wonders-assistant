@@ -19,7 +19,8 @@ import EditPlayer from '@/pages/players/EditPlayer';
 import ListPlayers from '@/pages/players/ListPlayers';
 import NewPlayer from '@/pages/players/NewPlayer';
 import Settings from '@/pages/Settings';
-import Statistics from '@/pages/Statistics';
+import { PlayerStatistics } from '@/pages/statistics/PlayerStatistics';
+import Statistics from '@/pages/statistics/Statistics';
 import Support from '@/pages/Support';
 import TestCamera from '@/pages/tests/TestCamera';
 import TestCrop from '@/pages/tests/TestCrop';
@@ -30,6 +31,7 @@ import {
   loaderGames,
   loaderPlayer,
   loaderPlayers,
+  loaderPlayerStatistics,
   loaderStatistics,
 } from '@lib/loaders';
 import { MainLayout } from '@components/layout';
@@ -129,10 +131,22 @@ export const ROUTES: Route[] = [
       },
       {
         path: '/statistics',
-        element: <Statistics />,
         icon: ImStatsBars,
         label: 'route.statistics',
-        loader: loaderStatistics,
+        children: [
+          {
+            path: '/statistics',
+            element: <Statistics />,
+            loader: loaderStatistics,
+          },
+          {
+            path: '/statistics/:idPlayer',
+            element: <PlayerStatistics />,
+            label: 'route.player_statistics',
+            previous: true,
+            loader: loaderPlayerStatistics,
+          },
+        ],
       },
       {
         path: '/history',
