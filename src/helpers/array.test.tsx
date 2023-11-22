@@ -15,8 +15,7 @@ import {
 import {
   addValueIntoMax,
   addValueIntoMin,
-  avg,
-  countScienceScore,
+  avg, // countScienceScore,
   flattenRoutes,
   getLabelAndPrevious,
   sum,
@@ -547,51 +546,33 @@ describe('Arrays methods', () => {
     });
   });
 
-  // describe('Method: addValueIntoMax()', () => {
-  //   it('should return an empty array of the input is an empty array', () => {
-  //     expect(addValueIntoMax([], 3)).toStrictEqual([]);
+  // describe('Method: countScienceScore()', () => {
+  //   it('should return 0 if the player has not scientific symbol', () => {
+  //     expect(countScienceScore(0, 0, 0, 7)).toStrictEqual(0);
   //   });
 
-  //   it('should return an equal array of the mod is equal to 0', () => {
-  //     expect(addValueIntoMax([1, 3, 2], 0)).toStrictEqual([1, 3, 2]);
+  //   it('should return 10 if the player has 1 of each symbol', () => {
+  //     expect(countScienceScore(1, 1, 1, 7)).toStrictEqual(10);
   //   });
 
-  //   it('should increment the maximal number', () => {
-  //     expect(addValueIntoMax([0, 10, 5], 3)).toStrictEqual([0, 13, 5]);
+  //   it('should return 13 if the player has 2, 1 and 1 symbols', () => {
+  //     expect(countScienceScore(2, 1, 1, 7)).toStrictEqual(13);
   //   });
 
-  //   it('should increment the first maximal number', () => {
-  //     expect(addValueIntoMax([0, 10, 10], 3)).toStrictEqual([0, 13, 10]);
+  //   it('should return 26 if the player has 2 of each symbol', () => {
+  //     expect(countScienceScore(2, 2, 2, 7)).toStrictEqual(26);
+  //   });
+
+  //   it('should return 13 if the player has 1 of each symbol and each triple worth 10 points', () => {
+  //     expect(countScienceScore(1, 1, 1, 10)).toStrictEqual(13);
+  //   });
+
+  //   it('should return 16 if the player has 2, 1 and 1 symbols and each triple worth 10 points', () => {
+  //     expect(countScienceScore(2, 1, 1, 10)).toStrictEqual(16);
+  //   });
+
+  //   it('should return 26 if the player has 2 of each symbol and each triple worth 10 points', () => {
+  //     expect(countScienceScore(2, 2, 2, 10)).toStrictEqual(32);
   //   });
   // });
-
-  describe('Method: countScienceScore()', () => {
-    it('should return 0 if the player has not scientific symbol', () => {
-      expect(countScienceScore(0, 0, 0, 7)).toStrictEqual(0);
-    });
-
-    it('should return 10 if the player has 1 of each symbol', () => {
-      expect(countScienceScore(1, 1, 1, 7)).toStrictEqual(10);
-    });
-
-    it('should return 13 if the player has 2, 1 and 1 symbols', () => {
-      expect(countScienceScore(2, 1, 1, 7)).toStrictEqual(13);
-    });
-
-    it('should return 26 if the player has 2 of each symbol', () => {
-      expect(countScienceScore(2, 2, 2, 7)).toStrictEqual(26);
-    });
-
-    it('should return 13 if the player has 1 of each symbol and each triple worth 10 points', () => {
-      expect(countScienceScore(1, 1, 1, 10)).toStrictEqual(13);
-    });
-
-    it('should return 16 if the player has 2, 1 and 1 symbols and each triple worth 10 points', () => {
-      expect(countScienceScore(2, 1, 1, 10)).toStrictEqual(16);
-    });
-
-    it('should return 26 if the player has 2 of each symbol and each triple worth 10 points', () => {
-      expect(countScienceScore(2, 2, 2, 10)).toStrictEqual(32);
-    });
-  });
 });

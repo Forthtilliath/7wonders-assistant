@@ -82,7 +82,7 @@ export function sum(arr: number[]): number {
  */
 export function avg(arr: number[]): number {
   if (arr.length === 0) return 0;
-  
+
   return sum(arr) / arr.length;
 }
 
@@ -122,18 +122,4 @@ export function addValueIntoMax(arr: number[], mod: number): number[] {
   arrRes[indexMax] += mod;
 
   return arrRes;
-}
-
-export function countScienceScore(
-  wheel: number,
-  tablet: number,
-  compass: number,
-  scoreTriple: number
-): number {
-  return (
-    Math.pow(wheel, 2) +
-    Math.pow(tablet, 2) +
-    Math.pow(compass, 2) +
-    Math.min(wheel, tablet, compass) * scoreTriple
-  );
 }

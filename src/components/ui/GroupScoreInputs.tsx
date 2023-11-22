@@ -1,13 +1,8 @@
 import { useState } from 'react';
-import {
-  addValueIntoMax,
-  addValueIntoMin,
-  assertsIsDefined,
-  cn,
-  countScienceScore,
-} from '@/helpers';
 import { useRefs } from '@/hooks/useRefs';
+import { calculateScores, ScienceSymbol } from '@lib/utils/scores';
 import { CardPlayer } from '@components/cards';
+import { assertsIsDefined, cn } from '@helpers';
 import { useGameStore } from '@lib';
 import { CATEGORIES } from '@constants';
 import { ButtonToggleIcon } from '../shared';
@@ -22,12 +17,7 @@ type Props = {
   step: (typeof CATEGORIES)[number];
 };
 
-type Science = 'wheel' | 'tablet' | 'compass' | 'all';
-type Science2 = 'wheel' | 'tablet' | 'compass' | 'most' | 'all';
-
 const DROPDOWN_CLOSED = -1;
-
-const SCORE_TRIPLET = 7;
 
 export function GroupScoreInputs({ step }: Props) {
   const players = useGameStore((s) => s.players);
@@ -41,75 +31,13 @@ export function GroupScoreInputs({ step }: Props) {
     setScore(step, idPlayer, newScore);
   };
 
-  const calculateScoreSolo = ({
-    wheel,
-    tablet,
-    compass,
-    all,
-  }: Record<Science, number>) => {
-    [wheel, tablet, compass] = addValueIntoMax([wheel, tablet, compass], all);
-
-    return countScienceScore(wheel, tablet, compass, SCORE_TRIPLET);
-  };
-
-  const calculateScoreTriplet = ({
-    wheel,
-    tablet,
-    compass,
-    all,
-  }: Record<Science, number>) => {
-    while (all > 0) {
-      [wheel, tablet, compass] = addValueIntoMin([wheel, tablet, compass], 1);
-      all--;
-    }
-
-    return countScienceScore(wheel, tablet, compass, SCORE_TRIPLET);
-  };
-
-  const calculateScores = ({
-    wheel,
-    tablet,
-    compass,
-    most,
-    all,
-  }: Record<Science2, string>) => {
-    let iWheel = parseInt(wheel, 10);
-    let iTablet = parseInt(tablet, 10);
-    let iCompass = parseInt(compass, 10);
-
-    const iMost = parseInt(most, 10);
-
-    [iWheel, iTablet, iCompass] = addValueIntoMax(
-      [iWheel, iTablet, iCompass],
-      iMost
-    );
-
-    const iAll = parseInt(all, 10);
-
-    const scoreBySolo = calculateScoreSolo({
-      wheel: iWheel,
-      tablet: iTablet,
-      compass: iCompass,
-      all: iAll,
-    });
-
-    const scoreByTriplet = calculateScoreTriplet({
-      wheel: iWheel,
-      tablet: iTablet,
-      compass: iCompass,
-      all: iAll,
-    });
-
-    return Math.max(scoreBySolo, scoreByTriplet);
-  };
-
   const handleSubmit: (iPlayer: number) => FormSubmitEventHandler =
     (iPlayer: number) => (e) => {
       e.preventDefault();
       const sciencesObj = Object.fromEntries(new FormData(e.currentTarget));
 
       const bestScore = calculateScores(
-        sciencesObj as Record<Science2, string>
+        sciencesObj as Record<ScienceSymbol, string>
       );
 
       const input = refsByKey[iPlayer];
@@ -128,17 +56,7 @@ export function GroupScoreInputs({ step }: Props) {
               className=""
               classNameH2="text-xs font-normal"
             />
-            {/* <input
-              ref={setRef(i)}
-              type="number"
-              defaultValue={scores[player.idPlayer]?.[step] ?? 0}
-              onChange={saveScore(player.idPlayer)}
-              className="w-full rounded bg-slate-900 p-3 text-center outline-none ring-1 ring-slate-400 transition-shadow duration-100 focus:ring-2 focus:ring-slate-50 disabled:ring-slate-700"
-              disabled={panelIndexOpen !== DROPDOWN_CLOSED}
-              inputMode="numeric"
-            /> */}
             <ScoreInput
-              // key={`${player.idPlayer}:${scores[player.idPlayer]?.[step] ?? 0}`}
               key={player.idPlayer}
               ref={setRef(i)}
               value={scores[player.idPlayer]?.[step] ?? 0}
