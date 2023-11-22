@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRefs } from '@/hooks/useRefs';
-import { calculateScores, ScienceSymbol } from '@lib/utils/scores';
+import { calculateScores, ScienceSymbol } from '@lib/utils/science';
 import { CardPlayer } from '@components/cards';
 import { assertsIsDefined, cn } from '@helpers';
 import { useGameStore } from '@lib';
