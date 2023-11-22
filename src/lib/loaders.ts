@@ -19,6 +19,20 @@ export async function loaderStatistics() {
   return { games, players };
 }
 
+export async function loaderPlayerStatistics({
+  params,
+}: LoaderParams<'idPlayer'>) {
+  if (!params.idPlayer) {
+    throw new Error('Player not found');
+  }
+  const idPlayer = parseInt(params.idPlayer, 10);
+
+  const games = await getGames();
+  const player = await getPlayer(idPlayer);
+
+  return { games, player };
+}
+
 export function loaderPlayers() {
   return getPlayers();
 }
