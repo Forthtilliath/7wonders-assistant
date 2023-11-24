@@ -1,3 +1,5 @@
+import { isNumber } from './boolean';
+
 export function assertsIsDefined<T>(
   val: T | null | undefined,
   errorMessage?: string
@@ -12,7 +14,7 @@ export function assertsIsDefined<T>(
  * @param {unknown} val - The parameter `val` is of type `unknown`, which means it can be any type.
  */
 export function assertsIsNumber(val: unknown): asserts val is number {
-  if (typeof val !== 'number') {
+  if (!isNumber(val)) {
     throw new Error(`Invalid input. The value ${val} must be a number.`);
   }
 }
