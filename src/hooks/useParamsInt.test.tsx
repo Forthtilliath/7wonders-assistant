@@ -64,7 +64,7 @@ describe('Hook: useParamsInt()', () => {
   it('should throw an error if the key is not found in the URL parameters', () => {
     const Comp = () => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      expect(() => useParamsInt('idUser')).toThrowError('idUser is undefined');
+      expect(() => useParamsInt('idUser')).toThrow('idUser is undefined');
 
       return null;
     };
@@ -79,7 +79,7 @@ describe('Hook: useParamsInt()', () => {
   it('should throw an error if any of the keys in the array are not found in the URL parameters', () => {
     const Comp = () => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      expect(() => useParamsInt(['id', 'countLikes'])).toThrowError(
+      expect(() => useParamsInt(['id', 'countLikes'])).toThrow(
         'countLikes is undefined'
       );
       return null;
