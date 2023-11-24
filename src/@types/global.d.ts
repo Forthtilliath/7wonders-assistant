@@ -37,6 +37,11 @@ declare global {
     Awaited<ReturnType<Loader>>;
 
   type ReadonlyObject<T extends string = ''> = Readonly<Record<T, number>>;
+
+  type IntegerNumber = number & { __brand: 'IntegerNumber' };
+  type NegativeNumber = number & { __brand: 'NegativeNumber' };
+  type PositiveNumber = number & { __brand: 'PositiveNumber' };
+  type PositiveIntegerNumber = number & { __brand: 'PositiveIntegerNumber' };
 }
 
 export {};
