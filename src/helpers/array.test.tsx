@@ -15,7 +15,8 @@ import {
 import {
   addValueIntoMax,
   addValueIntoMin,
-  avg, // countScienceScore,
+  avg,
+  containsNegativeValue, // countScienceScore,
   flattenRoutes,
   getLabelAndPrevious,
   sum,
@@ -546,33 +547,42 @@ describe('Arrays methods', () => {
     });
   });
 
-  // describe('Method: countScienceScore()', () => {
-  //   it('should return 0 if the player has not scientific symbol', () => {
-  //     expect(countScienceScore(0, 0, 0, 7)).toStrictEqual(0);
-  //   });
+  describe('Method: containsNegativeValue()', () => {
+    it('should return false when the array contains only positive integers', () => {
+      const arr = [1, 2, 3, 4, 5];
+      const result = containsNegativeValue(arr);
+      expect(result).toBe(false);
+    });
 
-  //   it('should return 10 if the player has 1 of each symbol', () => {
-  //     expect(countScienceScore(1, 1, 1, 7)).toStrictEqual(10);
-  //   });
+    it('should return true when the array contains at least one negative value', () => {
+      const arr = [1, -2, 3, 4, 5];
+      const result = containsNegativeValue(arr);
+      expect(result).toBe(true);
+    });
 
-  //   it('should return 13 if the player has 2, 1 and 1 symbols', () => {
-  //     expect(countScienceScore(2, 1, 1, 7)).toStrictEqual(13);
-  //   });
+    it('should return true when the array contains at least one decimal value', () => {
+      const arr = [1, 2.5, 3, 4, 5];
+      const result = containsNegativeValue(arr);
+      expect(result).toBe(true);
+    });
 
-  //   it('should return 26 if the player has 2 of each symbol', () => {
-  //     expect(countScienceScore(2, 2, 2, 7)).toStrictEqual(26);
-  //   });
+    it('should return false when the array contains a negative zero', () => {
+      const arr = [1, -0, 3, 4, 5];
+      const result = containsNegativeValue(arr);
+      expect(result).toBe(false);
+    });
 
-  //   it('should return 13 if the player has 1 of each symbol and each triple worth 10 points', () => {
-  //     expect(countScienceScore(1, 1, 1, 10)).toStrictEqual(13);
-  //   });
+    it('should return true when the array contains NaN or Infinity', () => {
+      const arr = [1, NaN, 3, Infinity, 5];
+      const result = containsNegativeValue(arr);
+      expect(result).toBe(true);
+    });
 
-  //   it('should return 16 if the player has 2, 1 and 1 symbols and each triple worth 10 points', () => {
-  //     expect(countScienceScore(2, 1, 1, 10)).toStrictEqual(16);
-  //   });
-
-  //   it('should return 26 if the player has 2 of each symbol and each triple worth 10 points', () => {
-  //     expect(countScienceScore(2, 2, 2, 10)).toStrictEqual(32);
-  //   });
-  // });
+    it('should return true when the array contains a string or an object', () => {
+      const arr = [1, 'hello', 3, { key: 'value' }, 5];
+      // @ts-expect-error "Array contains a string or an object"
+      const result = containsNegativeValue(arr);
+      expect(result).toBe(true);
+    });
+  });
 });
