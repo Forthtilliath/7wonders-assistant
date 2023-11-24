@@ -1,3 +1,5 @@
+import { isPositiveInteger } from './boolean';
+
 export const flattenRoutes = (routes: Route[]): MenuItem[] => {
   const flattenedRoutes: MenuItem[] = [];
 
@@ -122,4 +124,14 @@ export function addValueIntoMax(arr: number[], mod: number): number[] {
   arrRes[indexMax] += mod;
 
   return arrRes;
+}
+
+/**
+ * The function checks if an array contains any negative or decimal values.
+ * @param {number[]} arr - An array of numbers
+ * @returns a boolean value. It returns true if the array contains at least one negative or
+ * decimal value, and false if all values in the array are positive integers.
+ */
+export function containsNegativeValue(arr: number[]) {
+  return !arr.every(isPositiveInteger);
 }
