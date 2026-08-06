@@ -18,6 +18,8 @@ export type ScienceInput = {
 	gear: number;
 	/** Symboles "au choix" (guildes des scientifiques, effets de meneurs, etc.). */
 	wildcards: number;
+	/** Symboles qui dupliquent automatiquement le type déjà le plus fréquent (pas un choix libre). */
+	maxSymbols: number;
 };
 
 /** Les catégories de score de base, communes à toutes les parties. */
@@ -45,6 +47,13 @@ export type PlayerGameEntry = {
 	 * nombre de pièces ne suffit donc pas à retrouver ce total.
 	 */
 	treasury: { points: number };
+	/**
+	 * Merveille jouée : nom libre (texte plutôt qu'une liste fermée — entre les extensions
+	 * officielles, le contenu communautaire et les futurs ajouts, aucune liste figée ne suffirait
+	 * pour l'instant) + face A/B. Chaîne vide / null = non renseigné. Pure info, sans impact sur
+	 * le calcul du score.
+	 */
+	wonder: { name: string; side: "A" | "B" | null };
 	wonders: { points: number };
 	civilians: { points: number };
 	commercials: { points: number };
@@ -70,10 +79,11 @@ export function createEmptyPlayerGameEntry(playerId: string): PlayerGameEntry {
 		playerId,
 		military: { points: 0 },
 		treasury: { points: 0 },
+		wonder: { name: "", side: null },
 		wonders: { points: 0 },
 		civilians: { points: 0 },
 		commercials: { points: 0 },
-		scientifics: { compass: 0, tablet: 0, gear: 0, wildcards: 0 },
+		scientifics: { compass: 0, tablet: 0, gear: 0, wildcards: 0, maxSymbols: 0 },
 		guilds: { points: 0 },
 		leaders: { points: 0 },
 		cities: { points: 0 },
