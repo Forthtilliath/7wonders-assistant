@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
@@ -47,50 +48,67 @@ export default function NewGameScreen() {
 		router.push("/game/score/military");
 	};
 
+	// Swipe droite -> retour au menu. Swipe gauche -> lance la partie, seulement si les critères
+	// (2 joueurs minimum) sont réunis. Seuils horizontaux + tolérance verticale pour ne pas voler
+	// le scroll de la liste de joueurs.
+	const swipeGesture = Gesture.Pan()
+		.activeOffsetX([-20, 20])
+		.failOffsetY([-15, 15])
+		.runOnJS(true)
+		.onEnd((event) => {
+			if (event.translationX > 60) {
+				router.back();
+			} else if (event.translationX < -60 && canStart) {
+				startGame();
+			}
+		});
+
 	return (
-		<ScreenContainer>
-			<ScrollView contentContainerStyle={styles.content}>
-				<Text style={styles.sectionTitle}>
-					Joueurs ({selectedIds.length}/{MAX_PLAYERS})
-				</Text>
-				<View style={styles.grid}>
-					{activePlayers.map((player) => (
-						<SelectablePlayerCard
-							key={player.id}
-							name={player.name}
-							avatarUri={player.avatarUri}
-							selected={selectedIds.includes(player.id)}
-							onPress={() => toggleSelected(player.id)}
-						/>
-					))}
-				</View>
-				{activePlayers.length === 0 && (
-					<Text style={styles.empty}>
-						Aucun joueur disponible. Crée d'abord des joueurs depuis l'accueil.
+		<GestureDetector gesture={swipeGesture}>
+			<ScreenContainer>
+				<ScrollView contentContainerStyle={styles.content}>
+					<Text style={styles.sectionTitle}>
+						Joueurs ({selectedIds.length}/{MAX_PLAYERS})
 					</Text>
-				)}
+					<View style={styles.grid}>
+						{activePlayers.map((player) => (
+							<SelectablePlayerCard
+								key={player.id}
+								name={player.name}
+								avatarUri={player.avatarUri}
+								selected={selectedIds.includes(player.id)}
+								onPress={() => toggleSelected(player.id)}
+							/>
+						))}
+					</View>
+					{activePlayers.length === 0 && (
+						<Text style={styles.empty}>
+							Aucun joueur disponible. Crée d'abord des joueurs depuis l'accueil.
+						</Text>
+					)}
 
-				<Text style={styles.sectionTitle}>Extensions</Text>
-				<View style={styles.chipsRow}>
-					{EXTENSION_ORDER.map((ext) => {
-						const active = extensions.includes(ext);
-						return (
-							<Pressable
-								key={ext}
-								style={[styles.chip, active && styles.chipActive]}
-								onPress={() => toggleExtension(ext)}
-							>
-								<Text style={[styles.chipLabel, active && styles.chipLabelActive]}>
-									{EXTENSION_LABELS[ext]}
-								</Text>
-							</Pressable>
-						);
-					})}
-				</View>
-			</ScrollView>
+					<Text style={styles.sectionTitle}>Extensions</Text>
+					<View style={styles.chipsRow}>
+						{EXTENSION_ORDER.map((ext) => {
+							const active = extensions.includes(ext);
+							return (
+								<Pressable
+									key={ext}
+									style={[styles.chip, active && styles.chipActive]}
+									onPress={() => toggleExtension(ext)}
+								>
+									<Text style={[styles.chipLabel, active && styles.chipLabelActive]}>
+										{EXTENSION_LABELS[ext]}
+									</Text>
+								</Pressable>
+							);
+						})}
+					</View>
+				</ScrollView>
 
-			<Button label="Lancer la partie" disabled={!canStart} onPress={startGame} />
-		</ScreenContainer>
+				<Button label="Lancer la partie" disabled={!canStart} onPress={startGame} />
+			</ScreenContainer>
+		</GestureDetector>
 	);
 }
 
