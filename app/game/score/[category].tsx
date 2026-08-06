@@ -63,7 +63,7 @@ export default function CategoryScoreScreen() {
 	const allPlayers = usePlayersStore((s) => s.players);
 
 	useEffect(() => {
-		if (playerIds.length === 0) router.replace("/game/new");
+		if (playerIds.length === 0) router.replace("/");
 	}, [playerIds, router]);
 
 	if (playerIds.length === 0) return null;

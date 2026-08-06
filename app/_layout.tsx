@@ -17,8 +17,7 @@ export default function RootLayout() {
 						contentStyle: { backgroundColor: COLORS.background },
 					}}
 				>
-					<Stack.Screen name="index" options={{ title: "7 Wonders" }} />
-					<Stack.Screen name="players/index" options={{ title: "Joueurs" }} />
+					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 					<Stack.Screen
 						name="players/new"
 						options={{ title: "Nouveau joueur", presentation: "modal" }}
@@ -27,16 +26,12 @@ export default function RootLayout() {
 						name="players/[id]"
 						options={{ title: "Modifier le joueur", presentation: "modal" }}
 					/>
-					<Stack.Screen name="game/new" options={{ title: "Nouvelle partie" }} />
 					<Stack.Screen name="game/score/[category]" options={{ title: "Score" }} />
 					<Stack.Screen
 						name="game/results"
 						options={{ title: "Résultats", headerBackVisible: false }}
 					/>
-					<Stack.Screen name="history/index" options={{ title: "Historique" }} />
 					<Stack.Screen name="history/[id]" options={{ title: "Détail de la partie" }} />
-					<Stack.Screen name="stats/index" options={{ title: "Statistiques" }} />
-					<Stack.Screen name="settings/index" options={{ title: "Réglages" }} />
 				</Stack>
 			</SafeAreaProvider>
 		</GestureHandlerRootView>

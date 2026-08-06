@@ -12,10 +12,11 @@ import { useGameStore } from "@/stores/gameStore";
 import { selectSortedPlayers, usePlayersStore } from "@/stores/playersStore";
 import type { ExtensionId } from "@/types/game";
 
-export default function NewGameScreen() {
+export default function NewGameTab() {
 	const router = useRouter();
 	const players = usePlayersStore((s) => s.players);
 	const startNewGame = useGameStore((s) => s.startNewGame);
+	const hasOngoingGame = useGameStore((s) => s.hasOngoingGame());
 
 	const activePlayers = selectSortedPlayers(players.filter((p) => !p.isArchived));
 
@@ -48,17 +49,14 @@ export default function NewGameScreen() {
 		router.push("/game/score/military");
 	};
 
-	// Swipe droite -> retour au menu. Swipe gauche -> lance la partie, seulement si les critères
-	// (2 joueurs minimum) sont réunis. Seuils horizontaux + tolérance verticale pour ne pas voler
-	// le scroll de la liste de joueurs.
+	// Swipe gauche -> lance la partie, seulement si les critères (2 joueurs minimum) sont réunis.
+	// Seuils horizontaux + tolérance verticale pour ne pas voler le scroll de la liste de joueurs.
 	const swipeGesture = Gesture.Pan()
 		.activeOffsetX([-20, 20])
 		.failOffsetY([-15, 15])
 		.runOnJS(true)
 		.onEnd((event) => {
-			if (event.translationX > 60) {
-				router.back();
-			} else if (event.translationX < -60 && canStart) {
+			if (event.translationX < -60 && canStart) {
 				startGame();
 			}
 		});
@@ -66,6 +64,14 @@ export default function NewGameScreen() {
 	return (
 		<GestureDetector gesture={swipeGesture}>
 			<ScreenContainer>
+				{hasOngoingGame && (
+					<Button
+						label="Reprendre la partie en cours"
+						onPress={() => router.push("/game/score/military")}
+						style={styles.resumeButton}
+					/>
+				)}
+
 				<ScrollView contentContainerStyle={styles.content}>
 					<Text style={styles.sectionTitle}>
 						Joueurs ({selectedIds.length}/{MAX_PLAYERS})
@@ -83,7 +89,7 @@ export default function NewGameScreen() {
 					</View>
 					{activePlayers.length === 0 && (
 						<Text style={styles.empty}>
-							Aucun joueur disponible. Crée d'abord des joueurs depuis l'accueil.
+							Aucun joueur disponible. Crée d'abord des joueurs dans l'onglet Joueurs.
 						</Text>
 					)}
 
@@ -113,6 +119,9 @@ export default function NewGameScreen() {
 }
 
 const styles = StyleSheet.create({
+	resumeButton: {
+		marginBottom: SPACING.md,
+	},
 	content: {
 		gap: SPACING.md,
 		paddingBottom: SPACING.md,
