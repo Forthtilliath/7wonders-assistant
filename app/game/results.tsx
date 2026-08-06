@@ -1,19 +1,28 @@
 import { router } from "expo-router";
+import { useMemo } from "react";
 import { Alert, ScrollView, StyleSheet, Text } from "react-native";
 import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { COLORS, SPACING } from "@/constants/theme";
+import { getGameRanking } from "@/lib/scoring/game";
 import { useGameStore } from "@/stores/gameStore";
 import { usePlayersStore } from "@/stores/playersStore";
 
 export default function ResultsScreen() {
 	const extensions = useGameStore((s) => s.extensions);
 	const playerIds = useGameStore((s) => s.playerIds);
+	const entries = useGameStore((s) => s.entries);
 	const finishGame = useGameStore((s) => s.finishGame);
 	const resetGame = useGameStore((s) => s.resetGame);
 	const allPlayers = usePlayersStore((s) => s.players);
-	const ranking = useGameStore((s) => s.getRanking());
+	// getRanking() recalcule à chaque appel : le sélectionner directement casserait la stabilité
+	// de référence attendue par le store et provoquerait une boucle de rendu infinie. On calcule
+	// donc le classement ici, mémorisé tant que les données brutes ne changent pas.
+	const ranking = useMemo(
+		() => getGameRanking({ id: "", createdAt: 0, extensions, playerIds, entries }),
+		[extensions, playerIds, entries],
+	);
 
 	if (playerIds.length === 0) return null;
 

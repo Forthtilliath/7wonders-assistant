@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { getGameRanking } from "@/lib/scoring/game";
 import { createId } from "@/lib/uuid";
 import {
 	createEmptyPlayerGameEntry,
@@ -23,7 +22,6 @@ type Actions = {
 	startNewGame: (playerIds: string[], extensions: ExtensionId[]) => void;
 	updateEntry: (playerId: string, patch: (entry: PlayerGameEntry) => PlayerGameEntry) => void;
 	toGame: () => Game;
-	getRanking: () => ReturnType<typeof getGameRanking>;
 	finishGame: () => Game;
 	resetGame: () => void;
 	hasOngoingGame: () => boolean;
@@ -67,8 +65,6 @@ export const useGameStore = create<State & Actions>()(
 					entries,
 				};
 			},
-
-			getRanking: () => getGameRanking(get().toGame()),
 
 			finishGame: () => {
 				const game: Game = { ...get().toGame(), id: createId(), finishedAt: Date.now() };
