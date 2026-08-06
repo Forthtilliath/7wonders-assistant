@@ -4,22 +4,21 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { ManualPointsFields } from "@/components/game/ManualPointsFields";
 import { PlayerScoreRow } from "@/components/game/PlayerScoreRow";
 import { ScienceFields } from "@/components/game/ScienceFields";
-import { TreasuryFields } from "@/components/game/TreasuryFields";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { CATEGORY_META } from "@/constants/categories";
 import { COLORS, SPACING } from "@/constants/theme";
 import { getCategoryFlow } from "@/lib/categoryFlow";
 import { computeScienceScore } from "@/lib/scoring/science";
-import { computeTreasuryScore } from "@/lib/scoring/treasury";
 import { useGameStore } from "@/stores/gameStore";
 import { usePlayersStore } from "@/stores/playersStore";
 import type { CategoryId } from "@/types/game";
 
 // Catégories dont le score est un total de points saisi directement (jetons/cartes déjà comptés
-// par le joueur), par opposition aux catégories calculées automatiquement (trésor, sciences).
+// par le joueur), par opposition aux catégories calculées automatiquement (sciences).
 const MANUAL_CATEGORIES = [
 	"military",
+	"treasury",
 	"wonders",
 	"civilians",
 	"commercials",
@@ -32,6 +31,7 @@ const MANUAL_CATEGORIES = [
 // Catégories dont le total peut légitimement être négatif (jetons de défaite, dettes...).
 const NEGATIVE_ALLOWED: Partial<Record<(typeof MANUAL_CATEGORIES)[number], boolean>> = {
 	military: true,
+	treasury: true,
 	cities: true,
 	armada: true,
 };
@@ -40,6 +40,7 @@ const NEGATIVE_ALLOWED: Partial<Record<(typeof MANUAL_CATEGORIES)[number], boole
 // ont besoin.
 const CATEGORY_HINTS: Partial<Record<CategoryId, string>> = {
 	military: "Additionne tes jetons militaires : Victoire (+1/+3/+5) et Défaite (-1).",
+	treasury: "Compte tes pièces ÷ 3, moins tes éventuels jetons de dette (extension Cités).",
 	armada: "Additionne tes jetons navals : Victoire (+1 à +7) et Défaite (-1/-2/-3).",
 };
 
@@ -94,23 +95,6 @@ export default function CategoryScoreScreen() {
 				{gamePlayers.map((player) => {
 					const entry = entries[player.id];
 					if (!entry) return null;
-
-					if (category === "treasury") {
-						return (
-							<PlayerScoreRow
-								key={player.id}
-								player={player}
-								points={computeTreasuryScore(entry.treasury.coins)}
-							>
-								<TreasuryFields
-									coins={entry.treasury.coins}
-									onChange={(coins) =>
-										updateEntry(player.id, (e) => ({ ...e, treasury: { coins } }))
-									}
-								/>
-							</PlayerScoreRow>
-						);
-					}
 
 					if (category === "scientifics") {
 						return (

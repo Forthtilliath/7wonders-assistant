@@ -39,7 +39,12 @@ export type PlayerGameEntry = {
 	playerId: string;
 	/** Total des jetons de conflit terrestre (Victoire +1/+3/+5, Défaite -1) déjà additionnés. */
 	military: { points: number };
-	treasury: { coins: number };
+	/**
+	 * Total en points déjà calculé (pièces ÷ 3, moins les éventuels jetons de dette de Cités) :
+	 * les dettes réduisent les PV sans passer par les pièces restantes, une simple formule sur le
+	 * nombre de pièces ne suffit donc pas à retrouver ce total.
+	 */
+	treasury: { points: number };
 	wonders: { points: number };
 	civilians: { points: number };
 	commercials: { points: number };
@@ -64,7 +69,7 @@ export function createEmptyPlayerGameEntry(playerId: string): PlayerGameEntry {
 	return {
 		playerId,
 		military: { points: 0 },
-		treasury: { coins: 0 },
+		treasury: { points: 0 },
 		wonders: { points: 0 },
 		civilians: { points: 0 },
 		commercials: { points: 0 },

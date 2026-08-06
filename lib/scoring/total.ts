@@ -1,6 +1,5 @@
 import type { ExtensionId, PlayerGameEntry } from "@/types/game";
 import { computeScienceScore } from "./science";
-import { computeTreasuryScore } from "./treasury";
 
 export type PlayerScoreBreakdown = {
 	playerId: string;
@@ -20,7 +19,7 @@ export type PlayerScoreBreakdown = {
 /** Calcule le détail du score d'un joueur pour une partie à partir de sa saisie brute. */
 export function computePlayerScore(entry: PlayerGameEntry): PlayerScoreBreakdown {
 	const military = entry.military.points;
-	const treasury = computeTreasuryScore(entry.treasury.coins);
+	const treasury = entry.treasury.points;
 	const scientifics = computeScienceScore(entry.scientifics).total;
 	const wonders = entry.wonders.points;
 	const civilians = entry.civilians.points;
@@ -61,25 +60,22 @@ export function computePlayerScore(entry: PlayerGameEntry): PlayerScoreBreakdown
 export type RankedPlayerScore = PlayerScoreBreakdown & { rank: number };
 
 /**
- * Classe les joueurs par score total décroissant. En cas d'égalité, la règle officielle
- * s'applique : le joueur avec le plus de pièces l'emporte (ex-aequo sinon).
+ * Classe les joueurs par score total décroissant. La règle officielle départage les égalités par
+ * le nombre de pièces ; comme le trésor est désormais saisi directement en points (les jetons de
+ * dette de Cités ne se reflètent pas dans les pièces restantes), on approxime ce départage avec le
+ * score de trésor : c'est la meilleure info dont on dispose sans redemander les pièces.
  */
-export function rankPlayers(
-	breakdowns: PlayerScoreBreakdown[],
-	coinsByPlayerId: Record<string, number>,
-): RankedPlayerScore[] {
+export function rankPlayers(breakdowns: PlayerScoreBreakdown[]): RankedPlayerScore[] {
 	const sorted = [...breakdowns].sort((a, b) => {
 		if (b.total !== a.total) return b.total - a.total;
-		return (coinsByPlayerId[b.playerId] ?? 0) - (coinsByPlayerId[a.playerId] ?? 0);
+		return b.treasury - a.treasury;
 	});
 
 	let rank = 1;
 	return sorted.map((score, index) => {
 		if (index > 0) {
 			const previous = sorted[index - 1];
-			const tied =
-				previous.total === score.total &&
-				(coinsByPlayerId[previous.playerId] ?? 0) === (coinsByPlayerId[score.playerId] ?? 0);
+			const tied = previous.total === score.total && previous.treasury === score.treasury;
 			if (!tied) rank = index + 1;
 		}
 		return { ...score, rank };

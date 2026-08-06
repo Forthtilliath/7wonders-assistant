@@ -8,9 +8,5 @@ export function getGameRanking(game: Game) {
 		.filter((entry) => entry != null)
 		.map(computePlayerScore);
 
-	const coinsByPlayerId = Object.fromEntries(
-		Object.values(game.entries).map((e) => [e.playerId, e.treasury.coins]),
-	);
-
-	return rankPlayers(breakdowns, coinsByPlayerId);
+	return rankPlayers(breakdowns);
 }

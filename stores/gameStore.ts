@@ -86,8 +86,8 @@ export const useGameStore = create<State & Actions>()(
 			storage: createJSONStorage(() => AsyncStorage),
 			// Bump on any breaking change to PlayerGameEntry's shape. A version mismatch just
 			// discards the in-progress game rather than crashing on stale/incompatible data.
-			version: 1,
-			migrate: (_persistedState, version) => (version === 1 ? _persistedState : initialState),
+			version: 2,
+			migrate: (_persistedState, version) => (version === 2 ? _persistedState : initialState),
 		},
 	),
 );
