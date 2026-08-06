@@ -60,3 +60,53 @@ export function computePlayerStats(playerId: string, games: Game[]): PlayerStats
 		averageByCategory,
 	};
 }
+
+export type WonderStats = {
+	/** Nom saisi par le joueur + face (A/B), tel quel : texte libre, pas de liste fermée. */
+	name: string;
+	side: "A" | "B" | null;
+	timesPlayed: number;
+	wins: number;
+	winRate: number;
+	averageTotal: number;
+};
+
+/**
+ * Agrège les statistiques par merveille (nom + face) sur tout l'historique. Les entrées sans nom
+ * de merveille renseigné sont ignorées.
+ */
+export function computeWonderStats(games: Game[]): WonderStats[] {
+	const byKey = new Map<
+		string,
+		{ name: string; side: "A" | "B" | null; timesPlayed: number; wins: number; totalSum: number }
+	>();
+
+	for (const game of games) {
+		const ranking = getGameRanking(game);
+		for (const playerId of game.playerIds) {
+			const entry = game.entries[playerId];
+			const name = entry?.wonder.name.trim();
+			if (!entry || !name) continue;
+
+			const score = ranking.find((r) => r.playerId === playerId);
+			if (!score) continue;
+
+			const side = entry.wonder.side;
+			const key = `${name.toLowerCase()}__${side ?? ""}`;
+			const current = byKey.get(key) ?? { name, side, timesPlayed: 0, wins: 0, totalSum: 0 };
+			current.timesPlayed += 1;
+			current.totalSum += score.total;
+			if (score.rank === 1) current.wins += 1;
+			byKey.set(key, current);
+		}
+	}
+
+	return Array.from(byKey.values()).map((w) => ({
+		name: w.name,
+		side: w.side,
+		timesPlayed: w.timesPlayed,
+		wins: w.wins,
+		winRate: w.wins / w.timesPlayed,
+		averageTotal: w.totalSum / w.timesPlayed,
+	}));
+}
