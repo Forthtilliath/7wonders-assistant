@@ -1,5 +1,4 @@
 import type { ExtensionId, PlayerGameEntry } from "@/types/game";
-import { computeMilitaryScore } from "./military";
 import { computeScienceScore } from "./science";
 import { computeTreasuryScore } from "./treasury";
 
@@ -20,7 +19,7 @@ export type PlayerScoreBreakdown = {
 
 /** Calcule le détail du score d'un joueur pour une partie à partir de sa saisie brute. */
 export function computePlayerScore(entry: PlayerGameEntry): PlayerScoreBreakdown {
-	const military = computeMilitaryScore(entry.military).total;
+	const military = entry.military.points;
 	const treasury = computeTreasuryScore(entry.treasury.coins);
 	const scientifics = computeScienceScore(entry.scientifics).total;
 	const wonders = entry.wonders.points;

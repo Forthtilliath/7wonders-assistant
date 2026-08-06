@@ -2,7 +2,6 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { ManualPointsFields } from "@/components/game/ManualPointsFields";
-import { MilitaryFields } from "@/components/game/MilitaryFields";
 import { PlayerScoreRow } from "@/components/game/PlayerScoreRow";
 import { ScienceFields } from "@/components/game/ScienceFields";
 import { TreasuryFields } from "@/components/game/TreasuryFields";
@@ -11,14 +10,16 @@ import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { CATEGORY_META } from "@/constants/categories";
 import { COLORS, SPACING } from "@/constants/theme";
 import { getCategoryFlow } from "@/lib/categoryFlow";
-import { computeMilitaryScore } from "@/lib/scoring/military";
 import { computeScienceScore } from "@/lib/scoring/science";
 import { computeTreasuryScore } from "@/lib/scoring/treasury";
 import { useGameStore } from "@/stores/gameStore";
 import { usePlayersStore } from "@/stores/playersStore";
 import type { CategoryId } from "@/types/game";
 
+// Catégories dont le score est un total de points saisi directement (jetons/cartes déjà comptés
+// par le joueur), par opposition aux catégories calculées automatiquement (trésor, sciences).
 const MANUAL_CATEGORIES = [
+	"military",
 	"wonders",
 	"civilians",
 	"commercials",
@@ -27,6 +28,20 @@ const MANUAL_CATEGORIES = [
 	"cities",
 	"armada",
 ] as const;
+
+// Catégories dont le total peut légitimement être négatif (jetons de défaite, dettes...).
+const NEGATIVE_ALLOWED: Partial<Record<(typeof MANUAL_CATEGORIES)[number], boolean>> = {
+	military: true,
+	cities: true,
+	armada: true,
+};
+
+// Rappel affiché une seule fois en haut de l'écran (pas par joueur) pour les catégories qui en
+// ont besoin.
+const CATEGORY_HINTS: Partial<Record<CategoryId, string>> = {
+	military: "Additionne tes jetons militaires : Victoire (+1/+3/+5) et Défaite (-1).",
+	armada: "Additionne tes jetons navals : Victoire (+1 à +7) et Défaite (-1/-2/-3).",
+};
 
 type ManualCategoryId = (typeof MANUAL_CATEGORIES)[number];
 
@@ -73,26 +88,12 @@ export default function CategoryScoreScreen() {
 			<Text style={styles.progress}>
 				Étape {stepIndex + 1} / {flow.length}
 			</Text>
+			{CATEGORY_HINTS[category] && <Text style={styles.hint}>{CATEGORY_HINTS[category]}</Text>}
 
 			<ScrollView contentContainerStyle={styles.list}>
 				{gamePlayers.map((player) => {
 					const entry = entries[player.id];
 					if (!entry) return null;
-
-					if (category === "military") {
-						return (
-							<PlayerScoreRow
-								key={player.id}
-								player={player}
-								points={computeMilitaryScore(entry.military).total}
-							>
-								<MilitaryFields
-									value={entry.military}
-									onChange={(military) => updateEntry(player.id, (e) => ({ ...e, military }))}
-								/>
-							</PlayerScoreRow>
-						);
-					}
 
 					if (category === "treasury") {
 						return (
@@ -133,6 +134,7 @@ export default function CategoryScoreScreen() {
 								<ManualPointsFields
 									points={current.points}
 									color={meta.color}
+									min={NEGATIVE_ALLOWED[category] ? -30 : 0}
 									onChange={(points) =>
 										updateEntry(player.id, (e) => ({
 											...e,
@@ -164,6 +166,13 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		textAlign: "center",
 		paddingVertical: SPACING.xs,
+	},
+	hint: {
+		color: COLORS.textMuted,
+		fontSize: 13,
+		textAlign: "center",
+		paddingHorizontal: SPACING.md,
+		paddingBottom: SPACING.sm,
 	},
 	list: {
 		gap: SPACING.sm,

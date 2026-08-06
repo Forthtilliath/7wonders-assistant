@@ -21,7 +21,7 @@ export type CategoryMeta = {
 };
 
 export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
-	military: { label: "Militaire", shortLabel: "Militaire", color: "#ef4444", isComputed: true },
+	military: { label: "Militaire", shortLabel: "Militaire", color: "#ef4444", isComputed: false },
 	treasury: { label: "Trésor", shortLabel: "Trésor", color: "#eab308", isComputed: true },
 	wonders: { label: "Merveille", shortLabel: "Merveille", color: "#a8a29e", isComputed: false },
 	civilians: {

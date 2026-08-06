@@ -11,15 +11,6 @@ export type Player = {
 	createdAt: number;
 };
 
-/** Résultat d'un joueur pour un âge de conflit militaire. */
-export type AgeResult = "win" | "tie" | "loss";
-
-export type MilitaryInput = {
-	age1: AgeResult;
-	age2: AgeResult;
-	age3: AgeResult;
-};
-
 /** Compteurs de symboles scientifiques bruts saisis par le joueur. */
 export type ScienceInput = {
 	compass: number;
@@ -46,7 +37,8 @@ export type CategoryId = BaseCategoryId | ExtensionId;
 /** Saisie brute d'un joueur pour une partie : ce que l'utilisateur remplit à l'écran. */
 export type PlayerGameEntry = {
 	playerId: string;
-	military: MilitaryInput;
+	/** Total des jetons de conflit terrestre (Victoire +1/+3/+5, Défaite -1) déjà additionnés. */
+	military: { points: number };
 	treasury: { coins: number };
 	wonders: { points: number };
 	civilians: { points: number };
@@ -55,6 +47,7 @@ export type PlayerGameEntry = {
 	guilds: { points: number };
 	leaders: { points: number };
 	cities: { points: number };
+	/** Total des jetons de conflit naval (Armada), séparés des jetons militaires terrestres. */
 	armada: { points: number };
 };
 
@@ -70,7 +63,7 @@ export type Game = {
 export function createEmptyPlayerGameEntry(playerId: string): PlayerGameEntry {
 	return {
 		playerId,
-		military: { age1: "tie", age2: "tie", age3: "tie" },
+		military: { points: 0 },
 		treasury: { coins: 0 },
 		wonders: { points: 0 },
 		civilians: { points: 0 },
