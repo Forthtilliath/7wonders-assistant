@@ -130,7 +130,7 @@ export default function CategoryScoreScreen() {
 					if (isManualCategory(category)) {
 						const current = entry[category];
 						return (
-							<PlayerScoreRow key={player.id} player={player} points={current.points}>
+							<PlayerScoreRow key={player.id} player={player}>
 								<ManualPointsFields
 									points={current.points}
 									color={meta.color}
