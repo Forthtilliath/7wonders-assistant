@@ -5,7 +5,9 @@ import { ManualPointsFields } from "@/components/game/ManualPointsFields";
 import { PlayerScoreRow } from "@/components/game/PlayerScoreRow";
 import { ScienceFields } from "@/components/game/ScienceFields";
 import { Button } from "@/components/ui/Button";
+import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { TextField } from "@/components/ui/TextField";
 import { CATEGORY_META } from "@/constants/categories";
 import { COLORS, SPACING } from "@/constants/theme";
 import { getCategoryFlow } from "@/lib/categoryFlow";
@@ -32,6 +34,7 @@ const MANUAL_CATEGORIES = [
 const NEGATIVE_ALLOWED: Partial<Record<(typeof MANUAL_CATEGORIES)[number], boolean>> = {
 	military: true,
 	treasury: true,
+	wonders: true,
 	cities: true,
 	armada: true,
 };
@@ -106,6 +109,38 @@ export default function CategoryScoreScreen() {
 								<ScienceFields
 									value={entry.scientifics}
 									onChange={(scientifics) => updateEntry(player.id, (e) => ({ ...e, scientifics }))}
+								/>
+							</PlayerScoreRow>
+						);
+					}
+
+					if (category === "wonders") {
+						return (
+							<PlayerScoreRow key={player.id} player={player}>
+								<TextField
+									placeholder="Nom de la merveille"
+									value={entry.wonder.name}
+									onChangeText={(name) =>
+										updateEntry(player.id, (e) => ({ ...e, wonder: { ...e.wonder, name } }))
+									}
+								/>
+								<RadioGroup
+									options={[
+										{ value: "A", label: "Face A" },
+										{ value: "B", label: "Face B" },
+									]}
+									value={entry.wonder.side}
+									onChange={(side) =>
+										updateEntry(player.id, (e) => ({ ...e, wonder: { ...e.wonder, side } }))
+									}
+								/>
+								<ManualPointsFields
+									points={entry.wonders.points}
+									color={meta.color}
+									min={NEGATIVE_ALLOWED.wonders ? -30 : 0}
+									onChange={(points) =>
+										updateEntry(player.id, (e) => ({ ...e, wonders: { points } }))
+									}
 								/>
 							</PlayerScoreRow>
 						);
