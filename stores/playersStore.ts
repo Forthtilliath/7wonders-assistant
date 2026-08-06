@@ -66,6 +66,9 @@ export const usePlayersStore = create<State & Actions>()(
 		{
 			name: "players-store",
 			storage: createJSONStorage(() => AsyncStorage),
+			// Bump on any breaking change to Player's shape.
+			version: 1,
+			migrate: (_persistedState, version) => (version === 1 ? _persistedState : { players: [] }),
 		},
 	),
 );
