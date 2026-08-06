@@ -38,13 +38,13 @@ export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
 	},
 	scientifics: { label: "Science", shortLabel: "Science", color: "#22c55e", isComputed: true },
 	guilds: { label: "Guildes", shortLabel: "Guildes", color: "#a855f7", isComputed: false },
-	leaders: { label: "Meneurs", shortLabel: "Meneurs", color: "#cbd5e1", isComputed: false },
+	leaders: { label: "Leaders", shortLabel: "Leaders", color: "#cbd5e1", isComputed: false },
 	cities: { label: "Cités", shortLabel: "Cités", color: "#64748b", isComputed: false },
 	armada: { label: "Armada", shortLabel: "Armada", color: "#06b6d4", isComputed: false },
 };
 
 export const EXTENSION_LABELS: Record<ExtensionId, string> = {
-	leaders: "Meneurs",
+	leaders: "Leaders",
 	cities: "Cités",
 	armada: "Armada",
 };

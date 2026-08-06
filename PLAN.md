@@ -14,7 +14,7 @@ Décisions validées (question à choix multiples) :
   vérification des règles officielles, est aussi en saisie directe (voir plus bas) : dans la vraie
   partie on n'a qu'une pile de jetons Victoire/Défaite déjà valorisés à additionner, pas besoin de
   reconstituer un historique par âge.
-- Extensions gérées dès le départ : Meneurs, Cités, Armada (pas Babel/Édifices).
+- Extensions gérées dès le départ : Leaders, Cités, Armada (pas Babel/Édifices).
 - Périmètre = parité avec la V1 : joueurs (photo, favoris, archivage), historique, statistiques,
   export/import JSON.
 - Stack : Expo (managed) + TypeScript + Expo Router, stockage 100% local (Zustand + AsyncStorage),
