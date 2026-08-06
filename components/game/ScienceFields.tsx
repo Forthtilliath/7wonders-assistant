@@ -51,8 +51,11 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
+		gap: 12,
 	},
 	label: {
+		flex: 1,
+		flexShrink: 1,
 		color: COLORS.textMuted,
 	},
 	hint: {
