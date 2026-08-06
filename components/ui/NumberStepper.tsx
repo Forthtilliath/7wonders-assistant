@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { COLORS, RADIUS } from "@/constants/theme";
 
@@ -19,6 +20,23 @@ export function NumberStepper({ value, onChange, min = 0, max, step = 1, accentC
 	};
 
 	const color = accentColor ?? COLORS.primary;
+	// "number-pad" a un clavier purement numérique, sans touche "-" sur Android. Dès qu'un
+	// négatif est possible, on bascule sur "numeric" qui affiche le signe.
+	const allowsNegative = min !== undefined && min < 0;
+
+	// Texte affiché, distinct de `value` : le temps de taper "-13", l'état intermédiaire ("-",
+	// "-1"...) n'est pas un nombre valide et ne doit pas être écrasé par la valeur committée.
+	const [text, setText] = useState(String(value));
+
+	useEffect(() => {
+		setText(String(value));
+	}, [value]);
+
+	const commit = (raw: string) => {
+		if (/^-?\d+$/.test(raw)) {
+			onChange(clamp(Number.parseInt(raw, 10)));
+		}
+	};
 
 	return (
 		<View style={styles.row}>
@@ -31,12 +49,14 @@ export function NumberStepper({ value, onChange, min = 0, max, step = 1, accentC
 
 			<TextInput
 				style={styles.value}
-				keyboardType="number-pad"
-				value={String(value)}
-				onChangeText={(text) => {
-					const parsed = Number.parseInt(text, 10);
-					onChange(clamp(Number.isNaN(parsed) ? 0 : parsed));
+				keyboardType={allowsNegative ? "numeric" : "number-pad"}
+				value={text}
+				onChangeText={(raw) => {
+					const cleaned = allowsNegative ? raw.replace(/[^\d-]/g, "") : raw.replace(/\D/g, "");
+					setText(cleaned);
+					commit(cleaned);
 				}}
+				onBlur={() => setText(String(value))}
 				selectTextOnFocus
 			/>
 
