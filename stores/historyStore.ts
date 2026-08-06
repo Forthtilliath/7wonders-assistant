@@ -31,8 +31,8 @@ export const useHistoryStore = create<State & Actions>()(
 			name: "history-store",
 			storage: createJSONStorage(() => AsyncStorage),
 			// Bump on any breaking change to Game/PlayerGameEntry's shape.
-			version: 2,
-			migrate: (_persistedState, version) => (version === 2 ? _persistedState : { games: [] }),
+			version: 4,
+			migrate: (_persistedState, version) => (version === 4 ? _persistedState : { games: [] }),
 		},
 	),
 );
