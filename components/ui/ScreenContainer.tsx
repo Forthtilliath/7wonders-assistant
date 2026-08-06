@@ -14,7 +14,7 @@ type Props = PropsWithChildren<
 export function ScreenContainer({ children, style, padded = true, ...rest }: Props) {
 	return (
 		<SafeAreaView style={styles.root} edges={["bottom", "left", "right"]}>
-			<View style={[padded && styles.padded, style]} {...rest}>
+			<View style={[styles.container, padded && styles.padded, style]} {...rest}>
 				{children}
 			</View>
 		</SafeAreaView>
@@ -26,8 +26,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: COLORS.background,
 	},
-	padded: {
+	container: {
 		flex: 1,
+	},
+	padded: {
 		padding: SPACING.md,
 	},
 });
