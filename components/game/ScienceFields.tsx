@@ -14,6 +14,7 @@ const SYMBOLS: { key: keyof ScienceInput; label: string }[] = [
 	{ key: "compass", label: "Compas" },
 	{ key: "tablet", label: "Tablettes" },
 	{ key: "wildcards", label: "Symboles au choix" },
+	{ key: "maxSymbols", label: "Symboles max (copie ton type dominant)" },
 ];
 
 export function ScienceFields({ value, onChange }: Props) {
