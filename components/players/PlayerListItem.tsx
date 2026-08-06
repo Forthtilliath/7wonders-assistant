@@ -1,0 +1,60 @@
+import { Ionicons } from "@expo/vector-icons";
+import { Pressable, StyleSheet, Text } from "react-native";
+import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
+import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import type { Player } from "@/types/game";
+
+type Props = {
+	player: Player;
+	onPress: () => void;
+	onToggleFavorite: () => void;
+	onToggleArchived: () => void;
+};
+
+export function PlayerListItem({ player, onPress, onToggleFavorite, onToggleArchived }: Props) {
+	return (
+		<Pressable style={[styles.row, player.isArchived && styles.archivedRow]} onPress={onPress}>
+			<PlayerAvatar name={player.name} avatarUri={player.avatarUri} size={48} />
+			<Text style={styles.name} numberOfLines={1}>
+				{player.name}
+			</Text>
+			<Pressable hitSlop={8} onPress={onToggleFavorite} style={styles.iconButton}>
+				<Ionicons
+					name={player.isFavorite ? "star" : "star-outline"}
+					size={22}
+					color={player.isFavorite ? COLORS.gold : COLORS.textMuted}
+				/>
+			</Pressable>
+			<Pressable hitSlop={8} onPress={onToggleArchived} style={styles.iconButton}>
+				<Ionicons
+					name={player.isArchived ? "archive" : "archive-outline"}
+					size={20}
+					color={COLORS.textMuted}
+				/>
+			</Pressable>
+		</Pressable>
+	);
+}
+
+const styles = StyleSheet.create({
+	row: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: SPACING.md,
+		backgroundColor: COLORS.surface,
+		borderRadius: RADIUS.md,
+		padding: SPACING.sm,
+	},
+	archivedRow: {
+		opacity: 0.5,
+	},
+	name: {
+		flex: 1,
+		color: COLORS.text,
+		fontSize: 16,
+		fontWeight: "600",
+	},
+	iconButton: {
+		padding: SPACING.xs,
+	},
+});
