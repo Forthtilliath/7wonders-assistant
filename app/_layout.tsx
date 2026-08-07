@@ -28,10 +28,17 @@ export default function RootLayout() {
 							name="players/[id]"
 							options={{ title: "Modifier le joueur", presentation: "modal" }}
 						/>
-						<Stack.Screen name="game/score/[category]" options={{ title: "Score" }} />
+						<Stack.Screen
+							name="game/score/[category]"
+							options={{ title: "Score", animation: "slide_from_right" }}
+						/>
 						<Stack.Screen
 							name="game/results"
-							options={{ title: "Résultats", headerBackVisible: false }}
+							options={{
+								title: "Résultats",
+								headerBackVisible: false,
+								animation: "slide_from_right",
+							}}
 						/>
 						<Stack.Screen name="history/[id]" options={{ title: "Détail de la partie" }} />
 					</Stack>

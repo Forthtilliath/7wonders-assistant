@@ -1,6 +1,7 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { ManualPointsFields } from "@/components/game/ManualPointsFields";
 import { PlayerScoreRow } from "@/components/game/PlayerScoreRow";
 import { ScienceFields } from "@/components/game/ScienceFields";
@@ -84,95 +85,115 @@ export default function CategoryScoreScreen() {
 		}
 	};
 
+	// Swipe gauche -> catégorie suivante (comme le bouton "Suivant"), swipe droite -> catégorie
+	// précédente (ou retour au menu depuis la première). `router.back()` réutilise l'écran déjà
+	// empilé par la navigation précédente, ce qui donne gratuitement l'animation de retour inverse.
+	// Tolérance verticale pour ne pas voler le scroll de la liste de joueurs.
+	const swipeGesture = Gesture.Pan()
+		.activeOffsetX([-20, 20])
+		.failOffsetY([-15, 15])
+		.runOnJS(true)
+		.onEnd((event) => {
+			if (event.translationX < -60) {
+				goNext();
+			} else if (event.translationX > 60) {
+				router.back();
+			}
+		});
+
 	return (
-		<ScreenContainer padded={false}>
-			<Stack.Screen options={{ title: meta.label }} />
+		<GestureDetector gesture={swipeGesture}>
+			<ScreenContainer padded={false}>
+				<Stack.Screen options={{ title: meta.label }} />
 
-			<View style={[styles.progressBar, { backgroundColor: meta.color }]} />
-			<Text style={styles.progress}>
-				Étape {stepIndex + 1} / {flow.length}
-			</Text>
-			{CATEGORY_HINTS[category] && <Text style={styles.hint}>{CATEGORY_HINTS[category]}</Text>}
+				<View style={[styles.progressBar, { backgroundColor: meta.color }]} />
+				<Text style={styles.progress}>
+					Étape {stepIndex + 1} / {flow.length}
+				</Text>
+				{CATEGORY_HINTS[category] && <Text style={styles.hint}>{CATEGORY_HINTS[category]}</Text>}
 
-			<ScrollView contentContainerStyle={styles.list}>
-				{gamePlayers.map((player) => {
-					const entry = entries[player.id];
-					if (!entry) return null;
+				<ScrollView contentContainerStyle={styles.list}>
+					{gamePlayers.map((player) => {
+						const entry = entries[player.id];
+						if (!entry) return null;
 
-					if (category === "scientifics") {
-						return (
-							<PlayerScoreRow
-								key={player.id}
-								player={player}
-								points={computeScienceScore(entry.scientifics).total}
-							>
-								<ScienceFields
-									value={entry.scientifics}
-									onChange={(scientifics) => updateEntry(player.id, (e) => ({ ...e, scientifics }))}
-								/>
-							</PlayerScoreRow>
-						);
-					}
+						if (category === "scientifics") {
+							return (
+								<PlayerScoreRow
+									key={player.id}
+									player={player}
+									points={computeScienceScore(entry.scientifics).total}
+								>
+									<ScienceFields
+										value={entry.scientifics}
+										onChange={(scientifics) =>
+											updateEntry(player.id, (e) => ({ ...e, scientifics }))
+										}
+									/>
+								</PlayerScoreRow>
+							);
+						}
 
-					if (category === "wonders") {
-						return (
-							<PlayerScoreRow key={player.id} player={player}>
-								<TextField
-									placeholder="Nom de la merveille"
-									value={entry.wonder.name}
-									onChangeText={(name) =>
-										updateEntry(player.id, (e) => ({ ...e, wonder: { ...e.wonder, name } }))
-									}
-								/>
-								<RadioGroup
-									options={[
-										{ value: "A", label: "Face A" },
-										{ value: "B", label: "Face B" },
-									]}
-									value={entry.wonder.side}
-									onChange={(side) =>
-										updateEntry(player.id, (e) => ({ ...e, wonder: { ...e.wonder, side } }))
-									}
-								/>
-								<ManualPointsFields
-									points={entry.wonders.points}
-									color={meta.color}
-									min={NEGATIVE_ALLOWED.wonders ? -30 : 0}
-									onChange={(points) =>
-										updateEntry(player.id, (e) => ({ ...e, wonders: { points } }))
-									}
-								/>
-							</PlayerScoreRow>
-						);
-					}
+						if (category === "wonders") {
+							return (
+								<PlayerScoreRow key={player.id} player={player}>
+									<TextField
+										placeholder="Nom de la merveille"
+										value={entry.wonder.name}
+										onChangeText={(name) =>
+											updateEntry(player.id, (e) => ({ ...e, wonder: { ...e.wonder, name } }))
+										}
+									/>
+									<RadioGroup
+										options={[
+											{ value: "A", label: "Face A" },
+											{ value: "B", label: "Face B" },
+										]}
+										value={entry.wonder.side}
+										onChange={(side) =>
+											updateEntry(player.id, (e) => ({ ...e, wonder: { ...e.wonder, side } }))
+										}
+									/>
+									<ManualPointsFields
+										points={entry.wonders.points}
+										color={meta.color}
+										min={NEGATIVE_ALLOWED.wonders ? -30 : 0}
+										onChange={(points) =>
+											updateEntry(player.id, (e) => ({ ...e, wonders: { points } }))
+										}
+									/>
+								</PlayerScoreRow>
+							);
+						}
 
-					if (isManualCategory(category)) {
-						const current = entry[category];
-						return (
-							<PlayerScoreRow key={player.id} player={player}>
-								<ManualPointsFields
-									points={current.points}
-									color={meta.color}
-									min={NEGATIVE_ALLOWED[category] ? -30 : 0}
-									onChange={(points) =>
-										updateEntry(player.id, (e) => ({
-											...e,
-											[category]: { points },
-										}))
-									}
-								/>
-							</PlayerScoreRow>
-						);
-					}
+						if (isManualCategory(category)) {
+							const current = entry[category];
+							return (
+								<PlayerScoreRow key={player.id} player={player}>
+									<ManualPointsFields
+										points={current.points}
+										color={meta.color}
+										min={NEGATIVE_ALLOWED[category] ? -30 : 0}
+										onChange={(points) =>
+											updateEntry(player.id, (e) => ({
+												...e,
+												[category]: { points },
+											}))
+										}
+									/>
+								</PlayerScoreRow>
+							);
+						}
 
-					return null;
-				})}
-			</ScrollView>
+						return null;
+					})}
+				</ScrollView>
 
-			<View style={styles.footer}>
-				<Button label={isLast ? "Voir les résultats" : "Suivant"} onPress={goNext} />
-			</View>
-		</ScreenContainer>
+				<View style={styles.footer}>
+					<Button label={isLast ? "Voir les résultats" : "Suivant"} onPress={goNext} />
+				</View>
+			</ScreenContainer>
+		</GestureDetector>
 	);
 }
 
