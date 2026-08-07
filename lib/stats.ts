@@ -72,10 +72,11 @@ export type WonderStats = {
 };
 
 /**
- * Agrège les statistiques par merveille (nom + face) sur tout l'historique. Les entrées sans nom
- * de merveille renseigné sont ignorées.
+ * Agrège les statistiques par merveille (nom + face) sur l'historique donné. Les entrées sans nom
+ * de merveille renseigné sont ignorées. Si `playerId` est fourni, ne considère que les merveilles
+ * jouées par ce joueur (pour un classement "mes meilleures/pires merveilles").
  */
-export function computeWonderStats(games: Game[]): WonderStats[] {
+export function computeWonderStats(games: Game[], playerId?: string): WonderStats[] {
 	const byKey = new Map<
 		string,
 		{ name: string; side: "A" | "B" | null; timesPlayed: number; wins: number; totalSum: number }
@@ -83,12 +84,14 @@ export function computeWonderStats(games: Game[]): WonderStats[] {
 
 	for (const game of games) {
 		const ranking = getGameRanking(game);
-		for (const playerId of game.playerIds) {
-			const entry = game.entries[playerId];
+		const playerIds = playerId ? game.playerIds.filter((id) => id === playerId) : game.playerIds;
+
+		for (const id of playerIds) {
+			const entry = game.entries[id];
 			const name = entry?.wonder.name.trim();
 			if (!entry || !name) continue;
 
-			const score = ranking.find((r) => r.playerId === playerId);
+			const score = ranking.find((r) => r.playerId === id);
 			if (!score) continue;
 
 			const side = entry.wonder.side;
