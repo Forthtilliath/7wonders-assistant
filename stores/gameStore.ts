@@ -27,17 +27,26 @@ type Actions = {
 	hasOngoingGame: () => boolean;
 };
 
-const initialState: State = {
+export const initialGameState: State = {
 	extensions: [],
 	playerIds: [],
 	entries: {},
 	startedAt: null,
 };
 
+// Bump on any breaking change to PlayerGameEntry's shape. A version mismatch just discards the
+// in-progress game rather than crashing on stale/incompatible data.
+export const GAME_STORE_VERSION = 4;
+
+/** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
+export function migrateGameStoreData(persistedState: unknown, version: number): State {
+	return version === GAME_STORE_VERSION ? (persistedState as State) : initialGameState;
+}
+
 export const useGameStore = create<State & Actions>()(
 	persist(
 		(set, get) => ({
-			...initialState,
+			...initialGameState,
 
 			startNewGame: (playerIds, extensions) => {
 				const entries: Record<string, PlayerGameEntry> = {};
@@ -73,17 +82,15 @@ export const useGameStore = create<State & Actions>()(
 				return game;
 			},
 
-			resetGame: () => set({ ...initialState }),
+			resetGame: () => set({ ...initialGameState }),
 
 			hasOngoingGame: () => get().playerIds.length > 0,
 		}),
 		{
 			name: "current-game-store",
 			storage: createJSONStorage(() => AsyncStorage),
-			// Bump on any breaking change to PlayerGameEntry's shape. A version mismatch just
-			// discards the in-progress game rather than crashing on stale/incompatible data.
-			version: 4,
-			migrate: (_persistedState, version) => (version === 4 ? _persistedState : initialState),
+			version: GAME_STORE_VERSION,
+			migrate: migrateGameStoreData,
 		},
 	),
 );

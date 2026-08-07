@@ -14,6 +14,14 @@ type Actions = {
 	replaceAll: (games: Game[]) => void;
 };
 
+// Bump on any breaking change to Game/PlayerGameEntry's shape.
+export const HISTORY_STORE_VERSION = 4;
+
+/** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
+export function migrateHistoryStoreData(persistedState: unknown, version: number): State {
+	return version === HISTORY_STORE_VERSION ? (persistedState as State) : { games: [] };
+}
+
 export const useHistoryStore = create<State & Actions>()(
 	persist(
 		(set, get) => ({
@@ -30,9 +38,8 @@ export const useHistoryStore = create<State & Actions>()(
 		{
 			name: "history-store",
 			storage: createJSONStorage(() => AsyncStorage),
-			// Bump on any breaking change to Game/PlayerGameEntry's shape.
-			version: 4,
-			migrate: (_persistedState, version) => (version === 4 ? _persistedState : { games: [] }),
+			version: HISTORY_STORE_VERSION,
+			migrate: migrateHistoryStoreData,
 		},
 	),
 );

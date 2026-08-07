@@ -17,6 +17,14 @@ type Actions = {
 	replaceAll: (players: Player[]) => void;
 };
 
+// Bump on any breaking change to Player's shape.
+export const PLAYERS_STORE_VERSION = 1;
+
+/** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
+export function migratePlayersStoreData(persistedState: unknown, version: number): State {
+	return version === PLAYERS_STORE_VERSION ? (persistedState as State) : { players: [] };
+}
+
 export const usePlayersStore = create<State & Actions>()(
 	persist(
 		(set, get) => ({
@@ -66,9 +74,8 @@ export const usePlayersStore = create<State & Actions>()(
 		{
 			name: "players-store",
 			storage: createJSONStorage(() => AsyncStorage),
-			// Bump on any breaking change to Player's shape.
-			version: 1,
-			migrate: (_persistedState, version) => (version === 1 ? _persistedState : { players: [] }),
+			version: PLAYERS_STORE_VERSION,
+			migrate: migratePlayersStoreData,
 		},
 	),
 );
