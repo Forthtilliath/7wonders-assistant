@@ -99,6 +99,36 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
 - **Sélection réinitialisée dans Statistiques** quand le filtre d'extensions exclut le joueur (ou le
   joueur de comparaison) actuellement affiché, plutôt que de laisser une sélection obsolète ; un
   bouton "Réinitialiser les filtres" apparaît aussi quand plus aucune partie ne correspond.
+- **Couleur d'avatar cohérente partout** : l'écran "Modifier le joueur" dérivait la couleur à partir
+  du nom (faute d'id transmis à `PlayerForm`) alors que toutes les listes/cartes la dérivent de
+  l'id — un même joueur pouvait donc changer de couleur selon l'écran. `PlayerForm` accepte
+  maintenant un `playerId` optionnel (absent seulement à la création, où l'id n'existe pas encore).
+  Palette aussi élargie de 10 à 18 teintes pour réduire les couleurs identiques entre joueurs.
+
+## UI (interface)
+
+- Sur la grille de sélection de joueurs de Nouvelle partie (`SelectablePlayerCard`), rien
+  n'indique quels joueurs sont favoris — l'étoile n'apparaît que dans la liste Joueurs. Les
+  favoris sont pourtant pré-sélectionnés par défaut : un petit indicateur (étoile en coin de
+  carte) rendrait ce choix plus visible.
+- La couleur de la catégorie Merveille (`#a8a29e`, gris neutre) tranche moins que les autres
+  teintes saturées dans les graphiques/le tableau — assumé au départ (les merveilles peuvent être
+  négatives), mais pourrait gagner en lisibilité avec une teinte plus marquée.
+
+## UX (expérience utilisateur)
+
+- **Idée** : "Comparer avec..." dans Statistiques permet de choisir le joueur déjà sélectionné
+  comme second joueur (la liste de `FiltersSheet` n'exclut pas `selectedId`), ce qui affiche deux
+  fois les mêmes statistiques côte à côte. Filtrer ce joueur de la liste de comparaison réglerait
+  le cas.
+- Aucun message si la permission d'accès aux photos est refusée en créant/modifiant un joueur
+  (`PlayerForm.pickAvatar`) : le bouton "Changer la photo" ne fait alors rien, sans expliquer
+  pourquoi. Une alerte ("Autorise l'accès aux photos dans les réglages du téléphone pour choisir
+  un avatar") clarifierait.
+- Les extensions d'une partie sont figées une fois "Lancer la partie" pressé : impossible d'en
+  activer/désactiver une en cours de saisie sans abandonner et recommencer. Rare en pratique (on
+  choisit ses extensions avant de sortir la boîte), mais aucun message n'explique ce verrouillage
+  si quelqu'un cherche à le faire.
 
 ## Sécurité / intégrité des données
 
@@ -114,6 +144,9 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
   `react-native-worklets` est ajoutée un jour (ex. `react-native-reanimated`), ce stub la cassera
   silencieusement. À retirer dès qu'une version corrigée d'`expo-router`/`@expo/ui` sort — rien à
   faire avant ça, ce n'est pas un bug actuel.
+- `EXTRA_CATEGORIES` (`types/game.ts`) est exporté mais jamais importé ailleurs — seul le type
+  `ExtraCategoryId` qu'il sert à dériver est utilisé. Un export mort à retirer ou à préfixer
+  d'un commentaire expliquant qu'il n'existe que pour ça.
 
 ## Fonctionnalités
 
@@ -124,3 +157,12 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
   seul un avertissement à la création/au renommage est affiché (voir "✅ Corrigés").
 - Extensions Babel et Édifices toujours hors périmètre (décision assumée au départ, listée ici pour
   mémoire si le besoin change).
+- **Idée** : partager le classement d'une partie terminée (texte simple ou image) via la feuille
+  de partage système directement depuis l'écran Résultats/Historique, sans passer par l'export CSV
+  complet — pratique pour envoyer le résultat du soir sur un groupe de discussion.
+- **Idée** : rappel périodique (ou juste un indicateur discret) suggérant d'exporter une
+  sauvegarde, puisque les données sont 100% locales sans synchronisation cloud — un changement de
+  téléphone sans export préalable perd tout l'historique.
+- **Idée** : quelques records personnels mis en avant en haut de Statistiques (meilleur score
+  jamais réalisé, plus longue série de victoires, partie la plus disputée...) — la donnée existe
+  déjà dans l'historique, il ne manque qu'un calcul et un petit encart.
