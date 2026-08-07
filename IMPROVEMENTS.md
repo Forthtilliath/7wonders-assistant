@@ -128,6 +128,13 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
   tous les joueurs par taux de victoire décroissant — visible sans avoir à sélectionner un joueur,
   dans les deux vues (graphique et tableau), et recalculé selon le filtre d'extensions courant.
 
+- **Réglages éclatés en sous-pages** : l'onglet Réglages devenait un long empilement de sections
+  (apparence, extensions par défaut, sauvegarde, zone dangereuse) au fur et à mesure des ajouts.
+  Transformé en menu de navigation (`SettingsRow`, icône + aperçu de la valeur actuelle + chevron)
+  vers 4 sous-écrans dédiés (`app/settings/appearance.tsx`, `new-game.tsx`, `backup.tsx`,
+  `danger-zone.tsx`), chacun centré sur un seul sujet — plus facile à scanner et à faire grossir
+  sans redevenir un bazar.
+
 ## UI (interface)
 
 _Rien en attente pour l'instant._
