@@ -9,6 +9,10 @@ import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 type Props = {
+	/** Id du joueur en cours de modification, pour que la couleur de son avatar reste la même
+	 * qu'ailleurs dans l'app (dérivée de l'id, pas du nom). Absent pour un nouveau joueur : pas
+	 * encore d'id, la couleur se base alors sur le nom tapé jusqu'à la création. */
+	playerId?: string;
 	initialName?: string;
 	initialAvatarUri?: string;
 	submitLabel: string;
@@ -17,6 +21,7 @@ type Props = {
 };
 
 export function PlayerForm({
+	playerId,
 	initialName = "",
 	initialAvatarUri,
 	submitLabel,
@@ -53,7 +58,7 @@ export function PlayerForm({
 				accessibilityRole="button"
 				accessibilityLabel="Changer la photo"
 			>
-				<PlayerAvatar name={name || "?"} avatarUri={avatarUri} size={96} />
+				<PlayerAvatar name={name || "?"} avatarUri={avatarUri} seed={playerId} size={96} />
 				<Text style={styles.avatarHint}>Changer la photo</Text>
 			</Pressable>
 

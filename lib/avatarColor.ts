@@ -1,16 +1,25 @@
 // Palette de couleurs saturées, choisies pour rester lisibles avec du texte blanc dessus, aussi
-// bien en thème sombre que clair.
+// bien en thème sombre que clair. 18 teintes réparties sur tout le cercle chromatique (au lieu de
+// 10) pour que deux joueurs distincts se ressemblent moins souvent, même dans un groupe nombreux.
 const AVATAR_PALETTE = [
-	"#ef4444",
-	"#f97316",
-	"#eab308",
-	"#22c55e",
-	"#14b8a6",
-	"#3b82f6",
-	"#6366f1",
-	"#a855f7",
-	"#ec4899",
-	"#84cc16",
+	"#ef4444", // rouge
+	"#f97316", // orange
+	"#f59e0b", // ambre
+	"#ca8a04", // jaune (foncé, pour rester lisible en blanc dessus)
+	"#84cc16", // citron vert
+	"#22c55e", // vert
+	"#10b981", // émeraude
+	"#14b8a6", // sarcelle
+	"#06b6d4", // cyan
+	"#0ea5e9", // bleu ciel
+	"#3b82f6", // bleu
+	"#6366f1", // indigo
+	"#8b5cf6", // violet
+	"#a855f7", // pourpre
+	"#d946ef", // fuchsia
+	"#ec4899", // rose vif
+	"#f43f5e", // rose rouge
+	"#78716c", // pierre (neutre, pour varier des teintes vives)
 ] as const;
 
 /**

@@ -12,4 +12,10 @@ describe("getAvatarColor", () => {
 	it("retourne une couleur hexadécimale valide", () => {
 		expect(getAvatarColor("quelconque")).toMatch(/^#[0-9a-f]{6}$/i);
 	});
+
+	it("offre une bonne variété de couleurs sur un échantillon de joueurs", () => {
+		const seeds = Array.from({ length: 30 }, (_, i) => `joueur-${i}`);
+		const distinctColors = new Set(seeds.map(getAvatarColor));
+		expect(distinctColors.size).toBeGreaterThanOrEqual(15);
+	});
 });

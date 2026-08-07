@@ -43,6 +43,7 @@ export default function EditPlayerScreen() {
 	return (
 		<ScreenContainer>
 			<PlayerForm
+				playerId={player.id}
 				initialName={player.name}
 				initialAvatarUri={player.avatarUri}
 				submitLabel="Enregistrer"
