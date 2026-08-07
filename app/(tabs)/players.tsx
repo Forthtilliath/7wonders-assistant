@@ -1,10 +1,11 @@
 import { useRouter } from "expo-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { GroupListItem } from "@/components/groups/GroupListItem";
 import { PlayerListItem } from "@/components/players/PlayerListItem";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { TextField } from "@/components/ui/TextField";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -21,38 +22,57 @@ export default function PlayersScreen() {
 	const groups = useGroupsStore((s) => s.groups);
 	const toggleGroupFavorite = useGroupsStore((s) => s.toggleFavorite);
 	const toggleGroupArchived = useGroupsStore((s) => s.toggleArchived);
+	const [query, setQuery] = useState("");
 
 	const sorted = selectSortedPlayers(players);
 	const sortedGroups = selectSortedGroups(groups);
+	const filtered = sorted.filter((p) => p.name.toLowerCase().includes(query.trim().toLowerCase()));
 
 	return (
 		<ScreenContainer>
+			{players.length > 0 && (
+				<TextField
+					placeholder="Rechercher un joueur..."
+					value={query}
+					onChangeText={setQuery}
+					style={styles.search}
+					autoCapitalize="none"
+				/>
+			)}
 			<FlatList
-				data={sorted}
+				data={filtered}
 				keyExtractor={(p) => p.id}
 				contentContainerStyle={styles.list}
 				ItemSeparatorComponent={() => <Text style={{ height: SPACING.sm }} />}
 				ListHeaderComponent={
-					<View style={styles.groupsSection}>
-						<Text style={styles.sectionTitle}>Groupes</Text>
-						{sortedGroups.map((group) => (
-							<GroupListItem
-								key={group.id}
-								group={group}
-								onPress={() => router.push(`/groups/${group.id}`)}
-								onToggleFavorite={() => toggleGroupFavorite(group.id)}
-								onToggleArchived={() => toggleGroupArchived(group.id)}
+					query.length === 0 ? (
+						<View style={styles.groupsSection}>
+							<Text style={styles.sectionTitle}>Groupes</Text>
+							{sortedGroups.map((group) => (
+								<GroupListItem
+									key={group.id}
+									group={group}
+									onPress={() => router.push(`/groups/${group.id}`)}
+									onToggleFavorite={() => toggleGroupFavorite(group.id)}
+									onToggleArchived={() => toggleGroupArchived(group.id)}
+								/>
+							))}
+							<Button
+								label="Nouveau groupe"
+								variant="ghost"
+								onPress={() => router.push("/groups/new")}
 							/>
-						))}
-						<Button
-							label="Nouveau groupe"
-							variant="ghost"
-							onPress={() => router.push("/groups/new")}
-						/>
-						<Text style={styles.sectionTitle}>Joueurs</Text>
-					</View>
+							<Text style={styles.sectionTitle}>Joueurs</Text>
+						</View>
+					) : null
 				}
-				ListEmptyComponent={<Text style={styles.empty}>Aucun joueur pour l'instant.</Text>}
+				ListEmptyComponent={
+					<Text style={styles.empty}>
+						{query.length > 0
+							? "Aucun joueur ne correspond à cette recherche."
+							: "Aucun joueur pour l'instant."}
+					</Text>
+				}
 				renderItem={({ item }) => (
 					<PlayerListItem
 						player={item}
@@ -75,6 +95,9 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
+				search: {
+					marginBottom: SPACING.md,
+				},
 				list: {
 					paddingBottom: SPACING.md,
 				},
