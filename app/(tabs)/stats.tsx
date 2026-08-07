@@ -1,61 +1,74 @@
 import { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { BarChart } from "react-native-gifted-charts";
-import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard";
-import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
+import { FiltersSheet } from "@/components/stats/FiltersSheet";
+import { PlayerStatsSection } from "@/components/stats/PlayerStatsSection";
 import { ScoreTable } from "@/components/stats/ScoreTable";
-import { StatTile } from "@/components/stats/StatTile";
 import { WonderRankingRow } from "@/components/stats/WonderRankingRow";
+import { Button } from "@/components/ui/Button";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { BASE_CATEGORY_ORDER, CATEGORY_META, EXTENSION_ORDER } from "@/constants/categories";
+import { BASE_CATEGORY_ORDER, EXTENSION_ORDER } from "@/constants/categories";
 import { COLORS, SPACING } from "@/constants/theme";
-import { computeBarChartScale } from "@/lib/chartScale";
+import { type ExtensionFilter, filterGamesByExtension } from "@/lib/gameFilters";
 import { computePlayerStats, computeWonderStats } from "@/lib/stats";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 
 type ViewMode = "graph" | "table";
+type PickerTarget = null | "playerA" | "playerB" | "extensionsOnly";
 
 export default function StatsScreen() {
 	const players = usePlayersStore((s) => s.players);
 	const games = useHistoryStore((s) => s.games);
+
 	const [viewMode, setViewMode] = useState<ViewMode>("graph");
+	const [extensionFilter, setExtensionFilter] = useState<ExtensionFilter>([]);
+	const [selectedId, setSelectedId] = useState<string | undefined>();
+	const [compareId, setCompareId] = useState<string | undefined>();
+	const [pickerTarget, setPickerTarget] = useState<PickerTarget>(null);
 
-	const playersWithGames = players.filter((p) => games.some((g) => g.playerIds.includes(p.id)));
-	const [selectedId, setSelectedId] = useState<string | undefined>(playersWithGames[0]?.id);
-	const selectedPlayer = playersWithGames.find((p) => p.id === selectedId);
-
-	const stats = useMemo(
-		() => (selectedPlayer ? computePlayerStats(selectedPlayer.id, games) : null),
-		[selectedPlayer, games],
+	const filteredGames = useMemo(
+		() => filterGamesByExtension(games, extensionFilter),
+		[games, extensionFilter],
 	);
 
-	// Catégories utilisées par au moins une partie de l'historique (pour le tableau, toutes
-	// extensions confondues, contrairement au graphique qui ne regarde que le joueur sélectionné).
+	const playersWithGames = players.filter((p) =>
+		filteredGames.some((g) => g.playerIds.includes(p.id)),
+	);
+
 	const allCategories = useMemo(
 		() => [
 			...BASE_CATEGORY_ORDER,
-			...EXTENSION_ORDER.filter((ext) => games.some((g) => g.extensions.includes(ext))),
+			...EXTENSION_ORDER.filter((ext) => filteredGames.some((g) => g.extensions.includes(ext))),
 		],
-		[games],
+		[filteredGames],
 	);
 
 	const statsByPlayerId = useMemo(
-		() => Object.fromEntries(playersWithGames.map((p) => [p.id, computePlayerStats(p.id, games)])),
-		[playersWithGames, games],
+		() =>
+			Object.fromEntries(
+				playersWithGames.map((p) => [p.id, computePlayerStats(p.id, filteredGames)]),
+			),
+		[playersWithGames, filteredGames],
 	);
 
-	// Classées par taux de victoire, comme demandé.
+	// Classement global, avec le filtre d'extensions courant, par taux de victoire.
 	const { bestWonders, worstWonders } = useMemo(() => {
-		const sorted = [...computeWonderStats(games)].sort((a, b) => b.winRate - a.winRate);
-		return {
-			bestWonders: sorted.slice(0, 5),
-			worstWonders: sorted.slice(-5).reverse(),
-		};
-	}, [games]);
+		const sorted = [...computeWonderStats(filteredGames)].sort((a, b) => b.winRate - a.winRate);
+		return { bestWonders: sorted.slice(0, 5), worstWonders: sorted.slice(-5).reverse() };
+	}, [filteredGames]);
 
-	if (playersWithGames.length === 0) {
+	const selectedPlayer = playersWithGames.find((p) => p.id === selectedId);
+	const comparePlayer = playersWithGames.find((p) => p.id === compareId);
+
+	const pickerPlayers = pickerTarget === "extensionsOnly" ? undefined : playersWithGames;
+	const pickerSelectedId = pickerTarget === "playerB" ? compareId : selectedId;
+	const handlePickerSelectPlayer = (id: string) => {
+		if (pickerTarget === "playerB") setCompareId(id);
+		else setSelectedId(id);
+	};
+
+	if (games.length === 0) {
 		return (
 			<ScreenContainer>
 				<Text style={styles.empty}>
@@ -65,22 +78,6 @@ export default function StatsScreen() {
 			</ScreenContainer>
 		);
 	}
-
-	const categories = selectedPlayer
-		? [
-				...BASE_CATEGORY_ORDER,
-				...EXTENSION_ORDER.filter((ext) =>
-					games.some((g) => g.playerIds.includes(selectedPlayer.id) && g.extensions.includes(ext)),
-				),
-			]
-		: [];
-
-	const chartData = categories.map((category) => ({
-		value: Math.round((stats?.averageByCategory[category] ?? 0) * 10) / 10,
-		label: CATEGORY_META[category].shortLabel,
-		frontColor: CATEGORY_META[category].color,
-	}));
-	const chartScale = computeBarChartScale(chartData.map((d) => d.value));
 
 	return (
 		<ScreenContainer>
@@ -94,7 +91,15 @@ export default function StatsScreen() {
 			/>
 
 			<ScrollView contentContainerStyle={styles.content}>
-				{viewMode === "table" ? (
+				<Button
+					label={extensionFilter.length > 0 ? `Filtres (${extensionFilter.length})` : "Filtres"}
+					variant="ghost"
+					onPress={() => setPickerTarget(viewMode === "table" ? "extensionsOnly" : "playerA")}
+				/>
+
+				{playersWithGames.length === 0 ? (
+					<Text style={styles.empty}>Aucune partie ne correspond à ce filtre.</Text>
+				) : viewMode === "table" ? (
 					<>
 						<Text style={styles.sectionTitle}>Moyenne de points par catégorie</Text>
 						<ScoreTable
@@ -103,60 +108,32 @@ export default function StatsScreen() {
 							statsByPlayerId={statsByPlayerId}
 						/>
 					</>
-				) : (
+				) : selectedPlayer ? (
 					<>
-						<View style={styles.playerRow}>
-							{playersWithGames.map((player) => (
-								<SelectablePlayerCard
-									key={player.id}
-									name={player.name}
-									avatarUri={player.avatarUri}
-									selected={player.id === selectedId}
-									onPress={() => setSelectedId(player.id)}
-								/>
-							))}
-						</View>
+						<PlayerStatsSection player={selectedPlayer} games={filteredGames} />
 
-						{stats && (
+						{comparePlayer ? (
 							<>
-								<View style={styles.tilesRow}>
-									<StatTile label="Parties jouées" value={String(stats.gamesPlayed)} />
-									<StatTile label="Victoires" value={String(stats.wins)} />
-									<StatTile
-										label="Taux de victoire"
-										value={`${Math.round(stats.winRate * 100)}%`}
-									/>
-								</View>
-								<View style={styles.tilesRow}>
-									<StatTile label="Score moyen" value={String(Math.round(stats.averageTotal))} />
-									<StatTile label="Meilleur score" value={String(stats.bestTotal)} />
-								</View>
-
-								<Text style={styles.sectionTitle}>Points moyens par catégorie</Text>
-								<View style={styles.chartWrapper}>
-									<BarChart
-										data={chartData}
-										barWidth={24}
-										spacing={18}
-										roundedTop
-										noOfSections={chartScale.noOfSections}
-										noOfSectionsBelowXAxis={chartScale.noOfSectionsBelowXAxis}
-										stepValue={chartScale.stepValue}
-										maxValue={chartScale.maxValue}
-										mostNegativeValue={chartScale.mostNegativeValue}
-										yAxisTextStyle={{ color: COLORS.textMuted }}
-										xAxisLabelTextStyle={{ color: COLORS.textMuted, fontSize: 10 }}
-										xAxisColor={COLORS.border}
-										yAxisColor={COLORS.border}
-										hideRules
-									/>
-								</View>
-
-								<Text style={styles.sectionTitle}>Répartition des points</Text>
-								<CategoryPieChart categories={categories} stats={stats} />
+								<Button
+									label="Retirer la comparaison"
+									variant="ghost"
+									onPress={() => setCompareId(undefined)}
+								/>
+								<View style={styles.divider} />
+								<PlayerStatsSection player={comparePlayer} games={filteredGames} />
 							</>
+						) : (
+							<Button
+								label="Comparer avec..."
+								variant="secondary"
+								onPress={() => setPickerTarget("playerB")}
+							/>
 						)}
 					</>
+				) : (
+					<Text style={styles.empty}>
+						Choisis un joueur (bouton "Filtres") pour voir ses statistiques.
+					</Text>
 				)}
 
 				{bestWonders.length > 0 && (
@@ -185,6 +162,17 @@ export default function StatsScreen() {
 					</>
 				)}
 			</ScrollView>
+
+			<FiltersSheet
+				visible={pickerTarget !== null}
+				onClose={() => setPickerTarget(null)}
+				extensionFilter={extensionFilter}
+				onChangeExtensionFilter={setExtensionFilter}
+				players={pickerPlayers}
+				selectedPlayerId={pickerSelectedId}
+				onSelectPlayer={handlePickerSelectPlayer}
+				playerSectionTitle={pickerTarget === "playerB" ? "Comparer avec" : "Joueur"}
+			/>
 		</ScreenContainer>
 	);
 }
@@ -195,23 +183,16 @@ const styles = StyleSheet.create({
 		paddingTop: SPACING.md,
 		paddingBottom: SPACING.md,
 	},
-	playerRow: {
-		flexDirection: "row",
-		flexWrap: "wrap",
-		gap: SPACING.sm,
-	},
-	tilesRow: {
-		flexDirection: "row",
-		gap: SPACING.sm,
+	divider: {
+		height: 1,
+		backgroundColor: COLORS.border,
+		marginVertical: SPACING.sm,
 	},
 	sectionTitle: {
 		color: COLORS.textMuted,
 		fontSize: 14,
 		textTransform: "uppercase",
 		letterSpacing: 0.5,
-	},
-	chartWrapper: {
-		paddingVertical: SPACING.md,
 	},
 	wonderList: {
 		gap: SPACING.xs,
