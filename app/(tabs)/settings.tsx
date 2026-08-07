@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { APP_INFO } from "@/constants/app";
 import { COLORS, SPACING } from "@/constants/theme";
-import { exportData, ImportError, importData } from "@/lib/backup";
+import { exportData, importData, restoreSafetyBackup } from "@/lib/backup";
+import { ImportError } from "@/lib/backupSchema";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 
@@ -30,7 +31,9 @@ export default function SettingsScreen() {
 			const { players, history } = await importData();
 			Alert.alert(
 				"Import réussi",
-				`${players} joueur(s) et ${history} partie(s) chargés. Les données précédentes ont été remplacées.`,
+				`${players} joueur(s) et ${history} partie(s) chargés. Les données précédentes ont été ` +
+					'remplacées (une sauvegarde de secours a été gardée, restaurable via "Annuler le ' +
+					'dernier import" si besoin).',
 			);
 		} catch (error) {
 			if (error instanceof ImportError) {
@@ -41,6 +44,34 @@ export default function SettingsScreen() {
 		} finally {
 			setBusy(false);
 		}
+	};
+
+	const confirmRestoreSafetyBackup = () => {
+		Alert.alert(
+			"Annuler le dernier import ?",
+			"Restaure les données telles qu'elles étaient juste avant le dernier import effectué sur cet appareil. Ce qui a été fait depuis sera perdu.",
+			[
+				{ text: "Annuler", style: "cancel" },
+				{
+					text: "Restaurer",
+					style: "destructive",
+					onPress: async () => {
+						setBusy(true);
+						try {
+							const { players, history } = await restoreSafetyBackup();
+							Alert.alert("Restauré", `${players} joueur(s) et ${history} partie(s) restaurés.`);
+						} catch (error) {
+							Alert.alert(
+								"Erreur",
+								error instanceof ImportError ? error.message : "La restauration a échoué.",
+							);
+						} finally {
+							setBusy(false);
+						}
+					},
+				},
+			],
+		);
 	};
 
 	const confirmClearData = () => {
@@ -74,6 +105,12 @@ export default function SettingsScreen() {
 					label="Importer une sauvegarde"
 					variant="secondary"
 					onPress={handleImport}
+					disabled={busy}
+				/>
+				<Button
+					label="Annuler le dernier import"
+					variant="ghost"
+					onPress={confirmRestoreSafetyBackup}
 					disabled={busy}
 				/>
 			</View>
