@@ -66,6 +66,32 @@ describe("migrateBackupData", () => {
 		]);
 	});
 
+	it("migre une sauvegarde v3 (entrées sans catégorie islands) vers la version courante", () => {
+		// Une vraie sauvegarde v3 n'a jamais eu de champ `islands` du tout (ajouté en v4).
+		const { islands: _islands, ...v3Entry } = createEmptyPlayerGameEntry("p1");
+		const v3Data = {
+			app: "7wonders-assistant",
+			dataVersion: 3,
+			exportedAt: 0,
+			players: [],
+			groups: [],
+			history: [
+				{
+					id: "g1",
+					createdAt: 0,
+					extensions: ["armada"],
+					playerIds: ["p1"],
+					entries: { p1: v3Entry },
+				},
+			],
+		} as unknown as BackupData;
+
+		const migrated = migrateBackupData(v3Data);
+
+		expect(migrated.dataVersion).toBe(DATA_VERSION);
+		expect(migrated.history[0].entries.p1.islands).toEqual({ points: 0 });
+	});
+
 	it("rejette une sauvegarde à une version antérieure sans étape de migration disponible", () => {
 		// Aucune étape n'existe pour la version 0 : une version antérieure à la toute première doit
 		// échouer proprement plutôt que charger des données incompatibles en silence — c'est

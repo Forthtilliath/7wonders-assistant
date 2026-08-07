@@ -24,7 +24,15 @@ describe("getCategoryFlow", () => {
 			"guilds",
 			"leaders",
 			"armada",
+			"islands",
 		]);
+	});
+
+	it("Armada apporte deux catégories distinctes (maritime + îles)", () => {
+		const flow = getCategoryFlow(["armada"]);
+		expect(flow).toContain("armada");
+		expect(flow).toContain("islands");
+		expect(flow.indexOf("armada")).toBeLessThan(flow.indexOf("islands"));
 	});
 });
 

@@ -36,7 +36,7 @@ export const initialGameState: State = {
 
 // Bump on any breaking change to PlayerGameEntry's shape. A version mismatch just discards the
 // in-progress game rather than crashing on stale/incompatible data.
-export const GAME_STORE_VERSION = 4;
+export const GAME_STORE_VERSION = 5;
 
 /** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
 export function migrateGameStoreData(persistedState: unknown, version: number): State {

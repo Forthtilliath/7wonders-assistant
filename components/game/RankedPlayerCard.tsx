@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
-import { BASE_CATEGORY_ORDER, CATEGORY_META, EXTENSION_ORDER } from "@/constants/categories";
+import { BASE_CATEGORY_ORDER, CATEGORY_META, getExtensionCategories } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -21,10 +21,7 @@ export function RankedPlayerCard({ player, score, extensions }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 
-	const categories = [
-		...BASE_CATEGORY_ORDER,
-		...EXTENSION_ORDER.filter((e) => extensions.includes(e)),
-	];
+	const categories = [...BASE_CATEGORY_ORDER, ...getExtensionCategories(extensions)];
 
 	return (
 		<View style={[styles.card, score.rank === 1 && styles.cardWinner]}>

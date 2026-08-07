@@ -5,7 +5,12 @@ import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
 import { StatTile } from "@/components/stats/StatTile";
 import { WonderRankingRow } from "@/components/stats/WonderRankingRow";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
-import { BASE_CATEGORY_ORDER, CATEGORY_META, EXTENSION_ORDER } from "@/constants/categories";
+import {
+	BASE_CATEGORY_ORDER,
+	CATEGORY_META,
+	EXTENSION_ORDER,
+	getExtensionCategories,
+} from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -25,15 +30,12 @@ export function PlayerStatsSection({ player, games }: Props) {
 	const styles = useStyles(colors);
 	const stats = useMemo(() => computePlayerStats(player.id, games), [player.id, games]);
 
-	const categories = useMemo(
-		() => [
-			...BASE_CATEGORY_ORDER,
-			...EXTENSION_ORDER.filter((ext) =>
-				games.some((g) => g.playerIds.includes(player.id) && g.extensions.includes(ext)),
-			),
-		],
-		[games, player.id],
-	);
+	const categories = useMemo(() => {
+		const activeExtensions = EXTENSION_ORDER.filter((ext) =>
+			games.some((g) => g.playerIds.includes(player.id) && g.extensions.includes(ext)),
+		);
+		return [...BASE_CATEGORY_ORDER, ...getExtensionCategories(activeExtensions)];
+	}, [games, player.id]);
 
 	const chartData = categories.map((category) => ({
 		value: Math.round((stats.averageByCategory[category] ?? 0) * 10) / 10,

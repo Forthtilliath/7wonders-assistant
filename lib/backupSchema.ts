@@ -13,7 +13,7 @@ export const APP_ID = "7wonders-assistant";
  * (la fonction recalculait la version cible sans transformer les données, et n'était même pas
  * appelée au chargement), les étapes ci-dessous sont réellement exécutées à l'import.
  */
-export const DATA_VERSION = 3;
+export const DATA_VERSION = 4;
 
 export type BackupData = {
 	app: typeof APP_ID;
@@ -41,6 +41,21 @@ const MIGRATIONS: Record<number, (data: BackupData) => BackupData> = {
 		...data,
 		dataVersion: 3,
 		groups: data.groups.map((g) => ({ ...g, isFavorite: false, isArchived: false })),
+	}),
+	// v3 -> v4 : ajout de la catégorie "islands" (Îles + plateau Armada), distincte des jetons
+	// maritimes, sur chaque saisie de chaque partie de l'historique.
+	3: (data) => ({
+		...data,
+		dataVersion: 4,
+		history: data.history.map((game) => ({
+			...game,
+			entries: Object.fromEntries(
+				Object.entries(game.entries).map(([id, entry]) => [
+					id,
+					{ ...entry, islands: { points: 0 } },
+				]),
+			),
+		})),
 	}),
 };
 
@@ -105,6 +120,7 @@ const playerGameEntrySchema = z.object({
 	leaders: pointsSchema,
 	cities: pointsSchema,
 	armada: pointsSchema,
+	islands: pointsSchema,
 });
 
 const gameSchema = z.object({

@@ -91,11 +91,18 @@ export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
 		icon: "city",
 	},
 	armada: {
-		label: "Armada",
-		shortLabel: "Armada",
+		label: "Maritime",
+		shortLabel: "Maritime",
 		color: "#06b6d4",
 		isComputed: false,
 		icon: "sail-boat",
+	},
+	islands: {
+		label: "Îles & Plateau Armada",
+		shortLabel: "Îles",
+		color: "#0891b2",
+		isComputed: false,
+		icon: "island",
 	},
 };
 
@@ -104,3 +111,21 @@ export const EXTENSION_LABELS: Record<ExtensionId, string> = {
 	cities: "Cités",
 	armada: "Armada",
 };
+
+/**
+ * Catégories de score apportées par chaque extension. La plupart n'en apportent qu'une (elles-
+ * mêmes), mais Armada en apporte deux : les jetons maritimes (catégorie `armada`) et les cartes
+ * Îles + plateau individuel (catégorie `islands`).
+ */
+export const EXTENSION_CATEGORIES: Record<ExtensionId, CategoryId[]> = {
+	leaders: ["leaders"],
+	cities: ["cities"],
+	armada: ["armada", "islands"],
+};
+
+/** Catégories de score apportées par un ensemble d'extensions actives, dans l'ordre. */
+export function getExtensionCategories(extensions: ExtensionId[]): CategoryId[] {
+	return EXTENSION_ORDER.filter((ext) => extensions.includes(ext)).flatMap(
+		(ext) => EXTENSION_CATEGORIES[ext],
+	);
+}

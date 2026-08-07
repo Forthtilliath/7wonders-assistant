@@ -7,7 +7,11 @@ import { WonderRankingRow } from "@/components/stats/WonderRankingRow";
 import { Button } from "@/components/ui/Button";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { BASE_CATEGORY_ORDER, EXTENSION_ORDER } from "@/constants/categories";
+import {
+	BASE_CATEGORY_ORDER,
+	EXTENSION_ORDER,
+	getExtensionCategories,
+} from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -40,13 +44,12 @@ export default function StatsScreen() {
 		filteredGames.some((g) => g.playerIds.includes(p.id)),
 	);
 
-	const allCategories = useMemo(
-		() => [
-			...BASE_CATEGORY_ORDER,
-			...EXTENSION_ORDER.filter((ext) => filteredGames.some((g) => g.extensions.includes(ext))),
-		],
-		[filteredGames],
-	);
+	const allCategories = useMemo(() => {
+		const activeExtensions = EXTENSION_ORDER.filter((ext) =>
+			filteredGames.some((g) => g.extensions.includes(ext)),
+		);
+		return [...BASE_CATEGORY_ORDER, ...getExtensionCategories(activeExtensions)];
+	}, [filteredGames]);
 
 	const statsByPlayerId = useMemo(
 		() =>

@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { Game } from "@/types/game";
+import type { Game, PlayerGameEntry } from "@/types/game";
 
 type State = {
 	games: Game[];
@@ -15,11 +15,34 @@ type Actions = {
 };
 
 // Bump on any breaking change to Game/PlayerGameEntry's shape.
-export const HISTORY_STORE_VERSION = 4;
+export const HISTORY_STORE_VERSION = 5;
+
+type GameV4 = Omit<Game, "entries"> & {
+	entries: Record<string, Omit<PlayerGameEntry, "islands">>;
+};
 
 /** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
 export function migrateHistoryStoreData(persistedState: unknown, version: number): State {
-	return version === HISTORY_STORE_VERSION ? (persistedState as State) : { games: [] };
+	if (version === HISTORY_STORE_VERSION) return persistedState as State;
+
+	if (version === 4) {
+		// v4 -> v5 : ajout de la catégorie "islands" sur chaque saisie de chaque partie de
+		// l'historique, plutôt que de perdre tout l'historique pour un simple champ additif.
+		const old = persistedState as { games: GameV4[] };
+		return {
+			games: old.games.map((g) => ({
+				...g,
+				entries: Object.fromEntries(
+					Object.entries(g.entries).map(([id, entry]) => [
+						id,
+						{ ...entry, islands: { points: 0 } },
+					]),
+				),
+			})),
+		};
+	}
+
+	return { games: [] };
 }
 
 export const useHistoryStore = create<State & Actions>()(

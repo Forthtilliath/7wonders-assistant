@@ -17,6 +17,7 @@ describe("computePlayerScore", () => {
 			leaders: { points: 1 },
 			cities: { points: 2 },
 			armada: { points: 3 },
+			islands: { points: 4 },
 			scientifics: { compass: 2, tablet: 2, gear: 2, wildcards: 0, maxSymbols: 0 },
 		});
 
@@ -24,7 +25,8 @@ describe("computePlayerScore", () => {
 
 		// science: 2²+2²+2² + 7×2 = 12+14 = 26
 		expect(breakdown.scientifics).toBe(26);
-		expect(breakdown.total).toBe(3 + 4 + 5 + 6 + 2 + 26 + 7 + 1 + 2 + 3);
+		expect(breakdown.islands).toBe(4);
+		expect(breakdown.total).toBe(3 + 4 + 5 + 6 + 2 + 26 + 7 + 1 + 2 + 3 + 4);
 		expect(breakdown.playerId).toBe("p1");
 	});
 
@@ -81,10 +83,16 @@ describe("filterActiveCategories", () => {
 			leaders: true,
 			cities: false,
 			armada: true,
+			islands: true,
 		});
 	});
 
 	it("tout est inactif sans extension", () => {
-		expect(filterActiveCategories([])).toEqual({ leaders: false, cities: false, armada: false });
+		expect(filterActiveCategories([])).toEqual({
+			leaders: false,
+			cities: false,
+			armada: false,
+			islands: false,
+		});
 	});
 });
