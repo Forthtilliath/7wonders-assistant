@@ -67,6 +67,21 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
   création ou au renommage d'un joueur, si un autre joueur porte déjà ce nom, un message suggère de
   renommer l'un des deux ou d'ajouter une photo pour les distinguer — sans bloquer la création (deux
   personnes peuvent légitimement porter le même prénom).
+- **L'I/O de `lib/backup.ts` est désormais testée** (`lib/__tests__/backup.io.test.ts`) :
+  `expo-file-system`/`expo-sharing` sont mockés (système de fichiers en mémoire dans la closure de
+  la factory `jest.mock`, sans variable externe pour respecter la contrainte de hoisting de Jest),
+  couvrant `exportData`, `exportGamesCsv`, `importData` (annulation, JSON invalide, version trop
+  récente, sauvegarde de secours) et `restoreSafetyBackup`.
+- **`expo-document-picker` retiré** de `package.json` : plus aucun usage depuis le passage à
+  `File.pickFileAsync` d'`expo-file-system`.
+- **Casts `as` non vérifiés remplacés** par `getCategoryScore()` (`lib/scoring/total.ts`), un accès
+  `switch` exhaustif sur `CategoryId` : oublier une catégorie devient une erreur de compilation
+  plutôt qu'un bug silencieux à l'exécution. Utilisé dans `lib/stats.ts` et `RankedPlayerCard.tsx`.
+- **Version affichée dans Réglages synchronisée** avec `package.json` (`constants/app.ts` importe
+  directement `version` au lieu de la dupliquer en dur).
+- **Calcul de stats évité en vue graphique** (`app/(tabs)/stats.tsx`) : `statsByPlayerId`, utilisé
+  uniquement par `ScoreTable` en vue tableau, ne se calcule plus du tout quand la vue graphique est
+  affichée.
 
 ## UX (expérience utilisateur)
 
@@ -94,24 +109,11 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
 
 ## Optimisation du code
 
-- L'I/O fichier de `lib/backup.ts` (lecture/écriture via `expo-file-system`, `restoreSafetyBackup`,
-  `exportGamesCsv`) n'est pas testée — nécessiterait de mocker `expo-file-system`/`expo-sharing`.
-  Seule sa logique pure (extraite dans `lib/backupSchema.ts` et `lib/csv.ts`) l'est.
-- `expo-document-picker` reste installé dans `package.json` sans être utilisé nulle part (remplacé
-  par `File.pickFileAsync` d'`expo-file-system`) — jamais retiré à cause d'un conflit de peer
-  dependencies npm rencontré à l'époque.
 - Le stub de `react-native-worklets` dans `metro.config.js` (contournement d'un bug amont dans
-  `@expo/ui`/`expo-router`) est une dette technique à surveiller : si une vraie dépendance à
+  `@expo/ui`/`expo-router`) reste une dette technique à surveiller : si une vraie dépendance à
   `react-native-worklets` est ajoutée un jour (ex. `react-native-reanimated`), ce stub la cassera
-  silencieusement. À retirer dès qu'une version corrigée d'`expo-router`/`@expo/ui` sort.
-- Plusieurs écrans recalculent des statistiques dérivées (classement, moyennes) indépendamment via
-  `useMemo` séparés plutôt qu'une seule passe partagée — sans impact perceptible à l'échelle d'un
-  historique de parties personnel, mais à surveiller si l'historique grossit beaucoup.
-- Quelques `as` de type dans `lib/stats.ts` (accès dynamique aux catégories d'un score) qui
-  contournent la vérification stricte des types ; un typage plus précis de `PlayerScoreBreakdown`
-  éviterait ces casts.
-- Version affichée dans Réglages (`constants/app.ts`) codée en dur, non synchronisée avec
-  `package.json`.
+  silencieusement. À retirer dès qu'une version corrigée d'`expo-router`/`@expo/ui` sort — rien à
+  faire avant ça, ce n'est pas un bug actuel.
 
 ## Fonctionnalités
 
