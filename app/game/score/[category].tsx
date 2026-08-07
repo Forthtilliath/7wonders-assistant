@@ -6,10 +6,10 @@ import { ManualPointsFields } from "@/components/game/ManualPointsFields";
 import { PlayerScoreRow } from "@/components/game/PlayerScoreRow";
 import { ScienceFields } from "@/components/game/ScienceFields";
 import { TokenCounterSheet } from "@/components/game/TokenCounterSheet";
+import { WonderNameField } from "@/components/game/WonderNameField";
 import { Button } from "@/components/ui/Button";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { TextField } from "@/components/ui/TextField";
 import { CATEGORY_META } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
@@ -152,10 +152,9 @@ export default function CategoryScoreScreen() {
 						if (category === "wonders") {
 							return (
 								<PlayerScoreRow key={player.id} player={player}>
-									<TextField
-										placeholder="Nom de la merveille"
+									<WonderNameField
 										value={entry.wonder.name}
-										onChangeText={(name) =>
+										onChange={(name) =>
 											updateEntry(player.id, (e) => ({ ...e, wonder: { ...e.wonder, name } }))
 										}
 									/>
