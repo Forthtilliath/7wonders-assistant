@@ -82,23 +82,23 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
 - **Calcul de stats évité en vue graphique** (`app/(tabs)/stats.tsx`) : `statsByPlayerId`, utilisé
   uniquement par `ScoreTable` en vue tableau, ne se calcule plus du tout quand la vue graphique est
   affichée.
-
-## UX (expérience utilisateur)
-
-- Lancer une nouvelle partie alors qu'une partie est déjà en cours l'écrase silencieusement (pas
-  de confirmation "une partie est en cours, l'abandonner ?").
-- Pas de recherche/tri dans la liste des joueurs ou l'historique — deviendra utile avec beaucoup
-  de joueurs/parties.
-- Pas d'état d'accueil guidé pour un utilisateur qui n'a encore aucun joueur/partie (expliquer le
-  flow : créer des joueurs → nouvelle partie → jouer).
-- Abandonner une partie en cours n'est possible que depuis l'écran Résultats ; si on quitte l'app
-  au milieu de la saisie sans aller jusqu'au bout, la partie reste "en cours" indéfiniment (juste
-  récupérable via "Reprendre", ce qui est correct, mais pas évident si on a oublié).
-- Pas de retour haptique sur les boutons/steppers (confort tactile mobile).
-- Pas de suggestion/autocomplétion du nom de merveille à partir des noms déjà saisis (réduirait les
-  doublons dus à des fautes de frappe dans les statistiques par merveille).
-- Changer le filtre d'extensions dans Statistiques ne réinitialise pas le joueur sélectionné même
-  s'il n'a plus de partie correspondante (affiche juste "aucune partie" au lieu de reproposer un choix).
+- **Confirmation avant d'écraser une partie en cours** : lancer une nouvelle partie (bouton ou
+  swipe) alors qu'une partie est déjà en cours demande confirmation avant de l'abandonner. Un
+  bouton "Abandonner la partie en cours" est aussi ajouté directement sur l'onglet Nouvelle partie,
+  à côté de "Reprendre", pour ne plus avoir à passer par l'écran Résultats.
+- **État d'accueil guidé** sur l'onglet Nouvelle partie quand aucun joueur n'existe encore : message
+  de bienvenue + bouton "Créer mon premier joueur" plutôt qu'une grille vide.
+- **Recherche** ajoutée sur les listes Joueurs (par nom) et Historique (par joueur ayant participé).
+- **Retour haptique** (`expo-haptics`, `lib/haptics.ts`) sur les boutons, les pas de `NumberStepper`,
+  et les sélections (cases à cocher, boutons radio, cartes joueur, chips) — retiré temporairement
+  quand un pas de stepper est bloqué par sa borne min/max pour ne pas vibrer dans le vide.
+- **Suggestions de noms de merveille** (`lib/wonders.ts`, `WonderNameField`) : en tapant le nom
+  d'une merveille, les noms déjà utilisés dans l'historique qui correspondent s'affichent en
+  suggestions cliquables, pour réduire les doublons dus à des fautes de frappe dans les
+  statistiques par merveille.
+- **Sélection réinitialisée dans Statistiques** quand le filtre d'extensions exclut le joueur (ou le
+  joueur de comparaison) actuellement affiché, plutôt que de laisser une sélection obsolète ; un
+  bouton "Réinitialiser les filtres" apparaît aussi quand plus aucune partie ne correspond.
 
 ## Sécurité / intégrité des données
 
