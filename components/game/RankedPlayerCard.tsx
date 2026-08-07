@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { BASE_CATEGORY_ORDER, CATEGORY_META, EXTENSION_ORDER } from "@/constants/categories";
@@ -36,7 +37,11 @@ export function RankedPlayerCard({ player, score, extensions }: Props) {
 					if (!value) return null;
 					return (
 						<View key={category} style={styles.chip}>
-							<View style={[styles.dot, { backgroundColor: CATEGORY_META[category].color }]} />
+							<MaterialCommunityIcons
+								name={CATEGORY_META[category].icon}
+								size={12}
+								color={CATEGORY_META[category].color}
+							/>
 							<Text style={styles.chipText}>
 								{CATEGORY_META[category].shortLabel} {value}
 							</Text>
@@ -93,11 +98,6 @@ const styles = StyleSheet.create({
 		borderRadius: RADIUS.full,
 		paddingHorizontal: SPACING.sm,
 		paddingVertical: 2,
-	},
-	dot: {
-		width: 6,
-		height: 6,
-		borderRadius: 3,
 	},
 	chipText: {
 		color: COLORS.textMuted,

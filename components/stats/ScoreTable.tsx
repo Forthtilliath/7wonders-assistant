@@ -1,7 +1,8 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { CATEGORY_META } from "@/constants/categories";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { COLORS, SPACING } from "@/constants/theme";
 import type { PlayerStats } from "@/lib/stats";
 import type { CategoryId, Player } from "@/types/game";
 
@@ -52,7 +53,11 @@ export function ScoreTable({ players, categories, statsByPlayerId }: Props) {
 				{categories.map((category) => (
 					<View key={category} style={styles.row}>
 						<View style={[styles.cell, styles.labelCell]}>
-							<View style={[styles.dot, { backgroundColor: CATEGORY_META[category].color }]} />
+							<MaterialCommunityIcons
+								name={CATEGORY_META[category].icon}
+								size={14}
+								color={CATEGORY_META[category].color}
+							/>
 							<Text style={styles.labelText} numberOfLines={1}>
 								{CATEGORY_META[category].shortLabel}
 							</Text>
@@ -96,11 +101,6 @@ const styles = StyleSheet.create({
 	playerCell: {
 		width: PLAYER_WIDTH,
 		gap: 4,
-	},
-	dot: {
-		width: 8,
-		height: 8,
-		borderRadius: RADIUS.full,
 	},
 	playerName: {
 		color: COLORS.text,

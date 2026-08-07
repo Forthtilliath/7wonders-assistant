@@ -1,7 +1,8 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 import { CATEGORY_META } from "@/constants/categories";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import { COLORS, SPACING } from "@/constants/theme";
 import type { PlayerStats } from "@/lib/stats";
 import type { CategoryId } from "@/types/game";
 
@@ -50,7 +51,11 @@ export function CategoryPieChart({ categories, stats }: Props) {
 			<View style={styles.legend}>
 				{slices.map((slice) => (
 					<View key={slice.category} style={styles.legendRow}>
-						<View style={[styles.dot, { backgroundColor: CATEGORY_META[slice.category].color }]} />
+						<MaterialCommunityIcons
+							name={CATEGORY_META[slice.category].icon}
+							size={14}
+							color={CATEGORY_META[slice.category].color}
+						/>
 						<Text style={styles.legendLabel} numberOfLines={1}>
 							{CATEGORY_META[slice.category].shortLabel}
 						</Text>
@@ -76,11 +81,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		gap: 6,
-	},
-	dot: {
-		width: 8,
-		height: 8,
-		borderRadius: RADIUS.full,
 	},
 	legendLabel: {
 		flex: 1,
