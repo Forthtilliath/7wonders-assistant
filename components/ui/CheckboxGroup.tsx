@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { COLORS, RADIUS } from "@/constants/theme";
 
@@ -13,6 +12,7 @@ type Props<T extends string> = {
 	onChange: (values: T[]) => void;
 };
 
+/** Groupe de boutons à sélection multiple (chaque option se coche/décoche indépendamment). */
 export function CheckboxGroup<T extends string>({ options, values, onChange }: Props<T>) {
 	const toggle = (value: T) => {
 		onChange(values.includes(value) ? values.filter((v) => v !== value) : [...values, value]);
@@ -28,11 +28,6 @@ export function CheckboxGroup<T extends string>({ options, values, onChange }: P
 						style={[styles.option, checked && styles.optionChecked]}
 						onPress={() => toggle(option.value)}
 					>
-						<Ionicons
-							name={checked ? "checkbox" : "square-outline"}
-							size={16}
-							color={checked ? COLORS.primaryText : COLORS.textMuted}
-						/>
 						<Text style={[styles.label, checked && styles.labelChecked]}>{option.label}</Text>
 					</Pressable>
 				);
@@ -48,9 +43,6 @@ const styles = StyleSheet.create({
 		gap: 8,
 	},
 	option: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 6,
 		paddingVertical: 8,
 		paddingHorizontal: 12,
 		borderRadius: RADIUS.full,
