@@ -23,6 +23,11 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
   `finishGame`...) ; `lib/categoryFlow.ts`, `lib/scoring/total.ts`, `lib/scoring/game.ts` et
   `lib/stats.ts` ont chacun leur suite de tests. AsyncStorage est mocké via `jest.setup.js`
   (`jest.mock` + le mock officiel du package, référencé depuis `setupFiles`). 70 tests au total.
+- **Validation de schéma à l'import (zod)** : après migration, chaque joueur et chaque partie d'une
+  sauvegarde importée est validé en profondeur (`lib/backupSchema.ts`, `validateMigratedBackupData`)
+  plutôt que de juste vérifier que `players`/`history` sont des tableaux. Un fichier corrompu ou
+  modifié à la main est rejeté avec un message précis (champ + raison) au lieu de risquer de planter
+  l'app au rendu.
 
 ## UI (interface)
 
@@ -33,7 +38,6 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
   surtout dans les graphiques et le tableau croisé.
 - Chaque avatar joueur sans photo utilise la même couleur de fond — attribuer une couleur distincte
   par joueur faciliterait le repérage visuel dans les tableaux/graphiques multi-joueurs.
-- Chips d'extension ("Sans extension" notamment) qui passent sur deux lignes selon la largeur d'écran.
 - Pas d'animation/transition personnalisée entre écrans (transitions par défaut d'Expo Router).
 - `NumberStepper` : pas d'accélération en appui long sur +/- pour saisir rapidement de grandes valeurs.
 
@@ -56,15 +60,10 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
 
 ## Sécurité / intégrité des données
 
-- Validation d'import assez superficielle (vérifie que `players`/`history` sont des tableaux, mais
-  pas la forme de chaque entrée) : un fichier corrompu ou modifié à la main pourrait planter l'app
-  au rendu plutôt que d'être rejeté proprement à l'import. Une validation de schéma (zod ou
-  équivalent) sécuriserait ce point.
-- Export en JSON non chiffré partagé via la feuille de partage système : peut atterrir dans un
-  cloud/autre app. Pour des scores de jeu de société, le risque est faible, mais à garder en tête
-  si l'app évolue vers des données plus sensibles.
-- Données stockées en clair dans AsyncStorage (standard React Native, pas un stockage sécurisé) —
-  sans enjeu aujourd'hui vu la nature des données.
+- ~~Export JSON non chiffré~~ / ~~données en clair dans AsyncStorage~~ : écartés délibérément — les
+  données de l'app (prénoms, scores, liens d'images locales) ne sont pas sensibles, chiffrer
+  n'apporterait rien. À reconsidérer seulement si l'app venait à stocker un jour un autre type de
+  donnée.
 
 ## Optimisation du code
 
