@@ -1,7 +1,10 @@
+import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { EXTENSION_LABELS } from "@/constants/categories";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { RADIUS, SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { formatDate } from "@/lib/date";
 import { getGameRanking } from "@/lib/scoring/game";
 import type { Game, Player } from "@/types/game";
@@ -13,6 +16,8 @@ type Props = {
 };
 
 export function GameSummaryCard({ game, players, onPress }: Props) {
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const ranking = getGameRanking(game);
 	const winnerScore = ranking[0];
 	const winner = players.find((p) => p.id === winnerScore?.playerId);
@@ -52,53 +57,59 @@ export function GameSummaryCard({ game, players, onPress }: Props) {
 	);
 }
 
-const styles = StyleSheet.create({
-	card: {
-		backgroundColor: COLORS.surface,
-		borderRadius: RADIUS.md,
-		padding: SPACING.md,
-		gap: SPACING.sm,
-	},
-	row: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-	},
-	date: {
-		color: COLORS.textMuted,
-		fontSize: 13,
-		textTransform: "capitalize",
-	},
-	playerCount: {
-		color: COLORS.textMuted,
-		fontSize: 13,
-	},
-	winnerRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: SPACING.sm,
-	},
-	winnerName: {
-		flex: 1,
-		color: COLORS.text,
-		fontSize: 16,
-		fontWeight: "700",
-	},
-	winnerScore: {
-		color: COLORS.gold,
-		fontWeight: "700",
-	},
-	extensionsRow: {
-		flexDirection: "row",
-		gap: SPACING.xs,
-	},
-	extensionChip: {
-		backgroundColor: COLORS.surfaceAlt,
-		borderRadius: RADIUS.full,
-		paddingHorizontal: SPACING.sm,
-		paddingVertical: 2,
-	},
-	extensionText: {
-		color: COLORS.textMuted,
-		fontSize: 11,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				card: {
+					backgroundColor: colors.surface,
+					borderRadius: RADIUS.md,
+					padding: SPACING.md,
+					gap: SPACING.sm,
+				},
+				row: {
+					flexDirection: "row",
+					justifyContent: "space-between",
+				},
+				date: {
+					color: colors.textMuted,
+					fontSize: 13,
+					textTransform: "capitalize",
+				},
+				playerCount: {
+					color: colors.textMuted,
+					fontSize: 13,
+				},
+				winnerRow: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: SPACING.sm,
+				},
+				winnerName: {
+					flex: 1,
+					color: colors.text,
+					fontSize: 16,
+					fontWeight: "700",
+				},
+				winnerScore: {
+					color: colors.gold,
+					fontWeight: "700",
+				},
+				extensionsRow: {
+					flexDirection: "row",
+					gap: SPACING.xs,
+				},
+				extensionChip: {
+					backgroundColor: colors.surfaceAlt,
+					borderRadius: RADIUS.full,
+					paddingHorizontal: SPACING.sm,
+					paddingVertical: 2,
+				},
+				extensionText: {
+					color: colors.textMuted,
+					fontSize: 11,
+				},
+			}),
+		[colors],
+	);
+}

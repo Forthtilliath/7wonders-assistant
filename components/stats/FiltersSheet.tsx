@@ -1,10 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { EXTENSION_LABELS, EXTENSION_ORDER } from "@/constants/categories";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { RADIUS, SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import type { ExtensionFilter } from "@/lib/gameFilters";
 import type { ExtensionId, Player } from "@/types/game";
 
@@ -35,6 +38,9 @@ export function FiltersSheet({
 	onSelectPlayer,
 	playerSectionTitle = "Joueur",
 }: Props) {
+	const colors = useColors();
+	const styles = useStyles(colors);
+
 	return (
 		<BottomSheet visible={visible} onClose={onClose} title="Filtres">
 			<ScrollView contentContainerStyle={styles.content}>
@@ -68,7 +74,7 @@ export function FiltersSheet({
 									<Text style={styles.playerName} numberOfLines={1}>
 										{player.name}
 									</Text>
-									{selected && <Ionicons name="checkmark" size={20} color={COLORS.primary} />}
+									{selected && <Ionicons name="checkmark" size={20} color={colors.primary} />}
 								</Pressable>
 							);
 						})}
@@ -79,31 +85,37 @@ export function FiltersSheet({
 	);
 }
 
-const styles = StyleSheet.create({
-	content: {
-		gap: SPACING.sm,
-		paddingBottom: SPACING.md,
-	},
-	sectionTitle: {
-		color: COLORS.textMuted,
-		fontSize: 13,
-		textTransform: "uppercase",
-		letterSpacing: 0.5,
-		marginTop: SPACING.sm,
-	},
-	playerRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: SPACING.sm,
-		padding: SPACING.sm,
-		borderRadius: RADIUS.md,
-	},
-	playerRowSelected: {
-		backgroundColor: COLORS.surfaceAlt,
-	},
-	playerName: {
-		flex: 1,
-		color: COLORS.text,
-		fontSize: 15,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				content: {
+					gap: SPACING.sm,
+					paddingBottom: SPACING.md,
+				},
+				sectionTitle: {
+					color: colors.textMuted,
+					fontSize: 13,
+					textTransform: "uppercase",
+					letterSpacing: 0.5,
+					marginTop: SPACING.sm,
+				},
+				playerRow: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: SPACING.sm,
+					padding: SPACING.sm,
+					borderRadius: RADIUS.md,
+				},
+				playerRowSelected: {
+					backgroundColor: colors.surfaceAlt,
+				},
+				playerName: {
+					flex: 1,
+					color: colors.text,
+					fontSize: 15,
+				},
+			}),
+		[colors],
+	);
+}

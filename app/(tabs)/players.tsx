@@ -1,13 +1,18 @@
 import { useRouter } from "expo-router";
+import { useMemo } from "react";
 import { FlatList, StyleSheet, Text } from "react-native";
 import { PlayerListItem } from "@/components/players/PlayerListItem";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { selectSortedPlayers, usePlayersStore } from "@/stores/playersStore";
 
 export default function PlayersScreen() {
 	const router = useRouter();
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const players = usePlayersStore((s) => s.players);
 	const toggleFavorite = usePlayersStore((s) => s.toggleFavorite);
 	const toggleArchived = usePlayersStore((s) => s.toggleArchived);
@@ -40,16 +45,22 @@ export default function PlayersScreen() {
 	);
 }
 
-const styles = StyleSheet.create({
-	list: {
-		paddingBottom: SPACING.md,
-	},
-	empty: {
-		color: COLORS.textMuted,
-		textAlign: "center",
-		marginTop: SPACING.xl,
-	},
-	addButton: {
-		marginTop: SPACING.md,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				list: {
+					paddingBottom: SPACING.md,
+				},
+				empty: {
+					color: colors.textMuted,
+					textAlign: "center",
+					marginTop: SPACING.xl,
+				},
+				addButton: {
+					marginTop: SPACING.md,
+				},
+			}),
+		[colors],
+	);
+}

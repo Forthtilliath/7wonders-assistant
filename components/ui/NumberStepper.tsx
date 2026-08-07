@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { COLORS, RADIUS } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { RADIUS } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 
 type Props = {
 	value: number;
@@ -71,7 +73,9 @@ export function NumberStepper({ value, onChange, min = 0, max, step = 1, accentC
 		}, INITIAL_DELAY_MS);
 	};
 
-	const color = accentColor ?? COLORS.primary;
+	const colors = useColors();
+	const styles = useStyles(colors);
+	const color = accentColor ?? colors.primary;
 	// "number-pad" a un clavier purement numérique, sans touche "-" sur Android. Dès qu'un
 	// négatif est possible, on bascule sur "numeric" qui affiche le signe.
 	const allowsNegative = min !== undefined && min < 0;
@@ -124,29 +128,35 @@ export function NumberStepper({ value, onChange, min = 0, max, step = 1, accentC
 	);
 }
 
-const styles = StyleSheet.create({
-	row: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 8,
-	},
-	button: {
-		width: 40,
-		height: 40,
-		borderRadius: RADIUS.sm,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	buttonLabel: {
-		color: COLORS.primaryText,
-		fontSize: 20,
-		fontWeight: "700",
-	},
-	value: {
-		minWidth: 48,
-		textAlign: "center",
-		color: COLORS.text,
-		fontSize: 18,
-		fontWeight: "700",
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				row: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: 8,
+				},
+				button: {
+					width: 40,
+					height: 40,
+					borderRadius: RADIUS.sm,
+					alignItems: "center",
+					justifyContent: "center",
+				},
+				buttonLabel: {
+					color: colors.primaryText,
+					fontSize: 20,
+					fontWeight: "700",
+				},
+				value: {
+					minWidth: 48,
+					textAlign: "center",
+					color: colors.text,
+					fontSize: 18,
+					fontWeight: "700",
+				},
+			}),
+		[colors],
+	);
+}

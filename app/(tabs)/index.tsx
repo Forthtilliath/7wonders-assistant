@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard";
@@ -7,13 +7,17 @@ import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { EXTENSION_LABELS, EXTENSION_ORDER } from "@/constants/categories";
 import { MAX_PLAYERS, MIN_PLAYERS } from "@/constants/game";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { RADIUS, SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { useGameStore } from "@/stores/gameStore";
 import { selectSortedPlayers, usePlayersStore } from "@/stores/playersStore";
 import type { ExtensionId } from "@/types/game";
 
 export default function NewGameTab() {
 	const router = useRouter();
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const players = usePlayersStore((s) => s.players);
 	const startNewGame = useGameStore((s) => s.startNewGame);
 	const hasOngoingGame = useGameStore((s) => s.hasOngoingGame());
@@ -119,50 +123,56 @@ export default function NewGameTab() {
 	);
 }
 
-const styles = StyleSheet.create({
-	resumeButton: {
-		marginBottom: SPACING.md,
-	},
-	content: {
-		gap: SPACING.md,
-		paddingBottom: SPACING.md,
-	},
-	sectionTitle: {
-		color: COLORS.textMuted,
-		fontSize: 14,
-		textTransform: "uppercase",
-		letterSpacing: 0.5,
-		marginTop: SPACING.sm,
-	},
-	grid: {
-		flexDirection: "row",
-		flexWrap: "wrap",
-		gap: SPACING.sm,
-	},
-	empty: {
-		color: COLORS.textMuted,
-	},
-	chipsRow: {
-		flexDirection: "row",
-		flexWrap: "wrap",
-		gap: SPACING.sm,
-	},
-	chip: {
-		paddingVertical: SPACING.sm,
-		paddingHorizontal: SPACING.md,
-		borderRadius: RADIUS.full,
-		borderWidth: 1,
-		borderColor: COLORS.border,
-	},
-	chipActive: {
-		backgroundColor: COLORS.primary,
-		borderColor: COLORS.primary,
-	},
-	chipLabel: {
-		color: COLORS.textMuted,
-	},
-	chipLabelActive: {
-		color: COLORS.primaryText,
-		fontWeight: "600",
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				resumeButton: {
+					marginBottom: SPACING.md,
+				},
+				content: {
+					gap: SPACING.md,
+					paddingBottom: SPACING.md,
+				},
+				sectionTitle: {
+					color: colors.textMuted,
+					fontSize: 14,
+					textTransform: "uppercase",
+					letterSpacing: 0.5,
+					marginTop: SPACING.sm,
+				},
+				grid: {
+					flexDirection: "row",
+					flexWrap: "wrap",
+					gap: SPACING.sm,
+				},
+				empty: {
+					color: colors.textMuted,
+				},
+				chipsRow: {
+					flexDirection: "row",
+					flexWrap: "wrap",
+					gap: SPACING.sm,
+				},
+				chip: {
+					paddingVertical: SPACING.sm,
+					paddingHorizontal: SPACING.md,
+					borderRadius: RADIUS.full,
+					borderWidth: 1,
+					borderColor: colors.border,
+				},
+				chipActive: {
+					backgroundColor: colors.primary,
+					borderColor: colors.primary,
+				},
+				chipLabel: {
+					color: colors.textMuted,
+				},
+				chipLabelActive: {
+					color: colors.primaryText,
+					fontWeight: "600",
+				},
+			}),
+		[colors],
+	);
+}

@@ -1,8 +1,11 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 import { CATEGORY_META } from "@/constants/categories";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import type { PlayerStats } from "@/lib/stats";
 import type { CategoryId } from "@/types/game";
 
@@ -17,6 +20,9 @@ type Props = {
  * exclues : une part de camembert négative n'a pas de sens.
  */
 export function CategoryPieChart({ categories, stats }: Props) {
+	const colors = useColors();
+	const styles = useStyles(colors);
+
 	const slices = categories
 		.map((category) => ({
 			category,
@@ -46,7 +52,7 @@ export function CategoryPieChart({ categories, stats }: Props) {
 				radius={70}
 				donut
 				innerRadius={36}
-				innerCircleColor={COLORS.surface}
+				innerCircleColor={colors.surface}
 			/>
 			<View style={styles.legend}>
 				{slices.map((slice) => (
@@ -67,33 +73,39 @@ export function CategoryPieChart({ categories, stats }: Props) {
 	);
 }
 
-const styles = StyleSheet.create({
-	row: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: SPACING.lg,
-	},
-	legend: {
-		flex: 1,
-		gap: 6,
-	},
-	legendRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 6,
-	},
-	legendLabel: {
-		flex: 1,
-		color: COLORS.textMuted,
-		fontSize: 12,
-	},
-	legendValue: {
-		color: COLORS.text,
-		fontSize: 12,
-		fontWeight: "700",
-	},
-	empty: {
-		color: COLORS.textMuted,
-		fontStyle: "italic",
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				row: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: SPACING.lg,
+				},
+				legend: {
+					flex: 1,
+					gap: 6,
+				},
+				legendRow: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: 6,
+				},
+				legendLabel: {
+					flex: 1,
+					color: colors.textMuted,
+					fontSize: 12,
+				},
+				legendValue: {
+					color: colors.text,
+					fontSize: 12,
+					fontWeight: "700",
+				},
+				empty: {
+					color: colors.textMuted,
+					fontStyle: "italic",
+				},
+			}),
+		[colors],
+	);
+}

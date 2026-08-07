@@ -1,9 +1,12 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useMemo } from "react";
 import { Alert, ScrollView, StyleSheet, Text } from "react-native";
 import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { formatDate } from "@/lib/date";
 import { getGameRanking } from "@/lib/scoring/game";
 import { useHistoryStore } from "@/stores/historyStore";
@@ -11,6 +14,8 @@ import { usePlayersStore } from "@/stores/playersStore";
 
 export default function GameDetailScreen() {
 	const router = useRouter();
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const game = useHistoryStore((s) => s.games.find((g) => g.id === id));
 	const removeGame = useHistoryStore((s) => s.removeGame);
@@ -62,20 +67,26 @@ export default function GameDetailScreen() {
 	);
 }
 
-const styles = StyleSheet.create({
-	date: {
-		color: COLORS.textMuted,
-		fontSize: 14,
-		textTransform: "capitalize",
-		marginBottom: SPACING.md,
-	},
-	list: {
-		gap: SPACING.sm,
-		paddingBottom: SPACING.md,
-	},
-	empty: {
-		color: COLORS.textMuted,
-		textAlign: "center",
-		marginTop: SPACING.xl,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				date: {
+					color: colors.textMuted,
+					fontSize: 14,
+					textTransform: "capitalize",
+					marginBottom: SPACING.md,
+				},
+				list: {
+					gap: SPACING.sm,
+					paddingBottom: SPACING.md,
+				},
+				empty: {
+					color: colors.textMuted,
+					textAlign: "center",
+					marginTop: SPACING.xl,
+				},
+			}),
+		[colors],
+	);
+}

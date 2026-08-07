@@ -1,8 +1,11 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { BASE_CATEGORY_ORDER, CATEGORY_META, EXTENSION_ORDER } from "@/constants/categories";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { RADIUS, SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import type { PlayerScoreBreakdown, RankedPlayerScore } from "@/lib/scoring/total";
 import type { ExtensionId, Player } from "@/types/game";
 
@@ -15,6 +18,9 @@ type Props = {
 };
 
 export function RankedPlayerCard({ player, score, extensions }: Props) {
+	const colors = useColors();
+	const styles = useStyles(colors);
+
 	const categories = [
 		...BASE_CATEGORY_ORDER,
 		...EXTENSION_ORDER.filter((e) => extensions.includes(e)),
@@ -53,54 +59,60 @@ export function RankedPlayerCard({ player, score, extensions }: Props) {
 	);
 }
 
-const styles = StyleSheet.create({
-	card: {
-		backgroundColor: COLORS.surface,
-		borderRadius: RADIUS.md,
-		padding: SPACING.md,
-		gap: SPACING.sm,
-	},
-	cardWinner: {
-		borderWidth: 1.5,
-		borderColor: COLORS.gold,
-	},
-	header: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: SPACING.sm,
-	},
-	rank: {
-		fontSize: 20,
-		width: 32,
-		textAlign: "center",
-	},
-	name: {
-		flex: 1,
-		color: COLORS.text,
-		fontSize: 17,
-		fontWeight: "700",
-	},
-	total: {
-		color: COLORS.gold,
-		fontSize: 22,
-		fontWeight: "800",
-	},
-	breakdown: {
-		flexDirection: "row",
-		flexWrap: "wrap",
-		gap: SPACING.xs,
-	},
-	chip: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 4,
-		backgroundColor: COLORS.surfaceAlt,
-		borderRadius: RADIUS.full,
-		paddingHorizontal: SPACING.sm,
-		paddingVertical: 2,
-	},
-	chipText: {
-		color: COLORS.textMuted,
-		fontSize: 11,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				card: {
+					backgroundColor: colors.surface,
+					borderRadius: RADIUS.md,
+					padding: SPACING.md,
+					gap: SPACING.sm,
+				},
+				cardWinner: {
+					borderWidth: 1.5,
+					borderColor: colors.gold,
+				},
+				header: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: SPACING.sm,
+				},
+				rank: {
+					fontSize: 20,
+					width: 32,
+					textAlign: "center",
+				},
+				name: {
+					flex: 1,
+					color: colors.text,
+					fontSize: 17,
+					fontWeight: "700",
+				},
+				total: {
+					color: colors.gold,
+					fontSize: 22,
+					fontWeight: "800",
+				},
+				breakdown: {
+					flexDirection: "row",
+					flexWrap: "wrap",
+					gap: SPACING.xs,
+				},
+				chip: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: 4,
+					backgroundColor: colors.surfaceAlt,
+					borderRadius: RADIUS.full,
+					paddingHorizontal: SPACING.sm,
+					paddingVertical: 2,
+				},
+				chipText: {
+					color: colors.textMuted,
+					fontSize: 11,
+				},
+			}),
+		[colors],
+	);
+}

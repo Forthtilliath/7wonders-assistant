@@ -1,8 +1,11 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { CATEGORY_META } from "@/constants/categories";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import type { PlayerStats } from "@/lib/stats";
 import type { CategoryId, Player } from "@/types/game";
 
@@ -17,6 +20,9 @@ const PLAYER_WIDTH = 76;
 
 /** Tableau croisé joueurs × catégories : moyenne de points par joueur pour chaque catégorie. */
 export function ScoreTable({ players, categories, statsByPlayerId }: Props) {
+	const colors = useColors();
+	const styles = useStyles(colors);
+
 	return (
 		<ScrollView horizontal showsHorizontalScrollIndicator>
 			<View>
@@ -77,53 +83,59 @@ export function ScoreTable({ players, categories, statsByPlayerId }: Props) {
 	);
 }
 
-const styles = StyleSheet.create({
-	row: {
-		flexDirection: "row",
-		borderBottomWidth: 1,
-		borderBottomColor: COLORS.border,
-	},
-	totalRow: {
-		backgroundColor: COLORS.surface,
-	},
-	cell: {
-		alignItems: "center",
-		justifyContent: "center",
-		paddingVertical: SPACING.sm,
-	},
-	labelCell: {
-		width: LABEL_WIDTH,
-		flexDirection: "row",
-		justifyContent: "flex-start",
-		gap: 6,
-		paddingLeft: SPACING.xs,
-	},
-	playerCell: {
-		width: PLAYER_WIDTH,
-		gap: 4,
-	},
-	playerName: {
-		color: COLORS.text,
-		fontSize: 11,
-		maxWidth: PLAYER_WIDTH - 8,
-	},
-	labelText: {
-		color: COLORS.textMuted,
-		fontSize: 12,
-		flexShrink: 1,
-	},
-	labelTextBold: {
-		color: COLORS.text,
-		fontSize: 12,
-		fontWeight: "700",
-	},
-	valueText: {
-		color: COLORS.text,
-		fontSize: 13,
-	},
-	valueTextBold: {
-		color: COLORS.gold,
-		fontSize: 15,
-		fontWeight: "700",
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				row: {
+					flexDirection: "row",
+					borderBottomWidth: 1,
+					borderBottomColor: colors.border,
+				},
+				totalRow: {
+					backgroundColor: colors.surface,
+				},
+				cell: {
+					alignItems: "center",
+					justifyContent: "center",
+					paddingVertical: SPACING.sm,
+				},
+				labelCell: {
+					width: LABEL_WIDTH,
+					flexDirection: "row",
+					justifyContent: "flex-start",
+					gap: 6,
+					paddingLeft: SPACING.xs,
+				},
+				playerCell: {
+					width: PLAYER_WIDTH,
+					gap: 4,
+				},
+				playerName: {
+					color: colors.text,
+					fontSize: 11,
+					maxWidth: PLAYER_WIDTH - 8,
+				},
+				labelText: {
+					color: colors.textMuted,
+					fontSize: 12,
+					flexShrink: 1,
+				},
+				labelTextBold: {
+					color: colors.text,
+					fontSize: 12,
+					fontWeight: "700",
+				},
+				valueText: {
+					color: colors.text,
+					fontSize: 13,
+				},
+				valueTextBold: {
+					color: colors.gold,
+					fontSize: 15,
+					fontWeight: "700",
+				},
+			}),
+		[colors],
+	);
+}

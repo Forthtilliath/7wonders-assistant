@@ -1,6 +1,9 @@
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { NumberStepper } from "@/components/ui/NumberStepper";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { computeScienceScore } from "@/lib/scoring/science";
 import type { ScienceInput } from "@/types/game";
 
@@ -18,6 +21,8 @@ const SYMBOLS: { key: keyof ScienceInput; label: string }[] = [
 ];
 
 export function ScienceFields({ value, onChange }: Props) {
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const result = computeScienceScore(value);
 
 	return (
@@ -29,7 +34,7 @@ export function ScienceFields({ value, onChange }: Props) {
 						value={value[symbol.key]}
 						onChange={(n) => onChange({ ...value, [symbol.key]: n })}
 						min={0}
-						accentColor={COLORS.success}
+						accentColor={colors.success}
 					/>
 				</View>
 			))}
@@ -44,24 +49,30 @@ export function ScienceFields({ value, onChange }: Props) {
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		gap: SPACING.sm,
-	},
-	row: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		gap: 12,
-	},
-	label: {
-		flex: 1,
-		flexShrink: 1,
-		color: COLORS.textMuted,
-	},
-	hint: {
-		color: COLORS.textMuted,
-		fontSize: 12,
-		fontStyle: "italic",
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				container: {
+					gap: SPACING.sm,
+				},
+				row: {
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					gap: 12,
+				},
+				label: {
+					flex: 1,
+					flexShrink: 1,
+					color: colors.textMuted,
+				},
+				hint: {
+					color: colors.textMuted,
+					fontSize: 12,
+					fontStyle: "italic",
+				},
+			}),
+		[colors],
+	);
+}

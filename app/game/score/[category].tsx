@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { ManualPointsFields } from "@/components/game/ManualPointsFields";
@@ -10,7 +10,9 @@ import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { TextField } from "@/components/ui/TextField";
 import { CATEGORY_META } from "@/constants/categories";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { getCategoryFlow } from "@/lib/categoryFlow";
 import { computeScienceScore } from "@/lib/scoring/science";
 import { useGameStore } from "@/stores/gameStore";
@@ -56,6 +58,8 @@ function isManualCategory(category: CategoryId): category is ManualCategoryId {
 
 export default function CategoryScoreScreen() {
 	const router = useRouter();
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const { category } = useLocalSearchParams<{ category: CategoryId }>();
 	const extensions = useGameStore((s) => s.extensions);
 	const playerIds = useGameStore((s) => s.playerIds);
@@ -197,30 +201,36 @@ export default function CategoryScoreScreen() {
 	);
 }
 
-const styles = StyleSheet.create({
-	progressBar: {
-		height: 4,
-	},
-	progress: {
-		color: COLORS.textMuted,
-		fontSize: 12,
-		textAlign: "center",
-		paddingVertical: SPACING.xs,
-	},
-	hint: {
-		color: COLORS.textMuted,
-		fontSize: 13,
-		textAlign: "center",
-		paddingHorizontal: SPACING.md,
-		paddingBottom: SPACING.sm,
-	},
-	list: {
-		gap: SPACING.sm,
-		padding: SPACING.md,
-	},
-	footer: {
-		padding: SPACING.md,
-		borderTopWidth: 1,
-		borderTopColor: COLORS.border,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				progressBar: {
+					height: 4,
+				},
+				progress: {
+					color: colors.textMuted,
+					fontSize: 12,
+					textAlign: "center",
+					paddingVertical: SPACING.xs,
+				},
+				hint: {
+					color: colors.textMuted,
+					fontSize: 13,
+					textAlign: "center",
+					paddingHorizontal: SPACING.md,
+					paddingBottom: SPACING.sm,
+				},
+				list: {
+					gap: SPACING.sm,
+					padding: SPACING.md,
+				},
+				footer: {
+					padding: SPACING.md,
+					borderTopWidth: 1,
+					borderTopColor: colors.border,
+				},
+			}),
+		[colors],
+	);
+}

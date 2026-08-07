@@ -1,6 +1,8 @@
 import { Image } from "expo-image";
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { COLORS } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { getAvatarColor } from "@/lib/avatarColor";
 
 type Props = {
@@ -13,6 +15,8 @@ type Props = {
 };
 
 export function PlayerAvatar({ name, avatarUri, size = 56, seed }: Props) {
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const initials = getInitials(name);
 	const dimension = { width: size, height: size, borderRadius: size / 2 };
 
@@ -38,17 +42,23 @@ function getInitials(name: string): string {
 	return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
-const styles = StyleSheet.create({
-	image: {
-		backgroundColor: COLORS.surfaceAlt,
-	},
-	placeholder: {
-		backgroundColor: COLORS.surfaceAlt,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	initials: {
-		color: COLORS.text,
-		fontWeight: "700",
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				image: {
+					backgroundColor: colors.surfaceAlt,
+				},
+				placeholder: {
+					backgroundColor: colors.surfaceAlt,
+					alignItems: "center",
+					justifyContent: "center",
+				},
+				initials: {
+					color: colors.text,
+					fontWeight: "700",
+				},
+			}),
+		[colors],
+	);
+}

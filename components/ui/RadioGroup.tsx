@@ -1,5 +1,8 @@
+import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { COLORS, RADIUS } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { RADIUS } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 
 type Option<T extends string> = {
 	value: T;
@@ -13,6 +16,9 @@ type Props<T extends string> = {
 };
 
 export function RadioGroup<T extends string>({ options, value, onChange }: Props<T>) {
+	const colors = useColors();
+	const styles = useStyles(colors);
+
 	return (
 		<View style={styles.row}>
 			{options.map((option) => {
@@ -31,29 +37,35 @@ export function RadioGroup<T extends string>({ options, value, onChange }: Props
 	);
 }
 
-const styles = StyleSheet.create({
-	row: {
-		flexDirection: "row",
-		gap: 8,
-	},
-	option: {
-		flex: 1,
-		paddingVertical: 8,
-		borderRadius: RADIUS.sm,
-		borderWidth: 1.5,
-		borderColor: COLORS.border,
-		alignItems: "center",
-	},
-	optionSelected: {
-		backgroundColor: COLORS.primary,
-		borderColor: COLORS.primary,
-	},
-	label: {
-		color: COLORS.textMuted,
-		fontSize: 13,
-		fontWeight: "600",
-	},
-	labelSelected: {
-		color: COLORS.primaryText,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				row: {
+					flexDirection: "row",
+					gap: 8,
+				},
+				option: {
+					flex: 1,
+					paddingVertical: 8,
+					borderRadius: RADIUS.sm,
+					borderWidth: 1.5,
+					borderColor: colors.border,
+					alignItems: "center",
+				},
+				optionSelected: {
+					backgroundColor: colors.primary,
+					borderColor: colors.primary,
+				},
+				label: {
+					color: colors.textMuted,
+					fontSize: 13,
+					fontWeight: "600",
+				},
+				labelSelected: {
+					color: colors.primaryText,
+				},
+			}),
+		[colors],
+	);
+}

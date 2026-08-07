@@ -1,10 +1,12 @@
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { TextField } from "@/components/ui/TextField";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 
 type Props = {
 	initialName?: string;
@@ -21,6 +23,8 @@ export function PlayerForm({
 	onSubmit,
 	extra,
 }: Props) {
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const [name, setName] = useState(initialName);
 	const [avatarUri, setAvatarUri] = useState(initialAvatarUri);
 
@@ -68,19 +72,25 @@ export function PlayerForm({
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		gap: SPACING.lg,
-	},
-	avatarPicker: {
-		alignItems: "center",
-		gap: SPACING.sm,
-	},
-	avatarHint: {
-		color: COLORS.primary,
-		fontSize: 14,
-	},
-	submit: {
-		marginTop: SPACING.md,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				container: {
+					gap: SPACING.lg,
+				},
+				avatarPicker: {
+					alignItems: "center",
+					gap: SPACING.sm,
+				},
+				avatarHint: {
+					color: colors.primary,
+					fontSize: 14,
+				},
+				submit: {
+					marginTop: SPACING.md,
+				},
+			}),
+		[colors],
+	);
+}

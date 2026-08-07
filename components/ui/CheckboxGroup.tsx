@@ -1,5 +1,8 @@
+import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { COLORS, RADIUS } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { RADIUS } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 
 type Option<T extends string> = {
 	value: T;
@@ -14,6 +17,9 @@ type Props<T extends string> = {
 
 /** Groupe de boutons à sélection multiple (chaque option se coche/décoche indépendamment). */
 export function CheckboxGroup<T extends string>({ options, values, onChange }: Props<T>) {
+	const colors = useColors();
+	const styles = useStyles(colors);
+
 	const toggle = (value: T) => {
 		onChange(values.includes(value) ? values.filter((v) => v !== value) : [...values, value]);
 	};
@@ -36,29 +42,35 @@ export function CheckboxGroup<T extends string>({ options, values, onChange }: P
 	);
 }
 
-const styles = StyleSheet.create({
-	row: {
-		flexDirection: "row",
-		flexWrap: "wrap",
-		gap: 8,
-	},
-	option: {
-		paddingVertical: 8,
-		paddingHorizontal: 12,
-		borderRadius: RADIUS.full,
-		borderWidth: 1.5,
-		borderColor: COLORS.border,
-	},
-	optionChecked: {
-		backgroundColor: COLORS.primary,
-		borderColor: COLORS.primary,
-	},
-	label: {
-		color: COLORS.textMuted,
-		fontSize: 13,
-		fontWeight: "600",
-	},
-	labelChecked: {
-		color: COLORS.primaryText,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				row: {
+					flexDirection: "row",
+					flexWrap: "wrap",
+					gap: 8,
+				},
+				option: {
+					paddingVertical: 8,
+					paddingHorizontal: 12,
+					borderRadius: RADIUS.full,
+					borderWidth: 1.5,
+					borderColor: colors.border,
+				},
+				optionChecked: {
+					backgroundColor: colors.primary,
+					borderColor: colors.primary,
+				},
+				label: {
+					color: colors.textMuted,
+					fontSize: 13,
+					fontWeight: "600",
+				},
+				labelChecked: {
+					color: colors.primaryText,
+				},
+			}),
+		[colors],
+	);
+}

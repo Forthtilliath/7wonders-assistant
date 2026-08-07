@@ -1,13 +1,18 @@
 import { useRouter } from "expo-router";
+import { useMemo } from "react";
 import { FlatList, StyleSheet, Text } from "react-native";
 import { GameSummaryCard } from "@/components/history/GameSummaryCard";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 
 export default function HistoryScreen() {
 	const router = useRouter();
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const games = useHistoryStore((s) => s.games);
 	const players = usePlayersStore((s) => s.players);
 
@@ -33,13 +38,19 @@ export default function HistoryScreen() {
 	);
 }
 
-const styles = StyleSheet.create({
-	list: {
-		paddingBottom: SPACING.md,
-	},
-	empty: {
-		color: COLORS.textMuted,
-		textAlign: "center",
-		marginTop: SPACING.xl,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				list: {
+					paddingBottom: SPACING.md,
+				},
+				empty: {
+					color: colors.textMuted,
+					textAlign: "center",
+					marginTop: SPACING.xl,
+				},
+			}),
+		[colors],
+	);
+}

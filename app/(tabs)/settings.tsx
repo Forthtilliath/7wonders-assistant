@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
+import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { APP_INFO } from "@/constants/app";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { exportData, importData, restoreSafetyBackup } from "@/lib/backup";
 import { ImportError } from "@/lib/backupSchema";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
+import { type ThemeMode, useThemeStore } from "@/stores/themeStore";
 
 export default function SettingsScreen() {
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const clearPlayers = usePlayersStore((s) => s.replaceAll);
 	const clearHistory = useHistoryStore((s) => s.replaceAll);
+	const mode = useThemeStore((s) => s.mode);
+	const setMode = useThemeStore((s) => s.setMode);
 	const [busy, setBusy] = useState(false);
 
 	const handleExport = async () => {
@@ -95,6 +103,18 @@ export default function SettingsScreen() {
 	return (
 		<ScreenContainer style={styles.container}>
 			<View style={styles.section}>
+				<Text style={styles.sectionTitle}>Apparence</Text>
+				<RadioGroup<ThemeMode>
+					options={[
+						{ value: "dark", label: "Sombre" },
+						{ value: "light", label: "Clair" },
+					]}
+					value={mode}
+					onChange={setMode}
+				/>
+			</View>
+
+			<View style={styles.section}>
 				<Text style={styles.sectionTitle}>Sauvegarde</Text>
 				<Text style={styles.hint}>
 					Toutes les données restent sur cet appareil. Exporte un fichier JSON pour la garder en
@@ -127,27 +147,33 @@ export default function SettingsScreen() {
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		justifyContent: "space-between",
-	},
-	section: {
-		gap: SPACING.sm,
-	},
-	sectionTitle: {
-		color: COLORS.textMuted,
-		fontSize: 14,
-		textTransform: "uppercase",
-		letterSpacing: 0.5,
-	},
-	hint: {
-		color: COLORS.textMuted,
-		fontSize: 13,
-		marginBottom: SPACING.xs,
-	},
-	version: {
-		color: COLORS.textMuted,
-		textAlign: "center",
-		fontSize: 12,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				container: {
+					justifyContent: "space-between",
+				},
+				section: {
+					gap: SPACING.sm,
+				},
+				sectionTitle: {
+					color: colors.textMuted,
+					fontSize: 14,
+					textTransform: "uppercase",
+					letterSpacing: 0.5,
+				},
+				hint: {
+					color: colors.textMuted,
+					fontSize: 13,
+					marginBottom: SPACING.xs,
+				},
+				version: {
+					color: colors.textMuted,
+					textAlign: "center",
+					fontSize: 12,
+				},
+			}),
+		[colors],
+	);
+}

@@ -4,12 +4,16 @@ import { Alert, ScrollView, StyleSheet, Text } from "react-native";
 import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { getGameRanking } from "@/lib/scoring/game";
 import { useGameStore } from "@/stores/gameStore";
 import { usePlayersStore } from "@/stores/playersStore";
 
 export default function ResultsScreen() {
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const extensions = useGameStore((s) => s.extensions);
 	const playerIds = useGameStore((s) => s.playerIds);
 	const entries = useGameStore((s) => s.entries);
@@ -74,18 +78,24 @@ export default function ResultsScreen() {
 	);
 }
 
-const styles = StyleSheet.create({
-	title: {
-		color: COLORS.text,
-		fontSize: 22,
-		fontWeight: "800",
-		marginBottom: SPACING.md,
-	},
-	list: {
-		gap: SPACING.sm,
-		paddingBottom: SPACING.md,
-	},
-	cancelButton: {
-		marginTop: SPACING.sm,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				title: {
+					color: colors.text,
+					fontSize: 22,
+					fontWeight: "800",
+					marginBottom: SPACING.md,
+				},
+				list: {
+					gap: SPACING.sm,
+					paddingBottom: SPACING.md,
+				},
+				cancelButton: {
+					marginTop: SPACING.sm,
+				},
+			}),
+		[colors],
+	);
+}

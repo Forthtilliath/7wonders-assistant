@@ -6,7 +6,9 @@ import { StatTile } from "@/components/stats/StatTile";
 import { WonderRankingRow } from "@/components/stats/WonderRankingRow";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { BASE_CATEGORY_ORDER, CATEGORY_META, EXTENSION_ORDER } from "@/constants/categories";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { computeBarChartScale } from "@/lib/chartScale";
 import { computePlayerStats, computeWonderStats } from "@/lib/stats";
 import type { Game, Player } from "@/types/game";
@@ -19,6 +21,8 @@ type Props = {
 
 /** Bloc de statistiques complet pour un joueur : tuiles, répartition, et ses propres merveilles. */
 export function PlayerStatsSection({ player, games }: Props) {
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const stats = useMemo(() => computePlayerStats(player.id, games), [player.id, games]);
 
 	const categories = useMemo(
@@ -76,10 +80,10 @@ export function PlayerStatsSection({ player, games }: Props) {
 							stepValue={chartScale.stepValue}
 							maxValue={chartScale.maxValue}
 							mostNegativeValue={chartScale.mostNegativeValue}
-							yAxisTextStyle={{ color: COLORS.textMuted }}
-							xAxisLabelTextStyle={{ color: COLORS.textMuted, fontSize: 10 }}
-							xAxisColor={COLORS.border}
-							yAxisColor={COLORS.border}
+							yAxisTextStyle={{ color: colors.textMuted }}
+							xAxisLabelTextStyle={{ color: colors.textMuted, fontSize: 10 }}
+							xAxisColor={colors.border}
+							yAxisColor={colors.border}
 							hideRules
 						/>
 					</View>
@@ -118,38 +122,44 @@ export function PlayerStatsSection({ player, games }: Props) {
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		gap: SPACING.md,
-	},
-	header: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: SPACING.sm,
-	},
-	name: {
-		color: COLORS.text,
-		fontSize: 18,
-		fontWeight: "700",
-	},
-	tilesRow: {
-		flexDirection: "row",
-		gap: SPACING.sm,
-	},
-	sectionTitle: {
-		color: COLORS.textMuted,
-		fontSize: 14,
-		textTransform: "uppercase",
-		letterSpacing: 0.5,
-	},
-	chartWrapper: {
-		paddingVertical: SPACING.md,
-	},
-	wonderList: {
-		gap: SPACING.xs,
-	},
-	empty: {
-		color: COLORS.textMuted,
-		fontStyle: "italic",
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				container: {
+					gap: SPACING.md,
+				},
+				header: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: SPACING.sm,
+				},
+				name: {
+					color: colors.text,
+					fontSize: 18,
+					fontWeight: "700",
+				},
+				tilesRow: {
+					flexDirection: "row",
+					gap: SPACING.sm,
+				},
+				sectionTitle: {
+					color: colors.textMuted,
+					fontSize: 14,
+					textTransform: "uppercase",
+					letterSpacing: 0.5,
+				},
+				chartWrapper: {
+					paddingVertical: SPACING.md,
+				},
+				wonderList: {
+					gap: SPACING.xs,
+				},
+				empty: {
+					color: colors.textMuted,
+					fontStyle: "italic",
+				},
+			}),
+		[colors],
+	);
+}

@@ -3,20 +3,24 @@ import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { COLORS } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
+import { useThemeStore } from "@/stores/themeStore";
 
 export default function RootLayout() {
+	const colors = useColors();
+	const mode = useThemeStore((s) => s.mode);
+
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
 			<SafeAreaProvider>
-				<StatusBar style="light" />
+				<StatusBar style={mode === "light" ? "dark" : "light"} />
 				<ErrorBoundary>
 					<Stack
 						screenOptions={{
-							headerStyle: { backgroundColor: COLORS.surface },
-							headerTintColor: COLORS.text,
-							headerTitleStyle: { color: COLORS.text },
-							contentStyle: { backgroundColor: COLORS.background },
+							headerStyle: { backgroundColor: colors.surface },
+							headerTintColor: colors.text,
+							headerTitleStyle: { color: colors.text },
+							contentStyle: { backgroundColor: colors.background },
 						}}
 					>
 						<Stack.Screen name="(tabs)" options={{ headerShown: false }} />

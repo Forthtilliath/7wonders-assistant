@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/Button";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { BASE_CATEGORY_ORDER, EXTENSION_ORDER } from "@/constants/categories";
-import { COLORS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import { type ExtensionFilter, filterGamesByExtension } from "@/lib/gameFilters";
 import { computePlayerStats, computeWonderStats } from "@/lib/stats";
 import { useHistoryStore } from "@/stores/historyStore";
@@ -18,6 +20,8 @@ type ViewMode = "graph" | "table";
 type PickerTarget = null | "playerA" | "playerB" | "extensionsOnly";
 
 export default function StatsScreen() {
+	const colors = useColors();
+	const styles = useStyles(colors);
 	const players = usePlayersStore((s) => s.players);
 	const games = useHistoryStore((s) => s.games);
 
@@ -177,29 +181,35 @@ export default function StatsScreen() {
 	);
 }
 
-const styles = StyleSheet.create({
-	content: {
-		gap: SPACING.md,
-		paddingTop: SPACING.md,
-		paddingBottom: SPACING.md,
-	},
-	divider: {
-		height: 1,
-		backgroundColor: COLORS.border,
-		marginVertical: SPACING.sm,
-	},
-	sectionTitle: {
-		color: COLORS.textMuted,
-		fontSize: 14,
-		textTransform: "uppercase",
-		letterSpacing: 0.5,
-	},
-	wonderList: {
-		gap: SPACING.xs,
-	},
-	empty: {
-		color: COLORS.textMuted,
-		textAlign: "center",
-		marginTop: SPACING.xl,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				content: {
+					gap: SPACING.md,
+					paddingTop: SPACING.md,
+					paddingBottom: SPACING.md,
+				},
+				divider: {
+					height: 1,
+					backgroundColor: colors.border,
+					marginVertical: SPACING.sm,
+				},
+				sectionTitle: {
+					color: colors.textMuted,
+					fontSize: 14,
+					textTransform: "uppercase",
+					letterSpacing: 0.5,
+				},
+				wonderList: {
+					gap: SPACING.xs,
+				},
+				empty: {
+					color: colors.textMuted,
+					textAlign: "center",
+					marginTop: SPACING.xl,
+				},
+			}),
+		[colors],
+	);
+}

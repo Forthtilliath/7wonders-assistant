@@ -1,5 +1,8 @@
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+import type { ThemeColors } from "@/constants/theme";
+import { RADIUS, SPACING } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import type { WonderStats } from "@/lib/stats";
 
 type Props = {
@@ -8,6 +11,9 @@ type Props = {
 };
 
 export function WonderRankingRow({ rank, wonder }: Props) {
+	const colors = useColors();
+	const styles = useStyles(colors);
+
 	return (
 		<View style={styles.row}>
 			<Text style={styles.rank}>{rank}</Text>
@@ -25,35 +31,41 @@ export function WonderRankingRow({ rank, wonder }: Props) {
 	);
 }
 
-const styles = StyleSheet.create({
-	row: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: SPACING.sm,
-		backgroundColor: COLORS.surface,
-		borderRadius: RADIUS.md,
-		padding: SPACING.sm,
-	},
-	rank: {
-		width: 24,
-		textAlign: "center",
-		color: COLORS.textMuted,
-		fontWeight: "700",
-	},
-	info: {
-		flex: 1,
-	},
-	name: {
-		color: COLORS.text,
-		fontWeight: "600",
-	},
-	meta: {
-		color: COLORS.textMuted,
-		fontSize: 12,
-	},
-	winRate: {
-		color: COLORS.gold,
-		fontWeight: "800",
-		fontSize: 16,
-	},
-});
+function useStyles(colors: ThemeColors) {
+	return useMemo(
+		() =>
+			StyleSheet.create({
+				row: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: SPACING.sm,
+					backgroundColor: colors.surface,
+					borderRadius: RADIUS.md,
+					padding: SPACING.sm,
+				},
+				rank: {
+					width: 24,
+					textAlign: "center",
+					color: colors.textMuted,
+					fontWeight: "700",
+				},
+				info: {
+					flex: 1,
+				},
+				name: {
+					color: colors.text,
+					fontWeight: "600",
+				},
+				meta: {
+					color: colors.textMuted,
+					fontSize: 12,
+				},
+				winRate: {
+					color: colors.gold,
+					fontWeight: "800",
+					fontSize: 16,
+				},
+			}),
+		[colors],
+	);
+}
