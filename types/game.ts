@@ -11,6 +11,15 @@ export type Player = {
 	createdAt: number;
 };
 
+/** Groupe de joueurs habituels (ex. "Soirée jeux du jeudi"), pour les sélectionner en un geste
+ * plutôt qu'un par un lors de la création d'une partie. */
+export type PlayerGroup = {
+	id: string;
+	name: string;
+	playerIds: string[];
+	createdAt: number;
+};
+
 /** Compteurs de symboles scientifiques bruts saisis par le joueur. */
 export type ScienceInput = {
 	compass: number;
