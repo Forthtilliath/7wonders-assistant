@@ -11,6 +11,9 @@ type Props = {
 	max?: number;
 	step?: number;
 	accentColor?: string;
+	/** Décrit ce que compte le stepper (ex. "Roues"), repris dans les libellés d'accessibilité des
+	 * boutons +/- pour un lecteur d'écran ("Diminuer Roues" plutôt que juste "Diminuer"). */
+	label?: string;
 };
 
 // Réglages de l'accélération en appui long : un premier pas immédiat, puis une répétition qui
@@ -20,7 +23,15 @@ const REPEAT_INTERVAL_MS = 180;
 const ACCELERATE_AFTER_MS = 1200;
 const FAST_INTERVAL_MS = 60;
 
-export function NumberStepper({ value, onChange, min = 0, max, step = 1, accentColor }: Props) {
+export function NumberStepper({
+	value,
+	onChange,
+	min = 0,
+	max,
+	step = 1,
+	accentColor,
+	label,
+}: Props) {
 	const clamp = (n: number) => {
 		let result = n;
 		if (min !== undefined) result = Math.max(min, result);
@@ -100,6 +111,8 @@ export function NumberStepper({ value, onChange, min = 0, max, step = 1, accentC
 				style={[styles.button, { backgroundColor: color }]}
 				onPressIn={() => startPress(-1)}
 				onPressOut={stopRepeat}
+				accessibilityRole="button"
+				accessibilityLabel={label ? `Diminuer ${label}` : "Diminuer"}
 			>
 				<Text style={styles.buttonLabel}>–</Text>
 			</Pressable>
@@ -115,12 +128,15 @@ export function NumberStepper({ value, onChange, min = 0, max, step = 1, accentC
 				}}
 				onBlur={() => setText(String(value))}
 				selectTextOnFocus
+				accessibilityLabel={label}
 			/>
 
 			<Pressable
 				style={[styles.button, { backgroundColor: color }]}
 				onPressIn={() => startPress(1)}
 				onPressOut={stopRepeat}
+				accessibilityRole="button"
+				accessibilityLabel={label ? `Augmenter ${label}` : "Augmenter"}
 			>
 				<Text style={styles.buttonLabel}>+</Text>
 			</Pressable>

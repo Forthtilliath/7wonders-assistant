@@ -12,9 +12,18 @@ type Props = {
 	variant?: Variant;
 	disabled?: boolean;
 	style?: StyleProp<ViewStyle>;
+	/** Libellé lu par le lecteur d'écran, si différent du texte affiché. */
+	accessibilityLabel?: string;
 };
 
-export function Button({ label, onPress, variant = "primary", disabled, style }: Props) {
+export function Button({
+	label,
+	onPress,
+	variant = "primary",
+	disabled,
+	style,
+	accessibilityLabel,
+}: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 
@@ -29,6 +38,9 @@ export function Button({ label, onPress, variant = "primary", disabled, style }:
 				pressed && !disabled && styles.pressed,
 				style,
 			]}
+			accessibilityRole="button"
+			accessibilityLabel={accessibilityLabel ?? label}
+			accessibilityState={{ disabled: !!disabled }}
 		>
 			<Text style={[styles.label, variant === "ghost" && styles.ghostLabel]}>{label}</Text>
 		</Pressable>

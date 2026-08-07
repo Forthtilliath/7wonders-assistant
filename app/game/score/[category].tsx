@@ -1,10 +1,11 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { ManualPointsFields } from "@/components/game/ManualPointsFields";
 import { PlayerScoreRow } from "@/components/game/PlayerScoreRow";
 import { ScienceFields } from "@/components/game/ScienceFields";
+import { TokenCounterSheet } from "@/components/game/TokenCounterSheet";
 import { Button } from "@/components/ui/Button";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
@@ -15,6 +16,7 @@ import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { getCategoryFlow } from "@/lib/categoryFlow";
 import { computeScienceScore } from "@/lib/scoring/science";
+import { ARMADA_TOKENS, MILITARY_TOKENS } from "@/lib/scoring/tokens";
 import { useGameStore } from "@/stores/gameStore";
 import { usePlayersStore } from "@/stores/playersStore";
 import type { CategoryId } from "@/types/game";
@@ -31,6 +33,7 @@ const MANUAL_CATEGORIES = [
 	"leaders",
 	"cities",
 	"armada",
+	"islands",
 ] as const;
 
 // Catégories dont le total peut légitimement être négatif (jetons de défaite, dettes...).
@@ -66,6 +69,9 @@ export default function CategoryScoreScreen() {
 	const entries = useGameStore((s) => s.entries);
 	const updateEntry = useGameStore((s) => s.updateEntry);
 	const allPlayers = usePlayersStore((s) => s.players);
+	// Joueur pour lequel le compteur de jetons est ouvert (military/armada uniquement) ; se
+	// réinitialise à chaque changement de catégorie via la key posée sur le composant plus bas.
+	const [tokenSheetPlayerId, setTokenSheetPlayerId] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (playerIds.length === 0) router.replace("/");
@@ -80,6 +86,11 @@ export default function CategoryScoreScreen() {
 	const gamePlayers = playerIds
 		.map((id) => allPlayers.find((p) => p.id === id))
 		.filter((p): p is NonNullable<typeof p> => p != null);
+
+	// Seules ces deux catégories se comptent avec des jetons physiques ; les autres (Trésor,
+	// Merveille, Cités...) sont des totaux à lire directement sur le plateau/les cartes.
+	const tokens =
+		category === "military" ? MILITARY_TOKENS : category === "armada" ? ARMADA_TOKENS : null;
 
 	const goNext = () => {
 		if (isLast) {
@@ -185,6 +196,14 @@ export default function CategoryScoreScreen() {
 											}))
 										}
 									/>
+									{tokens && (
+										<Button
+											label="Compter par jetons"
+											variant="ghost"
+											onPress={() => setTokenSheetPlayerId(player.id)}
+											accessibilityLabel={`Compter les jetons de ${player.name} un par un`}
+										/>
+									)}
 								</PlayerScoreRow>
 							);
 						}
@@ -192,6 +211,21 @@ export default function CategoryScoreScreen() {
 						return null;
 					})}
 				</ScrollView>
+
+				{tokens && (
+					<TokenCounterSheet
+						visible={tokenSheetPlayerId != null}
+						onClose={() => setTokenSheetPlayerId(null)}
+						title={category === "military" ? "Jetons militaires" : "Jetons maritimes"}
+						tokens={tokens}
+						accentColor={meta.color}
+						onConfirm={(total) => {
+							if (tokenSheetPlayerId) {
+								updateEntry(tokenSheetPlayerId, (e) => ({ ...e, [category]: { points: total } }));
+							}
+						}}
+					/>
+				)}
 
 				<View style={styles.footer}>
 					<Button label={isLast ? "Voir les résultats" : "Suivant"} onPress={goNext} />
