@@ -51,13 +51,15 @@ export default function StatsScreen() {
 		return [...BASE_CATEGORY_ORDER, ...getExtensionCategories(activeExtensions)];
 	}, [filteredGames]);
 
-	const statsByPlayerId = useMemo(
-		() =>
-			Object.fromEntries(
-				playersWithGames.map((p) => [p.id, computePlayerStats(p.id, filteredGames)]),
-			),
-		[playersWithGames, filteredGames],
-	);
+	// Uniquement nécessaire en vue tableau (ScoreTable) : évite de recalculer les stats de tous les
+	// joueurs à chaque rendu de la vue graphique, qui ne s'en sert pas (PlayerStatsSection calcule
+	// les siennes séparément, pour le seul joueur affiché).
+	const statsByPlayerId = useMemo(() => {
+		if (viewMode !== "table") return {};
+		return Object.fromEntries(
+			playersWithGames.map((p) => [p.id, computePlayerStats(p.id, filteredGames)]),
+		);
+	}, [viewMode, playersWithGames, filteredGames]);
 
 	// Classement global, avec le filtre d'extensions courant, par taux de victoire.
 	const { bestWonders, worstWonders } = useMemo(() => {
