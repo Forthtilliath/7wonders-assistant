@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { COLORS, RADIUS } from "@/constants/theme";
 
@@ -11,12 +11,64 @@ type Props = {
 	accentColor?: string;
 };
 
+// Réglages de l'accélération en appui long : un premier pas immédiat, puis une répétition qui
+// démarre après INITIAL_DELAY et s'accélère après ACCELERATE_AFTER pour saisir vite les grandes valeurs.
+const INITIAL_DELAY_MS = 450;
+const REPEAT_INTERVAL_MS = 180;
+const ACCELERATE_AFTER_MS = 1200;
+const FAST_INTERVAL_MS = 60;
+
 export function NumberStepper({ value, onChange, min = 0, max, step = 1, accentColor }: Props) {
 	const clamp = (n: number) => {
 		let result = n;
 		if (min !== undefined) result = Math.max(min, result);
 		if (max !== undefined) result = Math.min(max, result);
 		return result;
+	};
+
+	// Suit la valeur courante pendant une répétition, indépendamment des re-renders déclenchés par
+	// chaque onChange (la prop `value` du render en cours pourrait être en retard d'un tick).
+	const valueRef = useRef(value);
+	useEffect(() => {
+		valueRef.current = value;
+	}, [value]);
+
+	const timers = useRef<{
+		delay?: ReturnType<typeof setTimeout>;
+		interval?: ReturnType<typeof setInterval>;
+		accelerate?: ReturnType<typeof setTimeout>;
+	}>({});
+
+	const stopRepeat = () => {
+		clearTimeout(timers.current.delay);
+		clearInterval(timers.current.interval);
+		clearTimeout(timers.current.accelerate);
+		timers.current = {};
+	};
+
+	useEffect(() => {
+		return () => {
+			clearTimeout(timers.current.delay);
+			clearInterval(timers.current.interval);
+			clearTimeout(timers.current.accelerate);
+		};
+	}, []);
+
+	const stepOnce = (direction: 1 | -1) => {
+		const next = clamp(valueRef.current + direction * step);
+		valueRef.current = next;
+		onChange(next);
+	};
+
+	const startPress = (direction: 1 | -1) => {
+		stepOnce(direction);
+		timers.current.delay = setTimeout(() => {
+			timers.current.interval = setInterval(() => stepOnce(direction), REPEAT_INTERVAL_MS);
+			timers.current.accelerate = setTimeout(() => {
+				clearInterval(timers.current.interval);
+				timers.current.interval = setInterval(() => stepOnce(direction), FAST_INTERVAL_MS);
+			}, ACCELERATE_AFTER_MS);
+		}, INITIAL_DELAY_MS);
 	};
 
 	const color = accentColor ?? COLORS.primary;
@@ -42,7 +94,8 @@ export function NumberStepper({ value, onChange, min = 0, max, step = 1, accentC
 		<View style={styles.row}>
 			<Pressable
 				style={[styles.button, { backgroundColor: color }]}
-				onPress={() => onChange(clamp(value - step))}
+				onPressIn={() => startPress(-1)}
+				onPressOut={stopRepeat}
 			>
 				<Text style={styles.buttonLabel}>–</Text>
 			</Pressable>
@@ -62,7 +115,8 @@ export function NumberStepper({ value, onChange, min = 0, max, step = 1, accentC
 
 			<Pressable
 				style={[styles.button, { backgroundColor: color }]}
-				onPress={() => onChange(clamp(value + step))}
+				onPressIn={() => startPress(1)}
+				onPressOut={stopRepeat}
 			>
 				<Text style={styles.buttonLabel}>+</Text>
 			</Pressable>
