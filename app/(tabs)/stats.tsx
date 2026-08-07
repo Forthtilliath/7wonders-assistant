@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { FiltersSheet } from "@/components/stats/FiltersSheet";
 import { PlayerStatsSection } from "@/components/stats/PlayerStatsSection";
@@ -70,6 +70,21 @@ export default function StatsScreen() {
 	const selectedPlayer = playersWithGames.find((p) => p.id === selectedId);
 	const comparePlayer = playersWithGames.find((p) => p.id === compareId);
 
+	// Si le filtre d'extensions change et que le joueur choisi n'a plus de partie correspondante, on
+	// réinitialise la sélection plutôt que de la laisser pointer vers un joueur qui n'apparaît plus
+	// nulle part à l'écran.
+	useEffect(() => {
+		if (selectedId && !playersWithGames.some((p) => p.id === selectedId)) {
+			setSelectedId(undefined);
+		}
+	}, [selectedId, playersWithGames]);
+
+	useEffect(() => {
+		if (compareId && !playersWithGames.some((p) => p.id === compareId)) {
+			setCompareId(undefined);
+		}
+	}, [compareId, playersWithGames]);
+
 	const pickerPlayers = pickerTarget === "extensionsOnly" ? undefined : playersWithGames;
 	const pickerSelectedId = pickerTarget === "playerB" ? compareId : selectedId;
 	const handlePickerSelectPlayer = (id: string) => {
@@ -107,7 +122,16 @@ export default function StatsScreen() {
 				/>
 
 				{playersWithGames.length === 0 ? (
-					<Text style={styles.empty}>Aucune partie ne correspond à ce filtre.</Text>
+					<View style={styles.emptyFilterState}>
+						<Text style={styles.empty}>Aucune partie ne correspond à ce filtre.</Text>
+						{extensionFilter.length > 0 && (
+							<Button
+								label="Réinitialiser les filtres"
+								variant="ghost"
+								onPress={() => setExtensionFilter([])}
+							/>
+						)}
+					</View>
 				) : viewMode === "table" ? (
 					<>
 						<Text style={styles.sectionTitle}>Moyenne de points par catégorie</Text>
@@ -199,6 +223,10 @@ function useStyles(colors: ThemeColors) {
 					height: 1,
 					backgroundColor: colors.border,
 					marginVertical: SPACING.sm,
+				},
+				emptyFilterState: {
+					gap: SPACING.sm,
+					alignItems: "center",
 				},
 				sectionTitle: {
 					color: colors.textMuted,
