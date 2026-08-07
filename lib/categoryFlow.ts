@@ -1,9 +1,9 @@
-import { BASE_CATEGORY_ORDER, getExtensionCategories } from "@/constants/categories";
+import { getOrderedCategories } from "@/constants/categories";
 import type { CategoryId, ExtensionId } from "@/types/game";
 
 /** Ordre des écrans de saisie de score pour une partie donnée, extensions actives incluses. */
 export function getCategoryFlow(extensions: ExtensionId[]): CategoryId[] {
-	return [...BASE_CATEGORY_ORDER, ...getExtensionCategories(extensions)];
+	return getOrderedCategories(extensions);
 }
 
 export function getNextCategory(current: CategoryId, extensions: ExtensionId[]): CategoryId | null {

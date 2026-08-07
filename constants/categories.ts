@@ -44,7 +44,7 @@ export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
 	wonders: {
 		label: "Merveille",
 		shortLabel: "Merveille",
-		color: "#a8a29e",
+		color: "#f43f5e",
 		isComputed: false,
 		icon: "castle",
 	},
@@ -98,8 +98,12 @@ export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
 		icon: "sail-boat",
 	},
 	islands: {
-		label: "Îles & Plateau Armada",
-		shortLabel: "Îles",
+		// Cartes Îles + bonus du plateau individuel Armada : catégorie interne toujours nommée
+		// "islands" (pas de migration de données pour un simple libellé), mais affichée "Armada" —
+		// le jeu ne distingue pas "îles" du reste du score de plateau, la case jetons s'appelant déjà
+		// "Maritime" pour le conflit naval.
+		label: "Armada",
+		shortLabel: "Armada",
 		color: "#0891b2",
 		isComputed: false,
 		icon: "island",
@@ -113,19 +117,23 @@ export const EXTENSION_LABELS: Record<ExtensionId, string> = {
 };
 
 /**
- * Catégories de score apportées par chaque extension. La plupart n'en apportent qu'une (elles-
- * mêmes), mais Armada en apporte deux : les jetons maritimes (catégorie `armada`) et les cartes
- * Îles + plateau individuel (catégorie `islands`).
+ * Toutes les catégories de score actives pour une partie, dans l'ordre d'affichage/de saisie.
+ * Les 7 catégories de base sont toujours présentes, avec "Maritime" (jetons de conflit naval)
+ * inséré juste après "Militaire" quand Armada est active — pas à la fin avec les autres
+ * extensions, puisqu'on compte ses jetons dans la foulée du militaire au moment d'y jouer. Les
+ * autres extensions s'ajoutent à la suite, et le score de plateau Armada ("islands", affiché
+ * "Armada") ferme la marche.
  */
-export const EXTENSION_CATEGORIES: Record<ExtensionId, CategoryId[]> = {
-	leaders: ["leaders"],
-	cities: ["cities"],
-	armada: ["armada", "islands"],
-};
-
-/** Catégories de score apportées par un ensemble d'extensions actives, dans l'ordre. */
-export function getExtensionCategories(extensions: ExtensionId[]): CategoryId[] {
-	return EXTENSION_ORDER.filter((ext) => extensions.includes(ext)).flatMap(
-		(ext) => EXTENSION_CATEGORIES[ext],
-	);
+export function getOrderedCategories(extensions: ExtensionId[]): CategoryId[] {
+	const categories: CategoryId[] = [];
+	for (const category of BASE_CATEGORY_ORDER) {
+		categories.push(category);
+		if (category === "military" && extensions.includes("armada")) {
+			categories.push("armada");
+		}
+	}
+	if (extensions.includes("leaders")) categories.push("leaders");
+	if (extensions.includes("cities")) categories.push("cities");
+	if (extensions.includes("armada")) categories.push("islands");
+	return categories;
 }

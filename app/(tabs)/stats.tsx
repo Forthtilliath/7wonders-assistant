@@ -7,11 +7,7 @@ import { WonderRankingRow } from "@/components/stats/WonderRankingRow";
 import { Button } from "@/components/ui/Button";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import {
-	BASE_CATEGORY_ORDER,
-	EXTENSION_ORDER,
-	getExtensionCategories,
-} from "@/constants/categories";
+import { EXTENSION_ORDER, getOrderedCategories } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -48,7 +44,7 @@ export default function StatsScreen() {
 		const activeExtensions = EXTENSION_ORDER.filter((ext) =>
 			filteredGames.some((g) => g.extensions.includes(ext)),
 		);
-		return [...BASE_CATEGORY_ORDER, ...getExtensionCategories(activeExtensions)];
+		return getOrderedCategories(activeExtensions);
 	}, [filteredGames]);
 
 	// Uniquement nécessaire en vue tableau (ScoreTable) : évite de recalculer les stats de tous les
@@ -85,7 +81,14 @@ export default function StatsScreen() {
 		}
 	}, [compareId, playersWithGames]);
 
-	const pickerPlayers = pickerTarget === "extensionsOnly" ? undefined : playersWithGames;
+	// Pour "Comparer avec...", on exclut le joueur déjà sélectionné : le comparer à lui-même
+	// afficherait deux fois les mêmes statistiques côte à côte.
+	const pickerPlayers =
+		pickerTarget === "extensionsOnly"
+			? undefined
+			: pickerTarget === "playerB"
+				? playersWithGames.filter((p) => p.id !== selectedId)
+				: playersWithGames;
 	const pickerSelectedId = pickerTarget === "playerB" ? compareId : selectedId;
 	const handlePickerSelectPlayer = (id: string) => {
 		if (pickerTarget === "playerB") setCompareId(id);
