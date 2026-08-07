@@ -33,6 +33,14 @@ export default function RootLayout() {
 							options={{ title: "Modifier le joueur", presentation: "modal" }}
 						/>
 						<Stack.Screen
+							name="groups/new"
+							options={{ title: "Nouveau groupe", presentation: "modal" }}
+						/>
+						<Stack.Screen
+							name="groups/[id]"
+							options={{ title: "Modifier le groupe", presentation: "modal" }}
+						/>
+						<Stack.Screen
 							name="game/score/[category]"
 							options={{ title: "Score", animation: "slide_from_right" }}
 						/>
