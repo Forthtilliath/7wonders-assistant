@@ -59,7 +59,12 @@ export function FiltersSheet({
 										onClose();
 									}}
 								>
-									<PlayerAvatar name={player.name} avatarUri={player.avatarUri} size={36} />
+									<PlayerAvatar
+										name={player.name}
+										avatarUri={player.avatarUri}
+										seed={player.id}
+										size={36}
+									/>
 									<Text style={styles.playerName} numberOfLines={1}>
 										{player.name}
 									</Text>

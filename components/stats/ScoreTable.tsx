@@ -23,7 +23,12 @@ export function ScoreTable({ players, categories, statsByPlayerId }: Props) {
 					<View style={[styles.cell, styles.labelCell]} />
 					{players.map((player) => (
 						<View key={player.id} style={[styles.cell, styles.playerCell]}>
-							<PlayerAvatar name={player.name} avatarUri={player.avatarUri} size={28} />
+							<PlayerAvatar
+								name={player.name}
+								avatarUri={player.avatarUri}
+								seed={player.id}
+								size={28}
+							/>
 							<Text style={styles.playerName} numberOfLines={1}>
 								{player.name}
 							</Text>

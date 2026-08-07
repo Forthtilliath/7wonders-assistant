@@ -3,16 +3,17 @@ import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
 
 type Props = {
+	playerId: string;
 	name: string;
 	avatarUri?: string;
 	selected: boolean;
 	onPress: () => void;
 };
 
-export function SelectablePlayerCard({ name, avatarUri, selected, onPress }: Props) {
+export function SelectablePlayerCard({ playerId, name, avatarUri, selected, onPress }: Props) {
 	return (
 		<Pressable style={[styles.card, selected && styles.cardSelected]} onPress={onPress}>
-			<PlayerAvatar name={name} avatarUri={avatarUri} size={56} />
+			<PlayerAvatar name={name} avatarUri={avatarUri} seed={playerId} size={56} />
 			<Text style={styles.name} numberOfLines={1}>
 				{name}
 			</Text>

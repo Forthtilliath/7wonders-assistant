@@ -1,14 +1,18 @@
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 import { COLORS } from "@/constants/theme";
+import { getAvatarColor } from "@/lib/avatarColor";
 
 type Props = {
 	name: string;
 	avatarUri?: string;
 	size?: number;
+	/** Identifiant stable pour dériver la couleur de fond (l'id du joueur, idéalement). Par défaut
+	 * le nom, utilisé par exemple sur le formulaire de création où le joueur n'a pas encore d'id. */
+	seed?: string;
 };
 
-export function PlayerAvatar({ name, avatarUri, size = 56 }: Props) {
+export function PlayerAvatar({ name, avatarUri, size = 56, seed }: Props) {
 	const initials = getInitials(name);
 	const dimension = { width: size, height: size, borderRadius: size / 2 };
 
@@ -18,8 +22,10 @@ export function PlayerAvatar({ name, avatarUri, size = 56 }: Props) {
 		);
 	}
 
+	const backgroundColor = getAvatarColor(seed || name);
+
 	return (
-		<View style={[styles.placeholder, dimension]}>
+		<View style={[styles.placeholder, dimension, { backgroundColor }]}>
 			<Text style={[styles.initials, { fontSize: size * 0.36 }]}>{initials}</Text>
 		</View>
 	);

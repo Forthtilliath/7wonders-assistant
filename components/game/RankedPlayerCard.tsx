@@ -23,7 +23,7 @@ export function RankedPlayerCard({ player, score, extensions }: Props) {
 		<View style={[styles.card, score.rank === 1 && styles.cardWinner]}>
 			<View style={styles.header}>
 				<Text style={styles.rank}>{MEDALS[score.rank] ?? `#${score.rank}`}</Text>
-				<PlayerAvatar name={player.name} avatarUri={player.avatarUri} size={44} />
+				<PlayerAvatar name={player.name} avatarUri={player.avatarUri} seed={player.id} size={44} />
 				<Text style={styles.name} numberOfLines={1}>
 					{player.name}
 				</Text>

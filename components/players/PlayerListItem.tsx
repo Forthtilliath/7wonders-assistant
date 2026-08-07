@@ -14,7 +14,7 @@ type Props = {
 export function PlayerListItem({ player, onPress, onToggleFavorite, onToggleArchived }: Props) {
 	return (
 		<Pressable style={[styles.row, player.isArchived && styles.archivedRow]} onPress={onPress}>
-			<PlayerAvatar name={player.name} avatarUri={player.avatarUri} size={48} />
+			<PlayerAvatar name={player.name} avatarUri={player.avatarUri} seed={player.id} size={48} />
 			<Text style={styles.name} numberOfLines={1}>
 				{player.name}
 			</Text>

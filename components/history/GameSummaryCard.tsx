@@ -26,7 +26,12 @@ export function GameSummaryCard({ game, players, onPress }: Props) {
 
 			{winner && winnerScore && (
 				<View style={styles.winnerRow}>
-					<PlayerAvatar name={winner.name} avatarUri={winner.avatarUri} size={36} />
+					<PlayerAvatar
+						name={winner.name}
+						avatarUri={winner.avatarUri}
+						seed={winner.id}
+						size={36}
+					/>
 					<Text style={styles.winnerName} numberOfLines={1}>
 						🏆 {winner.name}
 					</Text>

@@ -80,6 +80,7 @@ export default function NewGameTab() {
 						{activePlayers.map((player) => (
 							<SelectablePlayerCard
 								key={player.id}
+								playerId={player.id}
 								name={player.name}
 								avatarUri={player.avatarUri}
 								selected={selectedIds.includes(player.id)}

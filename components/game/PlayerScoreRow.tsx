@@ -13,7 +13,7 @@ export function PlayerScoreRow({ player, points, children }: Props) {
 	return (
 		<View style={styles.card}>
 			<View style={styles.header}>
-				<PlayerAvatar name={player.name} avatarUri={player.avatarUri} size={40} />
+				<PlayerAvatar name={player.name} avatarUri={player.avatarUri} seed={player.id} size={40} />
 				<Text style={styles.name} numberOfLines={1}>
 					{player.name}
 				</Text>
