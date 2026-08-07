@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard";
+import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
 import { ScoreTable } from "@/components/stats/ScoreTable";
 import { StatTile } from "@/components/stats/StatTile";
 import { WonderRankingRow } from "@/components/stats/WonderRankingRow";
@@ -9,6 +10,7 @@ import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { BASE_CATEGORY_ORDER, CATEGORY_META, EXTENSION_ORDER } from "@/constants/categories";
 import { COLORS, SPACING } from "@/constants/theme";
+import { computeBarChartScale } from "@/lib/chartScale";
 import { computePlayerStats, computeWonderStats } from "@/lib/stats";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
@@ -78,6 +80,7 @@ export default function StatsScreen() {
 		label: CATEGORY_META[category].shortLabel,
 		frontColor: CATEGORY_META[category].color,
 	}));
+	const chartScale = computeBarChartScale(chartData.map((d) => d.value));
 
 	return (
 		<ScreenContainer>
@@ -136,7 +139,11 @@ export default function StatsScreen() {
 										barWidth={24}
 										spacing={18}
 										roundedTop
-										noOfSections={4}
+										noOfSections={chartScale.noOfSections}
+										noOfSectionsBelowXAxis={chartScale.noOfSectionsBelowXAxis}
+										stepValue={chartScale.stepValue}
+										maxValue={chartScale.maxValue}
+										mostNegativeValue={chartScale.mostNegativeValue}
 										yAxisTextStyle={{ color: COLORS.textMuted }}
 										xAxisLabelTextStyle={{ color: COLORS.textMuted, fontSize: 10 }}
 										xAxisColor={COLORS.border}
@@ -144,6 +151,9 @@ export default function StatsScreen() {
 										hideRules
 									/>
 								</View>
+
+								<Text style={styles.sectionTitle}>Répartition des points</Text>
+								<CategoryPieChart categories={categories} stats={stats} />
 							</>
 						)}
 					</>
