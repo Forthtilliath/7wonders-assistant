@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
-import { FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
-import { GroupChip } from "@/components/groups/GroupChip";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { GroupListItem } from "@/components/groups/GroupListItem";
 import { PlayerListItem } from "@/components/players/PlayerListItem";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
@@ -19,6 +19,8 @@ export default function PlayersScreen() {
 	const toggleFavorite = usePlayersStore((s) => s.toggleFavorite);
 	const toggleArchived = usePlayersStore((s) => s.toggleArchived);
 	const groups = useGroupsStore((s) => s.groups);
+	const toggleGroupFavorite = useGroupsStore((s) => s.toggleFavorite);
+	const toggleGroupArchived = useGroupsStore((s) => s.toggleArchived);
 
 	const sorted = selectSortedPlayers(players);
 	const sortedGroups = selectSortedGroups(groups);
@@ -33,24 +35,21 @@ export default function PlayersScreen() {
 				ListHeaderComponent={
 					<View style={styles.groupsSection}>
 						<Text style={styles.sectionTitle}>Groupes</Text>
-						<ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.groupsRow}>
-							<View style={styles.groupsRowContent}>
-								{sortedGroups.map((group) => (
-									<GroupChip
-										key={group.id}
-										name={group.name}
-										memberCount={group.playerIds.length}
-										onPress={() => router.push(`/groups/${group.id}`)}
-									/>
-								))}
-								<Button
-									label="+ Nouveau groupe"
-									variant="ghost"
-									onPress={() => router.push("/groups/new")}
-									style={styles.newGroupButton}
-								/>
-							</View>
-						</ScrollView>
+						{sortedGroups.map((group) => (
+							<GroupListItem
+								key={group.id}
+								group={group}
+								onPress={() => router.push(`/groups/${group.id}`)}
+								onToggleFavorite={() => toggleGroupFavorite(group.id)}
+								onToggleArchived={() => toggleGroupArchived(group.id)}
+							/>
+						))}
+						<Button
+							label="Nouveau groupe"
+							variant="ghost"
+							onPress={() => router.push("/groups/new")}
+						/>
+						<Text style={styles.sectionTitle}>Joueurs</Text>
 					</View>
 				}
 				ListEmptyComponent={<Text style={styles.empty}>Aucun joueur pour l'instant.</Text>}
@@ -89,23 +88,13 @@ function useStyles(colors: ThemeColors) {
 				},
 				groupsSection: {
 					gap: SPACING.sm,
-					marginBottom: SPACING.md,
+					marginBottom: SPACING.sm,
 				},
 				sectionTitle: {
 					color: colors.textMuted,
 					fontSize: 14,
 					textTransform: "uppercase",
 					letterSpacing: 0.5,
-				},
-				groupsRow: {
-					flexGrow: 0,
-				},
-				groupsRowContent: {
-					flexDirection: "row",
-					gap: SPACING.sm,
-				},
-				newGroupButton: {
-					justifyContent: "center",
 				},
 			}),
 		[colors],
