@@ -17,6 +17,8 @@ export type PlayerGroup = {
 	id: string;
 	name: string;
 	playerIds: string[];
+	isFavorite: boolean;
+	isArchived: boolean;
 	createdAt: number;
 };
 

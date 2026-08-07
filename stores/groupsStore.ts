@@ -12,15 +12,27 @@ type Actions = {
 	addGroup: (input: { name: string; playerIds: string[] }) => PlayerGroup;
 	updateGroup: (id: string, patch: { name: string; playerIds: string[] }) => void;
 	removeGroup: (id: string) => void;
+	toggleFavorite: (id: string) => void;
+	toggleArchived: (id: string) => void;
 	replaceAll: (groups: PlayerGroup[]) => void;
 };
 
 // Bump on any breaking change to PlayerGroup's shape.
-export const GROUPS_STORE_VERSION = 1;
+export const GROUPS_STORE_VERSION = 2;
 
 /** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
 export function migrateGroupsStoreData(persistedState: unknown, version: number): State {
-	return version === GROUPS_STORE_VERSION ? (persistedState as State) : { groups: [] };
+	if (version === GROUPS_STORE_VERSION) return persistedState as State;
+
+	if (version === 1) {
+		// v1 -> v2 : ajout de isFavorite/isArchived, absents des groupes créés avant cette version.
+		const old = persistedState as { groups: Omit<PlayerGroup, "isFavorite" | "isArchived">[] };
+		return {
+			groups: old.groups.map((g) => ({ ...g, isFavorite: false, isArchived: false })),
+		};
+	}
+
+	return { groups: [] };
 }
 
 export const useGroupsStore = create<State & Actions>()(
@@ -33,6 +45,8 @@ export const useGroupsStore = create<State & Actions>()(
 					id: createId(),
 					name: name.trim(),
 					playerIds,
+					isFavorite: false,
+					isArchived: false,
 					createdAt: Date.now(),
 				};
 				set({ groups: [...get().groups, group] });
@@ -51,6 +65,18 @@ export const useGroupsStore = create<State & Actions>()(
 				set({ groups: get().groups.filter((g) => g.id !== id) });
 			},
 
+			toggleFavorite: (id) => {
+				set({
+					groups: get().groups.map((g) => (g.id === id ? { ...g, isFavorite: !g.isFavorite } : g)),
+				});
+			},
+
+			toggleArchived: (id) => {
+				set({
+					groups: get().groups.map((g) => (g.id === id ? { ...g, isArchived: !g.isArchived } : g)),
+				});
+			},
+
 			replaceAll: (groups) => set({ groups }),
 		}),
 		{
@@ -62,7 +88,11 @@ export const useGroupsStore = create<State & Actions>()(
 	),
 );
 
-/** Groupes triés par ordre alphabétique. */
+/** Groupes triés : favoris puis actifs puis archivés, par ordre alphabétique dans chaque groupe. */
 export function selectSortedGroups(groups: PlayerGroup[]): PlayerGroup[] {
-	return [...groups].sort((a, b) => a.name.localeCompare(b.name));
+	return [...groups].sort((a, b) => {
+		if (a.isArchived !== b.isArchived) return a.isArchived ? 1 : -1;
+		if (a.isFavorite !== b.isFavorite) return a.isFavorite ? -1 : 1;
+		return a.name.localeCompare(b.name);
+	});
 }
