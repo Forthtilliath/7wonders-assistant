@@ -1,6 +1,7 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard";
 import { Button } from "@/components/ui/Button";
@@ -10,6 +11,7 @@ import { MAX_PLAYERS, MIN_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { selectFeedback } from "@/lib/haptics";
 import { useGameStore } from "@/stores/gameStore";
 import { selectSortedGroups, useGroupsStore } from "@/stores/groupsStore";
 import { selectSortedPlayers, usePlayersStore } from "@/stores/playersStore";
@@ -24,6 +26,7 @@ export default function NewGameTab() {
 	const groups = useGroupsStore((s) => s.groups);
 	const defaultExtensions = usePreferencesStore((s) => s.defaultExtensions);
 	const startNewGame = useGameStore((s) => s.startNewGame);
+	const resetGame = useGameStore((s) => s.resetGame);
 	const hasOngoingGame = useGameStore((s) => s.hasOngoingGame());
 
 	const activePlayers = selectSortedPlayers(players.filter((p) => !p.isArchived));
@@ -47,6 +50,7 @@ export default function NewGameTab() {
 	};
 
 	const toggleExtension = (ext: ExtensionId) => {
+		selectFeedback();
 		setExtensions((current) =>
 			current.includes(ext) ? current.filter((e) => e !== ext) : [...current, ext],
 		);
@@ -58,6 +62,7 @@ export default function NewGameTab() {
 		group.playerIds.every((id) => selectedIds.includes(id));
 
 	const applyGroup = (group: PlayerGroup) => {
+		selectFeedback();
 		const memberIds = group.playerIds
 			.filter((id) => activePlayers.some((p) => p.id === id))
 			.slice(0, MAX_PLAYERS);
@@ -71,6 +76,30 @@ export default function NewGameTab() {
 		router.push("/game/score/military");
 	};
 
+	// Une partie en cours serait silencieusement écrasée par startNewGame() : on prévient plutôt que
+	// de perdre des scores déjà saisis sans le vouloir.
+	const confirmStart = () => {
+		if (!hasOngoingGame) {
+			startGame();
+			return;
+		}
+		Alert.alert(
+			"Une partie est en cours",
+			"La démarrer maintenant abandonnera la partie en cours : les scores déjà saisis seront perdus.",
+			[
+				{ text: "Annuler", style: "cancel" },
+				{ text: "Démarrer quand même", style: "destructive", onPress: startGame },
+			],
+		);
+	};
+
+	const confirmAbandon = () => {
+		Alert.alert("Abandonner la partie en cours ?", "Les scores déjà saisis seront perdus.", [
+			{ text: "Annuler", style: "cancel" },
+			{ text: "Abandonner", style: "destructive", onPress: resetGame },
+		]);
+	};
+
 	// Swipe gauche -> lance la partie, seulement si les critères (2 joueurs minimum) sont réunis.
 	// Seuils horizontaux + tolérance verticale pour ne pas voler le scroll de la liste de joueurs.
 	const swipeGesture = Gesture.Pan()
@@ -79,19 +108,39 @@ export default function NewGameTab() {
 		.runOnJS(true)
 		.onEnd((event) => {
 			if (event.translationX < -60 && canStart) {
-				startGame();
+				confirmStart();
 			}
 		});
+
+	if (players.length === 0) {
+		return (
+			<ScreenContainer style={styles.onboarding}>
+				<MaterialCommunityIcons name="account-group" size={48} color={colors.primary} />
+				<Text style={styles.onboardingTitle}>Bienvenue !</Text>
+				<Text style={styles.onboardingText}>
+					Pour commencer, crée les joueurs avec qui tu joues. Tu pourras ensuite lancer une partie
+					et suivre les scores au fil des parties.
+				</Text>
+				<Button label="Créer mon premier joueur" onPress={() => router.push("/players/new")} />
+			</ScreenContainer>
+		);
+	}
 
 	return (
 		<GestureDetector gesture={swipeGesture}>
 			<ScreenContainer>
 				{hasOngoingGame && (
-					<Button
-						label="Reprendre la partie en cours"
-						onPress={() => router.push("/game/score/military")}
-						style={styles.resumeButton}
-					/>
+					<View style={styles.ongoingSection}>
+						<Button
+							label="Reprendre la partie en cours"
+							onPress={() => router.push("/game/score/military")}
+						/>
+						<Button
+							label="Abandonner la partie en cours"
+							variant="ghost"
+							onPress={confirmAbandon}
+						/>
+					</View>
 				)}
 
 				<ScrollView contentContainerStyle={styles.content}>
@@ -163,7 +212,7 @@ export default function NewGameTab() {
 					</View>
 				</ScrollView>
 
-				<Button label="Lancer la partie" disabled={!canStart} onPress={startGame} />
+				<Button label="Lancer la partie" disabled={!canStart} onPress={confirmStart} />
 			</ScreenContainer>
 		</GestureDetector>
 	);
@@ -173,7 +222,8 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
-				resumeButton: {
+				ongoingSection: {
+					gap: SPACING.sm,
 					marginBottom: SPACING.md,
 				},
 				content: {
@@ -217,6 +267,23 @@ function useStyles(colors: ThemeColors) {
 				chipLabelActive: {
 					color: colors.primaryText,
 					fontWeight: "600",
+				},
+				onboarding: {
+					flex: 1,
+					alignItems: "center",
+					justifyContent: "center",
+					gap: SPACING.sm,
+					padding: SPACING.lg,
+				},
+				onboardingTitle: {
+					color: colors.text,
+					fontSize: 22,
+					fontWeight: "800",
+				},
+				onboardingText: {
+					color: colors.textMuted,
+					textAlign: "center",
+					marginBottom: SPACING.md,
 				},
 			}),
 		[colors],
