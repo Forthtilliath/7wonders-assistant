@@ -9,6 +9,7 @@ import {
 	migrateBackupData,
 	validateMigratedBackupData,
 } from "@/lib/backupSchema";
+import { buildGamesCsv } from "@/lib/csv";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
@@ -26,23 +27,38 @@ function currentBackupData(): BackupData {
 	};
 }
 
-async function writeBackupFile(data: BackupData, name: string): Promise<File> {
+async function writeTextFile(content: string, name: string): Promise<File> {
 	const file = new File(Paths.cache, name);
 	file.create({ overwrite: true });
-	file.write(JSON.stringify(data, null, 2));
+	file.write(content);
 	return file;
+}
+
+async function writeBackupFile(data: BackupData, name: string): Promise<File> {
+	return writeTextFile(JSON.stringify(data, null, 2), name);
+}
+
+async function shareFile(file: File, mimeType: string, dialogTitle: string): Promise<void> {
+	if (await Sharing.isAvailableAsync()) {
+		await Sharing.shareAsync(file.uri, { mimeType, dialogTitle });
+	}
 }
 
 /** Exporte joueurs + historique dans un fichier JSON et ouvre la feuille de partage du système. */
 export async function exportData(): Promise<void> {
 	const file = await writeBackupFile(currentBackupData(), `7wonders-save-${Date.now()}.json`);
+	await shareFile(file, "application/json", "Exporter les données 7 Wonders");
+}
 
-	if (await Sharing.isAvailableAsync()) {
-		await Sharing.shareAsync(file.uri, {
-			mimeType: "application/json",
-			dialogTitle: "Exporter les données 7 Wonders",
-		});
-	}
+/**
+ * Exporte l'historique des parties en CSV (une ligne par joueur par partie), pour l'ouvrir dans un
+ * tableur. Ne contient pas les joueurs/groupes eux-mêmes : c'est un export de lecture, pas une
+ * sauvegarde (utiliser `exportData` pour ça).
+ */
+export async function exportGamesCsv(): Promise<void> {
+	const csv = buildGamesCsv(useHistoryStore.getState().games, usePlayersStore.getState().players);
+	const file = await writeTextFile(csv, `7wonders-scores-${Date.now()}.csv`);
+	await shareFile(file, "text/csv", "Exporter les scores en CSV");
 }
 
 /**

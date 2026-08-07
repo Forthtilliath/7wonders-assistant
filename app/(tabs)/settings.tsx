@@ -9,7 +9,7 @@ import { EXTENSION_LABELS, EXTENSION_ORDER } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import { exportData, importData, restoreSafetyBackup } from "@/lib/backup";
+import { exportData, exportGamesCsv, importData, restoreSafetyBackup } from "@/lib/backup";
 import { ImportError } from "@/lib/backupSchema";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
@@ -41,6 +41,17 @@ export default function SettingsScreen() {
 			await exportData();
 		} catch {
 			Alert.alert("Erreur", "L'export a échoué.");
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	const handleExportCsv = async () => {
+		setBusy(true);
+		try {
+			await exportGamesCsv();
+		} catch {
+			Alert.alert("Erreur", "L'export CSV a échoué.");
 		} finally {
 			setBusy(false);
 		}
@@ -147,9 +158,16 @@ export default function SettingsScreen() {
 				<Text style={styles.sectionTitle}>Sauvegarde</Text>
 				<Text style={styles.hint}>
 					Toutes les données restent sur cet appareil. Exporte un fichier JSON pour la garder en
-					sécurité ou la transférer sur un autre téléphone.
+					sécurité ou la transférer sur un autre téléphone, ou un CSV pour ouvrir les scores dans un
+					tableur.
 				</Text>
 				<Button label="Exporter les données" onPress={handleExport} disabled={busy} />
+				<Button
+					label="Exporter les scores en CSV"
+					variant="secondary"
+					onPress={handleExportCsv}
+					disabled={busy}
+				/>
 				<Button
 					label="Importer une sauvegarde"
 					variant="secondary"
