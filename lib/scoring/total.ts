@@ -1,4 +1,4 @@
-import type { ExtensionId, PlayerGameEntry } from "@/types/game";
+import type { CategoryId, ExtensionId, PlayerGameEntry } from "@/types/game";
 import { computeScienceScore } from "./science";
 
 export type PlayerScoreBreakdown = {
@@ -59,6 +59,38 @@ export function computePlayerScore(entry: PlayerGameEntry): PlayerScoreBreakdown
 		islands,
 		total,
 	};
+}
+
+/**
+ * Valeur d'une catégorie donnée dans un score déjà calculé, sans passer par un accès dynamique
+ * `score[category]` (qui obligerait à un cast `as` non vérifié par le compilateur). Le `switch`
+ * exhaustif sur `CategoryId` fait qu'oublier une catégorie ici est une erreur de compilation.
+ */
+export function getCategoryScore(score: PlayerScoreBreakdown, category: CategoryId): number {
+	switch (category) {
+		case "military":
+			return score.military;
+		case "treasury":
+			return score.treasury;
+		case "wonders":
+			return score.wonders;
+		case "civilians":
+			return score.civilians;
+		case "commercials":
+			return score.commercials;
+		case "scientifics":
+			return score.scientifics;
+		case "guilds":
+			return score.guilds;
+		case "leaders":
+			return score.leaders;
+		case "cities":
+			return score.cities;
+		case "armada":
+			return score.armada;
+		case "islands":
+			return score.islands;
+	}
 }
 
 export type RankedPlayerScore = PlayerScoreBreakdown & { rank: number };

@@ -6,7 +6,7 @@ import { BASE_CATEGORY_ORDER, CATEGORY_META, getExtensionCategories } from "@/co
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import type { PlayerScoreBreakdown, RankedPlayerScore } from "@/lib/scoring/total";
+import { getCategoryScore, type RankedPlayerScore } from "@/lib/scoring/total";
 import type { ExtensionId, Player } from "@/types/game";
 
 const MEDALS: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
@@ -36,7 +36,7 @@ export function RankedPlayerCard({ player, score, extensions }: Props) {
 
 			<View style={styles.breakdown}>
 				{categories.map((category) => {
-					const value = score[category as keyof PlayerScoreBreakdown] as number;
+					const value = getCategoryScore(score, category);
 					if (!value) return null;
 					return (
 						<View key={category} style={styles.chip}>

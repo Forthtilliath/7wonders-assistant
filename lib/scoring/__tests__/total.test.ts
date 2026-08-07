@@ -1,5 +1,10 @@
 import { createEmptyPlayerGameEntry, type PlayerGameEntry } from "@/types/game";
-import { computePlayerScore, filterActiveCategories, rankPlayers } from "../total";
+import {
+	computePlayerScore,
+	filterActiveCategories,
+	getCategoryScore,
+	rankPlayers,
+} from "../total";
 
 function makeEntry(playerId: string, patch: Partial<PlayerGameEntry> = {}): PlayerGameEntry {
 	return { ...createEmptyPlayerGameEntry(playerId), ...patch };
@@ -74,6 +79,36 @@ describe("rankPlayers", () => {
 		const ranked = rankPlayers([a, b, c]);
 
 		expect(ranked.map((r) => r.rank)).toEqual([1, 1, 3]);
+	});
+});
+
+describe("getCategoryScore", () => {
+	it("lit la valeur de chaque catégorie sur un score déjà calculé", () => {
+		const score = computePlayerScore(
+			makeEntry("p1", {
+				military: { points: 3 },
+				treasury: { points: 4 },
+				wonders: { points: 5 },
+				civilians: { points: 6 },
+				commercials: { points: 2 },
+				guilds: { points: 7 },
+				leaders: { points: 1 },
+				cities: { points: 2 },
+				armada: { points: 8 },
+				islands: { points: 9 },
+			}),
+		);
+
+		expect(getCategoryScore(score, "military")).toBe(3);
+		expect(getCategoryScore(score, "treasury")).toBe(4);
+		expect(getCategoryScore(score, "wonders")).toBe(5);
+		expect(getCategoryScore(score, "civilians")).toBe(6);
+		expect(getCategoryScore(score, "commercials")).toBe(2);
+		expect(getCategoryScore(score, "guilds")).toBe(7);
+		expect(getCategoryScore(score, "leaders")).toBe(1);
+		expect(getCategoryScore(score, "cities")).toBe(2);
+		expect(getCategoryScore(score, "armada")).toBe(8);
+		expect(getCategoryScore(score, "islands")).toBe(9);
 	});
 });
 

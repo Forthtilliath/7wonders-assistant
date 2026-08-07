@@ -1,6 +1,7 @@
 import { BASE_CATEGORY_ORDER, getExtensionCategories } from "@/constants/categories";
 import type { CategoryId, Game } from "@/types/game";
 import { getGameRanking } from "./scoring/game";
+import { getCategoryScore } from "./scoring/total";
 
 export type PlayerStats = {
 	gamesPlayed: number;
@@ -44,7 +45,7 @@ export function computePlayerStats(playerId: string, games: Game[]): PlayerStats
 			...getExtensionCategories(game.extensions),
 		];
 		for (const category of categories) {
-			const value = score[category as keyof typeof score] as number;
+			const value = getCategoryScore(score, category);
 			categorySums[category] = (categorySums[category] ?? 0) + value;
 		}
 	}
