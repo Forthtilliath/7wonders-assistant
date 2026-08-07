@@ -4,11 +4,13 @@ import { Alert, ScrollView, StyleSheet, Text } from "react-native";
 import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { MIN_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { formatDate } from "@/lib/date";
 import { getGameRanking } from "@/lib/scoring/game";
+import { useGameStore } from "@/stores/gameStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 
@@ -20,6 +22,7 @@ export default function GameDetailScreen() {
 	const game = useHistoryStore((s) => s.games.find((g) => g.id === id));
 	const removeGame = useHistoryStore((s) => s.removeGame);
 	const players = usePlayersStore((s) => s.players);
+	const startNewGame = useGameStore((s) => s.startNewGame);
 
 	if (!game) {
 		return (
@@ -45,6 +48,37 @@ export default function GameDetailScreen() {
 		]);
 	};
 
+	const replay = (playerIds: string[]) => {
+		startNewGame(playerIds, game.extensions);
+		router.push("/game/score/military");
+	};
+
+	const confirmReplay = () => {
+		const stillExisting = game.playerIds.filter((pid) => players.some((p) => p.id === pid));
+
+		if (stillExisting.length < MIN_PLAYERS) {
+			Alert.alert(
+				"Impossible de rejouer",
+				"Trop de joueurs de cette partie ont été supprimés depuis.",
+			);
+			return;
+		}
+
+		if (stillExisting.length < game.playerIds.length) {
+			Alert.alert(
+				"Certains joueurs ont été supprimés",
+				"La partie démarrera uniquement avec les joueurs restants.",
+				[
+					{ text: "Annuler", style: "cancel" },
+					{ text: "Continuer", onPress: () => replay(stillExisting) },
+				],
+			);
+			return;
+		}
+
+		replay(stillExisting);
+	};
+
 	return (
 		<ScreenContainer>
 			<Text style={styles.date}>{formatDate(game.createdAt)}</Text>
@@ -62,6 +96,12 @@ export default function GameDetailScreen() {
 					);
 				})}
 			</ScrollView>
+			<Button
+				label="Rejouer avec les mêmes joueurs"
+				variant="secondary"
+				onPress={confirmReplay}
+				style={styles.replayButton}
+			/>
 			<Button label="Supprimer cette partie" variant="danger" onPress={confirmDelete} />
 		</ScreenContainer>
 	);
@@ -80,6 +120,9 @@ function useStyles(colors: ThemeColors) {
 				list: {
 					gap: SPACING.sm,
 					paddingBottom: SPACING.md,
+				},
+				replayButton: {
+					marginBottom: SPACING.sm,
 				},
 				empty: {
 					color: colors.textMuted,
