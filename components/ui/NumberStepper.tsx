@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { tapFeedback } from "@/lib/haptics";
 
 type Props = {
 	value: number;
@@ -69,6 +70,7 @@ export function NumberStepper({
 
 	const stepOnce = (direction: 1 | -1) => {
 		const next = clamp(valueRef.current + direction * step);
+		if (next !== valueRef.current) tapFeedback();
 		valueRef.current = next;
 		onChange(next);
 	};

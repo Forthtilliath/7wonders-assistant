@@ -3,6 +3,7 @@ import { Pressable, type StyleProp, StyleSheet, Text, type ViewStyle } from "rea
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { tapFeedback } from "@/lib/haptics";
 
 type Variant = "primary" | "secondary" | "danger" | "ghost";
 
@@ -30,7 +31,10 @@ export function Button({
 	return (
 		<Pressable
 			disabled={disabled}
-			onPress={onPress}
+			onPress={() => {
+				tapFeedback();
+				onPress?.();
+			}}
 			style={({ pressed }) => [
 				styles.base,
 				styles[variant],

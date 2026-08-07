@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { selectFeedback } from "@/lib/haptics";
 
 type Option<T extends string> = {
 	value: T;
@@ -21,6 +22,7 @@ export function CheckboxGroup<T extends string>({ options, values, onChange }: P
 	const styles = useStyles(colors);
 
 	const toggle = (value: T) => {
+		selectFeedback();
 		onChange(values.includes(value) ? values.filter((v) => v !== value) : [...values, value]);
 	};
 

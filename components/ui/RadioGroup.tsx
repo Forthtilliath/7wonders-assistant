@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { selectFeedback } from "@/lib/haptics";
 
 type Option<T extends string> = {
 	value: T;
@@ -27,7 +28,10 @@ export function RadioGroup<T extends string>({ options, value, onChange }: Props
 					<Pressable
 						key={option.value}
 						style={[styles.option, selected && styles.optionSelected]}
-						onPress={() => onChange(option.value)}
+						onPress={() => {
+							selectFeedback();
+							onChange(option.value);
+						}}
 						accessibilityRole="radio"
 						accessibilityState={{ selected }}
 						accessibilityLabel={option.label}

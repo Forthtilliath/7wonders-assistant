@@ -4,6 +4,7 @@ import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { selectFeedback } from "@/lib/haptics";
 
 type Props = {
 	playerId: string;
@@ -20,7 +21,10 @@ export function SelectablePlayerCard({ playerId, name, avatarUri, selected, onPr
 	return (
 		<Pressable
 			style={[styles.card, selected && styles.cardSelected]}
-			onPress={onPress}
+			onPress={() => {
+				selectFeedback();
+				onPress();
+			}}
 			accessibilityRole="checkbox"
 			accessibilityState={{ checked: selected }}
 			accessibilityLabel={name}
