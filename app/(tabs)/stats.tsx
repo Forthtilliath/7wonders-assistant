@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { FiltersSheet } from "@/components/stats/FiltersSheet";
 import { PlayerStatsSection } from "@/components/stats/PlayerStatsSection";
+import { PlayerWinRateRow } from "@/components/stats/PlayerWinRateRow";
+import { RecordsSection } from "@/components/stats/RecordsSection";
 import { ScoreTable } from "@/components/stats/ScoreTable";
 import { WonderRankingRow } from "@/components/stats/WonderRankingRow";
 import { Button } from "@/components/ui/Button";
@@ -12,7 +14,12 @@ import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { type ExtensionFilter, filterGamesByExtension } from "@/lib/gameFilters";
-import { computePlayerStats, computeWonderStats } from "@/lib/stats";
+import {
+	computeGlobalRecords,
+	computePlayerLeaderboard,
+	computePlayerStats,
+	computeWonderStats,
+} from "@/lib/stats";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 
@@ -46,6 +53,12 @@ export default function StatsScreen() {
 		);
 		return getOrderedCategories(activeExtensions);
 	}, [filteredGames]);
+
+	const records = useMemo(() => computeGlobalRecords(filteredGames), [filteredGames]);
+	const leaderboard = useMemo(
+		() => computePlayerLeaderboard(filteredGames, playersWithGames),
+		[filteredGames, playersWithGames],
+	);
 
 	// Uniquement nécessaire en vue tableau (ScoreTable) : évite de recalculer les stats de tous les
 	// joueurs à chaque rendu de la vue graphique, qui ne s'en sert pas (PlayerStatsSection calcule
@@ -135,41 +148,67 @@ export default function StatsScreen() {
 							/>
 						)}
 					</View>
-				) : viewMode === "table" ? (
+				) : (
 					<>
-						<Text style={styles.sectionTitle}>Moyenne de points par catégorie</Text>
-						<ScoreTable
-							players={playersWithGames}
-							categories={allCategories}
-							statsByPlayerId={statsByPlayerId}
-						/>
-					</>
-				) : selectedPlayer ? (
-					<>
-						<PlayerStatsSection player={selectedPlayer} games={filteredGames} />
+						<RecordsSection records={records} players={playersWithGames} />
 
-						{comparePlayer ? (
+						{leaderboard.length > 0 && (
 							<>
-								<Button
-									label="Retirer la comparaison"
-									variant="ghost"
-									onPress={() => setCompareId(undefined)}
+								<Text style={styles.sectionTitle}>Taux de victoire</Text>
+								<View style={styles.wonderList}>
+									{leaderboard.map((entry, index) => {
+										const player = playersWithGames.find((p) => p.id === entry.playerId);
+										if (!player) return null;
+										return (
+											<PlayerWinRateRow
+												key={entry.playerId}
+												rank={index + 1}
+												player={player}
+												entry={entry}
+											/>
+										);
+									})}
+								</View>
+							</>
+						)}
+
+						{viewMode === "table" ? (
+							<>
+								<Text style={styles.sectionTitle}>Moyenne de points par catégorie</Text>
+								<ScoreTable
+									players={playersWithGames}
+									categories={allCategories}
+									statsByPlayerId={statsByPlayerId}
 								/>
-								<View style={styles.divider} />
-								<PlayerStatsSection player={comparePlayer} games={filteredGames} />
+							</>
+						) : selectedPlayer ? (
+							<>
+								<PlayerStatsSection player={selectedPlayer} games={filteredGames} />
+
+								{comparePlayer ? (
+									<>
+										<Button
+											label="Retirer la comparaison"
+											variant="ghost"
+											onPress={() => setCompareId(undefined)}
+										/>
+										<View style={styles.divider} />
+										<PlayerStatsSection player={comparePlayer} games={filteredGames} />
+									</>
+								) : (
+									<Button
+										label="Comparer avec..."
+										variant="secondary"
+										onPress={() => setPickerTarget("playerB")}
+									/>
+								)}
 							</>
 						) : (
-							<Button
-								label="Comparer avec..."
-								variant="secondary"
-								onPress={() => setPickerTarget("playerB")}
-							/>
+							<Text style={styles.empty}>
+								Choisis un joueur (bouton "Filtres") pour voir ses statistiques.
+							</Text>
 						)}
 					</>
-				) : (
-					<Text style={styles.empty}>
-						Choisis un joueur (bouton "Filtres") pour voir ses statistiques.
-					</Text>
 				)}
 
 				{bestWonders.length > 0 && (
