@@ -27,7 +27,7 @@ export default function NewGameTab() {
 	const hasOngoingGame = useGameStore((s) => s.hasOngoingGame());
 
 	const activePlayers = selectSortedPlayers(players.filter((p) => !p.isArchived));
-	const sortedGroups = selectSortedGroups(groups);
+	const sortedGroups = selectSortedGroups(groups.filter((g) => !g.isArchived));
 
 	const [selectedIds, setSelectedIds] = useState<string[]>(() =>
 		activePlayers
