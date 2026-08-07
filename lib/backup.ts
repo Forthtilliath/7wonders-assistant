@@ -7,6 +7,7 @@ import {
 	ImportError,
 	isBackupDataShape,
 	migrateBackupData,
+	validateMigratedBackupData,
 } from "@/lib/backupSchema";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
@@ -74,7 +75,7 @@ export async function importData(): Promise<{ players: number; history: number }
 		);
 	}
 
-	const migrated = migrateBackupData(data);
+	const migrated = validateMigratedBackupData(migrateBackupData(data));
 
 	// Filet de sécurité : si l'import se passe mal ou que le fichier était le mauvais, on garde une
 	// trace de l'état d'avant sur l'appareil (silencieuse, sans ouvrir le partage).
@@ -98,7 +99,7 @@ export async function restoreSafetyBackup(): Promise<{ players: number; history:
 		throw new ImportError("La sauvegarde de secours est corrompue.");
 	}
 
-	const migrated = migrateBackupData(data);
+	const migrated = validateMigratedBackupData(migrateBackupData(data));
 	usePlayersStore.getState().replaceAll(migrated.players);
 	useHistoryStore.getState().replaceAll(migrated.history);
 

@@ -1,9 +1,11 @@
+import { createEmptyPlayerGameEntry } from "@/types/game";
 import {
 	type BackupData,
 	DATA_VERSION,
 	ImportError,
 	isBackupDataShape,
 	migrateBackupData,
+	validateMigratedBackupData,
 } from "../backupSchema";
 
 function makeBackup(dataVersion: number): BackupData {
@@ -41,5 +43,63 @@ describe("isBackupDataShape", () => {
 		expect(isBackupDataShape({ app: "7wonders-assistant", players: [] })).toBe(false);
 		expect(isBackupDataShape(null)).toBe(false);
 		expect(isBackupDataShape("pas un objet")).toBe(false);
+	});
+});
+
+describe("validateMigratedBackupData", () => {
+	it("accepte une sauvegarde dont chaque joueur et partie a la forme attendue", () => {
+		const data: BackupData = {
+			...makeBackup(DATA_VERSION),
+			players: [
+				{
+					id: "p1",
+					name: "Alice",
+					isFavorite: false,
+					isArchived: false,
+					createdAt: 0,
+				},
+			],
+			history: [
+				{
+					id: "g1",
+					createdAt: 0,
+					extensions: ["armada"],
+					playerIds: ["p1"],
+					entries: { p1: createEmptyPlayerGameEntry("p1") },
+				},
+			],
+		};
+
+		expect(validateMigratedBackupData(data)).toEqual(data);
+	});
+
+	it("rejette un joueur dont un champ a le mauvais type", () => {
+		const data = {
+			...makeBackup(DATA_VERSION),
+			players: [{ id: "p1", name: "Alice", isFavorite: "oui", isArchived: false, createdAt: 0 }],
+		} as unknown as BackupData;
+
+		expect(() => validateMigratedBackupData(data)).toThrow(ImportError);
+	});
+
+	it("rejette une partie dont une entrée de score est mal formée (fichier modifié à la main)", () => {
+		const brokenEntry = { ...createEmptyPlayerGameEntry("p1"), military: { points: "beaucoup" } };
+		const data = {
+			...makeBackup(DATA_VERSION),
+			history: [
+				{ id: "g1", createdAt: 0, extensions: [], playerIds: ["p1"], entries: { p1: brokenEntry } },
+			],
+		} as unknown as BackupData;
+
+		expect(() => validateMigratedBackupData(data)).toThrow(ImportError);
+	});
+
+	it("rejette une extension inconnue", () => {
+		const data = {
+			...makeBackup(DATA_VERSION),
+			history: [{ id: "g1", createdAt: 0, extensions: ["babel"], playerIds: [], entries: {} }],
+		} as unknown as BackupData;
+
+		expect(() => validateMigratedBackupData(data)).toThrow(ImportError);
 	});
 });

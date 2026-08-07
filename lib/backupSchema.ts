@@ -1,3 +1,4 @@
+import { z } from "zod";
 import type { Game, Player } from "@/types/game";
 
 export const APP_ID = "7wonders-assistant";
@@ -62,4 +63,73 @@ export function isBackupDataShape(data: unknown): data is BackupData {
 		Array.isArray(d.players) &&
 		Array.isArray(d.history)
 	);
+}
+
+const extensionIdSchema = z.enum(["leaders", "cities", "armada"]);
+
+const playerSchema = z.object({
+	id: z.string().min(1),
+	name: z.string().min(1),
+	avatarUri: z.string().optional(),
+	isFavorite: z.boolean(),
+	isArchived: z.boolean(),
+	createdAt: z.number(),
+});
+
+const pointsSchema = z.object({ points: z.number() });
+
+const scienceInputSchema = z.object({
+	compass: z.number(),
+	tablet: z.number(),
+	gear: z.number(),
+	wildcards: z.number(),
+	maxSymbols: z.number(),
+});
+
+const playerGameEntrySchema = z.object({
+	playerId: z.string().min(1),
+	military: pointsSchema,
+	treasury: pointsSchema,
+	wonder: z.object({ name: z.string(), side: z.enum(["A", "B"]).nullable() }),
+	wonders: pointsSchema,
+	civilians: pointsSchema,
+	commercials: pointsSchema,
+	scientifics: scienceInputSchema,
+	guilds: pointsSchema,
+	leaders: pointsSchema,
+	cities: pointsSchema,
+	armada: pointsSchema,
+});
+
+const gameSchema = z.object({
+	id: z.string().min(1),
+	createdAt: z.number(),
+	finishedAt: z.number().optional(),
+	extensions: z.array(extensionIdSchema),
+	playerIds: z.array(z.string()),
+	entries: z.record(z.string(), playerGameEntrySchema),
+});
+
+/** Schéma complet (contenu de chaque joueur/partie compris), appliqué après migration. */
+const backupDataSchema = z.object({
+	app: z.literal(APP_ID),
+	dataVersion: z.number(),
+	exportedAt: z.number(),
+	players: z.array(playerSchema),
+	history: z.array(gameSchema),
+});
+
+/**
+ * Valide en profondeur le contenu d'une sauvegarde déjà migrée vers `DATA_VERSION`. Rejette avec un
+ * message précis (champ + raison) un fichier corrompu ou modifié à la main plutôt que de laisser
+ * l'app planter au rendu sur une entrée mal formée.
+ */
+export function validateMigratedBackupData(data: BackupData): BackupData {
+	const result = backupDataSchema.safeParse(data);
+	if (!result.success) {
+		const issue = result.error.issues[0];
+		const path = issue.path.join(".") || "racine";
+		throw new ImportError(`Sauvegarde corrompue (champ "${path}" : ${issue.message}).`);
+	}
+	return result.data;
 }
