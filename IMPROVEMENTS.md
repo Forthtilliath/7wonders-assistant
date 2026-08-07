@@ -45,6 +45,28 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
 - **Swipe + animation de transition** sur l'écran de saisie de score : swipe gauche/droite pour
   naviguer entre catégories (`router.back()`/`goNext()`), avec une transition `slide_from_right`
   explicite sur ces écrans pour rendre la navigation tactile plus perceptible.
+- **Export CSV de l'historique** (`lib/csv.ts`, une ligne par joueur par partie, séparateur `;` +
+  BOM UTF-8 pour Excel FR) en plus du JSON, accessible depuis Réglages.
+- **Action "Rejouer avec les mêmes joueurs"** sur l'écran de détail d'une partie : relance une
+  partie avec les mêmes joueurs et extensions (en avertissant, ou en bloquant si trop peu restent,
+  si certains joueurs ont depuis été supprimés).
+- **Attributs d'accessibilité** (`accessibilityRole`/`accessibilityLabel`/`accessibilityState`) sur
+  tous les boutons, chips, cases à cocher et boutons radio personnalisés (`Button`, `CheckboxGroup`,
+  `RadioGroup`, `NumberStepper`, `SelectablePlayerCard`, `PlayerListItem`/`GroupListItem`, chips
+  d'extensions/groupes, `BottomSheet`, `TextField`) — utilisable avec un lecteur d'écran (TalkBack).
+- **Mode "jetons"** pour Militaire et Maritime (`components/game/TokenCounterSheet.tsx`) : un
+  bouton "Compter par jetons" ouvre un sheet avec un compteur par valeur de jeton (Victoire
+  +1/+3/+5, Défaite -1 pour le militaire ; +1/+3/+5/+7 et -1/-2/-3 pour le maritime, valeurs
+  vérifiées dans les règles officielles de l'extension Armada), qui somme automatiquement dans le
+  champ existant — en plus de la saisie directe du total, pas à sa place.
+- **Extension Armada scindée en deux catégories de score** : les jetons maritimes (conflit naval)
+  et les cartes Îles + plateau individuel Armada sont désormais deux entrées séparées (`armada` et
+  `islands`), chacune avec son propre écran de saisie, plutôt qu'un seul total agrégé qui mélangeait
+  des sources de points très différentes.
+- **Avertissement de nom de joueur en double** (`lib/players.ts`, `hasDuplicateName`) : à la
+  création ou au renommage d'un joueur, si un autre joueur porte déjà ce nom, un message suggère de
+  renommer l'un des deux ou d'ajouter une photo pour les distinguer — sans bloquer la création (deux
+  personnes peuvent légitimement porter le même prénom).
 
 ## UX (expérience utilisateur)
 
@@ -72,9 +94,9 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
 
 ## Optimisation du code
 
-- L'I/O fichier de `lib/backup.ts` (lecture/écriture via `expo-file-system`, `restoreSafetyBackup`)
-  n'est pas testée — nécessiterait de mocker `expo-file-system`/`expo-sharing`. Seule sa logique pure
-  extraite dans `lib/backupSchema.ts` l'est.
+- L'I/O fichier de `lib/backup.ts` (lecture/écriture via `expo-file-system`, `restoreSafetyBackup`,
+  `exportGamesCsv`) n'est pas testée — nécessiterait de mocker `expo-file-system`/`expo-sharing`.
+  Seule sa logique pure (extraite dans `lib/backupSchema.ts` et `lib/csv.ts`) l'est.
 - `expo-document-picker` reste installé dans `package.json` sans être utilisé nulle part (remplacé
   par `File.pickFileAsync` d'`expo-file-system`) — jamais retiré à cause d'un conflit de peer
   dependencies npm rencontré à l'époque.
@@ -93,15 +115,10 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
 
 ## Fonctionnalités
 
-- Pas d'export CSV (seulement JSON) pour ouvrir les scores dans un tableur.
-- Pas d'action "rejouer avec les mêmes joueurs/extensions" depuis l'historique.
-- Pas de support multilingue (tout est en français, en dur) — cohérent avec la préférence actuelle,
-  à revoir seulement si le besoin apparaît.
-- Aucun attribut d'accessibilité (`accessibilityLabel`/`accessibilityRole`) sur les boutons et
-  chips personnalisés : l'app n'est pas utilisable avec un lecteur d'écran (TalkBack) en l'état.
-- Pas de mode "jetons" en plus du mode "total direct" pour militaire/armada, pour les joueurs qui
-  préfèrent compter jeton par jeton plutôt que de calculer le total dans leur tête (l'app fait déjà
-  ce choix consciemment simple, mais ça pourrait être une option plutôt qu'un seul mode imposé).
-- Pas de fusion de joueurs en doublon (même personne créée deux fois par erreur).
+- Pas de support multilingue (tout est en français, en dur) — prévu pour plus tard, pas encore
+  planifié précisément.
+- Pas de fusion de joueurs en doublon (même personne créée deux fois par erreur) — décision
+  assumée : deux joueurs peuvent légitimement porter le même nom, donc pas de fusion automatique ;
+  seul un avertissement à la création/au renommage est affiché (voir "✅ Corrigés").
 - Extensions Babel et Édifices toujours hors périmètre (décision assumée au départ, listée ici pour
   mémoire si le besoin change).
