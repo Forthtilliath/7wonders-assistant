@@ -3,23 +3,20 @@
 Liste de pistes recensées en construisant l'app (bugs réels identifiés, limites connues,
 suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne bien en l'état.
 
-## 🔴 À corriger en priorité
+## ✅ Corrigés
 
-- **Import JSON n'applique aucune migration de schéma.** `lib/backup.ts` écrit un `dataVersion`
-  dans l'export mais ne le relit jamais à l'import (contrairement aux stores Zustand, qui eux
-  migrent bien via `version`/`migrate`). Un export fait avant l'une des nombreuses évolutions de
-  schéma de cette session (ajout de `wonder`, `maxSymbols`, changement de `treasury.coins` →
-  `treasury.points`...) réimporterait des données incompatibles et casserait l'affichage sans
-  message clair. À corriger : soit versionner l'import et migrer, soit au minimum rejeter
-  clairement un `dataVersion` trop ancien avec un message explicite.
-- **Aucun Error Boundary.** Une erreur de rendu imprévue (comme la boucle infinie corrigée sur
-  l'écran Résultats) plante toute l'app en build de production, pas juste un écran rouge de dev.
-  Un `ErrorBoundary` racine avec un écran de récupération ("Une erreur est survenue, revenir à
-  l'accueil") éviterait un plantage total pour un bug futur non prévu.
-- **Import remplace les données sans sauvegarde de secours.** Si le fichier importé est structurellement
-  valide mais correspond à un mauvais export (vieux, ou d'un autre appareil), les données actuelles
-  sont perdues sans possibilité de revenir en arrière. Proposer une sauvegarde automatique avant
-  d'écraser (ou un export automatique juste avant import).
+- **Import JSON applique désormais une vraie migration de schéma**, sur le même principe que la V1
+  Capacitor (`convertDataVersion.ts`) mais réellement finie et branchée cette fois : le format est
+  scindé en `lib/backupSchema.ts` (pur, testé) qui définit `DATA_VERSION`, une chaîne de migrations
+  `MIGRATIONS[version] → version+1`, et rejette proprement un `dataVersion` trop récent (export
+  fait depuis une version plus neuve de l'app) plutôt que de charger des données incompatibles en
+  silence.
+- **Error Boundary ajouté** (`components/ErrorBoundary.tsx`, branché dans `app/_layout.tsx`) : une
+  erreur de rendu imprévue affiche désormais un écran de récupération ("Revenir à l'accueil") au
+  lieu de planter toute l'app en build de production. Les données restent intactes (stores séparés).
+- **Sauvegarde de secours avant import** : `importData()` écrit silencieusement une copie de l'état
+  actuel avant d'écraser les données, restaurable depuis Réglages via "Annuler le dernier import"
+  (`restoreSafetyBackup()`).
 
 ## UI (interface)
 
@@ -66,8 +63,9 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
 ## Optimisation du code
 
 - Aucun test sur les stores (`playersStore`, `historyStore`, `gameStore`, notamment les fonctions
-  `migrate`), ni sur `lib/backup.ts`, ni sur `lib/categoryFlow.ts` — seule la logique de calcul pure
-  (`lib/scoring`, `chartScale`, `gameFilters`) est testée actuellement.
+  `migrate`), ni sur `lib/categoryFlow.ts` — la logique pure (`lib/scoring`, `chartScale`,
+  `gameFilters`, `backupSchema`) est testée, mais l'I/O fichier de `lib/backup.ts` lui-même ne l'est
+  pas (nécessiterait de mocker `expo-file-system`).
 - `expo-document-picker` reste installé dans `package.json` sans être utilisé nulle part (remplacé
   par `File.pickFileAsync` d'`expo-file-system`) — jamais retiré à cause d'un conflit de peer
   dependencies npm rencontré à l'époque.
