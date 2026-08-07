@@ -1,25 +1,38 @@
 import { useMemo, useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
+import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { APP_INFO } from "@/constants/app";
+import { EXTENSION_LABELS, EXTENSION_ORDER } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { exportData, importData, restoreSafetyBackup } from "@/lib/backup";
 import { ImportError } from "@/lib/backupSchema";
+import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
+import { usePreferencesStore } from "@/stores/preferencesStore";
 import { type ThemeMode, useThemeStore } from "@/stores/themeStore";
+import type { ExtensionId } from "@/types/game";
+
+const EXTENSION_OPTIONS = EXTENSION_ORDER.map((ext) => ({
+	value: ext,
+	label: EXTENSION_LABELS[ext],
+}));
 
 export default function SettingsScreen() {
 	const colors = useColors();
 	const styles = useStyles(colors);
 	const clearPlayers = usePlayersStore((s) => s.replaceAll);
 	const clearHistory = useHistoryStore((s) => s.replaceAll);
+	const clearGroups = useGroupsStore((s) => s.replaceAll);
 	const mode = useThemeStore((s) => s.mode);
 	const setMode = useThemeStore((s) => s.setMode);
+	const defaultExtensions = usePreferencesStore((s) => s.defaultExtensions);
+	const setDefaultExtensions = usePreferencesStore((s) => s.setDefaultExtensions);
 	const [busy, setBusy] = useState(false);
 
 	const handleExport = async () => {
@@ -36,12 +49,12 @@ export default function SettingsScreen() {
 	const handleImport = async () => {
 		setBusy(true);
 		try {
-			const { players, history } = await importData();
+			const { players, history, groups } = await importData();
 			Alert.alert(
 				"Import réussi",
-				`${players} joueur(s) et ${history} partie(s) chargés. Les données précédentes ont été ` +
-					'remplacées (une sauvegarde de secours a été gardée, restaurable via "Annuler le ' +
-					'dernier import" si besoin).',
+				`${players} joueur(s), ${groups} groupe(s) et ${history} partie(s) chargés. Les données ` +
+					"précédentes ont été remplacées (une sauvegarde de secours a été gardée, restaurable " +
+					'via "Annuler le dernier import" si besoin).',
 			);
 		} catch (error) {
 			if (error instanceof ImportError) {
@@ -66,8 +79,11 @@ export default function SettingsScreen() {
 					onPress: async () => {
 						setBusy(true);
 						try {
-							const { players, history } = await restoreSafetyBackup();
-							Alert.alert("Restauré", `${players} joueur(s) et ${history} partie(s) restaurés.`);
+							const { players, history, groups } = await restoreSafetyBackup();
+							Alert.alert(
+								"Restauré",
+								`${players} joueur(s), ${groups} groupe(s) et ${history} partie(s) restaurés.`,
+							);
 						} catch (error) {
 							Alert.alert(
 								"Erreur",
@@ -85,7 +101,7 @@ export default function SettingsScreen() {
 	const confirmClearData = () => {
 		Alert.alert(
 			"Effacer toutes les données ?",
-			"Tous les joueurs et tout l'historique de parties seront supprimés définitivement.",
+			"Tous les joueurs, groupes et tout l'historique de parties seront supprimés définitivement.",
 			[
 				{ text: "Annuler", style: "cancel" },
 				{
@@ -94,6 +110,7 @@ export default function SettingsScreen() {
 					onPress: () => {
 						clearPlayers([]);
 						clearHistory([]);
+						clearGroups([]);
 					},
 				},
 			],
@@ -111,6 +128,18 @@ export default function SettingsScreen() {
 					]}
 					value={mode}
 					onChange={setMode}
+				/>
+			</View>
+
+			<View style={styles.section}>
+				<Text style={styles.sectionTitle}>Extensions par défaut</Text>
+				<Text style={styles.hint}>
+					Pré-cochées automatiquement à la création d'une nouvelle partie.
+				</Text>
+				<CheckboxGroup<ExtensionId>
+					options={EXTENSION_OPTIONS}
+					values={defaultExtensions}
+					onChange={setDefaultExtensions}
 				/>
 			</View>
 
