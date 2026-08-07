@@ -60,6 +60,7 @@ export function GroupForm({
 						playerId={player.id}
 						name={player.name}
 						avatarUri={player.avatarUri}
+						isFavorite={player.isFavorite}
 						selected={selectedIds.includes(player.id)}
 						onPress={() => toggleSelected(player.id)}
 					/>

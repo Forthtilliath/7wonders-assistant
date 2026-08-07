@@ -1,5 +1,6 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useMemo } from "react";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
@@ -10,11 +11,19 @@ type Props = {
 	playerId: string;
 	name: string;
 	avatarUri?: string;
+	isFavorite?: boolean;
 	selected: boolean;
 	onPress: () => void;
 };
 
-export function SelectablePlayerCard({ playerId, name, avatarUri, selected, onPress }: Props) {
+export function SelectablePlayerCard({
+	playerId,
+	name,
+	avatarUri,
+	isFavorite,
+	selected,
+	onPress,
+}: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 
@@ -27,9 +36,16 @@ export function SelectablePlayerCard({ playerId, name, avatarUri, selected, onPr
 			}}
 			accessibilityRole="checkbox"
 			accessibilityState={{ checked: selected }}
-			accessibilityLabel={name}
+			accessibilityLabel={isFavorite ? `${name}, favori` : name}
 		>
-			<PlayerAvatar name={name} avatarUri={avatarUri} seed={playerId} size={56} />
+			<View style={styles.avatarWrapper}>
+				<PlayerAvatar name={name} avatarUri={avatarUri} seed={playerId} size={56} />
+				{isFavorite && (
+					<View style={styles.favoriteBadge}>
+						<Ionicons name="star" size={11} color="#fff" />
+					</View>
+				)}
+			</View>
 			<Text style={styles.name} numberOfLines={1}>
 				{name}
 			</Text>
@@ -53,6 +69,23 @@ function useStyles(colors: ThemeColors) {
 				},
 				cardSelected: {
 					borderColor: colors.primary,
+				},
+				avatarWrapper: {
+					width: 56,
+					height: 56,
+				},
+				favoriteBadge: {
+					position: "absolute",
+					top: -4,
+					right: -4,
+					width: 20,
+					height: 20,
+					borderRadius: 10,
+					backgroundColor: colors.gold,
+					alignItems: "center",
+					justifyContent: "center",
+					borderWidth: 2,
+					borderColor: colors.surface,
 				},
 				name: {
 					color: colors.text,
