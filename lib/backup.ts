@@ -9,6 +9,7 @@ import {
 	migrateBackupData,
 	validateMigratedBackupData,
 } from "@/lib/backupSchema";
+import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 
@@ -21,6 +22,7 @@ function currentBackupData(): BackupData {
 		exportedAt: Date.now(),
 		players: usePlayersStore.getState().players,
 		history: useHistoryStore.getState().games,
+		groups: useGroupsStore.getState().groups,
 	};
 }
 
@@ -53,7 +55,7 @@ async function writeSafetyBackup(): Promise<void> {
 }
 
 /** Ouvre le sélecteur de fichier système, valide le JSON et remplace les données locales. */
-export async function importData(): Promise<{ players: number; history: number }> {
+export async function importData(): Promise<{ players: number; history: number; groups: number }> {
 	const picked = await File.pickFileAsync({ mimeTypes: "application/json" });
 	if (picked.canceled) throw new ImportError("Import annulé.");
 
@@ -83,12 +85,21 @@ export async function importData(): Promise<{ players: number; history: number }
 
 	usePlayersStore.getState().replaceAll(migrated.players);
 	useHistoryStore.getState().replaceAll(migrated.history);
+	useGroupsStore.getState().replaceAll(migrated.groups);
 
-	return { players: migrated.players.length, history: migrated.history.length };
+	return {
+		players: migrated.players.length,
+		history: migrated.history.length,
+		groups: migrated.groups.length,
+	};
 }
 
 /** Restaure la sauvegarde de secours écrite juste avant le dernier import. */
-export async function restoreSafetyBackup(): Promise<{ players: number; history: number }> {
+export async function restoreSafetyBackup(): Promise<{
+	players: number;
+	history: number;
+	groups: number;
+}> {
 	const file = new File(Paths.cache, "before-import-safety-backup.json");
 	if (!file.exists) {
 		throw new ImportError("Aucune sauvegarde de secours disponible.");
@@ -102,6 +113,11 @@ export async function restoreSafetyBackup(): Promise<{ players: number; history:
 	const migrated = validateMigratedBackupData(migrateBackupData(data));
 	usePlayersStore.getState().replaceAll(migrated.players);
 	useHistoryStore.getState().replaceAll(migrated.history);
+	useGroupsStore.getState().replaceAll(migrated.groups);
 
-	return { players: migrated.players.length, history: migrated.history.length };
+	return {
+		players: migrated.players.length,
+		history: migrated.history.length,
+		groups: migrated.groups.length,
+	};
 }

@@ -15,6 +15,7 @@ function makeBackup(dataVersion: number): BackupData {
 		exportedAt: 0,
 		players: [],
 		history: [],
+		groups: [],
 	};
 }
 
@@ -24,11 +25,27 @@ describe("migrateBackupData", () => {
 		expect(migrateBackupData(data)).toBe(data);
 	});
 
+	it("migre une sauvegarde v1 (sans groupes) vers la version courante en ajoutant un tableau vide", () => {
+		// Une vraie sauvegarde v1 n'a jamais eu de champ `groups` du tout (ajouté en v2).
+		const v1Data = {
+			app: "7wonders-assistant",
+			dataVersion: 1,
+			exportedAt: 0,
+			players: [],
+			history: [],
+		} as unknown as BackupData;
+
+		const migrated = migrateBackupData(v1Data);
+
+		expect(migrated.dataVersion).toBe(DATA_VERSION);
+		expect(migrated.groups).toEqual([]);
+	});
+
 	it("rejette une sauvegarde à une version antérieure sans étape de migration disponible", () => {
-		// Aucune étape n'existe encore (v1 est la toute première version du format) : une version
-		// plus ancienne que DATA_VERSION doit échouer proprement plutôt que charger des données
-		// incompatibles en silence — c'est exactement le bug qu'on corrige par rapport à la V1.
-		const data = makeBackup(DATA_VERSION - 1);
+		// Aucune étape n'existe pour la version 0 : une version antérieure à la toute première doit
+		// échouer proprement plutôt que charger des données incompatibles en silence — c'est
+		// exactement le bug qu'on corrige par rapport à la V1.
+		const data = makeBackup(0);
 		expect(() => migrateBackupData(data)).toThrow(ImportError);
 	});
 });
@@ -98,6 +115,24 @@ describe("validateMigratedBackupData", () => {
 		const data = {
 			...makeBackup(DATA_VERSION),
 			history: [{ id: "g1", createdAt: 0, extensions: ["babel"], playerIds: [], entries: {} }],
+		} as unknown as BackupData;
+
+		expect(() => validateMigratedBackupData(data)).toThrow(ImportError);
+	});
+
+	it("accepte un groupe de joueurs bien formé", () => {
+		const data: BackupData = {
+			...makeBackup(DATA_VERSION),
+			groups: [{ id: "grp1", name: "Soirée jeudi", playerIds: ["p1", "p2"], createdAt: 0 }],
+		};
+
+		expect(validateMigratedBackupData(data)).toEqual(data);
+	});
+
+	it("rejette un groupe dont playerIds n'est pas un tableau", () => {
+		const data = {
+			...makeBackup(DATA_VERSION),
+			groups: [{ id: "grp1", name: "Soirée jeudi", playerIds: "p1", createdAt: 0 }],
 		} as unknown as BackupData;
 
 		expect(() => validateMigratedBackupData(data)).toThrow(ImportError);

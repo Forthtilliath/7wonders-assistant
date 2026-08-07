@@ -1,19 +1,19 @@
 import { z } from "zod";
-import type { Game, Player } from "@/types/game";
+import type { Game, Player, PlayerGroup } from "@/types/game";
 
 export const APP_ID = "7wonders-assistant";
 
 /**
  * Version du format de sauvegarde JSON (indépendante des `version` de persistance Zustand).
- * À incrémenter à chaque changement de forme de `Player`/`Game`/`PlayerGameEntry`, et ajouter une
- * étape dans `MIGRATIONS` ci-dessous pour convertir l'étape précédente vers la nouvelle.
+ * À incrémenter à chaque changement de forme de `Player`/`Game`/`PlayerGameEntry`/`PlayerGroup`, et
+ * ajouter une étape dans `MIGRATIONS` ci-dessous pour convertir l'étape précédente vers la nouvelle.
  *
  * Contrairement à la V1 Capacitor (`convertDataVersion.ts`), où ce système avait été esquissé
  * (un type par version, une fonction de conversion) mais jamais réellement branché ni implémenté
  * (la fonction recalculait la version cible sans transformer les données, et n'était même pas
  * appelée au chargement), les étapes ci-dessous sont réellement exécutées à l'import.
  */
-export const DATA_VERSION = 1;
+export const DATA_VERSION = 2;
 
 export type BackupData = {
 	app: typeof APP_ID;
@@ -21,22 +21,22 @@ export type BackupData = {
 	exportedAt: number;
 	players: Player[];
 	history: Game[];
+	groups: PlayerGroup[];
 };
 
 export class ImportError extends Error {}
 
 /**
- * Une étape convertit les données de la version `from` vers `from + 1`. Aucune étape n'existe
- * encore : ce fichier est la toute première version du format exporté, il n'y a donc rien à migrer
- * pour l'instant. Exemple pour une future version 2 :
- *
- *   2: (data) => ({
- *     ...data,
- *     dataVersion: 2,
- *     players: data.players.map((p) => ({ ...p, nouveauChamp: valeurParDefaut })),
- *   }),
+ * Une étape convertit les données de la version `from` vers `from + 1`.
  */
-const MIGRATIONS: Record<number, (data: BackupData) => BackupData> = {};
+const MIGRATIONS: Record<number, (data: BackupData) => BackupData> = {
+	// v1 -> v2 : ajout des groupes de joueurs, absents des sauvegardes plus anciennes.
+	1: (data) => ({
+		...data,
+		dataVersion: 2,
+		groups: [],
+	}),
+};
 
 export function migrateBackupData(data: BackupData): BackupData {
 	let current = data;
@@ -110,13 +110,21 @@ const gameSchema = z.object({
 	entries: z.record(z.string(), playerGameEntrySchema),
 });
 
-/** Schéma complet (contenu de chaque joueur/partie compris), appliqué après migration. */
+const playerGroupSchema = z.object({
+	id: z.string().min(1),
+	name: z.string().min(1),
+	playerIds: z.array(z.string()),
+	createdAt: z.number(),
+});
+
+/** Schéma complet (contenu de chaque joueur/partie/groupe compris), appliqué après migration. */
 const backupDataSchema = z.object({
 	app: z.literal(APP_ID),
 	dataVersion: z.number(),
 	exportedAt: z.number(),
 	players: z.array(playerSchema),
 	history: z.array(gameSchema),
+	groups: z.array(playerGroupSchema),
 });
 
 /**
