@@ -17,6 +17,12 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
 - **Sauvegarde de secours avant import** : `importData()` écrit silencieusement une copie de l'état
   actuel avant d'écraser les données, restaurable depuis Réglages via "Annuler le dernier import"
   (`restoreSafetyBackup()`).
+- **Couverture de tests étendue à toute la logique métier** : les fonctions `migrate` des 3 stores
+  Zustand (`playersStore`, `historyStore`, `gameStore`) sont désormais extraites en fonctions pures
+  exportées et testées isolément, ainsi que leurs actions (`addPlayer`, `startNewGame`,
+  `finishGame`...) ; `lib/categoryFlow.ts`, `lib/scoring/total.ts`, `lib/scoring/game.ts` et
+  `lib/stats.ts` ont chacun leur suite de tests. AsyncStorage est mocké via `jest.setup.js`
+  (`jest.mock` + le mock officiel du package, référencé depuis `setupFiles`). 70 tests au total.
 
 ## UI (interface)
 
@@ -62,10 +68,9 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
 
 ## Optimisation du code
 
-- Aucun test sur les stores (`playersStore`, `historyStore`, `gameStore`, notamment les fonctions
-  `migrate`), ni sur `lib/categoryFlow.ts` — la logique pure (`lib/scoring`, `chartScale`,
-  `gameFilters`, `backupSchema`) est testée, mais l'I/O fichier de `lib/backup.ts` lui-même ne l'est
-  pas (nécessiterait de mocker `expo-file-system`).
+- L'I/O fichier de `lib/backup.ts` (lecture/écriture via `expo-file-system`, `restoreSafetyBackup`)
+  n'est pas testée — nécessiterait de mocker `expo-file-system`/`expo-sharing`. Seule sa logique pure
+  extraite dans `lib/backupSchema.ts` l'est.
 - `expo-document-picker` reste installé dans `package.json` sans être utilisé nulle part (remplacé
   par `File.pickFileAsync` d'`expo-file-system`) — jamais retiré à cause d'un conflit de peer
   dependencies npm rencontré à l'époque.
