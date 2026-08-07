@@ -11,18 +11,23 @@ import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { useGameStore } from "@/stores/gameStore";
+import { selectSortedGroups, useGroupsStore } from "@/stores/groupsStore";
 import { selectSortedPlayers, usePlayersStore } from "@/stores/playersStore";
-import type { ExtensionId } from "@/types/game";
+import { usePreferencesStore } from "@/stores/preferencesStore";
+import type { ExtensionId, PlayerGroup } from "@/types/game";
 
 export default function NewGameTab() {
 	const router = useRouter();
 	const colors = useColors();
 	const styles = useStyles(colors);
 	const players = usePlayersStore((s) => s.players);
+	const groups = useGroupsStore((s) => s.groups);
+	const defaultExtensions = usePreferencesStore((s) => s.defaultExtensions);
 	const startNewGame = useGameStore((s) => s.startNewGame);
 	const hasOngoingGame = useGameStore((s) => s.hasOngoingGame());
 
 	const activePlayers = selectSortedPlayers(players.filter((p) => !p.isArchived));
+	const sortedGroups = selectSortedGroups(groups);
 
 	const [selectedIds, setSelectedIds] = useState<string[]>(() =>
 		activePlayers
@@ -30,7 +35,8 @@ export default function NewGameTab() {
 			.slice(0, MAX_PLAYERS)
 			.map((p) => p.id),
 	);
-	const [extensions, setExtensions] = useState<ExtensionId[]>([]);
+	// Pré-coché avec les extensions habituelles configurées dans Réglages, modifiable ensuite.
+	const [extensions, setExtensions] = useState<ExtensionId[]>(() => defaultExtensions);
 
 	const toggleSelected = (id: string) => {
 		setSelectedIds((current) => {
@@ -44,6 +50,18 @@ export default function NewGameTab() {
 		setExtensions((current) =>
 			current.includes(ext) ? current.filter((e) => e !== ext) : [...current, ext],
 		);
+	};
+
+	// Sélectionne d'un coup les membres (actifs) d'un groupe, à la place de la sélection courante.
+	const isGroupActive = (group: PlayerGroup) =>
+		group.playerIds.length === selectedIds.length &&
+		group.playerIds.every((id) => selectedIds.includes(id));
+
+	const applyGroup = (group: PlayerGroup) => {
+		const memberIds = group.playerIds
+			.filter((id) => activePlayers.some((p) => p.id === id))
+			.slice(0, MAX_PLAYERS);
+		setSelectedIds(memberIds);
 	};
 
 	const canStart = selectedIds.length >= MIN_PLAYERS;
@@ -77,6 +95,28 @@ export default function NewGameTab() {
 				)}
 
 				<ScrollView contentContainerStyle={styles.content}>
+					{sortedGroups.length > 0 && (
+						<>
+							<Text style={styles.sectionTitle}>Groupes</Text>
+							<View style={styles.chipsRow}>
+								{sortedGroups.map((group) => {
+									const active = isGroupActive(group);
+									return (
+										<Pressable
+											key={group.id}
+											style={[styles.chip, active && styles.chipActive]}
+											onPress={() => applyGroup(group)}
+										>
+											<Text style={[styles.chipLabel, active && styles.chipLabelActive]}>
+												{group.name}
+											</Text>
+										</Pressable>
+									);
+								})}
+							</View>
+						</>
+					)}
+
 					<Text style={styles.sectionTitle}>
 						Joueurs ({selectedIds.length}/{MAX_PLAYERS})
 					</Text>
