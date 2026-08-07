@@ -18,7 +18,12 @@ export function GroupListItem({ group, onPress, onToggleFavorite, onToggleArchiv
 	const styles = useStyles(colors);
 
 	return (
-		<Pressable style={[styles.row, group.isArchived && styles.archivedRow]} onPress={onPress}>
+		<Pressable
+			style={[styles.row, group.isArchived && styles.archivedRow]}
+			onPress={onPress}
+			accessibilityRole="button"
+			accessibilityLabel={`Modifier le groupe ${group.name}`}
+		>
 			<View style={styles.icon}>
 				<Ionicons name="people" size={22} color={colors.primaryText} />
 			</View>
@@ -30,14 +35,28 @@ export function GroupListItem({ group, onPress, onToggleFavorite, onToggleArchiv
 					{group.playerIds.length} joueur{group.playerIds.length > 1 ? "s" : ""}
 				</Text>
 			</View>
-			<Pressable hitSlop={8} onPress={onToggleFavorite} style={styles.iconButton}>
+			<Pressable
+				hitSlop={8}
+				onPress={onToggleFavorite}
+				style={styles.iconButton}
+				accessibilityRole="button"
+				accessibilityLabel={group.isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+				accessibilityState={{ selected: group.isFavorite }}
+			>
 				<Ionicons
 					name={group.isFavorite ? "star" : "star-outline"}
 					size={22}
 					color={group.isFavorite ? colors.gold : colors.textMuted}
 				/>
 			</Pressable>
-			<Pressable hitSlop={8} onPress={onToggleArchived} style={styles.iconButton}>
+			<Pressable
+				hitSlop={8}
+				onPress={onToggleArchived}
+				style={styles.iconButton}
+				accessibilityRole="button"
+				accessibilityLabel={group.isArchived ? "Désarchiver" : "Archiver"}
+				accessibilityState={{ selected: group.isArchived }}
+			>
 				<Ionicons
 					name={group.isArchived ? "archive" : "archive-outline"}
 					size={20}

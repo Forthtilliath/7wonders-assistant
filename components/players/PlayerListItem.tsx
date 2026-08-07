@@ -19,19 +19,38 @@ export function PlayerListItem({ player, onPress, onToggleFavorite, onToggleArch
 	const styles = useStyles(colors);
 
 	return (
-		<Pressable style={[styles.row, player.isArchived && styles.archivedRow]} onPress={onPress}>
+		<Pressable
+			style={[styles.row, player.isArchived && styles.archivedRow]}
+			onPress={onPress}
+			accessibilityRole="button"
+			accessibilityLabel={`Modifier ${player.name}`}
+		>
 			<PlayerAvatar name={player.name} avatarUri={player.avatarUri} seed={player.id} size={48} />
 			<Text style={styles.name} numberOfLines={1}>
 				{player.name}
 			</Text>
-			<Pressable hitSlop={8} onPress={onToggleFavorite} style={styles.iconButton}>
+			<Pressable
+				hitSlop={8}
+				onPress={onToggleFavorite}
+				style={styles.iconButton}
+				accessibilityRole="button"
+				accessibilityLabel={player.isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+				accessibilityState={{ selected: player.isFavorite }}
+			>
 				<Ionicons
 					name={player.isFavorite ? "star" : "star-outline"}
 					size={22}
 					color={player.isFavorite ? colors.gold : colors.textMuted}
 				/>
 			</Pressable>
-			<Pressable hitSlop={8} onPress={onToggleArchived} style={styles.iconButton}>
+			<Pressable
+				hitSlop={8}
+				onPress={onToggleArchived}
+				style={styles.iconButton}
+				accessibilityRole="button"
+				accessibilityLabel={player.isArchived ? "Désarchiver" : "Archiver"}
+				accessibilityState={{ selected: player.isArchived }}
+			>
 				<Ionicons
 					name={player.isArchived ? "archive" : "archive-outline"}
 					size={20}

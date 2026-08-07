@@ -18,7 +18,13 @@ export function SelectablePlayerCard({ playerId, name, avatarUri, selected, onPr
 	const styles = useStyles(colors);
 
 	return (
-		<Pressable style={[styles.card, selected && styles.cardSelected]} onPress={onPress}>
+		<Pressable
+			style={[styles.card, selected && styles.cardSelected]}
+			onPress={onPress}
+			accessibilityRole="checkbox"
+			accessibilityState={{ checked: selected }}
+			accessibilityLabel={name}
+		>
 			<PlayerAvatar name={name} avatarUri={avatarUri} seed={playerId} size={56} />
 			<Text style={styles.name} numberOfLines={1}>
 				{name}

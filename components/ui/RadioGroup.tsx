@@ -28,6 +28,9 @@ export function RadioGroup<T extends string>({ options, value, onChange }: Props
 						key={option.value}
 						style={[styles.option, selected && styles.optionSelected]}
 						onPress={() => onChange(option.value)}
+						accessibilityRole="radio"
+						accessibilityState={{ selected }}
+						accessibilityLabel={option.label}
 					>
 						<Text style={[styles.label, selected && styles.labelSelected]}>{option.label}</Text>
 					</Pressable>

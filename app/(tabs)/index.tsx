@@ -106,6 +106,9 @@ export default function NewGameTab() {
 											key={group.id}
 											style={[styles.chip, active && styles.chipActive]}
 											onPress={() => applyGroup(group)}
+											accessibilityRole="button"
+											accessibilityLabel={`Sélectionner le groupe ${group.name}`}
+											accessibilityState={{ selected: active }}
 										>
 											<Text style={[styles.chipLabel, active && styles.chipLabelActive]}>
 												{group.name}
@@ -147,6 +150,9 @@ export default function NewGameTab() {
 									key={ext}
 									style={[styles.chip, active && styles.chipActive]}
 									onPress={() => toggleExtension(ext)}
+									accessibilityRole="checkbox"
+									accessibilityState={{ checked: active }}
+									accessibilityLabel={EXTENSION_LABELS[ext]}
 								>
 									<Text style={[styles.chipLabel, active && styles.chipLabelActive]}>
 										{EXTENSION_LABELS[ext]}

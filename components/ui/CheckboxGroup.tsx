@@ -33,6 +33,9 @@ export function CheckboxGroup<T extends string>({ options, values, onChange }: P
 						key={option.value}
 						style={[styles.option, checked && styles.optionChecked]}
 						onPress={() => toggle(option.value)}
+						accessibilityRole="checkbox"
+						accessibilityState={{ checked }}
+						accessibilityLabel={option.label}
 					>
 						<Text style={[styles.label, checked && styles.labelChecked]}>{option.label}</Text>
 					</Pressable>

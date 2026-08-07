@@ -19,8 +19,13 @@ export function BottomSheet({ visible, onClose, title, children }: Props) {
 
 	return (
 		<Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-			<Pressable style={styles.backdrop} onPress={onClose} />
-			<SafeAreaView style={styles.sheet} edges={["bottom"]}>
+			<Pressable
+				style={styles.backdrop}
+				onPress={onClose}
+				accessibilityRole="button"
+				accessibilityLabel="Fermer"
+			/>
+			<SafeAreaView style={styles.sheet} edges={["bottom"]} accessibilityViewIsModal>
 				<View style={styles.handle} />
 				{title && <Text style={styles.title}>{title}</Text>}
 				{children}

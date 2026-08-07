@@ -47,7 +47,12 @@ export function PlayerForm({
 
 	return (
 		<View style={styles.container}>
-			<Pressable style={styles.avatarPicker} onPress={pickAvatar}>
+			<Pressable
+				style={styles.avatarPicker}
+				onPress={pickAvatar}
+				accessibilityRole="button"
+				accessibilityLabel="Changer la photo"
+			>
 				<PlayerAvatar name={name || "?"} avatarUri={avatarUri} size={96} />
 				<Text style={styles.avatarHint}>Changer la photo</Text>
 			</Pressable>
