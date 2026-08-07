@@ -1,4 +1,8 @@
+import packageJson from "@/package.json";
+
 export const APP_INFO = {
 	name: "7 Wonders: Assistant",
-	version: "0.1.0",
+	// Lue depuis package.json plutôt que dupliquée en dur, pour ne plus jamais désynchroniser
+	// l'affichage de Réglages de la version réellement publiée.
+	version: packageJson.version,
 } as const;
