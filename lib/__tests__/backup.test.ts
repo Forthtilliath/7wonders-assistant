@@ -41,6 +41,31 @@ describe("migrateBackupData", () => {
 		expect(migrated.groups).toEqual([]);
 	});
 
+	it("migre une sauvegarde v2 (groupes sans isFavorite/isArchived) vers la version courante", () => {
+		const v2Data = {
+			app: "7wonders-assistant",
+			dataVersion: 2,
+			exportedAt: 0,
+			players: [],
+			history: [],
+			groups: [{ id: "grp1", name: "Soirée jeudi", playerIds: ["p1"], createdAt: 0 }],
+		} as unknown as BackupData;
+
+		const migrated = migrateBackupData(v2Data);
+
+		expect(migrated.dataVersion).toBe(DATA_VERSION);
+		expect(migrated.groups).toEqual([
+			{
+				id: "grp1",
+				name: "Soirée jeudi",
+				playerIds: ["p1"],
+				createdAt: 0,
+				isFavorite: false,
+				isArchived: false,
+			},
+		]);
+	});
+
 	it("rejette une sauvegarde à une version antérieure sans étape de migration disponible", () => {
 		// Aucune étape n'existe pour la version 0 : une version antérieure à la toute première doit
 		// échouer proprement plutôt que charger des données incompatibles en silence — c'est
@@ -123,7 +148,16 @@ describe("validateMigratedBackupData", () => {
 	it("accepte un groupe de joueurs bien formé", () => {
 		const data: BackupData = {
 			...makeBackup(DATA_VERSION),
-			groups: [{ id: "grp1", name: "Soirée jeudi", playerIds: ["p1", "p2"], createdAt: 0 }],
+			groups: [
+				{
+					id: "grp1",
+					name: "Soirée jeudi",
+					playerIds: ["p1", "p2"],
+					isFavorite: false,
+					isArchived: false,
+					createdAt: 0,
+				},
+			],
 		};
 
 		expect(validateMigratedBackupData(data)).toEqual(data);
@@ -132,7 +166,16 @@ describe("validateMigratedBackupData", () => {
 	it("rejette un groupe dont playerIds n'est pas un tableau", () => {
 		const data = {
 			...makeBackup(DATA_VERSION),
-			groups: [{ id: "grp1", name: "Soirée jeudi", playerIds: "p1", createdAt: 0 }],
+			groups: [
+				{
+					id: "grp1",
+					name: "Soirée jeudi",
+					playerIds: "p1",
+					isFavorite: false,
+					isArchived: false,
+					createdAt: 0,
+				},
+			],
 		} as unknown as BackupData;
 
 		expect(() => validateMigratedBackupData(data)).toThrow(ImportError);

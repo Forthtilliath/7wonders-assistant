@@ -13,7 +13,7 @@ export const APP_ID = "7wonders-assistant";
  * (la fonction recalculait la version cible sans transformer les données, et n'était même pas
  * appelée au chargement), les étapes ci-dessous sont réellement exécutées à l'import.
  */
-export const DATA_VERSION = 2;
+export const DATA_VERSION = 3;
 
 export type BackupData = {
 	app: typeof APP_ID;
@@ -35,6 +35,12 @@ const MIGRATIONS: Record<number, (data: BackupData) => BackupData> = {
 		...data,
 		dataVersion: 2,
 		groups: [],
+	}),
+	// v2 -> v3 : ajout de isFavorite/isArchived sur les groupes.
+	2: (data) => ({
+		...data,
+		dataVersion: 3,
+		groups: data.groups.map((g) => ({ ...g, isFavorite: false, isArchived: false })),
 	}),
 };
 
@@ -114,6 +120,8 @@ const playerGroupSchema = z.object({
 	id: z.string().min(1),
 	name: z.string().min(1),
 	playerIds: z.array(z.string()),
+	isFavorite: z.boolean(),
+	isArchived: z.boolean(),
 	createdAt: z.number(),
 });
 
