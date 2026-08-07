@@ -28,18 +28,23 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
   plutôt que de juste vérifier que `players`/`history` sont des tableaux. Un fichier corrompu ou
   modifié à la main est rejeté avec un message précis (champ + raison) au lieu de risquer de planter
   l'app au rendu.
-
-## UI (interface)
-
-- Icônes et splash screen encore ceux par défaut d'Expo (pas d'identité visuelle 7 Wonders).
-- Thème unique sombre : pas d'option thème clair (choix assumé au départ, mais à raviser si demandé).
-- Catégories identifiées seulement par un point de couleur — des petites icônes thématiques
-  (épée pour militaire, pièce pour trésor, tour pour merveille...) aideraient à la lecture rapide,
-  surtout dans les graphiques et le tableau croisé.
-- Chaque avatar joueur sans photo utilise la même couleur de fond — attribuer une couleur distincte
-  par joueur faciliterait le repérage visuel dans les tableaux/graphiques multi-joueurs.
-- Pas d'animation/transition personnalisée entre écrans (transitions par défaut d'Expo Router).
-- `NumberStepper` : pas d'accélération en appui long sur +/- pour saisir rapidement de grandes valeurs.
+- **Icône d'application sur mesure** : médaillon doré "7" sur fond navy (`assets/icon.png` +
+  déclinaisons adaptive icon Android : foreground/background/monochrome), généré en SVG vectoriel
+  (pas de police système, rendu identique partout) plutôt que les icônes par défaut d'Expo.
+- **Mode clair ajouté**, réglable dans Réglages (`stores/themeStore.ts`, persisté). Toute l'app est
+  passée d'un `COLORS` statique à un hook réactif `useColors()` (palettes `DARK_COLORS`/
+  `LIGHT_COLORS` dans `constants/theme.ts`), chaque écran/composant recalculant ses styles via
+  `useMemo` quand le thème change.
+- **Icônes thématiques par catégorie** (`CATEGORY_META.icon`, MaterialCommunityIcons : épée pour
+  militaire, pièces pour trésor, château pour merveille, etc.) remplaçant les simples points de
+  couleur dans le tableau croisé, les graphiques et les cartes de résultats.
+- **Couleur d'avatar distincte par joueur** sans photo (`lib/avatarColor.ts`, dérivée
+  déterministiquement de l'id du joueur) au lieu d'une couleur de fond unique pour tous.
+- **`NumberStepper`** accélère désormais en appui long sur +/- (délai puis répétition, qui
+  s'accélère encore après ~1,2 s) pour saisir vite les grandes valeurs.
+- **Swipe + animation de transition** sur l'écran de saisie de score : swipe gauche/droite pour
+  naviguer entre catégories (`router.back()`/`goNext()`), avec une transition `slide_from_right`
+  explicite sur ces écrans pour rendre la navigation tactile plus perceptible.
 
 ## UX (expérience utilisateur)
 
