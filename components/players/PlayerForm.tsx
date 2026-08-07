@@ -1,6 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
 import { useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { TextField } from "@/components/ui/TextField";
@@ -35,7 +35,24 @@ export function PlayerForm({
 
 	const pickAvatar = async () => {
 		const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-		if (!permission.granted) return;
+		if (!permission.granted) {
+			if (permission.canAskAgain) {
+				Alert.alert(
+					"Accès aux photos refusé",
+					"Autorise l'accès aux photos pour choisir un avatar.",
+				);
+			} else {
+				Alert.alert(
+					"Accès aux photos refusé",
+					"L'accès aux photos a été refusé. Autorise-le dans les réglages du téléphone pour choisir un avatar.",
+					[
+						{ text: "Annuler", style: "cancel" },
+						{ text: "Ouvrir les réglages", onPress: () => Linking.openSettings() },
+					],
+				);
+			}
+			return;
+		}
 
 		const result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ["images"],
