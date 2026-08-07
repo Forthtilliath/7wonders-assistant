@@ -53,6 +53,10 @@ export default function RootLayout() {
 							}}
 						/>
 						<Stack.Screen name="history/[id]" options={{ title: "Détail de la partie" }} />
+						<Stack.Screen name="settings/appearance" options={{ title: "Apparence" }} />
+						<Stack.Screen name="settings/new-game" options={{ title: "Nouvelle partie" }} />
+						<Stack.Screen name="settings/backup" options={{ title: "Sauvegarde" }} />
+						<Stack.Screen name="settings/danger-zone" options={{ title: "Zone dangereuse" }} />
 					</Stack>
 				</ErrorBoundary>
 			</SafeAreaProvider>
