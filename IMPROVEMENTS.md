@@ -104,27 +104,30 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
   l'id — un même joueur pouvait donc changer de couleur selon l'écran. `PlayerForm` accepte
   maintenant un `playerId` optionnel (absent seulement à la création, où l'id n'existe pas encore).
   Palette aussi élargie de 10 à 18 teintes pour réduire les couleurs identiques entre joueurs.
+- **Indicateur de favori sur la grille de sélection** (`SelectablePlayerCard`) : un badge étoile
+  doré en coin d'avatar apparaît désormais aussi sur la grille de Nouvelle partie, pas seulement
+  dans la liste Joueurs — cohérent avec la pré-sélection par défaut des favoris.
+- **Couleur de la catégorie Merveille plus marquée** : `#a8a29e` (gris neutre) remplacé par
+  `#f43f5e` (rose vif), pour mieux ressortir dans les graphiques et le tableau croisé.
+- **"Comparer avec..." exclut désormais le joueur déjà sélectionné** dans Statistiques (`stats.tsx`,
+  `pickerPlayers`) : impossible d'afficher deux fois les mêmes statistiques côte à côte.
+- **Alerte si la permission d'accès aux photos est refusée** en créant/modifiant un joueur
+  (`PlayerForm.pickAvatar`) : message explicatif, avec un raccourci vers les réglages du téléphone
+  si la permission a été refusée définitivement, plutôt qu'un bouton "Changer la photo" silencieux.
+- **Ordre des catégories de score d'Armada corrigé** : "Maritime" (jetons de conflit naval)
+  s'intercale désormais juste après "Militaire" dans la saisie/les graphiques/le tableau, au lieu
+  d'être regroupé en fin de liste avec les autres extensions ; la catégorie "islands" (cartes Îles +
+  plateau individuel Armada) ferme toujours la marche mais s'affiche désormais "Armada" (libellé
+  seul, id interne inchangé, pas de migration de données). Logique centralisée dans
+  `getOrderedCategories()` (`constants/categories.ts`), utilisée par tous les écrans concernés au
+  lieu d'un `[...BASE, ...getExtensionCategories()]` dupliqué à 5 endroits.
 
 ## UI (interface)
 
-- Sur la grille de sélection de joueurs de Nouvelle partie (`SelectablePlayerCard`), rien
-  n'indique quels joueurs sont favoris — l'étoile n'apparaît que dans la liste Joueurs. Les
-  favoris sont pourtant pré-sélectionnés par défaut : un petit indicateur (étoile en coin de
-  carte) rendrait ce choix plus visible.
-- La couleur de la catégorie Merveille (`#a8a29e`, gris neutre) tranche moins que les autres
-  teintes saturées dans les graphiques/le tableau — assumé au départ (les merveilles peuvent être
-  négatives), mais pourrait gagner en lisibilité avec une teinte plus marquée.
+_Rien en attente pour l'instant._
 
 ## UX (expérience utilisateur)
 
-- **Idée** : "Comparer avec..." dans Statistiques permet de choisir le joueur déjà sélectionné
-  comme second joueur (la liste de `FiltersSheet` n'exclut pas `selectedId`), ce qui affiche deux
-  fois les mêmes statistiques côte à côte. Filtrer ce joueur de la liste de comparaison réglerait
-  le cas.
-- Aucun message si la permission d'accès aux photos est refusée en créant/modifiant un joueur
-  (`PlayerForm.pickAvatar`) : le bouton "Changer la photo" ne fait alors rien, sans expliquer
-  pourquoi. Une alerte ("Autorise l'accès aux photos dans les réglages du téléphone pour choisir
-  un avatar") clarifierait.
 - Les extensions d'une partie sont figées une fois "Lancer la partie" pressé : impossible d'en
   activer/désactiver une en cours de saisie sans abandonner et recommencer. Rare en pratique (on
   choisit ses extensions avant de sortir la boîte), mais aucun message n'explique ce verrouillage
