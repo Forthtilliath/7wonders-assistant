@@ -4,6 +4,7 @@ import { PlayerForm } from "@/components/players/PlayerForm";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { SPACING } from "@/constants/theme";
+import { hasDuplicateName } from "@/lib/players";
 import { usePlayersStore } from "@/stores/playersStore";
 
 export default function EditPlayerScreen() {
@@ -46,8 +47,18 @@ export default function EditPlayerScreen() {
 				initialAvatarUri={player.avatarUri}
 				submitLabel="Enregistrer"
 				onSubmit={({ name, avatarUri }) => {
+					const isDuplicate = hasDuplicateName(usePlayersStore.getState().players, name, player.id);
 					updatePlayer(player.id, { name, avatarUri });
-					router.back();
+
+					if (isDuplicate) {
+						Alert.alert(
+							"Un joueur du même nom existe déjà",
+							"Pense à renommer l'un des deux ou à ajouter une photo pour les distinguer facilement dans les listes.",
+							[{ text: "Compris", onPress: () => router.back() }],
+						);
+					} else {
+						router.back();
+					}
 				}}
 			/>
 			<Button
