@@ -1,5 +1,5 @@
 import { getOrderedCategories } from "@/constants/categories";
-import type { CategoryId, Game } from "@/types/game";
+import type { CategoryId, Game, Player } from "@/types/game";
 import { getGameRanking } from "./scoring/game";
 import { getCategoryScore } from "./scoring/total";
 
@@ -113,4 +113,86 @@ export function computeWonderStats(games: Game[], playerId?: string): WonderStat
 		winRate: w.wins / w.timesPlayed,
 		averageTotal: w.totalSum / w.timesPlayed,
 	}));
+}
+
+export type GlobalRecords = {
+	bestScore: { playerId: string; total: number; finishedAt: number } | null;
+	longestWinStreak: { playerId: string; streak: number } | null;
+	closestGame: { gap: number; finishedAt: number } | null;
+};
+
+/**
+ * Records remarquables sur l'historique donné : le meilleur score jamais réalisé, la plus longue
+ * série de victoires consécutives d'un même joueur, et l'écart de points le plus faible entre les
+ * deux premiers d'une partie ("la plus disputée"). Chaque record vaut `null` si l'historique ne
+ * contient aucune partie exploitable.
+ */
+export function computeGlobalRecords(games: Game[]): GlobalRecords {
+	let bestScore: GlobalRecords["bestScore"] = null;
+	let longestWinStreak: GlobalRecords["longestWinStreak"] = null;
+	let closestGame: GlobalRecords["closestGame"] = null;
+	const currentStreakByPlayer = new Map<string, number>();
+
+	// Ordre chronologique (le plus ancien d'abord) pour dérouler les séries de victoires dans le bon
+	// sens ; l'historique lui-même est stocké le plus récent en premier.
+	const chronological = [...games].sort(
+		(a, b) => (a.finishedAt ?? a.createdAt) - (b.finishedAt ?? b.createdAt),
+	);
+
+	for (const game of chronological) {
+		const finishedAt = game.finishedAt ?? game.createdAt;
+		const ranking = getGameRanking(game);
+		if (ranking.length === 0) continue;
+
+		for (const score of ranking) {
+			if (!bestScore || score.total > bestScore.total) {
+				bestScore = { playerId: score.playerId, total: score.total, finishedAt };
+			}
+
+			const streak = score.rank === 1 ? (currentStreakByPlayer.get(score.playerId) ?? 0) + 1 : 0;
+			currentStreakByPlayer.set(score.playerId, streak);
+			if (streak > 0 && (!longestWinStreak || streak > longestWinStreak.streak)) {
+				longestWinStreak = { playerId: score.playerId, streak };
+			}
+		}
+
+		if (ranking.length >= 2) {
+			const gap = ranking[0].total - ranking[1].total;
+			if (!closestGame || gap < closestGame.gap) {
+				closestGame = { gap, finishedAt };
+			}
+		}
+	}
+
+	return { bestScore, longestWinStreak, closestGame };
+}
+
+export type PlayerLeaderboardEntry = {
+	playerId: string;
+	gamesPlayed: number;
+	wins: number;
+	winRate: number;
+};
+
+/**
+ * Classement des joueurs ayant au moins une partie dans l'historique donné, par taux de victoire
+ * décroissant. Le nombre de parties jouées départage les égalités : un taux construit sur beaucoup
+ * de parties est plus représentatif qu'un 100% obtenu sur une seule.
+ */
+export function computePlayerLeaderboard(
+	games: Game[],
+	players: Player[],
+): PlayerLeaderboardEntry[] {
+	return players
+		.map((player) => {
+			const stats = computePlayerStats(player.id, games);
+			return {
+				playerId: player.id,
+				gamesPlayed: stats.gamesPlayed,
+				wins: stats.wins,
+				winRate: stats.winRate,
+			};
+		})
+		.filter((entry) => entry.gamesPlayed > 0)
+		.sort((a, b) => b.winRate - a.winRate || b.gamesPlayed - a.gamesPlayed);
 }

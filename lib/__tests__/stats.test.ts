@@ -1,11 +1,17 @@
-import type { Game } from "@/types/game";
+import type { Game, Player } from "@/types/game";
 import { createEmptyPlayerGameEntry } from "@/types/game";
-import { computePlayerStats, computeWonderStats } from "../stats";
+import {
+	computeGlobalRecords,
+	computePlayerLeaderboard,
+	computePlayerStats,
+	computeWonderStats,
+} from "../stats";
 
 function makeGame(
 	id: string,
 	entries: Record<string, { military?: number; wonder?: { name: string; side: "A" | "B" | null } }>,
 	extensions: Game["extensions"] = [],
+	createdAt = 0,
 ): Game {
 	const gameEntries: Game["entries"] = {};
 	for (const [playerId, patch] of Object.entries(entries)) {
@@ -15,7 +21,18 @@ function makeGame(
 			...(patch.wonder ? { wonder: patch.wonder } : {}),
 		};
 	}
-	return { id, createdAt: 0, extensions, playerIds: Object.keys(entries), entries: gameEntries };
+	return {
+		id,
+		createdAt,
+		finishedAt: createdAt,
+		extensions,
+		playerIds: Object.keys(entries),
+		entries: gameEntries,
+	};
+}
+
+function makePlayer(id: string): Player {
+	return { id, name: id, isFavorite: false, isArchived: false, createdAt: 0 };
 }
 
 describe("computePlayerStats", () => {
@@ -112,5 +129,81 @@ describe("computeWonderStats", () => {
 		];
 
 		expect(computeWonderStats(games)).toHaveLength(2);
+	});
+});
+
+describe("computeGlobalRecords", () => {
+	it("retourne des records nuls sur un historique vide", () => {
+		expect(computeGlobalRecords([])).toEqual({
+			bestScore: null,
+			longestWinStreak: null,
+			closestGame: null,
+		});
+	});
+
+	it("retient le meilleur score toutes parties confondues", () => {
+		const games = [
+			makeGame("g1", { p1: { military: 10 }, p2: { military: 3 } }, [], 1),
+			makeGame("g2", { p1: { military: 2 }, p2: { military: 20 } }, [], 2),
+		];
+
+		const { bestScore } = computeGlobalRecords(games);
+
+		expect(bestScore?.playerId).toBe("p2");
+		expect(bestScore?.total).toBe(20);
+	});
+
+	it("calcule la plus longue série de victoires consécutives, séries interrompues comprises", () => {
+		const games = [
+			makeGame("g1", { p1: { military: 10 }, p2: { military: 1 } }, [], 1),
+			makeGame("g2", { p1: { military: 10 }, p2: { military: 1 } }, [], 2),
+			makeGame("g3", { p1: { military: 1 }, p2: { military: 10 } }, [], 3),
+			makeGame("g4", { p1: { military: 10 }, p2: { military: 1 } }, [], 4),
+		];
+
+		const { longestWinStreak } = computeGlobalRecords(games);
+
+		expect(longestWinStreak).toEqual({ playerId: "p1", streak: 2 });
+	});
+
+	it("respecte l'ordre chronologique même si l'historique est trié du plus récent au plus ancien", () => {
+		const games = [
+			makeGame("g2", { p1: { military: 10 }, p2: { military: 1 } }, [], 2),
+			makeGame("g1", { p1: { military: 10 }, p2: { military: 1 } }, [], 1),
+		];
+
+		expect(computeGlobalRecords(games).longestWinStreak).toEqual({ playerId: "p1", streak: 2 });
+	});
+
+	it("retient l'écart de points le plus faible entre les deux premiers", () => {
+		const games = [
+			makeGame("g1", { p1: { military: 10 }, p2: { military: 1 } }, [], 1),
+			makeGame("g2", { p1: { military: 10 }, p2: { military: 9 } }, [], 2),
+		];
+
+		expect(computeGlobalRecords(games).closestGame).toEqual({ gap: 1, finishedAt: 2 });
+	});
+});
+
+describe("computePlayerLeaderboard", () => {
+	it("ignore les joueurs sans aucune partie", () => {
+		const games = [makeGame("g1", { p1: { military: 10 }, p2: { military: 1 } })];
+		const players = [makePlayer("p1"), makePlayer("p2"), makePlayer("p3")];
+
+		expect(computePlayerLeaderboard(games, players).map((e) => e.playerId)).toEqual(["p1", "p2"]);
+	});
+
+	it("classe par taux de victoire décroissant", () => {
+		const games = [
+			makeGame("g1", { p1: { military: 10 }, p2: { military: 1 } }, [], 1),
+			makeGame("g2", { p1: { military: 1 }, p2: { military: 10 } }, [], 2),
+			makeGame("g3", { p1: { military: 10 }, p2: { military: 1 } }, [], 3),
+		];
+		const players = [makePlayer("p1"), makePlayer("p2")];
+
+		const leaderboard = computePlayerLeaderboard(games, players);
+
+		expect(leaderboard[0]).toEqual({ playerId: "p1", gamesPlayed: 3, wins: 2, winRate: 2 / 3 });
+		expect(leaderboard[1]).toEqual({ playerId: "p2", gamesPlayed: 3, wins: 1, winRate: 1 / 3 });
 	});
 });
