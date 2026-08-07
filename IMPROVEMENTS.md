@@ -121,6 +121,12 @@ suggestions). Rien ici n'est urgent sauf mention contraire — l'app fonctionne 
   seul, id interne inchangé, pas de migration de données). Logique centralisée dans
   `getOrderedCategories()` (`constants/categories.ts`), utilisée par tous les écrans concernés au
   lieu d'un `[...BASE, ...getExtensionCategories()]` dupliqué à 5 endroits.
+- **Records personnels et classement par taux de victoire en haut de Statistiques**
+  (`lib/stats.ts`, `computeGlobalRecords`/`computePlayerLeaderboard`) : un encart affiche désormais
+  le meilleur score jamais réalisé, la plus longue série de victoires consécutives et la partie la
+  plus disputée (écart de points le plus faible entre les deux premiers), suivi d'un classement de
+  tous les joueurs par taux de victoire décroissant — visible sans avoir à sélectionner un joueur,
+  dans les deux vues (graphique et tableau), et recalculé selon le filtre d'extensions courant.
 
 ## UI (interface)
 
@@ -166,6 +172,3 @@ _Rien en attente pour l'instant._
 - **Idée** : rappel périodique (ou juste un indicateur discret) suggérant d'exporter une
   sauvegarde, puisque les données sont 100% locales sans synchronisation cloud — un changement de
   téléphone sans export préalable perd tout l'historique.
-- **Idée** : quelques records personnels mis en avant en haut de Statistiques (meilleur score
-  jamais réalisé, plus longue série de victoires, partie la plus disputée...) — la donnée existe
-  déjà dans l'historique, il ne manque qu'un calcul et un petit encart.
