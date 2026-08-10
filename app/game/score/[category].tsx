@@ -1,6 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { ManualPointsFields } from "@/components/game/ManualPointsFields";
 import { PlayerScoreRow } from "@/components/game/PlayerScoreRow";
@@ -119,7 +120,21 @@ export default function CategoryScoreScreen() {
 	return (
 		<GestureDetector gesture={swipeGesture}>
 			<ScreenContainer padded={false}>
-				<Stack.Screen options={{ title: meta.label }} />
+				<Stack.Screen
+					options={{
+						title: meta.label,
+						headerRight: () => (
+							<Pressable
+								onPress={goNext}
+								hitSlop={12}
+								accessibilityRole="button"
+								accessibilityLabel={isLast ? "Voir les résultats" : "Étape suivante"}
+							>
+								<Ionicons name="chevron-forward" size={26} color={colors.text} />
+							</Pressable>
+						),
+					}}
+				/>
 
 				<View style={[styles.progressBar, { backgroundColor: meta.color }]} />
 				<Text style={styles.progress}>
