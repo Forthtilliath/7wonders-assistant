@@ -15,6 +15,10 @@ export const BASE_CATEGORY_ORDER: BaseCategoryId[] = [
 
 export const EXTENSION_ORDER: ExtensionId[] = ["leaders", "cities", "armada"];
 
+/** Sous-ensemble de `CategoryId` qui n'existe que grâce à une extension (donc "réinitialisable"
+ * quand celle-ci est désactivée), par opposition aux 7 catégories de base toujours présentes. */
+export type ExtensionCategoryId = "leaders" | "cities" | "armada" | "islands";
+
 export type CategoryMeta = {
 	label: string;
 	shortLabel: string;
@@ -114,6 +118,17 @@ export const EXTENSION_LABELS: Record<ExtensionId, string> = {
 	leaders: "Leaders",
 	cities: "Cités",
 	armada: "Armada",
+};
+
+/** Catégories de score qu'une extension seule/qu'elle seule apporte, dans l'esprit de
+ * `getOrderedCategories` : Armada apporte deux catégories ("armada" les jetons de conflit naval,
+ * "islands" le score de plateau), pas une seule comme Leaders/Cités. Sert à la fois à décrire
+ * l'impact d'activer/désactiver une extension (écran de modification en cours de partie) et à
+ * savoir quels champs de saisie remettre à zéro quand une extension est retirée. */
+export const EXTENSION_CATEGORIES: Record<ExtensionId, ExtensionCategoryId[]> = {
+	leaders: ["leaders"],
+	cities: ["cities"],
+	armada: ["armada", "islands"],
 };
 
 /**
