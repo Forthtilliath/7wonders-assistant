@@ -76,23 +76,6 @@ export default function NewGameTab() {
 		router.push("/game/score/military");
 	};
 
-	// Une partie en cours serait silencieusement écrasée par startNewGame() : on prévient plutôt que
-	// de perdre des scores déjà saisis sans le vouloir.
-	const confirmStart = () => {
-		if (!hasOngoingGame) {
-			startGame();
-			return;
-		}
-		Alert.alert(
-			"Une partie est en cours",
-			"La démarrer maintenant abandonnera la partie en cours : les scores déjà saisis seront perdus.",
-			[
-				{ text: "Annuler", style: "cancel" },
-				{ text: "Démarrer quand même", style: "destructive", onPress: startGame },
-			],
-		);
-	};
-
 	const confirmAbandon = () => {
 		Alert.alert("Abandonner la partie en cours ?", "Les scores déjà saisis seront perdus.", [
 			{ text: "Annuler", style: "cancel" },
@@ -108,7 +91,7 @@ export default function NewGameTab() {
 		.runOnJS(true)
 		.onEnd((event) => {
 			if (event.translationX < -60 && canStart) {
-				confirmStart();
+				startGame();
 			}
 		});
 
@@ -126,23 +109,29 @@ export default function NewGameTab() {
 		);
 	}
 
+	// Une seule partie à la fois : tant qu'une partie est en cours, on empêche d'en configurer une
+	// nouvelle (qui l'écraserait silencieusement) plutôt que de proposer les deux options en même
+	// temps. Il faut la reprendre ou l'abandonner explicitement pour débloquer l'écran.
+	if (hasOngoingGame) {
+		return (
+			<ScreenContainer style={styles.onboarding}>
+				<MaterialCommunityIcons name="progress-clock" size={48} color={colors.primary} />
+				<Text style={styles.onboardingTitle}>Une partie est en cours</Text>
+				<Text style={styles.onboardingText}>
+					Termine ou abandonne la partie en cours avant d'en démarrer une nouvelle.
+				</Text>
+				<Button
+					label="Reprendre la partie en cours"
+					onPress={() => router.push("/game/score/military")}
+				/>
+				<Button label="Abandonner la partie en cours" variant="ghost" onPress={confirmAbandon} />
+			</ScreenContainer>
+		);
+	}
+
 	return (
 		<GestureDetector gesture={swipeGesture}>
 			<ScreenContainer>
-				{hasOngoingGame && (
-					<View style={styles.ongoingSection}>
-						<Button
-							label="Reprendre la partie en cours"
-							onPress={() => router.push("/game/score/military")}
-						/>
-						<Button
-							label="Abandonner la partie en cours"
-							variant="ghost"
-							onPress={confirmAbandon}
-						/>
-					</View>
-				)}
-
 				<ScrollView contentContainerStyle={styles.content}>
 					{sortedGroups.length > 0 && (
 						<>
@@ -213,7 +202,7 @@ export default function NewGameTab() {
 					</View>
 				</ScrollView>
 
-				<Button label="Lancer la partie" disabled={!canStart} onPress={confirmStart} />
+				<Button label="Lancer la partie" disabled={!canStart} onPress={startGame} />
 			</ScreenContainer>
 		</GestureDetector>
 	);
@@ -223,10 +212,6 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
-				ongoingSection: {
-					gap: SPACING.sm,
-					marginBottom: SPACING.md,
-				},
 				content: {
 					gap: SPACING.md,
 					paddingBottom: SPACING.md,
