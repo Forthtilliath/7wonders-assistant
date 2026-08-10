@@ -9,7 +9,7 @@ type State = {
 };
 
 type Actions = {
-	addPlayer: (input: { name: string; avatarUri?: string }) => Player;
+	addPlayer: (input: { id?: string; name: string; avatarUri?: string }) => Player;
 	updatePlayer: (id: string, patch: Partial<Omit<Player, "id" | "createdAt">>) => void;
 	removePlayer: (id: string) => void;
 	toggleFavorite: (id: string) => void;
@@ -30,9 +30,12 @@ export const usePlayersStore = create<State & Actions>()(
 		(set, get) => ({
 			players: [],
 
-			addPlayer: ({ name, avatarUri }) => {
+			// `id` optionnel : passé par l'écran de création pour que la couleur d'avatar déjà
+			// affichée pendant la saisie (dérivée de cet id, voir PlayerForm) reste exactement la
+			// même une fois le joueur créé, au lieu de sauter sur une nouvelle couleur.
+			addPlayer: ({ id, name, avatarUri }) => {
 				const player: Player = {
-					id: createId(),
+					id: id ?? createId(),
 					name: name.trim(),
 					avatarUri,
 					isFavorite: false,

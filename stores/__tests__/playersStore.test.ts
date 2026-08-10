@@ -19,6 +19,13 @@ describe("usePlayersStore", () => {
 		expect(usePlayersStore.getState().players).toHaveLength(1);
 	});
 
+	it("addPlayer utilise l'id fourni plutôt que d'en générer un nouveau", () => {
+		const player = usePlayersStore.getState().addPlayer({ id: "fixed-id", name: "Isabelle" });
+
+		expect(player.id).toBe("fixed-id");
+		expect(usePlayersStore.getState().players[0].id).toBe("fixed-id");
+	});
+
 	it("updatePlayer ne modifie que le joueur ciblé", () => {
 		const a = usePlayersStore.getState().addPlayer({ name: "A" });
 		usePlayersStore.getState().addPlayer({ name: "B" });
