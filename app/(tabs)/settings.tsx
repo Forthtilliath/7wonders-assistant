@@ -49,6 +49,12 @@ export default function SettingsScreen() {
 				danger
 				onPress={() => router.push("/settings/danger-zone")}
 			/>
+			<SettingsRow
+				icon="information-circle"
+				label="À propos"
+				value="Dons, nouveautés, infos"
+				onPress={() => router.push("/settings/about")}
+			/>
 
 			<Text style={styles.version}>
 				{APP_INFO.name} · v{APP_INFO.version}
