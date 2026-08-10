@@ -86,7 +86,7 @@ export function PlayerStatsSection({ player, games }: Props) {
 					</View>
 
 					<Text style={styles.sectionTitle}>Répartition des points</Text>
-					<CategoryPieChart categories={categories} stats={stats} />
+					<CategoryPieChart categories={categories} values={stats.averageByCategory} />
 
 					{bestWonders.length > 0 && (
 						<>

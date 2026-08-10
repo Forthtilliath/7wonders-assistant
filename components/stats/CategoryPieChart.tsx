@@ -6,27 +6,27 @@ import { CATEGORY_META } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import type { PlayerStats } from "@/lib/stats";
 import type { CategoryId } from "@/types/game";
 
 type Props = {
 	categories: CategoryId[];
-	stats: PlayerStats;
+	/** Points par catégorie à répartir (moyenne sur l'historique, ou score d'une seule partie). */
+	values: Partial<Record<CategoryId, number>>;
 };
 
 /**
- * Répartition (en %) des points moyens par catégorie, pour faire ressortir comment le joueur
- * gagne ses points. Les catégories à moyenne négative ou nulle (ex. militaire déficitaire) sont
- * exclues : une part de camembert négative n'a pas de sens.
+ * Répartition (en %) des points par catégorie, pour faire ressortir comment le score se
+ * construit. Les catégories à valeur négative ou nulle (ex. militaire déficitaire) sont exclues :
+ * une part de camembert négative n'a pas de sens.
  */
-export function CategoryPieChart({ categories, stats }: Props) {
+export function CategoryPieChart({ categories, values }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 
 	const slices = categories
 		.map((category) => ({
 			category,
-			value: Math.max(0, stats.averageByCategory[category] ?? 0),
+			value: Math.max(0, values[category] ?? 0),
 		}))
 		.filter((slice) => slice.value > 0);
 
@@ -34,9 +34,7 @@ export function CategoryPieChart({ categories, stats }: Props) {
 
 	if (total === 0) {
 		return (
-			<Text style={styles.empty}>
-				Pas assez de points positifs en moyenne pour afficher une répartition.
-			</Text>
+			<Text style={styles.empty}>Pas assez de points positifs pour afficher une répartition.</Text>
 		);
 	}
 

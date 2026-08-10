@@ -1,15 +1,21 @@
 import { router } from "expo-router";
 import { useMemo } from "react";
-import { Alert, ScrollView, StyleSheet, Text } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { CategoryComparisonChart } from "@/components/game/CategoryComparisonChart";
 import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
+import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
 import { Button } from "@/components/ui/Button";
+import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { getOrderedCategories } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
-import { SPACING } from "@/constants/theme";
+import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { getGameRanking } from "@/lib/scoring/game";
+import { getCategoryScore } from "@/lib/scoring/total";
 import { useGameStore } from "@/stores/gameStore";
 import { usePlayersStore } from "@/stores/playersStore";
+import type { CategoryId } from "@/types/game";
 
 export default function ResultsScreen() {
 	const colors = useColors();
@@ -27,6 +33,10 @@ export default function ResultsScreen() {
 		() => getGameRanking({ id: "", createdAt: 0, extensions, playerIds, entries }),
 		[extensions, playerIds, entries],
 	);
+	const categories = useMemo(() => getOrderedCategories(extensions), [extensions]);
+	const gamePlayers = playerIds
+		.map((id) => allPlayers.find((p) => p.id === id))
+		.filter((p): p is NonNullable<typeof p> => p != null);
 
 	if (playerIds.length === 0) return null;
 
@@ -65,6 +75,37 @@ export default function ResultsScreen() {
 						/>
 					);
 				})}
+
+				<Text style={styles.sectionTitle}>Répartition par joueur</Text>
+				{gamePlayers.map((player) => {
+					const score = ranking.find((s) => s.playerId === player.id);
+					if (!score) return null;
+					const values: Partial<Record<CategoryId, number>> = {};
+					for (const category of categories) {
+						values[category] = getCategoryScore(score, category);
+					}
+					return (
+						<View key={player.id} style={styles.chartCard}>
+							<View style={styles.chartCardHeader}>
+								<PlayerAvatar
+									name={player.name}
+									avatarUri={player.avatarUri}
+									seed={player.id}
+									size={32}
+								/>
+								<Text style={styles.chartCardName}>{player.name}</Text>
+							</View>
+							<CategoryPieChart categories={categories} values={values} />
+						</View>
+					);
+				})}
+
+				<Text style={styles.sectionTitle}>Comparaison par catégorie</Text>
+				{categories.map((category) => (
+					<View key={category} style={styles.chartCard}>
+						<CategoryComparisonChart category={category} players={gamePlayers} scores={ranking} />
+					</View>
+				))}
 			</ScrollView>
 
 			<Button label="Terminer et enregistrer la partie" onPress={confirmFinish} />
@@ -91,6 +132,29 @@ function useStyles(colors: ThemeColors) {
 				list: {
 					gap: SPACING.sm,
 					paddingBottom: SPACING.md,
+				},
+				sectionTitle: {
+					color: colors.textMuted,
+					fontSize: 14,
+					textTransform: "uppercase",
+					letterSpacing: 0.5,
+					marginTop: SPACING.sm,
+				},
+				chartCard: {
+					backgroundColor: colors.surface,
+					borderRadius: RADIUS.md,
+					padding: SPACING.md,
+					gap: SPACING.sm,
+				},
+				chartCardHeader: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: SPACING.sm,
+				},
+				chartCardName: {
+					color: colors.text,
+					fontSize: 15,
+					fontWeight: "700",
 				},
 				cancelButton: {
 					marginTop: SPACING.sm,
