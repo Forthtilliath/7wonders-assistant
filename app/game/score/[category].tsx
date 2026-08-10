@@ -3,6 +3,7 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { EditExtensionsSheet } from "@/components/game/EditExtensionsSheet";
 import { ManualPointsFields } from "@/components/game/ManualPointsFields";
 import { PlayerScoreRow } from "@/components/game/PlayerScoreRow";
 import { ScienceFields } from "@/components/game/ScienceFields";
@@ -69,18 +70,30 @@ export default function CategoryScoreScreen() {
 	const playerIds = useGameStore((s) => s.playerIds);
 	const entries = useGameStore((s) => s.entries);
 	const updateEntry = useGameStore((s) => s.updateEntry);
+	const updateExtensions = useGameStore((s) => s.updateExtensions);
 	const allPlayers = usePlayersStore((s) => s.players);
 	// Joueur pour lequel le compteur de jetons est ouvert (military/armada uniquement) ; se
 	// réinitialise à chaque changement de catégorie via la key posée sur le composant plus bas.
 	const [tokenSheetPlayerId, setTokenSheetPlayerId] = useState<string | null>(null);
+	const [extensionsSheetVisible, setExtensionsSheetVisible] = useState(false);
+
+	const flow = useMemo(() => getCategoryFlow(extensions), [extensions]);
 
 	useEffect(() => {
 		if (playerIds.length === 0) router.replace("/");
 	}, [playerIds, router]);
 
-	if (playerIds.length === 0) return null;
+	// Une extension retirée en cours de partie peut faire disparaître l'étape affichée (ex. on est
+	// sur "Leaders" au moment où l'extension Leaders est désactivée) : on retombe sur la première
+	// étape du nouveau parcours plutôt que de rester bloqué sur une catégorie qui n'existe plus.
+	useEffect(() => {
+		if (playerIds.length > 0 && !flow.includes(category)) {
+			router.replace(`/game/score/${flow[0]}`);
+		}
+	}, [flow, category, playerIds.length, router]);
 
-	const flow = getCategoryFlow(extensions);
+	if (playerIds.length === 0 || !flow.includes(category)) return null;
+
 	const stepIndex = flow.indexOf(category);
 	const isLast = stepIndex === flow.length - 1;
 	const meta = CATEGORY_META[category];
@@ -124,16 +137,33 @@ export default function CategoryScoreScreen() {
 					options={{
 						title: meta.label,
 						headerRight: () => (
-							<Pressable
-								onPress={goNext}
-								hitSlop={12}
-								accessibilityRole="button"
-								accessibilityLabel={isLast ? "Voir les résultats" : "Étape suivante"}
-							>
-								<Ionicons name="chevron-forward" size={26} color={colors.text} />
-							</Pressable>
+							<View style={styles.headerActions}>
+								<Pressable
+									onPress={() => setExtensionsSheetVisible(true)}
+									hitSlop={12}
+									accessibilityRole="button"
+									accessibilityLabel="Modifier les extensions de la partie"
+								>
+									<Ionicons name="options-outline" size={24} color={colors.text} />
+								</Pressable>
+								<Pressable
+									onPress={goNext}
+									hitSlop={12}
+									accessibilityRole="button"
+									accessibilityLabel={isLast ? "Voir les résultats" : "Étape suivante"}
+								>
+									<Ionicons name="chevron-forward" size={26} color={colors.text} />
+								</Pressable>
+							</View>
 						),
 					}}
+				/>
+
+				<EditExtensionsSheet
+					visible={extensionsSheetVisible}
+					onClose={() => setExtensionsSheetVisible(false)}
+					currentExtensions={extensions}
+					onConfirm={updateExtensions}
 				/>
 
 				<View style={[styles.progressBar, { backgroundColor: meta.color }]} />
@@ -253,6 +283,11 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
+				headerActions: {
+					flexDirection: "row",
+					alignItems: "center",
+					gap: SPACING.md,
+				},
 				progressBar: {
 					height: 4,
 				},
