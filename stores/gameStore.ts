@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { EXTENSION_CATEGORIES } from "@/constants/categories";
 import { createId } from "@/lib/uuid";
 import {
 	createEmptyPlayerGameEntry,
@@ -21,6 +22,11 @@ type State = {
 type Actions = {
 	startNewGame: (playerIds: string[], extensions: ExtensionId[]) => void;
 	updateEntry: (playerId: string, patch: (entry: PlayerGameEntry) => PlayerGameEntry) => void;
+	/** Change les extensions actives d'une partie en cours (oubli à la création, par exemple). Les
+	 * catégories perdues par une extension désactivée sont remises à zéro pour tous les joueurs :
+	 * sinon des points déjà saisis pour une catégorie qui n'est plus affichée continueraient à
+	 * compter dans le total final. */
+	updateExtensions: (extensions: ExtensionId[]) => void;
 	toGame: () => Game;
 	finishGame: () => Game;
 	resetGame: () => void;
@@ -62,6 +68,26 @@ export const useGameStore = create<State & Actions>()(
 				set({
 					entries: { ...get().entries, [playerId]: patch(current) },
 				});
+			},
+
+			updateExtensions: (extensions) => {
+				const { extensions: current, entries } = get();
+				const removedExtensions = current.filter((ext) => !extensions.includes(ext));
+				if (removedExtensions.length === 0) {
+					set({ extensions });
+					return;
+				}
+
+				const categoriesToReset = removedExtensions.flatMap((ext) => EXTENSION_CATEGORIES[ext]);
+				const nextEntries: Record<string, PlayerGameEntry> = {};
+				for (const [playerId, entry] of Object.entries(entries)) {
+					let patched = entry;
+					for (const category of categoriesToReset) {
+						patched = { ...patched, [category]: { points: 0 } };
+					}
+					nextEntries[playerId] = patched;
+				}
+				set({ extensions, entries: nextEntries });
 			},
 
 			toGame: () => {

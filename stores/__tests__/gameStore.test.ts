@@ -51,6 +51,34 @@ describe("useGameStore", () => {
 		expect(useGameStore.getState().entries).toBe(before);
 	});
 
+	it("updateExtensions change les extensions sans toucher aux entrées si rien n'est retiré", () => {
+		useGameStore.getState().startNewGame(["p1"], ["leaders"]);
+		useGameStore.getState().updateEntry("p1", (entry) => ({ ...entry, leaders: { points: 7 } }));
+
+		useGameStore.getState().updateExtensions(["leaders", "cities"]);
+
+		expect(useGameStore.getState().extensions).toEqual(["leaders", "cities"]);
+		expect(useGameStore.getState().entries.p1.leaders.points).toBe(7);
+	});
+
+	it("updateExtensions remet à zéro les catégories des extensions retirées, pour tous les joueurs", () => {
+		useGameStore.getState().startNewGame(["p1", "p2"], ["armada"]);
+		useGameStore.getState().updateEntry("p1", (entry) => ({
+			...entry,
+			armada: { points: 5 },
+			islands: { points: 3 },
+		}));
+		useGameStore.getState().updateEntry("p2", (entry) => ({ ...entry, armada: { points: 2 } }));
+
+		useGameStore.getState().updateExtensions([]);
+
+		const state = useGameStore.getState();
+		expect(state.extensions).toEqual([]);
+		expect(state.entries.p1.armada.points).toBe(0);
+		expect(state.entries.p1.islands.points).toBe(0);
+		expect(state.entries.p2.armada.points).toBe(0);
+	});
+
 	it("toGame construit un Game sans id à partir de l'état courant", () => {
 		useGameStore.getState().startNewGame(["p1"], ["cities"]);
 
