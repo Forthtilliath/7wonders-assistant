@@ -23,7 +23,8 @@ export default function GameLayout() {
 				name="results"
 				options={{
 					title: "Résultats",
-					headerBackVisible: false,
+					// Bouton retour actif exprès : permet de revenir corriger une catégorie précise
+					// (ex. score mal saisi) sans passer par "Annuler la partie", qui jette tout.
 					animation: "slide_from_right",
 				}}
 			/>

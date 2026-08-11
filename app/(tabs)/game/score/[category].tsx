@@ -108,7 +108,9 @@ export default function CategoryScoreScreen() {
 
 	const goNext = () => {
 		if (isLast) {
-			router.push("/game/results");
+			// replace plutôt que push : si on revient corriger une catégorie depuis Résultats puis
+			// qu'on y retourne, ça remplace l'écran au lieu d'en empiler un nouveau à chaque aller-retour.
+			router.replace("/game/results");
 		} else {
 			router.push(`/game/score/${flow[stepIndex + 1]}`);
 		}
