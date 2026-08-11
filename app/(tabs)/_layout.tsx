@@ -51,7 +51,17 @@ export default function TabsLayout() {
 				name="settings"
 				options={{
 					title: "Réglages",
+					headerShown: false,
 					tabBarIcon: ({ color, size }) => <Ionicons name="settings" color={color} size={size} />,
+				}}
+			/>
+			<Tabs.Screen
+				name="game"
+				options={{
+					headerShown: false,
+					// Pas de bouton dédié : cet onglet n'est atteint que via "Lancer la partie" depuis
+					// l'onglet Jouer, mais reste dans le même Tabs pour garder la barre visible.
+					href: null,
 				}}
 			/>
 		</Tabs>

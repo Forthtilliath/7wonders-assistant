@@ -40,24 +40,7 @@ export default function RootLayout() {
 							name="groups/[id]"
 							options={{ title: "Modifier le groupe", presentation: "modal" }}
 						/>
-						<Stack.Screen
-							name="game/score/[category]"
-							options={{ title: "Score", animation: "slide_from_right" }}
-						/>
-						<Stack.Screen
-							name="game/results"
-							options={{
-								title: "Résultats",
-								headerBackVisible: false,
-								animation: "slide_from_right",
-							}}
-						/>
 						<Stack.Screen name="history/[id]" options={{ title: "Détail de la partie" }} />
-						<Stack.Screen name="settings/appearance" options={{ title: "Apparence" }} />
-						<Stack.Screen name="settings/new-game" options={{ title: "Nouvelle partie" }} />
-						<Stack.Screen name="settings/backup" options={{ title: "Sauvegarde" }} />
-						<Stack.Screen name="settings/danger-zone" options={{ title: "Zone dangereuse" }} />
-						<Stack.Screen name="settings/about" options={{ title: "À propos" }} />
 					</Stack>
 				</ErrorBoundary>
 			</SafeAreaProvider>

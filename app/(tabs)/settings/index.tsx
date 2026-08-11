@@ -33,27 +33,28 @@ export default function SettingsScreen() {
 			/>
 			<SettingsRow
 				icon="options"
-				label="Nouvelle partie"
+				label="Extensions par défaut"
 				value={defaultExtensionsPreview}
 				onPress={() => router.push("/settings/new-game")}
 			/>
 			<SettingsRow
 				icon="cloud-upload"
-				label="Sauvegarde"
-				value="Export, import, CSV"
+				label="Gestion des sauvegardes"
+				value="Exporter ou restaurer tes données"
 				onPress={() => router.push("/settings/backup")}
-			/>
-			<SettingsRow
-				icon="warning"
-				label="Zone dangereuse"
-				danger
-				onPress={() => router.push("/settings/danger-zone")}
 			/>
 			<SettingsRow
 				icon="information-circle"
 				label="À propos"
-				value="Dons, nouveautés, infos"
+				value="Nouveautés, dons, infos"
 				onPress={() => router.push("/settings/about")}
+			/>
+			<SettingsRow
+				icon="warning"
+				label="Zone dangereuse"
+				value="Effacer toutes les données"
+				danger
+				onPress={() => router.push("/settings/danger-zone")}
 			/>
 
 			<Text style={styles.version}>
