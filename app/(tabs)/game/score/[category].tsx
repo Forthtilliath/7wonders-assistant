@@ -152,7 +152,11 @@ export default function CategoryScoreScreen() {
 									accessibilityRole="button"
 									accessibilityLabel={isLast ? "Voir les résultats" : "Étape suivante"}
 								>
-									<Ionicons name="chevron-forward" size={26} color={colors.text} />
+									<Ionicons
+										name={isLast ? "trophy" : "arrow-forward"}
+										size={24}
+										color={colors.text}
+									/>
 								</Pressable>
 							</View>
 						),
@@ -270,10 +274,6 @@ export default function CategoryScoreScreen() {
 						}}
 					/>
 				)}
-
-				<View style={styles.footer}>
-					<Button label={isLast ? "Voir les résultats" : "Suivant"} onPress={goNext} />
-				</View>
 			</ScreenContainer>
 		</GestureDetector>
 	);
@@ -307,11 +307,6 @@ function useStyles(colors: ThemeColors) {
 				list: {
 					gap: SPACING.sm,
 					padding: SPACING.md,
-				},
-				footer: {
-					padding: SPACING.md,
-					borderTopWidth: 1,
-					borderTopColor: colors.border,
 				},
 			}),
 		[colors],
