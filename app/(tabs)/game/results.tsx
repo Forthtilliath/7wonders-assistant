@@ -1,6 +1,7 @@
-import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { router, Stack } from "expo-router";
 import { useMemo } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { CategoryComparisonChart } from "@/components/game/CategoryComparisonChart";
 import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
 import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
@@ -54,6 +55,20 @@ export default function ResultsScreen() {
 
 	return (
 		<ScreenContainer>
+			<Stack.Screen
+				options={{
+					headerRight: () => (
+						<Pressable
+							onPress={correctGame}
+							hitSlop={12}
+							accessibilityRole="button"
+							accessibilityLabel="Corriger la partie"
+						>
+							<Ionicons name="arrow-undo-outline" size={24} color={colors.text} />
+						</Pressable>
+					),
+				}}
+			/>
 			<Text style={styles.title}>Classement</Text>
 			<ScrollView contentContainerStyle={styles.list}>
 				{ranking.map((score) => {
@@ -101,12 +116,6 @@ export default function ResultsScreen() {
 				))}
 			</ScrollView>
 
-			<Button
-				label="Corriger la partie"
-				variant="ghost"
-				onPress={correctGame}
-				style={styles.correctButton}
-			/>
 			<Button label="Terminer et enregistrer la partie" onPress={confirmFinish} />
 		</ScreenContainer>
 	);
@@ -148,9 +157,6 @@ function useStyles(colors: ThemeColors) {
 					color: colors.text,
 					fontSize: 15,
 					fontWeight: "700",
-				},
-				correctButton: {
-					marginBottom: SPACING.sm,
 				},
 			}),
 		[colors],
