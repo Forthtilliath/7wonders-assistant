@@ -8,7 +8,7 @@ export default function NewGroupScreen() {
 	const addGroup = useGroupsStore((s) => s.addGroup);
 
 	return (
-		<ScreenContainer>
+		<ScreenContainer edges={["bottom", "left", "right"]}>
 			<GroupForm
 				submitLabel="Créer le groupe"
 				onSubmit={({ name, playerIds }) => {

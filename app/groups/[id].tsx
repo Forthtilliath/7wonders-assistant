@@ -15,7 +15,7 @@ export default function EditGroupScreen() {
 
 	if (!group) {
 		return (
-			<ScreenContainer>
+			<ScreenContainer edges={["bottom", "left", "right"]}>
 				<Text>Groupe introuvable.</Text>
 			</ScreenContainer>
 		);
@@ -40,7 +40,7 @@ export default function EditGroupScreen() {
 	};
 
 	return (
-		<ScreenContainer>
+		<ScreenContainer edges={["bottom", "left", "right"]}>
 			<GroupForm
 				initialName={group.name}
 				initialPlayerIds={group.playerIds}

@@ -16,7 +16,7 @@ export default function EditPlayerScreen() {
 
 	if (!player) {
 		return (
-			<ScreenContainer>
+			<ScreenContainer edges={["bottom", "left", "right"]}>
 				<Text>Joueur introuvable.</Text>
 			</ScreenContainer>
 		);
@@ -41,7 +41,7 @@ export default function EditPlayerScreen() {
 	};
 
 	return (
-		<ScreenContainer>
+		<ScreenContainer edges={["bottom", "left", "right"]}>
 			<PlayerForm
 				playerId={player.id}
 				initialName={player.name}
