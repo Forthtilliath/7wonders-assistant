@@ -39,3 +39,13 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# docs : seul README.md est autorisé par défaut, les autres .md sont ignorés
+# sauf exception ajoutée manuellement ici
+*.md
+!README.md
+!CHANGELOG.md
+!AGENTS.md
+!CLAUDE.md
+!IMPROVEMENTS.md
+!PLAN.md
