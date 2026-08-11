@@ -26,7 +26,7 @@ export default function GameDetailScreen() {
 
 	if (!game) {
 		return (
-			<ScreenContainer>
+			<ScreenContainer edges={["bottom", "left", "right"]}>
 				<Text style={styles.empty}>Partie introuvable.</Text>
 			</ScreenContainer>
 		);
@@ -80,7 +80,7 @@ export default function GameDetailScreen() {
 	};
 
 	return (
-		<ScreenContainer>
+		<ScreenContainer edges={["bottom", "left", "right"]}>
 			<Text style={styles.date}>{formatDate(game.createdAt)}</Text>
 			<ScrollView contentContainerStyle={styles.list}>
 				{ranking.map((score) => {

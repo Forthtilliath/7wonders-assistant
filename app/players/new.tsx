@@ -16,7 +16,7 @@ export default function NewPlayerScreen() {
 	const [playerId] = useState(() => createId());
 
 	return (
-		<ScreenContainer>
+		<ScreenContainer edges={["bottom", "left", "right"]}>
 			<PlayerForm
 				playerId={playerId}
 				submitLabel="Créer le joueur"
