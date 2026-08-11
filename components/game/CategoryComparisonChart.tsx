@@ -46,6 +46,7 @@ export function CategoryComparisonChart({ category, players, scores }: Props) {
 			</View>
 			<BarChart
 				data={chartData}
+				horizontal
 				barWidth={28}
 				spacing={20}
 				roundedTop
