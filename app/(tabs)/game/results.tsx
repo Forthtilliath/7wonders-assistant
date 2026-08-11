@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useMemo } from "react";
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { CategoryComparisonChart } from "@/components/game/CategoryComparisonChart";
 import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
 import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
@@ -24,7 +24,6 @@ export default function ResultsScreen() {
 	const playerIds = useGameStore((s) => s.playerIds);
 	const entries = useGameStore((s) => s.entries);
 	const finishGame = useGameStore((s) => s.finishGame);
-	const resetGame = useGameStore((s) => s.resetGame);
 	const allPlayers = usePlayersStore((s) => s.players);
 	// getRanking() recalcule à chaque appel : le sélectionner directement casserait la stabilité
 	// de référence attendue par le store et provoquerait une boucle de rendu infinie. On calcule
@@ -45,18 +44,12 @@ export default function ResultsScreen() {
 		router.dismissAll();
 	};
 
-	const confirmCancel = () => {
-		Alert.alert("Annuler la partie ?", "Les scores saisis seront perdus.", [
-			{ text: "Continuer la partie", style: "cancel" },
-			{
-				text: "Annuler la partie",
-				style: "destructive",
-				onPress: () => {
-					resetGame();
-					router.dismissAll();
-				},
-			},
-		]);
+	// Repart de la première catégorie pour reparcourir toute la saisie jusqu'aux résultats. Pas de
+	// confirmation nécessaire : contrairement à l'ancien "Annuler la partie", rien n'est perdu, on
+	// revient juste sur les écrans déjà remplis (dismissTo plutôt que push, pour ne pas en empiler
+	// des doublons).
+	const correctGame = () => {
+		router.dismissTo(`/game/score/${categories[0]}`);
 	};
 
 	return (
@@ -108,13 +101,13 @@ export default function ResultsScreen() {
 				))}
 			</ScrollView>
 
-			<Button label="Terminer et enregistrer la partie" onPress={confirmFinish} />
 			<Button
-				label="Annuler la partie"
+				label="Corriger la partie"
 				variant="ghost"
-				onPress={confirmCancel}
-				style={styles.cancelButton}
+				onPress={correctGame}
+				style={styles.correctButton}
 			/>
+			<Button label="Terminer et enregistrer la partie" onPress={confirmFinish} />
 		</ScreenContainer>
 	);
 }
@@ -156,8 +149,8 @@ function useStyles(colors: ThemeColors) {
 					fontSize: 15,
 					fontWeight: "700",
 				},
-				cancelButton: {
-					marginTop: SPACING.sm,
+				correctButton: {
+					marginBottom: SPACING.sm,
 				},
 			}),
 		[colors],
