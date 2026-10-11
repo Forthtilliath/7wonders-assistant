@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { BackupReminderBanner } from "@/components/backup/BackupReminderBanner";
 import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
@@ -133,6 +134,7 @@ export default function NewGameTab() {
 		<GestureDetector gesture={swipeGesture}>
 			<ScreenContainer>
 				<ScrollView contentContainerStyle={styles.content}>
+					<BackupReminderBanner />
 					{sortedGroups.length > 0 && (
 						<>
 							<Text style={styles.sectionTitle}>Groupes</Text>
