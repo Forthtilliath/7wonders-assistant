@@ -61,7 +61,7 @@ Fini les additions au dos de la feuille de score. **7 Wonders: Assistant** calcu
 
 ## 🛠️ Stack technique
 
-[Expo](https://expo.dev) (React Native) · [TypeScript](https://www.typescriptlang.org/) · [Expo Router](https://docs.expo.dev/router/introduction/) · [Zustand](https://github.com/pmndrs/zustand) · AsyncStorage · [Biome](https://biomejs.dev/) · Jest
+[Expo](https://expo.dev) (React Native) · [TypeScript](https://www.typescriptlang.org/) · [Expo Router](https://docs.expo.dev/router/introduction/) · [Zustand](https://github.com/pmndrs/zustand) · AsyncStorage · [Biome](https://biomejs.dev/) · Jest · [Testing Library](https://callstack.github.io/react-native-testing-library/)
 
 ## 🚀 Démarrer le projet
 
@@ -81,7 +81,7 @@ npx expo run:android
 Autres commandes utiles :
 
 ```bash
-npm test     # tests unitaires (Jest)
+npm test     # tests unitaires et fonctionnels (Jest + Testing Library)
 npm run lint # vérification du code (Biome)
 ```
 
