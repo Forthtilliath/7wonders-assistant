@@ -1,14 +1,15 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo } from "react";
-import { Alert, ScrollView, StyleSheet, Text } from "react-native";
-import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useMemo, useRef, useState } from "react";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, type View } from "react-native";
+import { ShareableRanking } from "@/components/game/ShareableRanking";
+import { ShareGameSheet } from "@/components/game/ShareGameSheet";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { MIN_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import { formatDate } from "@/lib/date";
 import { getGameRanking } from "@/lib/scoring/game";
 import { useGameStore } from "@/stores/gameStore";
 import { useHistoryStore } from "@/stores/historyStore";
@@ -23,6 +24,8 @@ export default function GameDetailScreen() {
 	const removeGame = useHistoryStore((s) => s.removeGame);
 	const players = usePlayersStore((s) => s.players);
 	const startNewGame = useGameStore((s) => s.startNewGame);
+	const rankingRef = useRef<View>(null);
+	const [shareVisible, setShareVisible] = useState(false);
 
 	if (!game) {
 		return (
@@ -81,20 +84,22 @@ export default function GameDetailScreen() {
 
 	return (
 		<ScreenContainer edges={["bottom", "left", "right"]}>
-			<Text style={styles.date}>{formatDate(game.createdAt)}</Text>
+			<Stack.Screen
+				options={{
+					headerRight: () => (
+						<Pressable
+							onPress={() => setShareVisible(true)}
+							hitSlop={12}
+							accessibilityRole="button"
+							accessibilityLabel="Partager la partie"
+						>
+							<Ionicons name="share-social-outline" size={24} color={colors.text} />
+						</Pressable>
+					),
+				}}
+			/>
 			<ScrollView contentContainerStyle={styles.list}>
-				{ranking.map((score) => {
-					const player = players.find((p) => p.id === score.playerId);
-					if (!player) return null;
-					return (
-						<RankedPlayerCard
-							key={score.playerId}
-							player={player}
-							score={score}
-							extensions={game.extensions}
-						/>
-					);
-				})}
+				<ShareableRanking ref={rankingRef} game={game} ranking={ranking} players={players} />
 			</ScrollView>
 			<Button
 				label="Rejouer avec les mêmes joueurs"
@@ -103,6 +108,12 @@ export default function GameDetailScreen() {
 				style={styles.replayButton}
 			/>
 			<Button label="Supprimer cette partie" variant="danger" onPress={confirmDelete} />
+			<ShareGameSheet
+				visible={shareVisible}
+				onClose={() => setShareVisible(false)}
+				game={game}
+				rankingRef={rankingRef}
+			/>
 		</ScreenContainer>
 	);
 }
@@ -111,14 +122,8 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
-				date: {
-					color: colors.textMuted,
-					fontSize: 14,
-					textTransform: "capitalize",
-					marginBottom: SPACING.md,
-				},
 				list: {
-					gap: SPACING.sm,
+					paddingTop: SPACING.sm,
 					paddingBottom: SPACING.md,
 				},
 				replayButton: {

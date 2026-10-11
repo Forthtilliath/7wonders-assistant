@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { CategoryComparisonChart } from "@/components/game/CategoryComparisonChart";
-import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
+import { ShareableRanking } from "@/components/game/ShareableRanking";
+import { ShareGameSheet } from "@/components/game/ShareGameSheet";
 import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
@@ -24,15 +25,19 @@ export default function ResultsScreen() {
 	const extensions = useGameStore((s) => s.extensions);
 	const playerIds = useGameStore((s) => s.playerIds);
 	const entries = useGameStore((s) => s.entries);
+	const startedAt = useGameStore((s) => s.startedAt);
 	const finishGame = useGameStore((s) => s.finishGame);
 	const allPlayers = usePlayersStore((s) => s.players);
 	// getRanking() recalcule à chaque appel : le sélectionner directement casserait la stabilité
 	// de référence attendue par le store et provoquerait une boucle de rendu infinie. On calcule
 	// donc le classement ici, mémorisé tant que les données brutes ne changent pas.
-	const ranking = useMemo(
-		() => getGameRanking({ id: "", createdAt: 0, extensions, playerIds, entries }),
-		[extensions, playerIds, entries],
+	const game = useMemo(
+		() => ({ id: "", createdAt: startedAt ?? Date.now(), extensions, playerIds, entries }),
+		[startedAt, extensions, playerIds, entries],
 	);
+	const ranking = useMemo(() => getGameRanking(game), [game]);
+	const rankingRef = useRef<View>(null);
+	const [shareVisible, setShareVisible] = useState(false);
 	const categories = useMemo(() => getOrderedCategories(extensions), [extensions]);
 	const gamePlayers = playerIds
 		.map((id) => allPlayers.find((p) => p.id === id))
@@ -58,31 +63,30 @@ export default function ResultsScreen() {
 			<Stack.Screen
 				options={{
 					headerRight: () => (
-						<Pressable
-							onPress={correctGame}
-							hitSlop={12}
-							accessibilityRole="button"
-							accessibilityLabel="Corriger la partie"
-						>
-							<Ionicons name="arrow-undo-outline" size={24} color={colors.text} />
-						</Pressable>
+						<View style={styles.headerActions}>
+							<Pressable
+								onPress={() => setShareVisible(true)}
+								hitSlop={12}
+								accessibilityRole="button"
+								accessibilityLabel="Partager la partie"
+							>
+								<Ionicons name="share-social-outline" size={24} color={colors.text} />
+							</Pressable>
+							<Pressable
+								onPress={correctGame}
+								hitSlop={12}
+								accessibilityRole="button"
+								accessibilityLabel="Corriger la partie"
+							>
+								<Ionicons name="arrow-undo-outline" size={24} color={colors.text} />
+							</Pressable>
+						</View>
 					),
 				}}
 			/>
 			<Text style={styles.title}>Classement</Text>
 			<ScrollView contentContainerStyle={styles.list}>
-				{ranking.map((score) => {
-					const player = allPlayers.find((p) => p.id === score.playerId);
-					if (!player) return null;
-					return (
-						<RankedPlayerCard
-							key={score.playerId}
-							player={player}
-							score={score}
-							extensions={extensions}
-						/>
-					);
-				})}
+				<ShareableRanking ref={rankingRef} game={game} ranking={ranking} players={allPlayers} />
 
 				<Text style={styles.sectionTitle}>Répartition par joueur</Text>
 				{gamePlayers.map((player) => {
@@ -117,6 +121,12 @@ export default function ResultsScreen() {
 			</ScrollView>
 
 			<Button label="Terminer et enregistrer la partie" onPress={confirmFinish} />
+			<ShareGameSheet
+				visible={shareVisible}
+				onClose={() => setShareVisible(false)}
+				game={game}
+				rankingRef={rankingRef}
+			/>
 		</ScreenContainer>
 	);
 }
@@ -125,6 +135,10 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
+				headerActions: {
+					flexDirection: "row",
+					gap: SPACING.lg,
+				},
 				title: {
 					color: colors.text,
 					fontSize: 22,

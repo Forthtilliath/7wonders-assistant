@@ -3,13 +3,12 @@ import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { CATEGORY_META, getOrderedCategories } from "@/constants/categories";
+import { RANK_MEDALS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { getCategoryScore, type RankedPlayerScore } from "@/lib/scoring/total";
 import type { ExtensionId, Player } from "@/types/game";
-
-const MEDALS: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
 
 type Props = {
 	player: Player;
@@ -26,7 +25,7 @@ export function RankedPlayerCard({ player, score, extensions }: Props) {
 	return (
 		<View style={[styles.card, score.rank === 1 && styles.cardWinner]}>
 			<View style={styles.header}>
-				<Text style={styles.rank}>{MEDALS[score.rank] ?? `#${score.rank}`}</Text>
+				<Text style={styles.rank}>{RANK_MEDALS[score.rank] ?? `#${score.rank}`}</Text>
 				<PlayerAvatar name={player.name} avatarUri={player.avatarUri} seed={player.id} size={44} />
 				<Text style={styles.name} numberOfLines={1}>
 					{player.name}
