@@ -1,0 +1,2 @@
+# Force LF line endings regardless of local core.autocrlf (Biome expects LF)
+* text=auto eol=lf
