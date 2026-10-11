@@ -20,8 +20,16 @@ jest.mock("@/lib/googleDrive", () => ({
 	uploadBackupFile: jest.fn(),
 }));
 
-import { APP_ID, type BackupData, DATA_VERSION } from "@/lib/backupSchema";
-import { connectGoogleDrive, connectWithRemoteBackup, syncCloudBackupNow } from "@/lib/cloudBackup";
+import { APP_ID, type BackupData, DATA_VERSION, ImportError } from "@/lib/backupSchema";
+import {
+	cloudErrorMessage,
+	connectGoogleDrive,
+	connectWithLocalData,
+	connectWithRemoteBackup,
+	disconnectGoogleDrive,
+	restoreFromCloud,
+	syncCloudBackupNow,
+} from "@/lib/cloudBackup";
 import * as googleAuth from "@/lib/googleAuth";
 import * as googleDrive from "@/lib/googleDrive";
 import { initialBackupState, useBackupStore } from "@/stores/backupStore";
@@ -142,5 +150,110 @@ describe("syncCloudBackupNow", () => {
 			cloudSyncPending: true,
 			cloudError: "Pas de connexion internet.",
 		});
+	});
+});
+
+describe("cloudErrorMessage", () => {
+	it.each([
+		[
+			new googleAuth.GoogleAuthError("Reconnecte ton compte Google."),
+			"Reconnecte ton compte Google.",
+		],
+		[new ImportError("Sauvegarde invalide."), "Sauvegarde invalide."],
+		[
+			new googleDrive.DriveError("refusé", 403),
+			"Google Drive a refusé l'accès. Reconnecte ton compte Google.",
+		],
+		[new googleDrive.DriveError("panne", 503), "Google Drive est momentanément indisponible."],
+		[new TypeError("Network request failed"), "Pas de connexion internet."],
+		[new Error("autre"), "La sauvegarde sur Google Drive a échoué."],
+	])("traduit %p en message affichable", (error, message) => {
+		expect(cloudErrorMessage(error)).toBe(message);
+	});
+});
+
+describe("connectGoogleDrive (cas limites)", () => {
+	it("relie directement le compte si la sauvegarde Drive est vide", async () => {
+		signIn.mockResolvedValue("a@b.c");
+		findFile.mockResolvedValue({ id: "f1", modifiedTime: "t" });
+		download.mockResolvedValue(JSON.stringify(remoteBackup([])));
+
+		await expect(connectGoogleDrive()).resolves.toEqual({ status: "connected", email: "a@b.c" });
+		expect(upload).toHaveBeenCalledWith("jeton", expect.any(String), "f1");
+	});
+
+	it("referme la session Google si la lecture du Drive échoue", async () => {
+		signIn.mockResolvedValue("a@b.c");
+		findFile.mockRejectedValue(new googleDrive.DriveError("panne", 503));
+
+		await expect(connectGoogleDrive()).rejects.toThrow("panne");
+		expect(googleAuth.signOutFromGoogle).toHaveBeenCalled();
+		expect(useBackupStore.getState().cloudAccount).toBeNull();
+	});
+});
+
+describe("connectWithLocalData", () => {
+	it("relie le compte et remplace la sauvegarde Drive par les données du téléphone", async () => {
+		findFile.mockResolvedValue({ id: "f1", modifiedTime: "t" });
+
+		await connectWithLocalData("a@b.c");
+
+		expect(useBackupStore.getState().cloudAccount).toEqual({ email: "a@b.c" });
+		expect(upload).toHaveBeenCalledWith("jeton", expect.stringContaining("Local"), "f1");
+	});
+});
+
+describe("restoreFromCloud", () => {
+	it("remplace les données locales par la sauvegarde Drive", async () => {
+		useBackupStore.getState().connectCloud("a@b.c");
+
+		const summary = await restoreFromCloud(remoteBackup([makePlayer("r", "Distant")]));
+
+		expect(summary).toEqual({ players: 1, history: 0, groups: 0 });
+		expect(usePlayersStore.getState().players.map((p) => p.name)).toEqual(["Distant"]);
+		expect(useBackupStore.getState().lastCloudBackupAt).toBe(1000);
+	});
+});
+
+describe("disconnectGoogleDrive", () => {
+	it("révoque l'accès Google et oublie le compte", async () => {
+		useBackupStore.getState().connectCloud("a@b.c");
+		useBackupStore.getState().markCloudPending();
+
+		await disconnectGoogleDrive();
+
+		expect(googleAuth.signOutFromGoogle).toHaveBeenCalled();
+		expect(useBackupStore.getState()).toMatchObject({
+			cloudAccount: null,
+			cloudSyncPending: false,
+		});
+	});
+});
+
+describe("syncCloudBackupNow (envois concurrents)", () => {
+	it("refait un envoi à la fin quand des données changent pendant l'envoi en cours", async () => {
+		useBackupStore.getState().connectCloud("a@b.c");
+		let finishFirstUpload: () => void = () => {};
+		findFile.mockResolvedValue(null);
+		upload
+			.mockImplementationOnce(
+				() =>
+					new Promise((resolve) => {
+						finishFirstUpload = () => resolve({ id: "f1", modifiedTime: "t" });
+					}),
+			)
+			.mockResolvedValue({ id: "f1", modifiedTime: "t" });
+
+		const first = syncCloudBackupNow();
+		await new Promise(process.nextTick);
+		// Un second envoi demandé pendant le premier n'est pas lancé en parallèle…
+		await expect(syncCloudBackupNow()).resolves.toBe(false);
+		expect(upload).toHaveBeenCalledTimes(1);
+
+		finishFirstUpload();
+		await expect(first).resolves.toBe(true);
+		await new Promise(process.nextTick);
+		// … mais relancé dès la fin du premier.
+		expect(upload).toHaveBeenCalledTimes(2);
 	});
 });
