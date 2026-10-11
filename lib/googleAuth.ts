@@ -45,6 +45,15 @@ export async function signInToGoogle(): Promise<string | null> {
 			if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
 				throw new GoogleAuthError("Les services Google Play sont indisponibles sur ce téléphone.");
 			}
+			// DEVELOPER_ERROR (code 10) : aucun client OAuth Android ne correspond au couple nom de
+			// package + SHA-1 de la clé qui a signé cet APK (voir README, "Configurer la sauvegarde
+			// Google Drive").
+			if (String(error.code) === "10" || error.message.includes("DEVELOPER_ERROR")) {
+				throw new GoogleAuthError(
+					"Google ne reconnaît pas cette version de l'app (client OAuth absent ou SHA-1 différente).",
+				);
+			}
+			throw new GoogleAuthError(`La connexion à Google a échoué (code ${error.code}).`);
 		}
 		throw new GoogleAuthError("La connexion à Google a échoué.");
 	}
