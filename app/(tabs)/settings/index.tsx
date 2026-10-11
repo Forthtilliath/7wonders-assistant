@@ -8,6 +8,7 @@ import { EXTENSION_LABELS } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { useBackupStore } from "@/stores/backupStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { useThemeStore } from "@/stores/themeStore";
 
@@ -17,6 +18,7 @@ export default function SettingsScreen() {
 	const router = useRouter();
 	const mode = useThemeStore((s) => s.mode);
 	const defaultExtensions = usePreferencesStore((s) => s.defaultExtensions);
+	const cloudConnected = useBackupStore((s) => s.cloudAccount != null);
 
 	const defaultExtensionsPreview =
 		defaultExtensions.length > 0
@@ -40,7 +42,9 @@ export default function SettingsScreen() {
 			<SettingsRow
 				icon="cloud-upload"
 				label="Gestion des sauvegardes"
-				value="Exporter ou restaurer tes données"
+				value={
+					cloudConnected ? "Sauvegarde Google Drive activée" : "Exporter ou restaurer tes données"
+				}
 				onPress={() => router.push("/settings/backup")}
 			/>
 			<SettingsRow
