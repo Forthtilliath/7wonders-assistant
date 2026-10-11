@@ -1,4 +1,5 @@
 import { DRIVE_SCOPE } from "@/lib/googleDrive";
+import { isNativeModuleAvailable } from "@/lib/nativeModules";
 
 type GoogleSigninModule = typeof import("@react-native-google-signin/google-signin");
 
@@ -19,16 +20,17 @@ let signinModule: GoogleSigninModule | null = null;
  */
 function loadGoogleSignin(): GoogleSigninModule {
 	if (signinModule) return signinModule;
-	try {
-		const loaded: GoogleSigninModule = require("@react-native-google-signin/google-signin");
-		loaded.GoogleSignin.configure({ scopes: [DRIVE_SCOPE] });
-		signinModule = loaded;
-		return loaded;
-	} catch {
+	// Vérification préalable indispensable : un `require` qui échoue hors du chargement initial est
+	// remonté par Metro comme erreur fatale, même entouré d'un try/catch.
+	if (!isNativeModuleAvailable("RNGoogleSignin")) {
 		throw new GoogleAuthError(
 			"La sauvegarde Google Drive n'est pas disponible dans cette version de l'app.",
 		);
 	}
+	const loaded: GoogleSigninModule = require("@react-native-google-signin/google-signin");
+	loaded.GoogleSignin.configure({ scopes: [DRIVE_SCOPE] });
+	signinModule = loaded;
+	return loaded;
 }
 
 /** Ouvre le sélecteur de compte Google. Renvoie l'e-mail du compte, ou null si annulé. */
