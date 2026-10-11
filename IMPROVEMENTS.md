@@ -40,11 +40,6 @@ _Rien en attente pour l'instant._
 _Rien d'identifié : les listes longues (Historique, Joueurs) utilisent déjà `FlatList` et les
 statistiques sont mémoïsées._
 
-- **Build native locale en échec** : `gradlew assembleDebug` échoue à la configuration CMake de
-  `react-native-worklets` et `react-native-screens` (« A restricted method in java.lang.System has
-  been called » : avertissement du JDK récent d'Android Studio traité comme une erreur). Les modules
-  Java/Kotlin compilent ; à corriger côté environnement (JDK 17/21 pour Gradle) avant la prochaine
-  release.
 - **Conflit de peer dependencies** préexistant (`react-dom@19.2.8` tiré par `expo-router` exige
   `react@^19.2.8`, l'app est en `19.2.3`) : `npm install <paquet>` échoue en ERESOLVE. Utiliser
   `--force` (garde les peers installés) et surtout pas `--legacy-peer-deps`, qui élague
