@@ -18,7 +18,7 @@
 
 Fini les additions au dos de la feuille de score. **7 Wonders: Assistant** calcule pour toi les points les plus fastidieux — sciences, militaire, trésor — pendant que tu restes concentré sur ta partie. Ajoute tes joueurs une fois, et l'appli se souvient de tout : favoris, historique, statistiques.
 
-100% hors ligne, 100% sur ton téléphone : aucune donnée ne quitte l'appareil.
+100% hors ligne, 100% sur ton téléphone : aucune donnée ne quitte l'appareil, sauf si tu actives la sauvegarde automatique sur ton propre Google Drive.
 
 ## 📱 En images
 
@@ -53,8 +53,10 @@ Fini les additions au dos de la feuille de score. **7 Wonders: Assistant** calcu
 - 👥 **Joueurs & groupes** — profils avec avatar et favoris, groupes réutilisables pour lancer une partie habituelle en un tap.
 - 📜 **Historique complet** — chaque partie est enregistrée avec son classement et le détail par catégorie.
 - 📊 **Statistiques** — meilleur score, plus longue série de victoires, taux de victoire par joueur, répartition des points par catégorie.
-- 💾 **Sauvegarde & export** — export/import JSON pour changer d'appareil, export CSV pour ouvrir tes scores dans un tableur.
-- 📴 **100% hors ligne** — aucun compte, aucun serveur, toutes les données restent sur le téléphone.
+- 📤 **Partage d'une partie** — le classement en texte (pour une messagerie), en image ou en CSV, directement depuis les résultats ou l'historique.
+- ☁️ **Sauvegarde automatique Google Drive (optionnelle)** — une fois ton compte relié, tes données sont envoyées après chaque partie dans un dossier privé de l'app sur ton Drive, et restaurables sur un nouveau téléphone.
+- 💾 **Sauvegarde & export** — export/import JSON pour changer d'appareil, export CSV pour ouvrir tes scores dans un tableur, et un rappel discret quand des parties n'ont pas été sauvegardées.
+- 📴 **Hors ligne** — aucun compte obligatoire, aucun serveur : sans Google Drive, toutes les données restent sur le téléphone.
 - 🌗 **Thème clair / sombre**.
 
 ## 🛠️ Stack technique
@@ -82,6 +84,16 @@ Autres commandes utiles :
 npm test     # tests unitaires (Jest)
 npm run lint # vérification du code (Biome)
 ```
+
+### Configurer la sauvegarde Google Drive
+
+La sauvegarde automatique utilise [Google Sign-In](https://react-native-google-signin.github.io/) et l'API Google Drive (scope `drive.appdata` : l'app n'accède qu'à son propre dossier caché, jamais aux autres fichiers du Drive). Pas de serveur ni de clé dans le code, mais un client OAuth doit être déclaré une fois dans la [console Google Cloud](https://console.cloud.google.com/) :
+
+1. Créer un projet, puis activer l'**API Google Drive** (*API et services ▸ Bibliothèque*).
+2. Configurer l'**écran de consentement OAuth** (type *Externe*), ajouter le scope `.../auth/drive.appdata`, puis le **publier en production** : en mode *Test*, l'accès expire au bout de 7 jours et seuls les testeurs déclarés peuvent se connecter.
+3. Créer un **ID client OAuth de type Android** avec le nom de package `com.forth.reactnative7wondersassistant` et l'empreinte **SHA-1 de la clé qui signe l'APK** (`cd android && ./gradlew signingReport`). Une empreinte par clé de signature : en ajouter un second si les APK de dev et de release sont signés différemment.
+
+Aucun identifiant à recopier dans l'app : Google reconnaît le client à partir du package et de la signature de l'APK. Un client mal configuré se traduit par l'erreur « La connexion à Google a échoué » au moment de relier le compte.
 
 ## 🎯 Périmètre
 
