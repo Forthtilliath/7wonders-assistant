@@ -1,30 +1,39 @@
-import {
-	GoogleSignin,
-	isErrorWithCode,
-	isSuccessResponse,
-	statusCodes,
-} from "@react-native-google-signin/google-signin";
 import { DRIVE_SCOPE } from "@/lib/googleDrive";
+
+type GoogleSigninModule = typeof import("@react-native-google-signin/google-signin");
 
 /** Connexion Google refusée ou impossible, avec un message affichable tel quel. */
 export class GoogleAuthError extends Error {}
 
-let configured = false;
+let signinModule: GoogleSigninModule | null = null;
 
 /**
+ * Chargement à la demande plutôt qu'un import en tête de fichier : la lib exige son module natif
+ * dès l'import, et ce fichier est importé (indirectement) par le layout racine. Sur un binaire
+ * compilé sans ce module (ancienne build de dev, Expo Go), un import statique ferait planter toute
+ * l'app au démarrage ; ici, seule la sauvegarde Google Drive est indisponible.
+ *
  * Pas de `webClientId` : l'app n'a pas de serveur, elle n'a besoin que d'un jeton d'accès Drive
  * côté appareil, ce que fournit le client OAuth "Android" (nom de package + empreinte SHA-1 de la
  * clé de signature) déclaré dans la console Google Cloud.
  */
-function ensureConfigured() {
-	if (configured) return;
-	GoogleSignin.configure({ scopes: [DRIVE_SCOPE] });
-	configured = true;
+function loadGoogleSignin(): GoogleSigninModule {
+	if (signinModule) return signinModule;
+	try {
+		const loaded: GoogleSigninModule = require("@react-native-google-signin/google-signin");
+		loaded.GoogleSignin.configure({ scopes: [DRIVE_SCOPE] });
+		signinModule = loaded;
+		return loaded;
+	} catch {
+		throw new GoogleAuthError(
+			"La sauvegarde Google Drive n'est pas disponible dans cette version de l'app.",
+		);
+	}
 }
 
 /** Ouvre le sélecteur de compte Google. Renvoie l'e-mail du compte, ou null si annulé. */
 export async function signInToGoogle(): Promise<string | null> {
-	ensureConfigured();
+	const { GoogleSignin, isErrorWithCode, isSuccessResponse, statusCodes } = loadGoogleSignin();
 	try {
 		await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 		const response = await GoogleSignin.signIn();
@@ -47,7 +56,7 @@ export async function signInToGoogle(): Promise<string | null> {
  * l'accès a été révoqué : l'utilisateur doit alors reconnecter son compte.
  */
 export async function getDriveAccessToken(): Promise<string> {
-	ensureConfigured();
+	const { GoogleSignin } = loadGoogleSignin();
 	try {
 		if (!GoogleSignin.getCurrentUser()) {
 			const response = await GoogleSignin.signInSilently();
@@ -65,12 +74,19 @@ export async function getDriveAccessToken(): Promise<string> {
 
 /** Jeton refusé par Drive (expiré côté serveur) : on l'oublie pour en obtenir un neuf. */
 export async function invalidateDriveAccessToken(token: string): Promise<void> {
-	await GoogleSignin.clearCachedAccessToken(token).catch(() => {});
+	await loadGoogleSignin()
+		.GoogleSignin.clearCachedAccessToken(token)
+		.catch(() => {});
 }
 
 /** Retire l'autorisation donnée à l'app (pas seulement la session locale), sans échouer. */
 export async function signOutFromGoogle(): Promise<void> {
-	ensureConfigured();
+	let GoogleSignin: GoogleSigninModule["GoogleSignin"];
+	try {
+		GoogleSignin = loadGoogleSignin().GoogleSignin;
+	} catch {
+		return;
+	}
 	await GoogleSignin.revokeAccess().catch(() => {});
 	await GoogleSignin.signOut().catch(() => {});
 }
