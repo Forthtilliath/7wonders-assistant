@@ -1,19 +1,20 @@
-import { useMemo, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text } from "react-native";
+import { useState } from "react";
+import { Alert, ScrollView, StyleSheet } from "react-native";
 import { CloudBackupSection } from "@/components/backup/CloudBackupSection";
+import {
+	SettingsCard,
+	SettingsCardHint,
+	SettingsCardStatus,
+} from "@/components/settings/SettingsCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
-import { useColors } from "@/hooks/useColors";
 import { exportData, exportGamesCsv, importData, restoreSafetyBackup } from "@/lib/backup";
 import { ImportError } from "@/lib/backupSchema";
 import { formatBackupDate } from "@/lib/date";
 import { useBackupStore } from "@/stores/backupStore";
 
 export default function BackupSettingsScreen() {
-	const colors = useColors();
-	const styles = useStyles(colors);
 	const [busy, setBusy] = useState(false);
 	const lastBackupAt = useBackupStore((s) => s.lastBackupAt);
 
@@ -95,57 +96,47 @@ export default function BackupSettingsScreen() {
 		<ScreenContainer>
 			<ScrollView contentContainerStyle={styles.container}>
 				<CloudBackupSection />
-				<Text style={styles.sectionTitle}>Sauvegarde manuelle</Text>
-				<Text style={styles.hint}>
-					Exporte un fichier JSON pour garder tes données en sécurité ou les transférer sur un autre
-					téléphone, ou un CSV pour ouvrir les scores dans un tableur. Dernière sauvegarde :{" "}
-					{formatBackupDate(lastBackupAt)}.
-				</Text>
-				<Button label="Exporter les données" onPress={handleExport} disabled={busy} />
-				<Button
-					label="Exporter les scores en CSV"
-					variant="secondary"
-					onPress={handleExportCsv}
-					disabled={busy}
-				/>
-				<Button
-					label="Importer une sauvegarde"
-					variant="secondary"
-					onPress={handleImport}
-					disabled={busy}
-				/>
-				<Button
-					label="Annuler le dernier import"
-					variant="ghost"
-					onPress={confirmRestoreSafetyBackup}
-					disabled={busy}
-				/>
+				<SettingsCard icon="document-text-outline" title="Sauvegarde manuelle">
+					<SettingsCardStatus icon="time-outline">
+						Dernière sauvegarde : {formatBackupDate(lastBackupAt)}
+					</SettingsCardStatus>
+					<SettingsCardHint>
+						Un fichier JSON pour changer de téléphone, ou un CSV pour ouvrir les scores dans un
+						tableur.
+					</SettingsCardHint>
+					<Button
+						label="Exporter les données"
+						variant="secondary"
+						onPress={handleExport}
+						disabled={busy}
+					/>
+					<Button
+						label="Exporter les scores en CSV"
+						variant="secondary"
+						onPress={handleExportCsv}
+						disabled={busy}
+					/>
+					<Button
+						label="Importer une sauvegarde"
+						variant="secondary"
+						onPress={handleImport}
+						disabled={busy}
+					/>
+					<Button
+						label="Annuler le dernier import"
+						variant="ghost"
+						onPress={confirmRestoreSafetyBackup}
+						disabled={busy}
+					/>
+				</SettingsCard>
 			</ScrollView>
 		</ScreenContainer>
 	);
 }
 
-function useStyles(colors: ThemeColors) {
-	return useMemo(
-		() =>
-			StyleSheet.create({
-				container: {
-					gap: SPACING.sm,
-					paddingBottom: SPACING.md,
-				},
-				sectionTitle: {
-					color: colors.textMuted,
-					fontSize: 14,
-					textTransform: "uppercase",
-					letterSpacing: 0.5,
-					marginTop: SPACING.md,
-				},
-				hint: {
-					color: colors.textMuted,
-					fontSize: 13,
-					marginBottom: SPACING.xs,
-				},
-			}),
-		[colors],
-	);
-}
+const styles = StyleSheet.create({
+	container: {
+		gap: SPACING.md,
+		paddingBottom: SPACING.md,
+	},
+});
