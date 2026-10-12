@@ -1,9 +1,11 @@
-import { Ionicons } from "@expo/vector-icons";
-import { useMemo, useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Alert } from "react-native";
+import {
+	SettingsCard,
+	SettingsCardHint,
+	SettingsCardStatus,
+} from "@/components/settings/SettingsCard";
 import { Button } from "@/components/ui/Button";
-import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import type { BackupData } from "@/lib/backupSchema";
 import {
@@ -26,7 +28,6 @@ function describeBackup(data: BackupData): string {
 /** Réglages ▸ Sauvegardes : connexion du compte Google et état de la sauvegarde automatique. */
 export function CloudBackupSection() {
 	const colors = useColors();
-	const styles = useStyles(colors);
 	const cloudAccount = useBackupStore((s) => s.cloudAccount);
 	const lastCloudBackupAt = useBackupStore((s) => s.lastCloudBackupAt);
 	const cloudSyncPending = useBackupStore((s) => s.cloudSyncPending);
@@ -132,37 +133,33 @@ export function CloudBackupSection() {
 
 	if (!cloudAccount) {
 		return (
-			<View style={styles.card}>
-				<Text style={styles.title}>Sauvegarde automatique</Text>
-				<Text style={styles.hint}>
+			<SettingsCard icon="cloud-upload-outline" title="Sauvegarde automatique">
+				<SettingsCardHint>
 					Relie ton compte Google : tes données sont envoyées automatiquement sur ton Google Drive
 					(dans un dossier privé réservé à l'app) après chaque partie. Pratique pour changer de
 					téléphone sans rien perdre.
-				</Text>
+				</SettingsCardHint>
 				<Button label="Connecter Google Drive" onPress={handleConnect} disabled={busy} />
-			</View>
+			</SettingsCard>
 		);
 	}
 
 	return (
-		<View style={styles.card}>
-			<Text style={styles.title}>Sauvegarde automatique</Text>
-			<View style={styles.statusRow}>
-				<Ionicons name="logo-google" size={16} color={colors.textMuted} />
-				<Text style={styles.status}>{cloudAccount.email}</Text>
-			</View>
-			<View style={styles.statusRow}>
-				<Ionicons
-					name={cloudError ? "cloud-offline" : "cloud-done"}
-					size={16}
-					color={cloudError ? colors.danger : colors.success}
-				/>
-				<Text style={styles.status}>
-					Dernier envoi : {formatBackupDate(lastCloudBackupAt)}
-					{cloudSyncPending && !cloudError ? " · envoi en cours…" : ""}
-				</Text>
-			</View>
-			{cloudError && <Text style={styles.error}>{cloudError}</Text>}
+		<SettingsCard icon="cloud-upload-outline" title="Sauvegarde automatique">
+			<SettingsCardStatus icon="logo-google">{cloudAccount.email}</SettingsCardStatus>
+			<SettingsCardStatus
+				icon={cloudError ? "cloud-offline" : "cloud-done"}
+				color={cloudError ? colors.danger : colors.success}
+			>
+				Dernier envoi : {formatBackupDate(lastCloudBackupAt)}
+				{cloudSyncPending && !cloudError ? " · envoi en cours…" : ""}
+			</SettingsCardStatus>
+			{cloudError && (
+				<SettingsCardStatus icon="alert-circle" color={colors.danger}>
+					{cloudError}
+				</SettingsCardStatus>
+			)}
+			<SettingsCardHint>Envoi automatique après chaque modification.</SettingsCardHint>
 			<Button
 				label="Sauvegarder maintenant"
 				variant="secondary"
@@ -176,43 +173,6 @@ export function CloudBackupSection() {
 				disabled={busy}
 			/>
 			<Button label="Déconnecter" variant="ghost" onPress={confirmDisconnect} disabled={busy} />
-		</View>
-	);
-}
-
-function useStyles(colors: ThemeColors) {
-	return useMemo(
-		() =>
-			StyleSheet.create({
-				card: {
-					backgroundColor: colors.surface,
-					borderRadius: RADIUS.md,
-					padding: SPACING.md,
-					gap: SPACING.sm,
-				},
-				title: {
-					color: colors.text,
-					fontSize: 16,
-					fontWeight: "700",
-				},
-				hint: {
-					color: colors.textMuted,
-					fontSize: 13,
-				},
-				statusRow: {
-					flexDirection: "row",
-					alignItems: "center",
-					gap: SPACING.sm,
-				},
-				status: {
-					color: colors.text,
-					fontSize: 14,
-				},
-				error: {
-					color: colors.danger,
-					fontSize: 13,
-				},
-			}),
-		[colors],
+		</SettingsCard>
 	);
 }
