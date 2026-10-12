@@ -38,6 +38,14 @@ async function withDriveToken<T>(call: (token: string) => Promise<T>): Promise<T
 export function cloudErrorMessage(error: unknown): string {
 	if (error instanceof GoogleAuthError || error instanceof ImportError) return error.message;
 	if (error instanceof DriveError) {
+		// Erreurs de configuration du projet Google Cloud ou de consentement : un message précis
+		// évite de chercher la cause à l'aveugle derrière un simple "accès refusé".
+		if (error.reason === "accessNotConfigured") {
+			return "L'API Google Drive n'est pas activée dans le projet Google Cloud de l'app.";
+		}
+		if (error.reason === "insufficientPermissions") {
+			return "L'accès à Google Drive n'a pas été autorisé. Reconnecte ton compte en acceptant l'accès à Drive.";
+		}
 		return error.status === 401 || error.status === 403
 			? "Google Drive a refusé l'accès. Reconnecte ton compte Google."
 			: "Google Drive est momentanément indisponible.";
