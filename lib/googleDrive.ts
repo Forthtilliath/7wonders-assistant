@@ -16,6 +16,8 @@ export class DriveError extends Error {
 	constructor(
 		message: string,
 		readonly status: number,
+		/** Raison détaillée donnée par Google (ex. "accessNotConfigured"), null si absente. */
+		readonly reason: string | null = null,
 	) {
 		super(message);
 	}
@@ -23,13 +25,28 @@ export class DriveError extends Error {
 
 export type DriveFile = { id: string; modifiedTime: string };
 
+/** Lit la raison d'un refus dans le corps d'erreur standard des API Google, sans jamais échouer. */
+async function readErrorReason(response: Response): Promise<string | null> {
+	try {
+		const data = (await response.json()) as { error?: { errors?: { reason?: string }[] } };
+		return data.error?.errors?.[0]?.reason ?? null;
+	} catch {
+		return null;
+	}
+}
+
 async function driveFetch(url: string, token: string, init: RequestInit = {}): Promise<Response> {
 	const response = await fetch(url, {
 		...init,
 		headers: { ...init.headers, Authorization: `Bearer ${token}` },
 	});
 	if (!response.ok) {
-		throw new DriveError(`Google Drive a répondu ${response.status}.`, response.status);
+		const reason = await readErrorReason(response);
+		throw new DriveError(
+			`Google Drive a répondu ${response.status}${reason ? ` (${reason})` : ""}.`,
+			response.status,
+			reason,
+		);
 	}
 	return response;
 }

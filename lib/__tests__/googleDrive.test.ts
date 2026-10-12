@@ -45,6 +45,27 @@ describe("findBackupFile", () => {
 		await expect(findBackupFile("jeton")).rejects.toMatchObject({ status: 401 });
 		await expect(findBackupFile("jeton")).rejects.toBeInstanceOf(DriveError);
 	});
+
+	it("garde la raison détaillée d'un refus donnée par Google", async () => {
+		mockFetch.mockResolvedValue(
+			respond({ error: { code: 403, errors: [{ reason: "accessNotConfigured" }] } }, 403),
+		);
+		await expect(findBackupFile("jeton")).rejects.toMatchObject({
+			status: 403,
+			reason: "accessNotConfigured",
+		});
+	});
+
+	it("tolère un corps d'erreur illisible", async () => {
+		mockFetch.mockResolvedValue({
+			ok: false,
+			status: 500,
+			json: async () => {
+				throw new SyntaxError("pas du JSON");
+			},
+		});
+		await expect(findBackupFile("jeton")).rejects.toMatchObject({ status: 500, reason: null });
+	});
 });
 
 describe("downloadBackupFile", () => {

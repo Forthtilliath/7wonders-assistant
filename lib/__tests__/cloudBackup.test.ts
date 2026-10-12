@@ -165,6 +165,14 @@ describe("cloudErrorMessage", () => {
 			"Google Drive a refusé l'accès. Reconnecte ton compte Google.",
 		],
 		[new googleDrive.DriveError("panne", 503), "Google Drive est momentanément indisponible."],
+		[
+			new googleDrive.DriveError("refusé", 403, "accessNotConfigured"),
+			"L'API Google Drive n'est pas activée dans le projet Google Cloud de l'app.",
+		],
+		[
+			new googleDrive.DriveError("refusé", 403, "insufficientPermissions"),
+			"L'accès à Google Drive n'a pas été autorisé. Reconnecte ton compte en acceptant l'accès à Drive.",
+		],
 		[new TypeError("Network request failed"), "Pas de connexion internet."],
 		[new Error("autre"), "La sauvegarde sur Google Drive a échoué."],
 	])("traduit %p en message affichable", (error, message) => {
