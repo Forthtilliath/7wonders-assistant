@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { EXTENSION_CATEGORIES } from "@/constants/categories";
 import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/armadaMigration";
+import { addBabelCategoryToEntries, type PreBabelEntry } from "@/lib/babelMigration";
 import { createId } from "@/lib/uuid";
 import {
 	createEmptyPlayerGameEntry,
@@ -43,22 +44,25 @@ export const initialGameState: State = {
 
 // Bump on any breaking change to PlayerGameEntry's shape. A version without a migration step just
 // discards the in-progress game rather than crashing on stale/incompatible data.
-export const GAME_STORE_VERSION = 6;
+export const GAME_STORE_VERSION = 7;
 
 /** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
 export function migrateGameStoreData(persistedState: unknown, version: number): State {
 	if (version === GAME_STORE_VERSION) return persistedState as State;
 
-	if (version === 5) {
-		// v5 -> v6 : renommage des catégories Armada ("armada" -> "naval", "islands" -> "armada"),
-		// sans perdre la partie en cours.
-		const old = persistedState as Omit<State, "entries"> & {
-			entries: Record<string, LegacyArmadaEntry>;
-		};
-		return { ...old, entries: renameArmadaCategoriesInEntries(old.entries) };
-	}
+	if (version !== 5 && version !== 6) return initialGameState;
 
-	return initialGameState;
+	// Étapes enchaînées, sans perdre la partie en cours.
+	const old = persistedState as Omit<State, "entries"> & {
+		entries: Record<string, LegacyArmadaEntry | PreBabelEntry>;
+	};
+	let entries = old.entries as Record<string, PreBabelEntry>;
+	if (version === 5) {
+		// v5 -> v6 : renommage des catégories Armada ("armada" -> "naval", "islands" -> "armada").
+		entries = renameArmadaCategoriesInEntries(old.entries as Record<string, LegacyArmadaEntry>);
+	}
+	// v6 -> v7 : ajout de la catégorie Babel (tuiles posées).
+	return { ...old, entries: addBabelCategoryToEntries(entries) };
 }
 
 export const useGameStore = create<State & Actions>()(
@@ -93,9 +97,11 @@ export const useGameStore = create<State & Actions>()(
 				const categoriesToReset = removedExtensions.flatMap((ext) => EXTENSION_CATEGORIES[ext]);
 				const nextEntries: Record<string, PlayerGameEntry> = {};
 				for (const [playerId, entry] of Object.entries(entries)) {
+					// Valeur d'une saisie neuve plutôt qu'un `{ points: 0 }` en dur : Babel compte des tuiles.
+					const empty = createEmptyPlayerGameEntry(playerId);
 					let patched = entry;
 					for (const category of categoriesToReset) {
-						patched = { ...patched, [category]: { points: 0 } };
+						patched = { ...patched, [category]: empty[category] };
 					}
 					nextEntries[playerId] = patched;
 				}

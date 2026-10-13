@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/armadaMigration";
+import { addBabelCategoryToEntries, type PreBabelEntry } from "@/lib/babelMigration";
 import type { Game } from "@/types/game";
 
 type State = {
@@ -16,8 +17,9 @@ type Actions = {
 };
 
 // Bump on any breaking change to Game/PlayerGameEntry's shape.
-export const HISTORY_STORE_VERSION = 6;
+export const HISTORY_STORE_VERSION = 7;
 
+type GameV6 = Omit<Game, "entries"> & { entries: Record<string, PreBabelEntry> };
 type GameV5 = Omit<Game, "entries"> & { entries: Record<string, LegacyArmadaEntry> };
 type GameV4 = Omit<Game, "entries"> & {
 	entries: Record<string, Omit<LegacyArmadaEntry, "islands">>;
@@ -27,6 +29,10 @@ type GameV4 = Omit<Game, "entries"> & {
 export function migrateHistoryStoreData(persistedState: unknown, version: number): State {
 	if (version === HISTORY_STORE_VERSION) return persistedState as State;
 	if (version < 4) return { games: [] };
+
+	if (version === 6) {
+		return { games: addBabelCategoryToHistory((persistedState as { games: GameV6[] }).games) };
+	}
 
 	let games = (persistedState as { games: GameV5[] }).games;
 
@@ -42,9 +48,16 @@ export function migrateHistoryStoreData(persistedState: unknown, version: number
 	}
 
 	// v5 -> v6 : renommage des catégories Armada ("armada" -> "naval", "islands" -> "armada").
-	return {
-		games: games.map((g) => ({ ...g, entries: renameArmadaCategoriesInEntries(g.entries) })),
-	};
+	const gamesV6: GameV6[] = games.map((g) => ({
+		...g,
+		entries: renameArmadaCategoriesInEntries(g.entries),
+	}));
+	// v6 -> v7 : ajout de la catégorie Babel.
+	return { games: addBabelCategoryToHistory(gamesV6) };
+}
+
+function addBabelCategoryToHistory(games: GameV6[]): Game[] {
+	return games.map((g) => ({ ...g, entries: addBabelCategoryToEntries(g.entries) }));
 }
 
 export const useHistoryStore = create<State & Actions>()(

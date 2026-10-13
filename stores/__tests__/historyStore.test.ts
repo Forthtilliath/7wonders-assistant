@@ -52,7 +52,7 @@ describe("migrateHistoryStoreData", () => {
 
 	it("migre la v4 (sans plateau Armada) jusqu'à la version courante, sans perdre l'historique", () => {
 		// En v4, "armada" contenait les jetons navals et le plateau n'existait pas encore.
-		const { naval: _naval, ...v4Entry } = { ...createEmptyPlayerGameEntry("p1") };
+		const { naval: _naval, babel: _babel, ...v4Entry } = { ...createEmptyPlayerGameEntry("p1") };
 		const v4State = {
 			games: [
 				{
@@ -67,11 +67,17 @@ describe("migrateHistoryStoreData", () => {
 
 		expect(migrated.games[0].entries.p1.naval).toEqual({ points: 4 });
 		expect(migrated.games[0].entries.p1.armada).toEqual({ points: 0 });
+		expect(migrated.games[0].entries.p1.babel).toEqual({ tiles: 0 });
 		expect(migrated.games[0].id).toBe("1");
 	});
 
 	it("renomme les catégories Armada venant de la v5 (jetons navals et plateau)", () => {
-		const { naval: _naval, armada: _armada, ...rest } = createEmptyPlayerGameEntry("p1");
+		const {
+			naval: _naval,
+			armada: _armada,
+			babel: _babel,
+			...rest
+		} = createEmptyPlayerGameEntry("p1");
 		const v5Entry = { ...rest, armada: { points: 4 }, islands: { points: 6 } };
 		const v5State = {
 			games: [{ ...makeGame("1"), extensions: ["armada"], entries: { p1: v5Entry } }],
@@ -83,7 +89,17 @@ describe("migrateHistoryStoreData", () => {
 			...rest,
 			naval: { points: 4 },
 			armada: { points: 6 },
+			babel: { tiles: 0 },
 		});
+	});
+
+	it("ajoute la catégorie Babel aux parties venant de la v6", () => {
+		const { babel: _babel, ...v6Entry } = createEmptyPlayerGameEntry("p1");
+		const v6State = { games: [{ ...makeGame("1"), playerIds: ["p1"], entries: { p1: v6Entry } }] };
+
+		const migrated = migrateHistoryStoreData(v6State, 6);
+
+		expect(migrated.games[0].entries.p1).toEqual({ ...v6Entry, babel: { tiles: 0 } });
 	});
 
 	it("réinitialise sur une version plus ancienne encore, sans étape de migration connue", () => {
