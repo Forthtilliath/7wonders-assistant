@@ -139,7 +139,7 @@ export const EXTENSION_CATEGORIES: Record<ExtensionId, ExtensionCategoryId[]> = 
 	leaders: ["leaders"],
 	cities: ["cities"],
 	babel: ["babel"],
-	// Aucune étape de score : les gains et pertes des projets Edifice se comptent avec les pièces.
+	// Aucune étape de score : pions Participation et jetons Dette d'Edifice se comptent avec le trésor.
 	edifice: [],
 	armada: ["naval", "armada"],
 };

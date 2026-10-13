@@ -213,7 +213,7 @@ describe("Saisie des scores par catégorie", () => {
 		await renderCategory("treasury", ["edifice"]);
 
 		expect(screen.getByText("Étape 2 / 7")).toBeOnTheScreen();
-		expect(screen.getByText(/Edifice : compte les pièces/)).toBeOnTheScreen();
+		expect(screen.getByText(/Edifice : ajoute tes pions Participation/)).toBeOnTheScreen();
 	});
 
 	it("ne propose que les extensions de l'édition et signale Babel + Edifice", async () => {

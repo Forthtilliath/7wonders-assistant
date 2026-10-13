@@ -67,7 +67,7 @@ export function EditExtensionsSheet({
 				`Retire : ${removedCategories.map((c) => CATEGORY_META[c].label).join(", ")} (les points déjà saisis pour ces catégories seront remis à zéro).`,
 			);
 		}
-		// Edifice n'apporte aucune étape de score (ses points se comptent avec les pièces).
+		// Edifice n'apporte aucune étape de score (ses pions et jetons se comptent avec le trésor).
 		if (lines.length === 0) lines.push("Aucune étape de score n'est ajoutée ni retirée.");
 		if (warning) lines.push(warning);
 

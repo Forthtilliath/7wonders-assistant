@@ -61,7 +61,8 @@ export type BaseCategoryId = (typeof BASE_CATEGORIES)[number];
 export const EXTRA_CATEGORIES = ["naval"] as const;
 export type ExtraCategoryId = (typeof EXTRA_CATEGORIES)[number];
 
-/** Extensions sans catégorie de score à elles : les points d'Edifice se comptent avec les pièces. */
+/** Extensions sans catégorie de score à elles : pions Participation et jetons Dette
+ * d'Edifice se comptent avec le trésor. */
 export type ExtensionWithoutCategory = "edifice";
 
 export type CategoryId =
