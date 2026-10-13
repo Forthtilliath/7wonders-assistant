@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { TextField } from "@/components/ui/TextField";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
-import { MAX_WONDER_NAME_LENGTH } from "@/constants/wonders";
+import { MAX_WONDER_NAME_LENGTH, OFFICIAL_WONDERS } from "@/constants/wonders";
 import { useColors } from "@/hooks/useColors";
 import {
 	getAvailableWonders,
@@ -25,7 +25,7 @@ type Props = {
 
 /**
  * Champ de nom de merveille : propose les merveilles jouables dans la partie (édition, extensions
- * actives, merveilles perso des extensions activées) encore libres, puis les noms déjà saisis dans l'historique, pour
+ * actives, merveilles perso des extensions non officielles cochées) encore libres, puis les noms déjà saisis dans l'historique, pour
  * réduire les doublons dus à des fautes de frappe dans les statistiques par merveille. Un nom
  * inconnu peut être ajouté aux merveilles perso, pour le retrouver dans les prochaines parties.
  */
@@ -35,18 +35,19 @@ export function WonderNameField({ playerId, value, onChange }: Props) {
 	const games = useHistoryStore((s) => s.games);
 	const edition = useGameStore((s) => s.edition);
 	const extensions = useGameStore((s) => s.extensions);
+	const wonderPacks = useGameStore((s) => s.wonderPacks);
 	const entries = useGameStore((s) => s.entries);
 	const customWonders = useWondersStore((s) => s.customWonders);
-	const packs = useWondersStore((s) => s.packs);
 	const addCustomWonder = useWondersStore((s) => s.addCustomWonder);
 
 	const suggestions = useMemo(() => {
-		const options = getAvailableWonders(edition, extensions, customWonders, packs);
+		const options = getAvailableWonders(edition, extensions, customWonders, wonderPacks);
 		const takenNames = Object.values(entries)
 			.filter((entry) => entry.playerId !== playerId)
 			.map((entry) => entry.wonder.name);
-		return getWonderNameSuggestions({ options, games, query: value, takenNames });
-	}, [edition, extensions, customWonders, packs, entries, playerId, games, value]);
+		const knownNames = [...OFFICIAL_WONDERS, ...customWonders].map((w) => w.name);
+		return getWonderNameSuggestions({ options, games, query: value, takenNames, knownNames });
+	}, [edition, extensions, customWonders, wonderPacks, entries, playerId, games, value]);
 
 	const canAddCustom =
 		value.trim() !== "" && getCustomWonderNameError(value, customWonders) === null;

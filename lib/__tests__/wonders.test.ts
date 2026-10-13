@@ -71,17 +71,13 @@ describe("getAvailableWonders", () => {
 		expect(names(available).filter((n) => normalizeWonderName(n) === "rhodes")).toEqual(["Rhodes"]);
 	});
 
-	it("écarte les merveilles des extensions non officielles désactivées", () => {
-		const packs = [
-			{ id: "on", name: "Wonders Box", enabled: true, createdAt: 0 },
-			{ id: "off", name: "Brouillons", enabled: false, createdAt: 0 },
-		];
+	it("ne propose que les merveilles des extensions non officielles cochées pour la partie", () => {
 		const wonders = [
-			{ ...custom("Atlantide"), packId: "on" },
-			{ ...custom("Ys"), packId: "off" },
+			{ ...custom("Atlantide"), packId: "box" },
+			{ ...custom("Ys"), packId: "drafts" },
 			custom("Lémurie"),
 		];
-		const available = names(getAvailableWonders("second", [], wonders, packs));
+		const available = names(getAvailableWonders("second", [], wonders, ["box"]));
 		expect(available).toEqual(expect.arrayContaining(["Atlantide", "Lémurie"]));
 		expect(available).not.toContain("Ys");
 	});
@@ -117,6 +113,15 @@ describe("getWonderNameSuggestions", () => {
 			"Abydos",
 			"Babel perso",
 		]);
+	});
+
+	it("ne suggère pas depuis l'historique une merveille connue mais non jouable dans la partie", () => {
+		const games = [makeGame("g1", ["Stonehenge", "Atlantide", "Stonehenge bis"])];
+		const knownNames = ["Stonehenge", "Atlantide"];
+		expect(getWonderNameSuggestions({ options, games, query: "st", knownNames })).toEqual([
+			"Stonehenge bis",
+		]);
+		expect(getWonderNameSuggestions({ options, games, query: "atl", knownNames })).toEqual([]);
 	});
 
 	it("n'inclut pas le nom déjà tapé exactement, ni les entrées vides de l'historique", () => {

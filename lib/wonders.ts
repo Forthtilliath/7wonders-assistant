@@ -1,5 +1,5 @@
 import { MAX_WONDER_NAME_LENGTH, OFFICIAL_WONDERS, type WonderSource } from "@/constants/wonders";
-import type { CustomWonder, CustomWonderPack, ExtensionId, Game, GameEdition } from "@/types/game";
+import type { CustomWonder, ExtensionId, Game, GameEdition } from "@/types/game";
 
 /** Merveille proposée à la saisie, avec son origine. */
 export type WonderOption = {
@@ -14,15 +14,16 @@ export function normalizeWonderName(name: string): string {
 
 /**
  * Merveilles jouables dans une partie : les plateaux officiels de l'édition choisie (jeu de base,
- * extensions actives, Wonder Pack) puis celles de l'utilisateur hors extensions non officielles
- * désactivées, par ordre alphabétique. Une merveille perso homonyme d'une officielle n'est pas
- * répétée.
+ * extensions actives, Wonder Pack) puis celles de l'utilisateur sans extension ou d'une extension
+ * non officielle cochée pour la partie, par ordre alphabétique. Une merveille perso homonyme d'une
+ * officielle n'est pas répétée.
  */
 export function getAvailableWonders(
 	edition: GameEdition,
 	extensions: readonly ExtensionId[],
 	customWonders: readonly CustomWonder[],
-	packs: readonly CustomWonderPack[],
+	/** Extensions non officielles cochées pour la partie. */
+	wonderPackIds: readonly string[],
 ): WonderOption[] {
 	const official: WonderOption[] = OFFICIAL_WONDERS.filter(
 		(wonder) =>
@@ -33,9 +34,8 @@ export function getAvailableWonders(
 	).map(({ name, source }) => ({ name, source }));
 
 	const officialKeys = new Set(official.map((w) => normalizeWonderName(w.name)));
-	const enabledPackIds = new Set(packs.filter((p) => p.enabled).map((p) => p.id));
 	const custom: WonderOption[] = customWonders
-		.filter((w) => !w.packId || enabledPackIds.has(w.packId))
+		.filter((w) => !w.packId || wonderPackIds.includes(w.packId))
 		.filter((w) => !officialKeys.has(normalizeWonderName(w.name)))
 		.map((w) => ({ name: w.name, source: "custom" as const }))
 		.sort((a, b) => a.name.localeCompare(b.name));
@@ -50,6 +50,9 @@ type SuggestionsInput = {
 	query: string;
 	/** Merveilles déjà choisies par les autres joueurs de la partie : un plateau ne se joue qu'une fois. */
 	takenNames?: readonly string[];
+	/** Merveilles connues (catalogue officiel + merveilles perso) : celles de l'historique qui ne sont
+	 * pas jouables dans la partie (autre édition, extension non cochée) ne sont pas suggérées. */
+	knownNames?: readonly string[];
 	limit?: number;
 };
 
@@ -57,13 +60,14 @@ type SuggestionsInput = {
  * Suggestions de noms pour le champ Merveille, pour éviter les doublons dus à des fautes de frappe
  * dans les statistiques par merveille. Champ vide : toutes les merveilles jouables encore libres.
  * Sinon : celles qui contiennent la recherche, merveilles jouables d'abord puis noms de
- * l'historique, sans répéter le nom déjà tapé.
+ * l'historique (hors merveilles connues non jouables dans la partie), sans répéter le nom déjà tapé.
  */
 export function getWonderNameSuggestions({
 	options,
 	games,
 	query,
 	takenNames = [],
+	knownNames = [],
 	limit = 8,
 }: SuggestionsInput): string[] {
 	const excluded = new Set(takenNames.map(normalizeWonderName));
@@ -76,6 +80,10 @@ export function getWonderNameSuggestions({
 		if (key && !namesByKey.has(key)) namesByKey.set(key, name.trim());
 	};
 	for (const option of options) add(option.name);
+	const playableKeys = new Set(namesByKey.keys());
+	const unplayable = new Set(
+		knownNames.map(normalizeWonderName).filter((key) => !playableKeys.has(key)),
+	);
 
 	if (!normalizedQuery) {
 		return Array.from(namesByKey.entries())
@@ -85,7 +93,7 @@ export function getWonderNameSuggestions({
 
 	const historyNames = games
 		.flatMap((game) => Object.values(game.entries).map((entry) => entry.wonder.name))
-		.filter((name) => name.trim())
+		.filter((name) => name.trim() && !unplayable.has(normalizeWonderName(name)))
 		.sort((a, b) => a.localeCompare(b));
 	for (const name of historyNames) add(name);
 

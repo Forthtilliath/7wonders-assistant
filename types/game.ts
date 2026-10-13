@@ -30,17 +30,19 @@ export type PlayerGroup = {
 };
 
 /** Extension non officielle créée par l'utilisateur (ex. Wonders Box, ses propres créations) pour
- * regrouper des merveilles perso. Désactivée, ses merveilles ne sont plus proposées à la saisie. */
+ * regrouper des merveilles perso. Elle se coche au lancement d'une partie, comme une extension
+ * officielle, et seules les merveilles des extensions cochées sont alors proposées. */
 export type CustomWonderPack = {
 	id: string;
 	name: string;
-	enabled: boolean;
+	/** Cochée d'office au lancement d'une nouvelle partie. */
+	selectedByDefault: boolean;
 	createdAt: number;
 };
 
 /** Merveille ajoutée par l'utilisateur, rattachée à aucune extension officielle (contenu
  * communautaire, promo absente du catalogue…). Sans `packId`, elle est proposée dans toutes les
- * parties ; sinon, tant que son extension non officielle est activée. */
+ * parties ; sinon, dans les parties où son extension non officielle est cochée. */
 export type CustomWonder = {
 	id: string;
 	name: string;
@@ -133,6 +135,9 @@ export type Game = {
 	/** Absente des parties enregistrées avant le choix de l'édition. */
 	edition?: GameEdition;
 	extensions: ExtensionId[];
+	/** Extensions non officielles jouées (ids de `CustomWonderPack`, qui peut avoir été supprimée
+	 * depuis). Absente des parties enregistrées avant leur ajout. */
+	wonderPacks?: string[];
 	playerIds: string[];
 	entries: Record<string, PlayerGameEntry>;
 };

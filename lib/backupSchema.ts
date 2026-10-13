@@ -193,6 +193,9 @@ const gameSchema = z.object({
 	// Facultative : absente des parties enregistrées avant le choix de l'édition.
 	edition: z.enum(["first", "second"]).optional(),
 	extensions: z.array(extensionIdSchema).max(10),
+	// Facultative : absente des parties enregistrées avant les extensions non officielles. Une
+	// extension supprimée depuis reste citée par ses parties : pas de contrôle de correspondance.
+	wonderPacks: z.array(idSchema).max(MAX_WONDER_PACKS).optional(),
 	playerIds: z.array(idSchema).max(20),
 	entries: boundedRecord(playerGameEntrySchema, 20),
 });
@@ -216,7 +219,7 @@ const customWonderSchema = z.object({
 const customWonderPackSchema = z.object({
 	id: idSchema,
 	name: z.string().trim().min(1).max(MAX_WONDER_PACK_NAME_LENGTH),
-	enabled: z.boolean(),
+	selectedByDefault: z.boolean(),
 	createdAt: timestampSchema,
 });
 
