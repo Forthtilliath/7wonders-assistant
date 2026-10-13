@@ -7,6 +7,7 @@ import { TextField } from "@/components/ui/TextField";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { storeAvatar } from "@/lib/avatarFiles";
 
 type Props = {
 	/** Id du joueur en cours de modification, pour que la couleur de son avatar reste la même
@@ -60,8 +61,11 @@ export function PlayerForm({
 			aspect: [1, 1],
 			quality: 0.7,
 		});
-		if (!result.canceled && result.assets[0]) {
-			setAvatarUri(result.assets[0].uri);
+		if (result.canceled || !result.assets[0]) return;
+		try {
+			setAvatarUri(await storeAvatar(result.assets[0].uri));
+		} catch {
+			Alert.alert("Photo non enregistrée", "Impossible d'enregistrer cette photo. Réessaie.");
 		}
 	};
 

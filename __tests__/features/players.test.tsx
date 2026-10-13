@@ -4,6 +4,7 @@ import { Linking } from "react-native";
 import PlayersScreen from "@/app/(tabs)/players";
 import EditPlayerScreen from "@/app/players/[id]";
 import NewPlayerScreen from "@/app/players/new";
+import { storeAvatar } from "@/lib/avatarFiles";
 import { usePlayersStore } from "@/stores/playersStore";
 import { mockRouter, setSearchParams } from "@/test-utils/expoRouter";
 import { mockAlert, pressAlertButton, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
@@ -11,6 +12,10 @@ import { mockAlert, pressAlertButton, resetAllStores, seedPlayers } from "@/test
 jest.mock("expo-image-picker", () => ({
 	requestMediaLibraryPermissionsAsync: jest.fn(),
 	launchImageLibraryAsync: jest.fn(),
+}));
+
+jest.mock("@/lib/avatarFiles", () => ({
+	storeAvatar: jest.fn(async () => "file:///documents/avatars/stored.jpg"),
 }));
 
 const players = () => usePlayersStore.getState().players;
@@ -114,7 +119,7 @@ describe("Joueurs", () => {
 			expect(mockRouter.back).toHaveBeenCalled();
 		});
 
-		it("choisit une photo d'avatar dans la galerie", async () => {
+		it("choisit une photo d'avatar dans la galerie et l'enregistre dans l'app", async () => {
 			const user = userEvent.setup();
 			jest.mocked(ImagePicker.requestMediaLibraryPermissionsAsync).mockResolvedValue({
 				granted: true,
@@ -129,7 +134,8 @@ describe("Joueurs", () => {
 			await user.type(screen.getByPlaceholderText("Ex : Alex"), "Alice");
 			await user.press(screen.getByRole("button", { name: "Créer le joueur" }));
 
-			expect(players()[0].avatarUri).toBe("file:///avatar.jpg");
+			expect(storeAvatar).toHaveBeenCalledWith("file:///avatar.jpg");
+			expect(players()[0].avatarUri).toBe("file:///documents/avatars/stored.jpg");
 		});
 
 		it("propose d'ouvrir les réglages si l'accès aux photos est bloqué", async () => {
