@@ -1,4 +1,4 @@
-import { render, screen, userEvent, within } from "@testing-library/react-native";
+import { act, render, screen, userEvent, within } from "@testing-library/react-native";
 import StatsScreen from "@/app/(tabs)/stats";
 import { useHistoryStore } from "@/stores/historyStore";
 import { makeGame, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
@@ -32,9 +32,13 @@ function seedHistory() {
 /** Contenu de la feuille de filtres, repérée par le titre de sa section joueurs. */
 const playerPicker = (title = "Joueur") => within(screen.getByText(title).parent!);
 
-/** Ferme la feuille en touchant le fond : masqué aux requêtes par `accessibilityViewIsModal`. */
-const closeSheet = () =>
-	userEvent.press(screen.getByRole("button", { name: "Fermer", includeHiddenElements: true }));
+/** Ferme la feuille comme le bouton retour d'Android (`onRequestClose` de la modale ouverte). */
+const closeSheet = async () => {
+	const [modal] = screen.container.queryAll(
+		(node) => node.type === "Modal" && node.props.visible === true,
+	);
+	await act(() => modal.props.onRequestClose());
+};
 
 describe("Statistiques", () => {
 	beforeEach(() => {

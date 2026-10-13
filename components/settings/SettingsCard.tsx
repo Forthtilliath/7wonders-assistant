@@ -1,7 +1,12 @@
-import { Ionicons } from "@expo/vector-icons";
-import type { PropsWithChildren } from "react";
+import type { Ionicons } from "@expo/vector-icons";
+import {
+	SettingsCard as KitSettingsCard,
+	SettingsCardHint as KitSettingsCardHint,
+	SettingsCardStatus as KitSettingsCardStatus,
+} from "@forthtilliath/react-native-kit/components/settings/SettingsCard";
+import type { PropsWithChildren, ReactNode } from "react";
 import { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -13,26 +18,27 @@ type Props = PropsWithChildren<{
 	title: string;
 }>;
 
-/** Carte de réglages : en-tête (icône + titre) puis contenu libre (lignes d'état, texte, boutons). */
+/** Carte de réglages (`SettingsCard` de react-native-kit) aux couleurs de l'app. */
 export function SettingsCard({ icon, title, children }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 
 	return (
-		<View style={styles.card}>
-			<View style={styles.header}>
-				<Ionicons name={icon} size={20} color={colors.primary} />
-				<Text style={styles.title}>{title}</Text>
-			</View>
+		<KitSettingsCard
+			icon={icon}
+			title={title}
+			iconColor={colors.primary}
+			styles={{ card: styles.card, header: styles.header, title: styles.title }}
+		>
 			{children}
-		</View>
+		</KitSettingsCard>
 	);
 }
 
 type StatusProps = {
 	icon: IconName;
 	color?: string;
-	children: React.ReactNode;
+	children: ReactNode;
 };
 
 /** Ligne d'état d'une carte : petite icône suivie d'un texte (compte relié, date de sauvegarde…). */
@@ -41,19 +47,22 @@ export function SettingsCardStatus({ icon, color, children }: StatusProps) {
 	const styles = useStyles(colors);
 
 	return (
-		<View style={styles.statusRow}>
-			<Ionicons name={icon} size={16} color={color ?? colors.textMuted} />
-			<Text style={styles.status}>{children}</Text>
-		</View>
+		<KitSettingsCardStatus
+			icon={icon}
+			iconColor={color ?? colors.textMuted}
+			styles={{ row: styles.statusRow, text: styles.status }}
+		>
+			{children}
+		</KitSettingsCardStatus>
 	);
 }
 
 /** Texte explicatif d'une carte, en retrait par rapport aux lignes d'état. */
-export function SettingsCardHint({ children }: { children: React.ReactNode }) {
+export function SettingsCardHint({ children }: { children: ReactNode }) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 
-	return <Text style={styles.hint}>{children}</Text>;
+	return <KitSettingsCardHint style={styles.hint}>{children}</KitSettingsCardHint>;
 }
 
 function useStyles(colors: ThemeColors) {
@@ -63,12 +72,11 @@ function useStyles(colors: ThemeColors) {
 				card: {
 					backgroundColor: colors.surface,
 					borderRadius: RADIUS.md,
+					borderWidth: 0,
 					padding: SPACING.md,
 					gap: SPACING.sm,
 				},
 				header: {
-					flexDirection: "row",
-					alignItems: "center",
 					gap: SPACING.sm,
 				},
 				title: {
@@ -77,8 +85,6 @@ function useStyles(colors: ThemeColors) {
 					fontWeight: "700",
 				},
 				statusRow: {
-					flexDirection: "row",
-					alignItems: "center",
 					gap: SPACING.sm,
 				},
 				status: {

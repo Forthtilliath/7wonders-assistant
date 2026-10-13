@@ -1,14 +1,15 @@
+import { shareViewAsImage } from "@forthtilliath/react-native-kit/utils/helpers/shareViewAsImage";
 import { act, render, screen, userEvent, within } from "@testing-library/react-native";
 import ResultsScreen from "@/app/(tabs)/game/results";
 import { exportGameCsv } from "@/lib/backup";
-import { shareGameText, shareViewAsImage } from "@/lib/shareGame";
+import { shareGameText } from "@/lib/shareGame";
 import { useGameStore } from "@/stores/gameStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { mockRouter } from "@/test-utils/expoRouter";
 import { mockAlert, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
 
-jest.mock("@/lib/shareGame", () => ({
-	shareGameText: jest.fn(() => Promise.resolve()),
+jest.mock("@/lib/shareGame", () => ({ shareGameText: jest.fn(() => Promise.resolve()) }));
+jest.mock("@forthtilliath/react-native-kit/utils/helpers/shareViewAsImage", () => ({
 	shareViewAsImage: jest.fn(() => Promise.resolve()),
 }));
 jest.mock("@/lib/backup", () => ({ exportGameCsv: jest.fn(() => Promise.resolve()) }));

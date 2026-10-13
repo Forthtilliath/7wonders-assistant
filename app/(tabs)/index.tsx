@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { selectFeedback } from "@forthtilliath/react-native-kit/utils/helpers/haptics";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -12,7 +13,6 @@ import { MAX_PLAYERS, MIN_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import { selectFeedback } from "@/lib/haptics";
 import { useGameStore } from "@/stores/gameStore";
 import { selectSortedGroups, useGroupsStore } from "@/stores/groupsStore";
 import { selectSortedPlayers, usePlayersStore } from "@/stores/playersStore";

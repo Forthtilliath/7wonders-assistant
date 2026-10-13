@@ -1,7 +1,8 @@
+import { BottomSheet as KitBottomSheet } from "@forthtilliath/react-native-kit/components/overlay/BottomSheet";
 import type { PropsWithChildren } from "react";
 import { useMemo } from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -12,25 +13,26 @@ type Props = PropsWithChildren<{
 	title?: string;
 }>;
 
-/** Feuille modale glissant depuis le bas, sans dépendance externe (juste le `Modal` natif). */
+/**
+ * Feuille modale glissant depuis le bas (`BottomSheet` de react-native-kit) aux couleurs de l'app,
+ * avec poignée et titre. Le contenu défile déjà : ne pas l'envelopper dans un autre `ScrollView`.
+ */
 export function BottomSheet({ visible, onClose, title, children }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
+	const { bottom } = useSafeAreaInsets();
 
 	return (
-		<Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-			<Pressable
-				style={styles.backdrop}
-				onPress={onClose}
-				accessibilityRole="button"
-				accessibilityLabel="Fermer"
-			/>
-			<SafeAreaView style={styles.sheet} edges={["bottom"]} accessibilityViewIsModal>
-				<View style={styles.handle} />
-				{title && <Text style={styles.title}>{title}</Text>}
-				{children}
-			</SafeAreaView>
-		</Modal>
+		<KitBottomSheet
+			visible={visible}
+			onClose={onClose}
+			bottomInset={bottom}
+			styles={{ overlay: styles.overlay, sheet: styles.sheet }}
+		>
+			<View style={styles.handle} />
+			{title && <Text style={styles.title}>{title}</Text>}
+			{children}
+		</KitBottomSheet>
 	);
 }
 
@@ -38,15 +40,10 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
-				backdrop: {
-					flex: 1,
+				overlay: {
 					backgroundColor: "rgba(0,0,0,0.6)",
 				},
 				sheet: {
-					position: "absolute",
-					left: 0,
-					right: 0,
-					bottom: 0,
 					maxHeight: "75%",
 					backgroundColor: colors.surface,
 					borderTopLeftRadius: RADIUS.lg,

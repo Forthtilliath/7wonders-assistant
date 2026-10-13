@@ -1,10 +1,7 @@
-import * as Sharing from "expo-sharing";
-import type { RefObject } from "react";
-import { Share, type View } from "react-native";
+import { Share } from "react-native";
 import { EXTENSION_LABELS } from "@/constants/categories";
 import { RANK_MEDALS } from "@/constants/game";
 import { formatDate } from "@/lib/date";
-import { isNativeModuleAvailable } from "@/lib/nativeModules";
 import { getGameRanking } from "@/lib/scoring/game";
 import type { Game, Player } from "@/types/game";
 
@@ -40,22 +37,4 @@ export function buildGameShareText(game: Game, players: Player[]): string {
 
 export async function shareGameText(game: Game, players: Player[]): Promise<void> {
 	await Share.share({ message: buildGameShareText(game, players) });
-}
-
-/**
- * Capture la vue du classement en PNG et l'ouvre dans la feuille de partage du système. La lib est
- * chargée à la demande : elle exige son module natif dès l'import, ce qui ferait planter les écrans
- * qui l'importent sur un binaire compilé sans elle (ancienne build de dev) ; seul le partage en
- * image échoue alors. La présence du module est vérifiée avant le `require`, dont l'échec serait
- * sinon remonté par Metro comme erreur fatale malgré le try/catch de l'appelant.
- */
-export async function shareViewAsImage(view: RefObject<View | null>): Promise<void> {
-	if (!isNativeModuleAvailable("RNViewShot")) {
-		throw new Error("Partage en image indisponible dans cette version de l'app.");
-	}
-	const { captureRef }: typeof import("react-native-view-shot") = require("react-native-view-shot");
-	const uri = await captureRef(view, { format: "png", quality: 1, result: "tmpfile" });
-	if (await Sharing.isAvailableAsync()) {
-		await Sharing.shareAsync(uri, { mimeType: "image/png", dialogTitle: "Partager le classement" });
-	}
 }

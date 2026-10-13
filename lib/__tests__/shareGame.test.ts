@@ -1,19 +1,6 @@
-jest.mock("react-native-view-shot", () => ({
-	captureRef: jest.fn(async () => "file:///capture.png"),
-}));
-jest.mock("@/lib/nativeModules", () => ({ isNativeModuleAvailable: jest.fn(() => true) }));
-jest.mock("expo-sharing", () => ({
-	isAvailableAsync: jest.fn(async () => true),
-	shareAsync: jest.fn(async () => {}),
-}));
-
-import * as Sharing from "expo-sharing";
-import { createRef } from "react";
-import { Share, type View } from "react-native";
-import { captureRef } from "react-native-view-shot";
-import { isNativeModuleAvailable } from "@/lib/nativeModules";
+import { Share } from "react-native";
 import { createEmptyPlayerGameEntry, type Game, type Player } from "@/types/game";
-import { buildGameShareText, shareGameText, shareViewAsImage } from "../shareGame";
+import { buildGameShareText, shareGameText } from "../shareGame";
 
 function makePlayer(id: string, name: string): Player {
 	return { id, name, isFavorite: false, isArchived: false, createdAt: 0 };
@@ -84,39 +71,5 @@ describe("shareGameText", () => {
 		await shareGameText(makeGame({ Alice: 10, Bob: 20 }), players);
 
 		expect(share).toHaveBeenCalledWith({ message: expect.stringContaining("🥇 Bob — 20 pts") });
-	});
-});
-
-describe("shareViewAsImage", () => {
-	const view = createRef<View>();
-
-	beforeEach(() => {
-		jest.clearAllMocks();
-		jest.mocked(isNativeModuleAvailable).mockReturnValue(true);
-	});
-
-	it("capture le classement en PNG et le partage", async () => {
-		await shareViewAsImage(view);
-
-		expect(captureRef).toHaveBeenCalledWith(view, expect.objectContaining({ format: "png" }));
-		expect(Sharing.shareAsync).toHaveBeenCalledWith(
-			"file:///capture.png",
-			expect.objectContaining({ mimeType: "image/png" }),
-		);
-	});
-
-	it("ne partage rien si le partage n'est pas disponible sur l'appareil", async () => {
-		jest.mocked(Sharing.isAvailableAsync).mockResolvedValueOnce(false);
-
-		await shareViewAsImage(view);
-
-		expect(Sharing.shareAsync).not.toHaveBeenCalled();
-	});
-
-	it("échoue proprement sur un binaire compilé sans le module de capture", async () => {
-		jest.mocked(isNativeModuleAvailable).mockReturnValue(false);
-
-		await expect(shareViewAsImage(view)).rejects.toThrow(/indisponible/);
-		expect(captureRef).not.toHaveBeenCalled();
 	});
 });

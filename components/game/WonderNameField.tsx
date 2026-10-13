@@ -1,10 +1,10 @@
+import { selectFeedback } from "@forthtilliath/react-native-kit/utils/helpers/haptics";
 import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { TextField } from "@/components/ui/TextField";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import { selectFeedback } from "@/lib/haptics";
 import { getWonderNameSuggestions } from "@/lib/wonders";
 import { useHistoryStore } from "@/stores/historyStore";
 

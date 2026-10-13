@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { shareViewAsImage } from "@forthtilliath/react-native-kit/utils/helpers/shareViewAsImage";
 import { type RefObject, useMemo } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { BottomSheet } from "@/components/ui/BottomSheet";
@@ -6,7 +7,7 @@ import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { exportGameCsv } from "@/lib/backup";
-import { shareGameText, shareViewAsImage } from "@/lib/shareGame";
+import { shareGameText } from "@/lib/shareGame";
 import { usePlayersStore } from "@/stores/playersStore";
 import type { Game } from "@/types/game";
 
@@ -41,7 +42,7 @@ export function ShareGameSheet({ visible, onClose, game, rankingRef }: Props) {
 			icon: "image-outline",
 			label: "Image",
 			description: "Une capture du classement avec le détail des points",
-			share: () => shareViewAsImage(rankingRef),
+			share: () => shareViewAsImage(rankingRef, { dialogTitle: "Partager le classement" }),
 		},
 		{
 			icon: "grid-outline",
