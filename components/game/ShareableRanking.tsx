@@ -1,6 +1,7 @@
 import { type Ref, useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, type View } from "react-native";
 import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
+import { CaptureFrame } from "@/components/ui/CaptureFrame";
 import { EXTENSION_LABELS } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
@@ -13,18 +14,20 @@ type Props = {
 	game: Game;
 	ranking: RankedPlayerScore[];
 	players: Player[];
-	/** Vue capturée pour le partage en image : elle porte son propre fond (sinon PNG transparent). */
+	/** Vue capturée pour le partage en image du classement seul. */
 	ref?: Ref<View>;
+	/** Capture en cours : la vue porte alors son propre fond (voir `CaptureFrame`). */
+	capturing?: boolean;
 };
 
 /** Classement d'une partie (date, extensions, cartes des joueurs), tel qu'il est partagé en image. */
-export function ShareableRanking({ game, ranking, players, ref }: Props) {
+export function ShareableRanking({ game, ranking, players, ref, capturing }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 	const extensions = game.extensions.map((ext) => EXTENSION_LABELS[ext]).join(", ");
 
 	return (
-		<View ref={ref} collapsable={false} style={styles.container}>
+		<CaptureFrame ref={ref} capturing={capturing} style={styles.container}>
 			<Text style={styles.caption}>
 				{formatDate(game.createdAt)}
 				{extensions ? ` · ${extensions}` : ""}
@@ -41,7 +44,7 @@ export function ShareableRanking({ game, ranking, players, ref }: Props) {
 					/>
 				);
 			})}
-		</View>
+		</CaptureFrame>
 	);
 }
 
@@ -49,13 +52,8 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
-				// Marge négative compensée par le padding : la capture a un peu d'air autour des cartes
-				// sans décaler leur alignement avec le reste de l'écran.
 				container: {
-					backgroundColor: colors.background,
 					gap: SPACING.sm,
-					padding: SPACING.sm,
-					margin: -SPACING.sm,
 				},
 				caption: {
 					color: colors.textMuted,

@@ -1,4 +1,5 @@
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { shareViewAsImage } from "@forthtilliath/react-native-kit/utils/helpers/shareViewAsImage";
+import { render, screen, userEvent, waitFor } from "@testing-library/react-native";
 import HistoryScreen from "@/app/(tabs)/history";
 import GameDetailScreen from "@/app/history/[id]";
 import { shareGameText } from "@/lib/shareGame";
@@ -17,6 +18,8 @@ import {
 
 jest.mock("@/lib/shareGame", () => ({
 	shareGameText: jest.fn(() => Promise.resolve()),
+}));
+jest.mock("@forthtilliath/react-native-kit/utils/helpers/shareViewAsImage", () => ({
 	shareViewAsImage: jest.fn(() => Promise.resolve()),
 }));
 
@@ -93,6 +96,20 @@ describe("Historique des parties", () => {
 			expect(screen.getByText("Alice")).toBeOnTheScreen();
 			expect(screen.getByText("Civil 30")).toBeOnTheScreen();
 			expect(screen.getByText(/· Leaders/)).toBeOnTheScreen();
+		});
+
+		it("affiche les graphiques de la partie à la demande", async () => {
+			const user = userEvent.setup();
+			await render(<GameDetailScreen />);
+
+			expect(screen.queryByText("Répartition par joueur")).not.toBeOnTheScreen();
+			await user.press(screen.getByRole("button", { name: "Voir les graphiques" }));
+
+			expect(screen.getByText("Répartition par joueur")).toBeOnTheScreen();
+			expect(screen.getByText("Comparaison par catégorie")).toBeOnTheScreen();
+
+			await user.press(screen.getByRole("button", { name: "Masquer les graphiques" }));
+			expect(screen.queryByText("Répartition par joueur")).not.toBeOnTheScreen();
 		});
 
 		it("relance une partie avec les mêmes joueurs et extensions", async () => {
@@ -180,6 +197,24 @@ describe("Historique des parties", () => {
 			expect(shareGameText).toHaveBeenCalledWith(
 				expect.objectContaining({ id: "g1" }),
 				expect.any(Array),
+			);
+		});
+
+		it("partage en image avec les graphiques, même masqués", async () => {
+			const user = userEvent.setup();
+			let chartsShownDuringCapture = false;
+			jest.mocked(shareViewAsImage).mockImplementationOnce(async () => {
+				chartsShownDuringCapture = screen.queryByText("Répartition par joueur") != null;
+			});
+			await render(<GameDetailScreen />);
+
+			await user.press(screen.getByRole("button", { name: "Partager la partie" }));
+			await user.press(screen.getByRole("button", { name: "Partager en Image avec graphiques" }));
+
+			expect(shareViewAsImage).toHaveBeenCalled();
+			expect(chartsShownDuringCapture).toBe(true);
+			await waitFor(() =>
+				expect(screen.queryByText("Répartition par joueur")).not.toBeOnTheScreen(),
 			);
 		});
 
