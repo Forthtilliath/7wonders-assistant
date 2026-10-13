@@ -72,6 +72,7 @@ export function CategoryEntryRow({
 		return (
 			<PlayerScoreRow player={player}>
 				<WonderEntryFields
+					playerId={player.id}
 					wonder={entry.wonder}
 					points={entry.wonders.points}
 					color={color}
