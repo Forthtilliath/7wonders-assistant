@@ -104,6 +104,17 @@ describe("Historique des parties", () => {
 			expect(mockRouter.push).toHaveBeenCalledWith("/game/score/military");
 		});
 
+		it("relance une partie dans son édition", async () => {
+			const user = userEvent.setup();
+			const game = makeGame("g1", { p1: 30, p2: 20, p3: 10 });
+			useHistoryStore.setState({ games: [{ ...game, edition: "second" }] });
+			await render(<GameDetailScreen />);
+
+			await user.press(screen.getByRole("button", { name: "Rejouer avec les mêmes joueurs" }));
+
+			expect(useGameStore.getState().edition).toBe("second");
+		});
+
 		it("rejoue sans les joueurs supprimés depuis, après confirmation", async () => {
 			const user = userEvent.setup();
 			const alert = mockAlert();
