@@ -13,6 +13,7 @@
 		"android": {
 			"package": "com.forthtilliath.sevenwondersassistant",
 			"versionCode": 2,
+			"allowBackup": false,
 			"permissions": ["android.permission.REQUEST_INSTALL_PACKAGES"],
 			"blockedPermissions": [
 				"android.permission.RECORD_AUDIO",
