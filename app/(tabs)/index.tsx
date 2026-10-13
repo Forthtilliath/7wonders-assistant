@@ -3,7 +3,7 @@ import { selectFeedback } from "@forthtilliath/react-native-kit/utils/helpers/ha
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector } from "react-native-gesture-handler";
 import { BackupReminderBanner } from "@/components/backup/BackupReminderBanner";
 import { ExtensionsPicker } from "@/components/game/ExtensionsPicker";
 import { GroupChips } from "@/components/game/GroupChips";
@@ -16,6 +16,7 @@ import { getMaxPlayers, MIN_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { FONTS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { useSwipeGesture } from "@/hooks/useSwipeGesture";
 import { useGameStore } from "@/stores/gameStore";
 import { selectSortedGroups, useGroupsStore } from "@/stores/groupsStore";
 import { selectSortedPlayers, usePlayersStore } from "@/stores/playersStore";
@@ -91,16 +92,11 @@ export default function NewGameTab() {
 	};
 
 	// Swipe gauche -> lance la partie, seulement si les critères (2 joueurs minimum) sont réunis.
-	// Seuils horizontaux + tolérance verticale pour ne pas voler le scroll de la liste de joueurs.
-	const swipeGesture = Gesture.Pan()
-		.activeOffsetX([-20, 20])
-		.failOffsetY([-15, 15])
-		.runOnJS(true)
-		.onEnd((event) => {
-			if (event.translationX < -60 && canStart) {
-				startGame();
-			}
-		});
+	const swipeGesture = useSwipeGesture({
+		onSwipeLeft: () => {
+			if (canStart) startGame();
+		},
+	});
 
 	if (players.length === 0) {
 		return (

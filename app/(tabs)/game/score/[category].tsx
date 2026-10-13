@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector } from "react-native-gesture-handler";
 import { CategoryEntryRow } from "@/components/game/CategoryEntryRow";
 import { EditExtensionsSheet } from "@/components/game/EditExtensionsSheet";
 import { TokenCounterSheet } from "@/components/game/TokenCounterSheet";
@@ -11,6 +11,7 @@ import { CATEGORY_META } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { useSwipeGesture } from "@/hooks/useSwipeGesture";
 import { getCategoryFlow } from "@/lib/categoryFlow";
 import { MILITARY_TOKENS, NAVAL_TOKENS } from "@/lib/scoring/tokens";
 import { useGameStore } from "@/stores/gameStore";
@@ -63,23 +64,8 @@ export default function CategoryScoreScreen() {
 		}
 	}, [flow, category, playerIds.length, router]);
 
-	if (playerIds.length === 0 || !flow.includes(category)) return null;
-
 	const stepIndex = flow.indexOf(category);
 	const isLast = stepIndex === flow.length - 1;
-	const meta = CATEGORY_META[category];
-	const hint =
-		category === "treasury" && extensions.includes("edifice")
-			? `${CATEGORY_HINTS.treasury} ${EDIFICE_TREASURY_HINT}`
-			: CATEGORY_HINTS[category];
-	const gamePlayers = playerIds
-		.map((id) => allPlayers.find((p) => p.id === id))
-		.filter((p): p is NonNullable<typeof p> => p != null);
-
-	// Seules ces deux catégories se comptent avec des jetons physiques ; les autres (Trésor,
-	// Merveille, Cités...) sont des totaux à lire directement sur le plateau/les cartes.
-	const tokens =
-		category === "military" ? MILITARY_TOKENS : category === "naval" ? NAVAL_TOKENS : null;
 
 	const goNext = () => {
 		if (isLast) {
@@ -94,18 +80,23 @@ export default function CategoryScoreScreen() {
 	// Swipe gauche -> catégorie suivante (comme le bouton "Suivant"), swipe droite -> catégorie
 	// précédente (ou retour au menu depuis la première). `router.back()` réutilise l'écran déjà
 	// empilé par la navigation précédente, ce qui donne gratuitement l'animation de retour inverse.
-	// Tolérance verticale pour ne pas voler le scroll de la liste de joueurs.
-	const swipeGesture = Gesture.Pan()
-		.activeOffsetX([-20, 20])
-		.failOffsetY([-15, 15])
-		.runOnJS(true)
-		.onEnd((event) => {
-			if (event.translationX < -60) {
-				goNext();
-			} else if (event.translationX > 60) {
-				router.back();
-			}
-		});
+	const swipeGesture = useSwipeGesture({ onSwipeLeft: goNext, onSwipeRight: () => router.back() });
+
+	if (playerIds.length === 0 || !flow.includes(category)) return null;
+
+	const meta = CATEGORY_META[category];
+	const hint =
+		category === "treasury" && extensions.includes("edifice")
+			? `${CATEGORY_HINTS.treasury} ${EDIFICE_TREASURY_HINT}`
+			: CATEGORY_HINTS[category];
+	const gamePlayers = playerIds
+		.map((id) => allPlayers.find((p) => p.id === id))
+		.filter((p): p is NonNullable<typeof p> => p != null);
+
+	// Seules ces deux catégories se comptent avec des jetons physiques ; les autres (Trésor,
+	// Merveille, Cités...) sont des totaux à lire directement sur le plateau/les cartes.
+	const tokens =
+		category === "military" ? MILITARY_TOKENS : category === "naval" ? NAVAL_TOKENS : null;
 
 	return (
 		<GestureDetector gesture={swipeGesture}>
