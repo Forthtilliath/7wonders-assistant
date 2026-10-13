@@ -26,12 +26,16 @@ const CATEGORY_HINTS: Partial<Record<CategoryId, string>> = {
 	babel: "Tuiles Babel posées : 1 tuile = 2 pts, 2 tuiles = 5 pts, 3 tuiles = 10 pts.",
 };
 
+/** Complète le rappel du Trésor : Edifice n'a pas d'étape à elle, ses points passent par les pièces. */
+const EDIFICE_TREASURY_HINT = "Edifice : compte les pièces gagnées ou perdues avec ses projets.";
+
 export default function CategoryScoreScreen() {
 	const router = useRouter();
 	const colors = useColors();
 	const styles = useStyles(colors);
 	const { category } = useLocalSearchParams<{ category: CategoryId }>();
 	const extensions = useGameStore((s) => s.extensions);
+	const edition = useGameStore((s) => s.edition);
 	const playerIds = useGameStore((s) => s.playerIds);
 	const entries = useGameStore((s) => s.entries);
 	const updateEntry = useGameStore((s) => s.updateEntry);
@@ -62,6 +66,10 @@ export default function CategoryScoreScreen() {
 	const stepIndex = flow.indexOf(category);
 	const isLast = stepIndex === flow.length - 1;
 	const meta = CATEGORY_META[category];
+	const hint =
+		category === "treasury" && extensions.includes("edifice")
+			? `${CATEGORY_HINTS.treasury} ${EDIFICE_TREASURY_HINT}`
+			: CATEGORY_HINTS[category];
 	const gamePlayers = playerIds
 		.map((id) => allPlayers.find((p) => p.id === id))
 		.filter((p): p is NonNullable<typeof p> => p != null);
@@ -134,6 +142,7 @@ export default function CategoryScoreScreen() {
 					visible={extensionsSheetVisible}
 					onClose={() => setExtensionsSheetVisible(false)}
 					currentExtensions={extensions}
+					edition={edition}
 					playerCount={playerIds.length}
 					onConfirm={updateExtensions}
 				/>
@@ -142,7 +151,7 @@ export default function CategoryScoreScreen() {
 				<Text style={styles.progress}>
 					Étape {stepIndex + 1} / {flow.length}
 				</Text>
-				{CATEGORY_HINTS[category] && <Text style={styles.hint}>{CATEGORY_HINTS[category]}</Text>}
+				{hint && <Text style={styles.hint}>{hint}</Text>}
 
 				<ScrollView contentContainerStyle={styles.list}>
 					{gamePlayers.map((player) => {

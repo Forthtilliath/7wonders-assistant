@@ -3,22 +3,20 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
-import {
-	CATEGORY_META,
-	EXTENSION_CATEGORIES,
-	EXTENSION_LABELS,
-	EXTENSION_ORDER,
-} from "@/constants/categories";
+import { CATEGORY_META, EXTENSION_CATEGORIES, EXTENSION_LABELS } from "@/constants/categories";
+import { getAvailableExtensions, getExtensionsWarning } from "@/constants/editions";
 import { getMaxPlayers } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import type { ExtensionId } from "@/types/game";
+import type { ExtensionId, GameEdition } from "@/types/game";
 
 type Props = {
 	visible: boolean;
 	onClose: () => void;
 	currentExtensions: ExtensionId[];
+	/** Édition de la partie : seules les extensions qu'elle propose sont listées. */
+	edition: GameEdition;
 	playerCount: number;
 	onConfirm: (extensions: ExtensionId[]) => void;
 };
@@ -28,12 +26,14 @@ type Props = {
  * Un aperçu des catégories ajoutées/retirées s'affiche dès qu'une sélection change, et la
  * validation redemande confirmation en rappelant cet impact — retirer une extension remet à zéro
  * les points déjà saisis pour ses catégories (cf. `gameStore.updateExtensions`).
- * Retirer Cités est refusé quand la partie compte plus de joueurs que le jeu de base n'en accepte.
+ * Retirer Cités est refusé quand la partie compte plus de joueurs que le jeu de base n'en accepte,
+ * et le mélange Babel + Edifice est signalé sans être bloqué.
  */
 export function EditExtensionsSheet({
 	visible,
 	onClose,
 	currentExtensions,
+	edition,
 	playerCount,
 	onConfirm,
 }: Props) {
@@ -50,6 +50,7 @@ export function EditExtensionsSheet({
 	const hasChanges = added.length > 0 || removed.length > 0;
 	const maxPlayers = getMaxPlayers(pending);
 	const tooManyPlayers = playerCount > maxPlayers;
+	const warning = getExtensionsWarning(pending);
 
 	const addedCategories = added.flatMap((ext) => EXTENSION_CATEGORIES[ext]);
 	const removedCategories = removed.flatMap((ext) => EXTENSION_CATEGORIES[ext]);
@@ -66,6 +67,9 @@ export function EditExtensionsSheet({
 				`Retire : ${removedCategories.map((c) => CATEGORY_META[c].label).join(", ")} (les points déjà saisis pour ces catégories seront remis à zéro).`,
 			);
 		}
+		// Edifice n'apporte aucune étape de score (ses points se comptent avec les pièces).
+		if (lines.length === 0) lines.push("Aucune étape de score n'est ajoutée ni retirée.");
+		if (warning) lines.push(warning);
 
 		Alert.alert("Modifier les extensions ?", lines.join("\n\n"), [
 			{ text: "Annuler", style: "cancel" },
@@ -83,7 +87,10 @@ export function EditExtensionsSheet({
 	return (
 		<BottomSheet visible={visible} onClose={onClose} title="Extensions de la partie">
 			<CheckboxGroup
-				options={EXTENSION_ORDER.map((ext) => ({ value: ext, label: EXTENSION_LABELS[ext] }))}
+				options={getAvailableExtensions(edition).map((ext) => ({
+					value: ext,
+					label: EXTENSION_LABELS[ext],
+				}))}
 				values={pending}
 				onChange={setPending}
 			/>
@@ -94,6 +101,8 @@ export function EditExtensionsSheet({
 					(maximum {maxPlayers} sans elle).
 				</Text>
 			)}
+
+			{warning && <Text style={styles.warning}>{warning}</Text>}
 
 			{hasChanges && !tooManyPlayers && (
 				<View style={styles.preview}>

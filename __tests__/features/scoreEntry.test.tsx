@@ -209,6 +209,47 @@ describe("Saisie des scores par catégorie", () => {
 		expect(entryOf("p1").naval.points).toBe(0);
 	});
 
+	it("compte Edifice avec le trésor, sans étape de score à elle", async () => {
+		await renderCategory("treasury", ["edifice"]);
+
+		expect(screen.getByText("Étape 2 / 7")).toBeOnTheScreen();
+		expect(screen.getByText(/Edifice : compte les pièces/)).toBeOnTheScreen();
+	});
+
+	it("ne propose que les extensions de l'édition et signale Babel + Edifice", async () => {
+		const user = userEvent.setup();
+		const alert = mockAlert();
+		seedPlayers(["Alice", "Bob"]);
+		useGameStore.getState().startNewGame(["p1", "p2"], ["babel"], "first");
+		setSearchParams({ category: "military" });
+		await render(<CategoryScoreScreen />);
+
+		await user.press(screen.getByRole("button", { name: "Modifier les extensions de la partie" }));
+		const sheet = within(screen.getByText("Extensions de la partie").parent!);
+		await user.press(sheet.getByRole("checkbox", { name: "Edifice" }));
+		expect(sheet.getByText(/Edifice remplace Babel/)).toBeOnTheScreen();
+
+		await user.press(sheet.getByRole("button", { name: "Valider" }));
+		expect(alert.mock.calls.at(-1)?.[1]).toBe(
+			"Aucune étape de score n'est ajoutée ni retirée.\n\nEdifice remplace Babel : les deux ne se jouent normalement pas ensemble.",
+		);
+		await pressAlertButton(alert, "Confirmer");
+		expect(useGameStore.getState().extensions).toEqual(["babel", "edifice"]);
+	});
+
+	it("cache Babel en cours de partie avec la 2e édition", async () => {
+		const user = userEvent.setup();
+		seedPlayers(["Alice", "Bob"]);
+		useGameStore.getState().startNewGame(["p1", "p2"], [], "second");
+		setSearchParams({ category: "military" });
+		await render(<CategoryScoreScreen />);
+
+		await user.press(screen.getByRole("button", { name: "Modifier les extensions de la partie" }));
+		const sheet = within(screen.getByText("Extensions de la partie").parent!);
+		expect(sheet.getByRole("checkbox", { name: "Edifice" })).toBeOnTheScreen();
+		expect(sheet.queryByRole("checkbox", { name: "Babel" })).not.toBeOnTheScreen();
+	});
+
 	it("refuse de retirer Cités d'une partie à 8 joueurs", async () => {
 		const user = userEvent.setup();
 		const ids = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"];
