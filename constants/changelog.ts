@@ -15,10 +15,10 @@ export const CHANGELOG: ChangelogEntry[] = [
 		version: "1.2.0",
 		date: Date.UTC(2026, 9, 13),
 		items: [
-			"Extension Babel : une étape de score après Leaders et Cités, où l'on coche le nombre de tuiles posées par chaque joueur (1 tuile = 2 pts, 2 = 5 pts, 3 = 10 pts).",
+			"Extension Babel : une étape de score après Leaders et Cities, où l'on coche le nombre de tuiles posées par chaque joueur (1 tuile = 2 pts, 2 = 5 pts, 3 = 10 pts).",
 			"Extension Edifice : sans étape de score à part, ses pions Participation et ses jetons Dette se comptent avec le trésor. Un avertissement s'affiche si elle est cochée avec Babel, qu'elle remplace.",
 			"Choix de l'édition du jeu (1re ou 2e) à côté des extensions, au lancement d'une partie comme dans les réglages : seules les extensions compatibles sont proposées (Babel n'existe qu'en 1re édition).",
-			"Parties à 8 joueurs avec l'extension Cités : les groupes peuvent compter jusqu'à 8 membres, et Cités ne peut plus être retirée d'une partie à 8.",
+			"Parties à 8 joueurs avec l'extension Cities : les groupes peuvent compter jusqu'à 8 membres, et Cities ne peut plus être retirée d'une partie à 8.",
 			"Photo d'un joueur prise directement avec l'appareil photo, pratique pour distinguer deux joueurs du même nom. La photo peut aussi être retirée.",
 			"Les points saisis par catégorie sont limités à des valeurs réalistes, pour éviter les fautes de frappe.",
 			"Réglages réorganisés : Nouveautés, Dons et À propos ont chacun leur page.",

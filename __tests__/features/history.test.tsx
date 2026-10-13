@@ -41,7 +41,7 @@ describe("Historique des parties", () => {
 
 			expect(screen.getByText("🏆 Alice")).toBeOnTheScreen();
 			expect(screen.getByText("30 pts")).toBeOnTheScreen();
-			expect(screen.getByText("Cités")).toBeOnTheScreen();
+			expect(screen.getByText("Cities")).toBeOnTheScreen();
 			expect(screen.getByText("🏆 Chloé")).toBeOnTheScreen();
 			expect(screen.getByText("3 joueurs")).toBeOnTheScreen();
 		});

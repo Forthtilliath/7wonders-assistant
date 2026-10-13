@@ -105,7 +105,7 @@ export type RankedPlayerScore = PlayerScoreBreakdown & { rank: number };
 /**
  * Classe les joueurs par score total décroissant. La règle officielle départage les égalités par
  * le nombre de pièces ; comme le trésor est désormais saisi directement en points (les jetons de
- * dette de Cités ne se reflètent pas dans les pièces restantes), on approxime ce départage avec le
+ * dette de Cities ne se reflètent pas dans les pièces restantes), on approxime ce départage avec le
  * score de trésor : c'est la meilleure info dont on dispose sans redemander les pièces.
  */
 export function rankPlayers(breakdowns: PlayerScoreBreakdown[]): RankedPlayerScore[] {

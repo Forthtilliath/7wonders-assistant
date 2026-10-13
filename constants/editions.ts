@@ -11,7 +11,7 @@ export const EDITION_LABELS: Record<GameEdition, string> = {
 /**
  * Extensions jouables avec chaque édition du jeu de base. Babel n'existe que pour la 1re édition
  * (2010). Edifice, sortie pour la 2e, se joue aussi avec la 1re puisqu'elle n'ajoute aucune carte
- * (le dos des cartes diffère d'une édition à l'autre). Leaders, Cités et Armada existent dans les
+ * (le dos des cartes diffère d'une édition à l'autre). Leaders, Cities et Armada existent dans les
  * deux éditions.
  */
 const EDITION_EXTENSIONS: Record<GameEdition, readonly ExtensionId[]> = {

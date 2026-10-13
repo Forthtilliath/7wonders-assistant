@@ -26,7 +26,7 @@ type Props = {
  * Un aperçu des catégories ajoutées/retirées s'affiche dès qu'une sélection change, et la
  * validation redemande confirmation en rappelant cet impact — retirer une extension remet à zéro
  * les points déjà saisis pour ses catégories (cf. `gameStore.updateExtensions`).
- * Retirer Cités est refusé quand la partie compte plus de joueurs que le jeu de base n'en accepte,
+ * Retirer Cities est refusé quand la partie compte plus de joueurs que le jeu de base n'en accepte,
  * et le mélange Babel + Edifice est signalé sans être bloqué.
  */
 export function EditExtensionsSheet({

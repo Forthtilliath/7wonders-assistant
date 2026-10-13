@@ -8,7 +8,7 @@ import { useColors } from "@/hooks/useColors";
 type Props = {
 	icon: keyof typeof Ionicons.glyphMap;
 	label: string;
-	/** Aperçu de la valeur actuelle affiché sous le libellé (ex. "Sombre", "Meneurs, Cités"). */
+	/** Aperçu de la valeur actuelle affiché sous le libellé (ex. "Sombre", "Leaders, Cities"). */
 	value?: string;
 	onPress: () => void;
 	/** Teinte rouge pour une entrée sensible (ex. "Zone dangereuse"). */

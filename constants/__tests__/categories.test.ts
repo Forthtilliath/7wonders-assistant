@@ -27,7 +27,7 @@ describe("getOrderedCategories", () => {
 		]);
 	});
 
-	it("ajoute Leaders puis Cités à la suite des catégories de base, sans Armada", () => {
+	it("ajoute Leaders puis Cities à la suite des catégories de base, sans Armada", () => {
 		expect(getOrderedCategories(["leaders", "cities"])).toEqual([
 			"military",
 			"treasury",
@@ -41,7 +41,7 @@ describe("getOrderedCategories", () => {
 		]);
 	});
 
-	it("place Babel après Leaders et Cités, avant le plateau Armada", () => {
+	it("place Babel après Leaders et Cities, avant le plateau Armada", () => {
 		expect(getOrderedCategories(["babel", "leaders", "cities"])).toEqual([
 			"military",
 			"treasury",

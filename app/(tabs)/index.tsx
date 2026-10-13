@@ -77,7 +77,7 @@ export default function NewGameTab() {
 		setSelectedIds(memberIds);
 	};
 
-	// Décocher Cités avec 8 joueurs sélectionnés ne retire personne : on bloque le lancement.
+	// Décocher Cities avec 8 joueurs sélectionnés ne retire personne : on bloque le lancement.
 	const canStart = selectedIds.length >= MIN_PLAYERS && !tooManyPlayers;
 
 	const startGame = () => {

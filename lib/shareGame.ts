@@ -9,7 +9,7 @@ import type { Game, Player } from "@/types/game";
  * Classement d'une partie en texte brut, lisible tel quel dans une messagerie :
  *
  *   7 Wonders · 11 octobre 2026
- *   Extensions : Leaders, Cités
+ *   Extensions : Leaders, Cities
  *
  *   🥇 Alice — 62 pts (Rhodes B)
  *   🥈 Bob — 55 pts

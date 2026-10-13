@@ -46,7 +46,7 @@ describe("buildGameShareText", () => {
 		game.entries.Bob.wonder = { name: "Gizeh", side: null };
 
 		const lines = buildGameShareText(game, players).split("\n");
-		expect(lines[1]).toBe("Extensions : Leaders, Cités");
+		expect(lines[1]).toBe("Extensions : Leaders, Cities");
 		expect(lines).toContain("🥇 Alice — 62 pts (Rhodes B)");
 		expect(lines).toContain("🥈 Bob — 55 pts (Gizeh)");
 	});
