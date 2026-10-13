@@ -5,9 +5,12 @@ import { act, render, screen, userEvent } from "@testing-library/react-native";
 import { Linking } from "react-native";
 import AboutSettingsScreen from "@/app/(tabs)/settings/about";
 import AppearanceSettingsScreen from "@/app/(tabs)/settings/appearance";
+import ChangelogSettingsScreen from "@/app/(tabs)/settings/changelog";
 import DangerZoneSettingsScreen from "@/app/(tabs)/settings/danger-zone";
+import DonateSettingsScreen from "@/app/(tabs)/settings/donate";
 import SettingsScreen from "@/app/(tabs)/settings/index";
 import NewGameSettingsScreen from "@/app/(tabs)/settings/new-game";
+import { CHANGELOG } from "@/constants/changelog";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
@@ -56,6 +59,8 @@ describe("Réglages", () => {
 				name: "Gestion des sauvegardes, Sauvegarde Google Drive activée",
 			}),
 		);
+		await user.press(screen.getByRole("button", { name: /^Nouveautés, Version \d+\.\d+\.\d+$/ }));
+		await user.press(screen.getByRole("button", { name: /^Dons/ }));
 		await user.press(screen.getByRole("button", { name: /^À propos/ }));
 		await user.press(screen.getByRole("button", { name: /^Zone dangereuse/ }));
 
@@ -63,6 +68,8 @@ describe("Réglages", () => {
 			"/settings/appearance",
 			"/settings/new-game",
 			"/settings/backup",
+			"/settings/changelog",
+			"/settings/donate",
 			"/settings/about",
 			"/settings/danger-zone",
 		]);
@@ -170,17 +177,21 @@ describe("Réglages", () => {
 			expect(alert.mock.calls.map(([title]) => title)).toEqual(["À jour", "Erreur"]);
 			expect(downloadAndInstallApk).not.toHaveBeenCalled();
 		});
+	});
 
-		it("affiche les nouveautés et ouvre la page de dons", async () => {
-			const user = userEvent.setup();
-			const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-			await render(<AboutSettingsScreen />);
+	it("affiche une entrée de nouveautés par version", async () => {
+		await render(<ChangelogSettingsScreen />);
 
-			expect(screen.getByText("Nouveautés")).toBeOnTheScreen();
-			expect(screen.getAllByText(/^Version \d+\.\d+\.\d+$/).length).toBeGreaterThan(1);
-			await user.press(screen.getByRole("button", { name: "Faire un don" }));
+		expect(screen.getAllByText(/^Version \d+\.\d+\.\d+$/)).toHaveLength(CHANGELOG.length);
+	});
 
-			expect(openURL).toHaveBeenCalledWith("https://buymeacoffee.com/forthtilliath");
-		});
+	it("ouvre la page de dons", async () => {
+		const user = userEvent.setup();
+		const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+		await render(<DonateSettingsScreen />);
+
+		await user.press(screen.getByRole("button", { name: "Faire un don" }));
+
+		expect(openURL).toHaveBeenCalledWith("https://buymeacoffee.com/forthtilliath");
 	});
 });

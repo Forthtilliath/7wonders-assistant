@@ -6,6 +6,7 @@ import { SettingsRow } from "@/components/settings/SettingsRow";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { APP_INFO } from "@/constants/app";
 import { EXTENSION_LABELS } from "@/constants/categories";
+import { CHANGELOG } from "@/constants/changelog";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -49,9 +50,21 @@ export default function SettingsScreen() {
 				onPress={() => router.push("/settings/backup")}
 			/>
 			<SettingsRow
+				icon="sparkles"
+				label="Nouveautés"
+				value={`Version ${CHANGELOG[0].version}`}
+				onPress={() => router.push("/settings/changelog")}
+			/>
+			<SettingsRow
+				icon="heart"
+				label="Dons"
+				value="Soutenir le projet"
+				onPress={() => router.push("/settings/donate")}
+			/>
+			<SettingsRow
 				icon="information-circle"
 				label="À propos"
-				value="Nouveautés, dons, infos"
+				value="Mises à jour, infos"
 				onPress={() => router.push("/settings/about")}
 			/>
 			<SettingsRow
