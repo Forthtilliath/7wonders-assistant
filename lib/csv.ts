@@ -1,3 +1,4 @@
+import { escapeCsvField } from "@forthtilliath/ts-kit/csv/escapeCsvField";
 import { EXTENSION_LABELS } from "@/constants/categories";
 import { getGameRanking } from "@/lib/scoring/game";
 import type { Game, Player } from "@/types/game";
@@ -23,15 +24,6 @@ const HEADER = [
 	"Total",
 	"Classement",
 ];
-
-/** Échappe un champ pour un CSV séparé par ";" (convention Excel FR) : guillemets si besoin. */
-function csvField(value: string | number): string {
-	const str = String(value);
-	if (/[;"\n]/.test(str)) {
-		return `"${str.replace(/"/g, '""')}"`;
-	}
-	return str;
-}
 
 function isoDate(timestamp: number): string {
 	return new Date(timestamp).toISOString().slice(0, 10);
@@ -76,7 +68,7 @@ export function buildGamesCsv(games: Game[], players: Player[]): string {
 		}
 	}
 
-	const csv = rows.map((row) => row.map(csvField).join(";")).join("\r\n");
+	const csv = rows.map((row) => row.map((field) => escapeCsvField(field)).join(";")).join("\r\n");
 	const UTF8_BOM = "﻿";
 	return UTF8_BOM + csv;
 }
