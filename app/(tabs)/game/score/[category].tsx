@@ -3,50 +3,19 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { CategoryEntryRow } from "@/components/game/CategoryEntryRow";
 import { EditExtensionsSheet } from "@/components/game/EditExtensionsSheet";
-import { ManualPointsFields } from "@/components/game/ManualPointsFields";
-import { PlayerScoreRow } from "@/components/game/PlayerScoreRow";
-import { ScienceFields } from "@/components/game/ScienceFields";
 import { TokenCounterSheet } from "@/components/game/TokenCounterSheet";
-import { WonderNameField } from "@/components/game/WonderNameField";
-import { Button } from "@/components/ui/Button";
-import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { CATEGORY_META } from "@/constants/categories";
-import { MIN_POINTS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { getCategoryFlow } from "@/lib/categoryFlow";
-import { computeScienceScore } from "@/lib/scoring/science";
 import { MILITARY_TOKENS, NAVAL_TOKENS } from "@/lib/scoring/tokens";
 import { useGameStore } from "@/stores/gameStore";
 import { usePlayersStore } from "@/stores/playersStore";
 import type { CategoryId } from "@/types/game";
-
-// Catégories dont le score est un total de points saisi directement (jetons/cartes déjà comptés
-// par le joueur), par opposition aux catégories calculées automatiquement (sciences).
-const MANUAL_CATEGORIES = [
-	"military",
-	"treasury",
-	"wonders",
-	"civilians",
-	"commercials",
-	"guilds",
-	"leaders",
-	"cities",
-	"naval",
-	"armada",
-] as const;
-
-// Catégories dont le total peut légitimement être négatif (jetons de défaite, dettes...).
-const NEGATIVE_ALLOWED: Partial<Record<(typeof MANUAL_CATEGORIES)[number], boolean>> = {
-	military: true,
-	treasury: true,
-	wonders: true,
-	cities: true,
-	naval: true,
-};
 
 // Rappel affiché une seule fois en haut de l'écran (pas par joueur) pour les catégories qui en
 // ont besoin.
@@ -54,13 +23,8 @@ const CATEGORY_HINTS: Partial<Record<CategoryId, string>> = {
 	military: "Additionne tes jetons militaires : Victoire (+1/+3/+5) et Défaite (-1).",
 	treasury: "Compte tes pièces ÷ 3, moins tes éventuels jetons de dette (extension Cités).",
 	naval: "Additionne tes jetons navals : Victoire (+1 à +7) et Défaite (-1/-2/-3).",
+	babel: "Tuiles Babel posées : 1 tuile = 2 pts, 2 tuiles = 5 pts, 3 tuiles = 10 pts.",
 };
-
-type ManualCategoryId = (typeof MANUAL_CATEGORIES)[number];
-
-function isManualCategory(category: CategoryId): category is ManualCategoryId {
-	return (MANUAL_CATEGORIES as readonly CategoryId[]).includes(category);
-}
 
 export default function CategoryScoreScreen() {
 	const router = useRouter();
@@ -184,83 +148,17 @@ export default function CategoryScoreScreen() {
 					{gamePlayers.map((player) => {
 						const entry = entries[player.id];
 						if (!entry) return null;
-
-						if (category === "scientifics") {
-							return (
-								<PlayerScoreRow
-									key={player.id}
-									player={player}
-									points={computeScienceScore(entry.scientifics).total}
-								>
-									<ScienceFields
-										value={entry.scientifics}
-										onChange={(scientifics) =>
-											updateEntry(player.id, (e) => ({ ...e, scientifics }))
-										}
-									/>
-								</PlayerScoreRow>
-							);
-						}
-
-						if (category === "wonders") {
-							return (
-								<PlayerScoreRow key={player.id} player={player}>
-									<WonderNameField
-										value={entry.wonder.name}
-										onChange={(name) =>
-											updateEntry(player.id, (e) => ({ ...e, wonder: { ...e.wonder, name } }))
-										}
-									/>
-									<RadioGroup
-										options={[
-											{ value: "A", label: "Face A" },
-											{ value: "B", label: "Face B" },
-										]}
-										value={entry.wonder.side}
-										onChange={(side) =>
-											updateEntry(player.id, (e) => ({ ...e, wonder: { ...e.wonder, side } }))
-										}
-									/>
-									<ManualPointsFields
-										points={entry.wonders.points}
-										color={meta.color}
-										min={NEGATIVE_ALLOWED.wonders ? MIN_POINTS : 0}
-										onChange={(points) =>
-											updateEntry(player.id, (e) => ({ ...e, wonders: { points } }))
-										}
-									/>
-								</PlayerScoreRow>
-							);
-						}
-
-						if (isManualCategory(category)) {
-							const current = entry[category];
-							return (
-								<PlayerScoreRow key={player.id} player={player}>
-									<ManualPointsFields
-										points={current.points}
-										color={meta.color}
-										min={NEGATIVE_ALLOWED[category] ? MIN_POINTS : 0}
-										onChange={(points) =>
-											updateEntry(player.id, (e) => ({
-												...e,
-												[category]: { points },
-											}))
-										}
-									/>
-									{tokens && (
-										<Button
-											label="Compter par jetons"
-											variant="ghost"
-											onPress={() => setTokenSheetPlayerId(player.id)}
-											accessibilityLabel={`Compter les jetons de ${player.name} un par un`}
-										/>
-									)}
-								</PlayerScoreRow>
-							);
-						}
-
-						return null;
+						return (
+							<CategoryEntryRow
+								key={player.id}
+								category={category}
+								player={player}
+								entry={entry}
+								color={meta.color}
+								onChange={(patch) => updateEntry(player.id, patch)}
+								onCountTokens={tokens ? () => setTokenSheetPlayerId(player.id) : undefined}
+							/>
+						);
 					})}
 				</ScrollView>
 

@@ -134,6 +134,28 @@ describe("Saisie des scores par catégorie", () => {
 		expect(entryOf("p1").wonders.points).toBe(1);
 	});
 
+	it("compte les tuiles Babel posées, après Leaders et Cités", async () => {
+		const user = userEvent.setup();
+		await renderCategory("babel", ["leaders", "cities", "babel"]);
+
+		expect(screen.getByText("Étape 10 / 10")).toBeOnTheScreen();
+		expect(
+			screen.getByText(/1 tuile = 2 pts, 2 tuiles = 5 pts, 3 tuiles = 10 pts/),
+		).toBeOnTheScreen();
+
+		await user.press(screen.getAllByRole("radio", { name: "3 tuiles" })[0]);
+		await user.press(screen.getAllByRole("radio", { name: "1 tuile" })[1]);
+
+		expect(entryOf("p1").babel).toEqual({ tiles: 3 });
+		expect(entryOf("p2").babel).toEqual({ tiles: 1 });
+		expect(screen.getByText("10 pts")).toBeOnTheScreen();
+		expect(screen.getByText("2 pts")).toBeOnTheScreen();
+
+		// Un joueur saisi par erreur peut revenir à zéro tuile.
+		await user.press(screen.getAllByRole("radio", { name: "Aucune" })[1]);
+		expect(entryOf("p2").babel).toEqual({ tiles: 0 });
+	});
+
 	it("passe à l'étape suivante, puis aux résultats depuis la dernière", async () => {
 		const user = userEvent.setup();
 		await renderCategory("military");
