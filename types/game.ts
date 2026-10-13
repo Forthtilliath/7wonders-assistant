@@ -1,6 +1,10 @@
-export type ExtensionId = "leaders" | "cities" | "babel" | "armada";
+export type ExtensionId = "leaders" | "cities" | "babel" | "edifice" | "armada";
 
-export const ALL_EXTENSIONS: ExtensionId[] = ["leaders", "cities", "babel", "armada"];
+export const ALL_EXTENSIONS: ExtensionId[] = ["leaders", "cities", "babel", "edifice", "armada"];
+
+/** Édition du jeu de base : la 2e (2020) a changé le dos des cartes, certaines extensions ne se
+ * jouent donc qu'avec l'une des deux (cf. constants/editions.ts). */
+export type GameEdition = "first" | "second";
 
 /** Tuiles Babel posées par un joueur au cours de la partie (3 au maximum). */
 export type BabelTileCount = 0 | 1 | 2 | 3;
@@ -57,7 +61,13 @@ export type BaseCategoryId = (typeof BASE_CATEGORIES)[number];
 export const EXTRA_CATEGORIES = ["naval"] as const;
 export type ExtraCategoryId = (typeof EXTRA_CATEGORIES)[number];
 
-export type CategoryId = BaseCategoryId | ExtensionId | ExtraCategoryId;
+/** Extensions sans catégorie de score à elles : les points d'Edifice se comptent avec les pièces. */
+export type ExtensionWithoutCategory = "edifice";
+
+export type CategoryId =
+	| BaseCategoryId
+	| Exclude<ExtensionId, ExtensionWithoutCategory>
+	| ExtraCategoryId;
 
 /** Saisie brute d'un joueur pour une partie : ce que l'utilisateur remplit à l'écran. */
 export type PlayerGameEntry = {
@@ -100,6 +110,8 @@ export type Game = {
 	id: string;
 	createdAt: number;
 	finishedAt?: number;
+	/** Absente des parties enregistrées avant le choix de l'édition. */
+	edition?: GameEdition;
 	extensions: ExtensionId[];
 	playerIds: string[];
 	entries: Record<string, PlayerGameEntry>;
