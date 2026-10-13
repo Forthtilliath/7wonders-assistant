@@ -9,6 +9,7 @@ import {
 	EXTENSION_LABELS,
 	EXTENSION_ORDER,
 } from "@/constants/categories";
+import { getMaxPlayers } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -18,6 +19,7 @@ type Props = {
 	visible: boolean;
 	onClose: () => void;
 	currentExtensions: ExtensionId[];
+	playerCount: number;
 	onConfirm: (extensions: ExtensionId[]) => void;
 };
 
@@ -26,8 +28,15 @@ type Props = {
  * Un aperçu des catégories ajoutées/retirées s'affiche dès qu'une sélection change, et la
  * validation redemande confirmation en rappelant cet impact — retirer une extension remet à zéro
  * les points déjà saisis pour ses catégories (cf. `gameStore.updateExtensions`).
+ * Retirer Cités est refusé quand la partie compte plus de joueurs que le jeu de base n'en accepte.
  */
-export function EditExtensionsSheet({ visible, onClose, currentExtensions, onConfirm }: Props) {
+export function EditExtensionsSheet({
+	visible,
+	onClose,
+	currentExtensions,
+	playerCount,
+	onConfirm,
+}: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 	const [pending, setPending] = useState<ExtensionId[]>(currentExtensions);
@@ -39,12 +48,14 @@ export function EditExtensionsSheet({ visible, onClose, currentExtensions, onCon
 	const added = pending.filter((ext) => !currentExtensions.includes(ext));
 	const removed = currentExtensions.filter((ext) => !pending.includes(ext));
 	const hasChanges = added.length > 0 || removed.length > 0;
+	const maxPlayers = getMaxPlayers(pending);
+	const tooManyPlayers = playerCount > maxPlayers;
 
 	const addedCategories = added.flatMap((ext) => EXTENSION_CATEGORIES[ext]);
 	const removedCategories = removed.flatMap((ext) => EXTENSION_CATEGORIES[ext]);
 
 	const handleConfirm = () => {
-		if (!hasChanges) return;
+		if (!hasChanges || tooManyPlayers) return;
 
 		const lines: string[] = [];
 		if (addedCategories.length > 0) {
@@ -77,7 +88,14 @@ export function EditExtensionsSheet({ visible, onClose, currentExtensions, onCon
 				onChange={setPending}
 			/>
 
-			{hasChanges && (
+			{tooManyPlayers && (
+				<Text style={styles.warning}>
+					{playerCount} joueurs dans la partie : {EXTENSION_LABELS.cities} ne peut pas être retirée
+					(maximum {maxPlayers} sans elle).
+				</Text>
+			)}
+
+			{hasChanges && !tooManyPlayers && (
 				<View style={styles.preview}>
 					{addedCategories.length > 0 && (
 						<Text style={styles.previewAdd}>
@@ -96,7 +114,7 @@ export function EditExtensionsSheet({ visible, onClose, currentExtensions, onCon
 			<Button
 				label="Valider"
 				onPress={handleConfirm}
-				disabled={!hasChanges}
+				disabled={!hasChanges || tooManyPlayers}
 				style={styles.confirmButton}
 			/>
 		</BottomSheet>
@@ -118,6 +136,11 @@ function useStyles(colors: ThemeColors) {
 				previewRemove: {
 					color: colors.danger,
 					fontSize: 13,
+				},
+				warning: {
+					color: colors.danger,
+					fontSize: 13,
+					marginTop: SPACING.md,
 				},
 				confirmButton: {
 					marginTop: SPACING.md,

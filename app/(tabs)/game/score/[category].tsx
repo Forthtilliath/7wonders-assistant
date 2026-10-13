@@ -169,6 +169,7 @@ export default function CategoryScoreScreen() {
 					visible={extensionsSheetVisible}
 					onClose={() => setExtensionsSheetVisible(false)}
 					currentExtensions={extensions}
+					playerCount={playerIds.length}
 					onConfirm={updateExtensions}
 				/>
 
