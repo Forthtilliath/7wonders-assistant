@@ -55,7 +55,8 @@ Fini les additions au dos de la feuille de score. **7 Wonders: Assistant** calcu
 - 📊 **Statistiques** — meilleur score, plus longue série de victoires, taux de victoire par joueur, répartition des points par catégorie.
 - 📤 **Partage d'une partie** — le classement en texte (pour une messagerie), en image ou en CSV, directement depuis les résultats ou l'historique.
 - ☁️ **Sauvegarde automatique Google Drive (optionnelle)** — une fois ton compte relié, tes données sont envoyées après chaque partie dans un dossier privé de l'app sur ton Drive, et restaurables sur un nouveau téléphone.
-- 💾 **Sauvegarde & export** — export/import JSON pour changer d'appareil, export CSV pour ouvrir tes scores dans un tableur, et un rappel discret quand des parties n'ont pas été sauvegardées.
+- 💾 **Sauvegarde & export** — export/import JSON pour changer d'appareil (avec annulation de la dernière restauration), chiffrement optionnel des sauvegardes, export CSV pour ouvrir tes scores dans un tableur, et un rappel discret quand des parties n'ont pas été sauvegardées.
+- 🔄 **Mises à jour intégrées** — Réglages ▸ À propos vérifie la dernière version publiée sur GitHub, la télécharge et la confie à l'installeur d'Android.
 - 📴 **Hors ligne** — aucun compte obligatoire, aucun serveur : sans Google Drive, toutes les données restent sur le téléphone.
 - 🌗 **Thème clair / sombre**.
 
@@ -94,6 +95,33 @@ La sauvegarde automatique utilise [Google Sign-In](https://react-native-google-s
 3. Créer un **ID client OAuth de type Android** avec le nom de package `com.forth.reactnative7wondersassistant` et l'empreinte **SHA-1 de la clé qui signe l'APK** (`cd android && ./gradlew signingReport`). Une empreinte par clé de signature : en ajouter un second si les APK de dev et de release sont signés différemment.
 
 Aucun identifiant à recopier dans l'app : Google reconnaît le client à partir du package et de la signature de l'APK. Un client mal configuré se traduit par l'erreur « La connexion à Google a échoué » au moment de relier le compte.
+
+La clé de debug étant publique (la même dans tous les projets React Native), le client OAuth qui porte sa SHA-1 n'est à garder que pour le développement : n'importe qui peut signer un APK avec cette clé.
+
+### Signer l'APK de release
+
+L'APK de release est signé avec une clé propre au projet, jamais avec le `debug.keystore` public de React Native (plugin `withReleaseSigning` de [`@forthtilliath/expo-config-plugins`](https://www.npmjs.com/package/@forthtilliath/expo-config-plugins)). Sans cette clé, `gradlew assembleRelease` échoue (« Keystore file not set »).
+
+1. Générer la clé une seule fois, **hors du dépôt**, et la sauvegarder (gestionnaire de mots de passe, stockage chiffré) : la perdre empêche toute mise à jour de l'app installée.
+
+   ```bash
+   keytool -genkeypair -v -storetype PKCS12 -keyalg RSA -keysize 2048 -validity 10000 -alias sevenwonders-upload -keystore ~/keys/sevenwonders-upload.keystore
+   ```
+
+2. Déclarer son emplacement et ses mots de passe dans `~/.gradle/gradle.properties` (jamais dans `android/gradle.properties`, régénéré par `expo prebuild`) :
+
+   ```properties
+   SEVENWONDERS_UPLOAD_STORE_FILE=C:/Users/<toi>/keys/sevenwonders-upload.keystore
+   SEVENWONDERS_UPLOAD_STORE_PASSWORD=...
+   SEVENWONDERS_UPLOAD_KEY_ALIAS=sevenwonders-upload
+   SEVENWONDERS_UPLOAD_KEY_PASSWORD=...
+   ```
+
+   En CI, les mêmes valeurs passent par des variables d'environnement `ORG_GRADLE_PROJECT_SEVENWONDERS_UPLOAD_…`.
+
+3. Ajouter la SHA-1 de cette clé (`keytool -list -v -keystore <fichier>` ou `cd android && ./gradlew signingReport`) à un client OAuth Android dans la console Google Cloud (voir ci-dessus).
+
+Android refuse d'installer par-dessus une app signée avec une autre clé : le passage à la clé de release oblige à désinstaller l'ancienne version (données locales effacées). Faire une sauvegarde (Google Drive ou export JSON) avant, puis la restaurer.
 
 ## 🎯 Périmètre
 
