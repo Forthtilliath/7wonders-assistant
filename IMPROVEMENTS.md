@@ -47,12 +47,10 @@ statistiques sont mémoïsées._
 
 ## Sécurité / intégrité des données
 
-- **APK de release signé avec la clé de debug publique de React Native** (`android/app/debug.keystore`,
-SHA-1 `5E:8F:16:06:…:F6:25`, identique dans tous les projets RN) : n'importe qui peut signer un APK
-qu'Android acceptera comme mise à jour de l'app. Créer une vraie clé de release (hors git) et
-déclarer sa SHA-1 dans le client OAuth Google. Attention : changer de clé oblige à désinstaller
-l'app (les données locales sont effacées) — à faire après la diffusion de la sauvegarde Google
-Drive, pour que les joueurs puissent restaurer leurs données.
+- **Clé de debug encore déclarée dans le client OAuth Google** : le release est désormais signé avec
+  une clé propre au projet (plugin `withReleaseSigning` de `@forthtilliath/expo-config-plugins`, voir README). Une fois la SHA-1 de
+  release ajoutée, retirer la SHA-1 de debug (`5E:8F:16:06:…:F6:25`, publique) du client OAuth de
+  production, ou la déplacer dans un projet Google Cloud de test.
 
 Pour le reste, rien d'identifié : les données (prénoms, scores, chemins d'images locales) ne sont
 pas sensibles, le chiffrement de l'export ou d'AsyncStorage n'apporterait rien. Les imports (fichier
