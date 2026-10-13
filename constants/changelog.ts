@@ -12,6 +12,17 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.2.0",
+		date: Date.UTC(2026, 9, 13),
+		items: [
+			"Parties à 8 joueurs avec l'extension Cités : les groupes peuvent compter jusqu'à 8 membres, et Cités ne peut plus être retirée d'une partie à 8.",
+			"Photo d'un joueur prise directement avec l'appareil photo, pratique pour distinguer deux joueurs du même nom. La photo peut aussi être retirée.",
+			"Les points saisis par catégorie sont limités à des valeurs réalistes, pour éviter les fautes de frappe.",
+			"Réglages réorganisés : Nouveautés, Dons et À propos ont chacun leur page.",
+			"Tes données ne sont plus copiées dans la sauvegarde automatique d'Android : utilise la sauvegarde de l'app (export ou Google Drive) pour changer de téléphone.",
+		],
+	},
+	{
 		version: "1.1.0",
 		date: Date.UTC(2026, 9, 13),
 		items: [
