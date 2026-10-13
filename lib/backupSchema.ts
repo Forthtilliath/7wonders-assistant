@@ -115,7 +115,7 @@ export function isBackupDataShape(data: unknown): data is BackupData {
 	);
 }
 
-const extensionIdSchema = z.enum(["leaders", "cities", "babel", "armada"]);
+const extensionIdSchema = z.enum(["leaders", "cities", "babel", "edifice", "armada"]);
 
 // Bornes de chaque champ importé : un fichier modifié à la main ne doit ni faire planter l'app, ni la
 // geler (les compteurs de sciences pilotent des boucles, voir lib/scoring/science.ts), ni remplir le
@@ -176,6 +176,8 @@ const gameSchema = z.object({
 	id: idSchema,
 	createdAt: timestampSchema,
 	finishedAt: timestampSchema.optional(),
+	// Facultative : absente des parties enregistrées avant le choix de l'édition.
+	edition: z.enum(["first", "second"]).optional(),
 	extensions: z.array(extensionIdSchema).max(10),
 	playerIds: z.array(idSchema).max(20),
 	entries: boundedRecord(playerGameEntrySchema, 20),

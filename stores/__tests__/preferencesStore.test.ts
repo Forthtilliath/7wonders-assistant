@@ -6,7 +6,7 @@ import {
 
 describe("usePreferencesStore", () => {
 	beforeEach(() => {
-		usePreferencesStore.setState({ defaultExtensions: [] });
+		usePreferencesStore.setState({ defaultExtensions: [], defaultEdition: "first" });
 	});
 
 	it("n'a aucune extension par défaut au départ", () => {
@@ -17,17 +17,27 @@ describe("usePreferencesStore", () => {
 		usePreferencesStore.getState().setDefaultExtensions(["leaders", "armada"]);
 		expect(usePreferencesStore.getState().defaultExtensions).toEqual(["leaders", "armada"]);
 	});
+
+	it("setDefaultEdition décoche les extensions absentes de la nouvelle édition", () => {
+		usePreferencesStore.getState().setDefaultExtensions(["babel", "edifice"]);
+		usePreferencesStore.getState().setDefaultEdition("second");
+		expect(usePreferencesStore.getState()).toMatchObject({
+			defaultEdition: "second",
+			defaultExtensions: ["edifice"],
+		});
+	});
 });
 
 describe("migratePreferencesStoreData", () => {
 	it("garde les données à la version courante", () => {
-		const state = { defaultExtensions: ["cities" as const] };
+		const state = { defaultExtensions: ["cities" as const], defaultEdition: "second" as const };
 		expect(migratePreferencesStoreData(state, PREFERENCES_STORE_VERSION)).toBe(state);
 	});
 
 	it("réinitialise sur une version incompatible plutôt que de garder des données obsolètes", () => {
 		expect(migratePreferencesStoreData({ defaultExtensions: ["obsolète"] }, 0)).toEqual({
 			defaultExtensions: [],
+			defaultEdition: "first",
 		});
 	});
 });

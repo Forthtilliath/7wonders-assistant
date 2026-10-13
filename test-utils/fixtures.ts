@@ -23,7 +23,7 @@ export function resetAllStores() {
 	useHistoryStore.setState({ games: [] });
 	useGameStore.setState({ ...initialGameState });
 	useBackupStore.setState({ ...initialBackupState });
-	usePreferencesStore.setState({ defaultExtensions: [] });
+	usePreferencesStore.setState({ defaultExtensions: [], defaultEdition: "first" });
 	useThemeStore.setState({ mode: "dark" });
 }
 

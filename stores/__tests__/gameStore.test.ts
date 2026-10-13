@@ -19,6 +19,8 @@ describe("useGameStore", () => {
 		const state = useGameStore.getState();
 		expect(state.playerIds).toEqual(["p1", "p2"]);
 		expect(state.extensions).toEqual(["leaders"]);
+		// Sans édition précisée : la 1re, qui propose toutes les extensions.
+		expect(state.edition).toBe("first");
 		expect(Object.keys(state.entries)).toEqual(["p1", "p2"]);
 		expect(state.startedAt).not.toBeNull();
 	});
@@ -95,12 +97,13 @@ describe("useGameStore", () => {
 	});
 
 	it("toGame construit un Game sans id à partir de l'état courant", () => {
-		useGameStore.getState().startNewGame(["p1"], ["cities"]);
+		useGameStore.getState().startNewGame(["p1"], ["cities"], "second");
 
 		const game = useGameStore.getState().toGame();
 
 		expect(game.id).toBe("");
 		expect(game.playerIds).toEqual(["p1"]);
+		expect(game.edition).toBe("second");
 		expect(game.extensions).toEqual(["cities"]);
 		expect(game.finishedAt).toBeUndefined();
 	});
