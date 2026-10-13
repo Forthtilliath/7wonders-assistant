@@ -7,6 +7,7 @@ import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { useThemeStore } from "@/stores/themeStore";
+import { initialUpdateState, useUpdateStore } from "@/stores/updateStore";
 import {
 	createEmptyPlayerGameEntry,
 	type ExtensionId,
@@ -25,6 +26,7 @@ export function resetAllStores() {
 	useBackupStore.setState({ ...initialBackupState });
 	usePreferencesStore.setState({ defaultExtensions: [], defaultEdition: "first" });
 	useThemeStore.setState({ mode: "dark" });
+	useUpdateStore.setState({ ...initialUpdateState });
 }
 
 export function makePlayer(id: string, name: string, patch: Partial<Player> = {}): Player {
