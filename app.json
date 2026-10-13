@@ -18,7 +18,9 @@
 			"blockedPermissions": [
 				"android.permission.RECORD_AUDIO",
 				"android.permission.WRITE_EXTERNAL_STORAGE",
-				"android.permission.SYSTEM_ALERT_WINDOW"
+				"android.permission.SYSTEM_ALERT_WINDOW",
+				"android.permission.USE_BIOMETRIC",
+				"android.permission.USE_FINGERPRINT"
 			],
 			"adaptiveIcon": {
 				"backgroundColor": "#0f172a",
