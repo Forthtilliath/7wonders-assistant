@@ -7,6 +7,7 @@ import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { formatDate } from "@/lib/date";
 import { getGameRanking } from "@/lib/scoring/game";
+import { useWondersStore } from "@/stores/wondersStore";
 import type { Game, Player } from "@/types/game";
 
 type Props = {
@@ -21,6 +22,10 @@ export function GameSummaryCard({ game, players, onPress }: Props) {
 	const ranking = getGameRanking(game);
 	const winnerScore = ranking[0];
 	const winner = players.find((p) => p.id === winnerScore?.playerId);
+	const packs = useWondersStore((s) => s.packs);
+	// Une extension non officielle supprimée depuis n'est plus affichée.
+	const packLabels = packs.filter((p) => game.wonderPacks?.includes(p.id)).map((p) => p.name);
+	const labels = [...game.extensions.map((ext) => EXTENSION_LABELS[ext]), ...packLabels];
 
 	return (
 		<Pressable style={styles.card} onPress={onPress}>
@@ -44,11 +49,11 @@ export function GameSummaryCard({ game, players, onPress }: Props) {
 				</View>
 			)}
 
-			{game.extensions.length > 0 && (
+			{labels.length > 0 && (
 				<View style={styles.extensionsRow}>
-					{game.extensions.map((ext) => (
-						<View key={ext} style={styles.extensionChip}>
-							<Text style={styles.extensionText}>{EXTENSION_LABELS[ext]}</Text>
+					{labels.map((label) => (
+						<View key={label} style={styles.extensionChip}>
+							<Text style={styles.extensionText}>{label}</Text>
 						</View>
 					))}
 				</View>

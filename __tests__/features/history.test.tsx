@@ -5,6 +5,7 @@ import { shareGameText } from "@/lib/shareGame";
 import { useGameStore } from "@/stores/gameStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
+import { useWondersStore } from "@/stores/wondersStore";
 import { mockRouter, setSearchParams } from "@/test-utils/expoRouter";
 import {
 	makeGame,
@@ -113,6 +114,20 @@ describe("Historique des parties", () => {
 			await user.press(screen.getByRole("button", { name: "Rejouer avec les mêmes joueurs" }));
 
 			expect(useGameStore.getState().edition).toBe("second");
+		});
+
+		it("relance une partie avec ses extensions non officielles encore existantes", async () => {
+			const user = userEvent.setup();
+			const game = makeGame("g1", { p1: 30, p2: 20, p3: 10 });
+			useHistoryStore.setState({ games: [{ ...game, wonderPacks: ["box", "deleted"] }] });
+			useWondersStore.setState({
+				packs: [{ id: "box", name: "Wonders Box", selectedByDefault: false, createdAt: 0 }],
+			});
+			await render(<GameDetailScreen />);
+
+			await user.press(screen.getByRole("button", { name: "Rejouer avec les mêmes joueurs" }));
+
+			expect(useGameStore.getState().wonderPacks).toEqual(["box"]);
 		});
 
 		it("rejoue sans les joueurs supprimés depuis, après confirmation", async () => {
