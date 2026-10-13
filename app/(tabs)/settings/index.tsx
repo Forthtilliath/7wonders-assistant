@@ -26,6 +26,7 @@ export default function SettingsScreen() {
 	const defaultEdition = usePreferencesStore((s) => s.defaultEdition);
 	const cloudConnected = useBackupState(backup).cloudAccount != null;
 	const customWonderCount = useWondersStore((s) => s.customWonders.length);
+	const packCount = useWondersStore((s) => s.packs.length);
 
 	const defaultExtensionsPreview = [
 		EDITION_LABELS[defaultEdition],
@@ -33,10 +34,11 @@ export default function SettingsScreen() {
 			? defaultExtensions.map((ext) => EXTENSION_LABELS[ext])
 			: ["aucune extension"]),
 	].join(", ");
-	const wondersPreview =
-		customWonderCount > 0
-			? `${OFFICIAL_WONDERS.length} officielles, ${customWonderCount} perso`
-			: `${OFFICIAL_WONDERS.length} officielles`;
+	const wondersPreview = [
+		`${OFFICIAL_WONDERS.length} officielles`,
+		...(customWonderCount > 0 ? [`${customWonderCount} perso`] : []),
+		...(packCount > 0 ? [`${packCount} extension(s) non officielle(s)`] : []),
+	].join(", ");
 
 	return (
 		<ScreenContainer style={styles.container}>

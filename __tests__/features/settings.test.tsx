@@ -135,16 +135,16 @@ describe("Réglages", () => {
 			const user = userEvent.setup();
 			const alert = mockAlert();
 			await render(<WondersSettingsScreen />);
-			const field = screen.getByPlaceholderText("Nouvelle merveille");
+			const field = screen.getByPlaceholderText("Nouvelles merveilles, une par ligne");
 
 			await user.type(field, "Atlantide");
-			await user.press(screen.getByRole("button", { name: "Ajouter la merveille" }));
+			await user.press(screen.getByRole("button", { name: "Ajouter" }));
 			expect(useWondersStore.getState().customWonders.map((w) => w.name)).toEqual(["Atlantide"]);
 			expect(screen.getByText("Atlantide")).toBeOnTheScreen();
 
 			await user.type(field, "rhodes");
-			await user.press(screen.getByRole("button", { name: "Ajouter la merveille" }));
-			expect(screen.getByText("Cette merveille existe déjà.")).toBeOnTheScreen();
+			await user.press(screen.getByRole("button", { name: "Ajouter" }));
+			expect(screen.getByText(/rhodes : Cette merveille existe déjà\./)).toBeOnTheScreen();
 			expect(useWondersStore.getState().customWonders).toHaveLength(1);
 
 			await user.press(screen.getByRole("button", { name: "Supprimer Atlantide" }));

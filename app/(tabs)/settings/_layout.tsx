@@ -12,6 +12,7 @@ export default function SettingsLayout() {
 			<Stack.Screen name="appearance" options={{ title: "Apparence" }} />
 			<Stack.Screen name="new-game" options={{ title: "Édition et extensions" }} />
 			<Stack.Screen name="wonders" options={{ title: "Merveilles" }} />
+			<Stack.Screen name="wonder-packs/[id]" options={{ title: "Extension non officielle" }} />
 			<Stack.Screen name="backup" options={{ title: "Gestion des sauvegardes" }} />
 			<Stack.Screen name="danger-zone" options={{ title: "Zone dangereuse" }} />
 			<Stack.Screen name="changelog" options={{ title: "Nouveautés" }} />
