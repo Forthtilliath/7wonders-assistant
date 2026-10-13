@@ -52,7 +52,7 @@ describe("Réglages", () => {
 
 		await user.press(screen.getByRole("button", { name: "Apparence, Sombre" }));
 		await user.press(
-			screen.getByRole("button", { name: "Extensions par défaut, Leaders, Armada" }),
+			screen.getByRole("button", { name: "Édition et extensions, 1re édition, Leaders, Armada" }),
 		);
 		await user.press(
 			screen.getByRole("button", {
@@ -97,6 +97,24 @@ describe("Réglages", () => {
 
 		expect(usePreferencesStore.getState().defaultExtensions).toEqual(["armada"]);
 		expect(screen.getByRole("checkbox", { name: "Armada" })).toBeChecked();
+	});
+
+	it("filtre les extensions par défaut selon l'édition et signale Babel + Edifice", async () => {
+		const user = userEvent.setup();
+		await render(<NewGameSettingsScreen />);
+
+		await user.press(screen.getByRole("checkbox", { name: "Babel" }));
+		await user.press(screen.getByRole("checkbox", { name: "Edifice" }));
+		expect(screen.getByText(/Edifice remplace Babel/)).toBeOnTheScreen();
+
+		await user.press(screen.getByRole("radio", { name: "2e édition" }));
+
+		expect(usePreferencesStore.getState()).toMatchObject({
+			defaultEdition: "second",
+			defaultExtensions: ["edifice"],
+		});
+		expect(screen.queryByRole("checkbox", { name: "Babel" })).not.toBeOnTheScreen();
+		expect(screen.queryByText(/Edifice remplace Babel/)).not.toBeOnTheScreen();
 	});
 
 	describe("zone dangereuse", () => {

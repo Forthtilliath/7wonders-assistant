@@ -2,24 +2,25 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { selectFeedback } from "@forthtilliath/react-native-kit/utils/helpers/haptics";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { BackupReminderBanner } from "@/components/backup/BackupReminderBanner";
+import { ExtensionsPicker } from "@/components/game/ExtensionsPicker";
 import { GroupChips } from "@/components/game/GroupChips";
 import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { EXTENSION_LABELS, EXTENSION_ORDER } from "@/constants/categories";
+import { EXTENSION_LABELS } from "@/constants/categories";
 import { getMaxPlayers, MIN_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
-import { FONTS, RADIUS, SPACING } from "@/constants/theme";
+import { FONTS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { useGameStore } from "@/stores/gameStore";
 import { selectSortedGroups, useGroupsStore } from "@/stores/groupsStore";
 import { selectSortedPlayers, usePlayersStore } from "@/stores/playersStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
-import type { ExtensionId } from "@/types/game";
+import type { ExtensionId, GameEdition } from "@/types/game";
 
 export default function NewGameTab() {
 	const router = useRouter();
@@ -28,6 +29,7 @@ export default function NewGameTab() {
 	const players = usePlayersStore((s) => s.players);
 	const groups = useGroupsStore((s) => s.groups);
 	const defaultExtensions = usePreferencesStore((s) => s.defaultExtensions);
+	const defaultEdition = usePreferencesStore((s) => s.defaultEdition);
 	const startNewGame = useGameStore((s) => s.startNewGame);
 	const resetGame = useGameStore((s) => s.resetGame);
 	const hasOngoingGame = useGameStore((s) => s.hasOngoingGame());
@@ -41,7 +43,9 @@ export default function NewGameTab() {
 			.slice(0, getMaxPlayers(defaultExtensions))
 			.map((p) => p.id),
 	);
-	// Pré-coché avec les extensions habituelles configurées dans Réglages, modifiable ensuite.
+	// Pré-choisis avec l'édition et les extensions habituelles configurées dans Réglages, modifiables
+	// ensuite.
+	const [edition, setEdition] = useState<GameEdition>(() => defaultEdition);
 	const [extensions, setExtensions] = useState<ExtensionId[]>(() => defaultExtensions);
 	const maxPlayers = getMaxPlayers(extensions);
 	const tooManyPlayers = selectedIds.length > maxPlayers;
@@ -54,11 +58,9 @@ export default function NewGameTab() {
 		});
 	};
 
-	const toggleExtension = (ext: ExtensionId) => {
-		selectFeedback();
-		setExtensions((current) =>
-			current.includes(ext) ? current.filter((e) => e !== ext) : [...current, ext],
-		);
+	const changeExtensions = (nextEdition: GameEdition, nextExtensions: ExtensionId[]) => {
+		setEdition(nextEdition);
+		setExtensions(nextExtensions);
 	};
 
 	// Sélectionne d'un coup les membres (actifs) d'un groupe, à la place de la sélection courante.
@@ -71,7 +73,7 @@ export default function NewGameTab() {
 	const canStart = selectedIds.length >= MIN_PLAYERS && !tooManyPlayers;
 
 	const startGame = () => {
-		startNewGame(selectedIds, extensions);
+		startNewGame(selectedIds, extensions, edition);
 		router.push("/game/score/military");
 	};
 
@@ -174,26 +176,8 @@ export default function NewGameTab() {
 						</Text>
 					)}
 
-					<SectionTitle style={styles.sectionTitle}>Extensions</SectionTitle>
-					<View style={styles.chipsRow}>
-						{EXTENSION_ORDER.map((ext) => {
-							const active = extensions.includes(ext);
-							return (
-								<Pressable
-									key={ext}
-									style={[styles.chip, active && styles.chipActive]}
-									onPress={() => toggleExtension(ext)}
-									accessibilityRole="checkbox"
-									accessibilityState={{ checked: active }}
-									accessibilityLabel={EXTENSION_LABELS[ext]}
-								>
-									<Text style={[styles.chipLabel, active && styles.chipLabelActive]}>
-										{EXTENSION_LABELS[ext]}
-									</Text>
-								</Pressable>
-							);
-						})}
-					</View>
+					<SectionTitle style={styles.sectionTitle}>Édition et extensions</SectionTitle>
+					<ExtensionsPicker edition={edition} extensions={extensions} onChange={changeExtensions} />
 				</ScrollView>
 
 				<Button label="Lancer la partie" disabled={!canStart} onPress={startGame} />
@@ -223,29 +207,6 @@ function useStyles(colors: ThemeColors) {
 				},
 				warning: {
 					color: colors.danger,
-				},
-				chipsRow: {
-					flexDirection: "row",
-					flexWrap: "wrap",
-					gap: SPACING.sm,
-				},
-				chip: {
-					paddingVertical: SPACING.sm,
-					paddingHorizontal: SPACING.md,
-					borderRadius: RADIUS.full,
-					borderWidth: 1,
-					borderColor: colors.border,
-				},
-				chipActive: {
-					backgroundColor: colors.primary,
-					borderColor: colors.primary,
-				},
-				chipLabel: {
-					color: colors.textMuted,
-				},
-				chipLabelActive: {
-					color: colors.primaryText,
-					fontWeight: "600",
 				},
 				onboarding: {
 					flex: 1,
