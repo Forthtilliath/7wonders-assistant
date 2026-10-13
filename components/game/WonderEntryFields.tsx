@@ -7,6 +7,7 @@ import type { PlayerGameEntry } from "@/types/game";
 type Wonder = PlayerGameEntry["wonder"];
 
 type Props = {
+	playerId: string;
 	wonder: Wonder;
 	points: number;
 	color: string;
@@ -16,6 +17,7 @@ type Props = {
 
 /** Saisie de l'étape Merveille : nom et face de la merveille jouée (pure info), puis ses points. */
 export function WonderEntryFields({
+	playerId,
 	wonder,
 	points,
 	color,
@@ -25,6 +27,7 @@ export function WonderEntryFields({
 	return (
 		<>
 			<WonderNameField
+				playerId={playerId}
 				value={wonder.name}
 				onChange={(name) => onWonderChange({ ...wonder, name })}
 			/>

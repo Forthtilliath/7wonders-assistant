@@ -2,6 +2,7 @@ import { act, render, screen, userEvent, within } from "@testing-library/react-n
 import CategoryScoreScreen from "@/app/(tabs)/game/score/[category]";
 import { useGameStore } from "@/stores/gameStore";
 import { useHistoryStore } from "@/stores/historyStore";
+import { useWondersStore } from "@/stores/wondersStore";
 import { mockRouter, setSearchParams } from "@/test-utils/expoRouter";
 import {
 	makeGame,
@@ -125,13 +126,30 @@ describe("Saisie des scores par catégorie", () => {
 
 		const [aliceName] = screen.getAllByPlaceholderText("Nom de la merveille");
 		await user.type(aliceName, "Rh");
-		// Suggestion issue des noms déjà saisis dans l'historique.
-		await user.press(screen.getByRole("button", { name: "Utiliser le nom Rhodes" }));
+		// Bob voit aussi Rhodes, dans la liste complète de son champ encore vide.
+		await user.press(screen.getAllByRole("button", { name: "Utiliser le nom Rhodes" })[0]);
 		await user.press(screen.getAllByRole("radio", { name: "Face B" })[0]);
 		await user.press(screen.getAllByRole("button", { name: "Augmenter" })[0]);
 
 		expect(entryOf("p1").wonder).toEqual({ name: "Rhodes", side: "B" });
 		expect(entryOf("p1").wonders.points).toBe(1);
+		// Rhodes est prise par Alice : elle n'est plus proposée à Bob.
+		expect(screen.queryByRole("button", { name: "Utiliser le nom Rhodes" })).toBeNull();
+	});
+
+	it("propose les merveilles des extensions actives et ajoute une merveille perso", async () => {
+		const user = userEvent.setup();
+		await renderCategory("wonders", ["cities"]);
+
+		expect(screen.getAllByRole("button", { name: "Utiliser le nom Pétra" })).toHaveLength(2);
+		expect(screen.queryByRole("button", { name: "Utiliser le nom Rome" })).toBeNull();
+
+		const [aliceName] = screen.getAllByPlaceholderText("Nom de la merveille");
+		await user.type(aliceName, "Atlantide");
+		await user.press(screen.getByRole("button", { name: "Ajouter Atlantide à mes merveilles" }));
+
+		expect(entryOf("p1").wonder.name).toBe("Atlantide");
+		expect(useWondersStore.getState().customWonders.map((w) => w.name)).toEqual(["Atlantide"]);
 	});
 
 	it("compte les tuiles Babel posées, après Leaders et Cities", async () => {
