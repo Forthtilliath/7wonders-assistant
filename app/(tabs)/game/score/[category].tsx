@@ -26,8 +26,10 @@ const CATEGORY_HINTS: Partial<Record<CategoryId, string>> = {
 	babel: "Tuiles Babel posées : 1 tuile = 2 pts, 2 tuiles = 5 pts, 3 tuiles = 10 pts.",
 };
 
-/** Complète le rappel du Trésor : Edifice n'a pas d'étape à elle, ses points passent par les pièces. */
-const EDIFICE_TREASURY_HINT = "Edifice : compte les pièces gagnées ou perdues avec ses projets.";
+/** Complète le rappel du Trésor : Edifice n'a pas d'étape à elle, ses pions Participation et ses
+ * jetons Dette se comptent avec le trésor. */
+const EDIFICE_TREASURY_HINT =
+	"Edifice : ajoute tes pions Participation ; ses jetons Dette se retirent comme ceux de Cités.";
 
 export default function CategoryScoreScreen() {
 	const router = useRouter();
