@@ -1,6 +1,7 @@
 import { act, render, screen, userEvent, within } from "@testing-library/react-native";
 import StatsScreen from "@/app/(tabs)/stats";
 import { useHistoryStore } from "@/stores/historyStore";
+import { useWondersStore } from "@/stores/wondersStore";
 import { makeGame, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
 import type { PlayerGameEntry } from "@/types/game";
 
@@ -67,9 +68,32 @@ describe("Statistiques", () => {
 		seedHistory();
 		await render(<StatsScreen />);
 
-		expect(screen.getByText("Top 5 des meilleures merveilles")).toBeOnTheScreen();
+		expect(screen.getByText("Classement par taux de victoire")).toBeOnTheScreen();
 		expect(screen.getAllByText("Rhodes (Face A)").length).toBeGreaterThan(0);
 		expect(screen.getAllByText("Gizeh (Face B)").length).toBeGreaterThan(0);
+	});
+
+	it("filtre le classement des merveilles par extension non officielle", async () => {
+		const user = userEvent.setup();
+		seedPlayers(["Alice", "Bob"]);
+		useWondersStore.setState({
+			packs: [{ id: "box", name: "Wonders Box", enabled: true, createdAt: 0 }],
+			customWonders: [{ id: "w1", name: "Atlantide", packId: "box", createdAt: 0 }],
+		});
+		const patch = withWonder({
+			p1: { name: "Atlantide", side: "A" },
+			p2: { name: "Gizeh", side: "B" },
+		});
+		useHistoryStore.setState({ games: [makeGame("g1", { p1: 30, p2: 20 }, { patch })] });
+		await render(<StatsScreen />);
+
+		expect(screen.getByText("Gizeh (Face B)")).toBeOnTheScreen();
+		await user.press(screen.getByRole("radio", { name: "Wonders Box" }));
+
+		expect(screen.getByText("Atlantide (Face A)")).toBeOnTheScreen();
+		expect(screen.queryByText("Gizeh (Face B)")).not.toBeOnTheScreen();
+		await user.press(screen.getByRole("radio", { name: "Officielles" }));
+		expect(screen.queryByText("Atlantide (Face A)")).not.toBeOnTheScreen();
 	});
 
 	it("filtre les statistiques par extension, et signale un filtre sans résultat", async () => {
