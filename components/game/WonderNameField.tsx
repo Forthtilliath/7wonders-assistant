@@ -25,7 +25,7 @@ type Props = {
 
 /**
  * Champ de nom de merveille : propose les merveilles jouables dans la partie (édition, extensions
- * actives, merveilles perso) encore libres, puis les noms déjà saisis dans l'historique, pour
+ * actives, merveilles perso des extensions activées) encore libres, puis les noms déjà saisis dans l'historique, pour
  * réduire les doublons dus à des fautes de frappe dans les statistiques par merveille. Un nom
  * inconnu peut être ajouté aux merveilles perso, pour le retrouver dans les prochaines parties.
  */
@@ -37,15 +37,16 @@ export function WonderNameField({ playerId, value, onChange }: Props) {
 	const extensions = useGameStore((s) => s.extensions);
 	const entries = useGameStore((s) => s.entries);
 	const customWonders = useWondersStore((s) => s.customWonders);
+	const packs = useWondersStore((s) => s.packs);
 	const addCustomWonder = useWondersStore((s) => s.addCustomWonder);
 
 	const suggestions = useMemo(() => {
-		const options = getAvailableWonders(edition, extensions, customWonders);
+		const options = getAvailableWonders(edition, extensions, customWonders, packs);
 		const takenNames = Object.values(entries)
 			.filter((entry) => entry.playerId !== playerId)
 			.map((entry) => entry.wonder.name);
 		return getWonderNameSuggestions({ options, games, query: value, takenNames });
-	}, [edition, extensions, customWonders, entries, playerId, games, value]);
+	}, [edition, extensions, customWonders, packs, entries, playerId, games, value]);
 
 	const canAddCustom =
 		value.trim() !== "" && getCustomWonderNameError(value, customWonders) === null;

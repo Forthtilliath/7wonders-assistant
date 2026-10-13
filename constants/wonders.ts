@@ -4,8 +4,8 @@ import type { ExtensionId, GameEdition } from "@/types/game";
 /**
  * Origine d'une merveille officielle : le jeu de base, une extension de l'app qui apporte des
  * plateaux (Babel et Edifice n'en ajoutent aucun), ou le Wonder Pack, recueil de merveilles promo
- * sans étape de score à lui (donc pas une extension à cocher). Une future extension non officielle
- * viendra s'ajouter ici comme une source de plus.
+ * sans étape de score à lui (donc pas une extension à cocher). Les extensions non officielles sont
+ * créées par l'utilisateur (types/game.ts, `CustomWonderPack`).
  */
 export type OfficialWonderSource =
 	| "base"
@@ -71,3 +71,11 @@ export const OFFICIAL_WONDERS: readonly OfficialWonder[] = [
 
 /** Longueur maximale d'un nom de merveille, la même que celle acceptée à l'import d'une sauvegarde. */
 export const MAX_WONDER_NAME_LENGTH = 100;
+
+/** Longueur maximale du nom d'une extension non officielle. */
+export const MAX_WONDER_PACK_NAME_LENGTH = 100;
+
+/** Nombre maximal de merveilles perso et d'extensions non officielles, les mêmes qu'à l'import d'une
+ * sauvegarde : au-delà, la sauvegarde exportée ne pourrait plus être réimportée. */
+export const MAX_CUSTOM_WONDERS = 1000;
+export const MAX_WONDER_PACKS = 100;
