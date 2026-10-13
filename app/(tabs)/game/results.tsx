@@ -1,24 +1,21 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { CategoryComparisonChart } from "@/components/game/CategoryComparisonChart";
+import { GameCharts } from "@/components/game/GameCharts";
 import { ShareableRanking } from "@/components/game/ShareableRanking";
 import { ShareGameSheet } from "@/components/game/ShareGameSheet";
-import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
 import { Button } from "@/components/ui/Button";
-import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
+import { CaptureFrame } from "@/components/ui/CaptureFrame";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { SectionTitle } from "@/components/ui/SectionTitle";
 import { getOrderedCategories } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
-import { cardSurface, FONTS, RADIUS, SPACING } from "@/constants/theme";
+import { FONTS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { useGameCapture } from "@/hooks/useGameCapture";
 import { getGameRanking } from "@/lib/scoring/game";
-import { getCategoryScore } from "@/lib/scoring/total";
 import { useGameStore } from "@/stores/gameStore";
 import { usePlayersStore } from "@/stores/playersStore";
-import type { CategoryId } from "@/types/game";
 
 export default function ResultsScreen() {
 	const colors = useColors();
@@ -37,7 +34,7 @@ export default function ResultsScreen() {
 		[startedAt, extensions, playerIds, entries],
 	);
 	const ranking = useMemo(() => getGameRanking(game), [game]);
-	const rankingRef = useRef<View>(null);
+	const { rankingRef, chartsRef, capturing, shareImage } = useGameCapture();
 	const [shareVisible, setShareVisible] = useState(false);
 	const categories = useMemo(() => getOrderedCategories(extensions), [extensions]);
 	const gamePlayers = playerIds
@@ -87,38 +84,16 @@ export default function ResultsScreen() {
 			/>
 			<Text style={styles.title}>Classement</Text>
 			<ScrollView contentContainerStyle={styles.list}>
-				<ShareableRanking ref={rankingRef} game={game} ranking={ranking} players={allPlayers} />
-
-				<SectionTitle style={styles.sectionTitle}>Répartition par joueur</SectionTitle>
-				{gamePlayers.map((player) => {
-					const score = ranking.find((s) => s.playerId === player.id);
-					if (!score) return null;
-					const values: Partial<Record<CategoryId, number>> = {};
-					for (const category of categories) {
-						values[category] = getCategoryScore(score, category);
-					}
-					return (
-						<View key={player.id} style={styles.chartCard}>
-							<View style={styles.chartCardHeader}>
-								<PlayerAvatar
-									name={player.name}
-									avatarUri={player.avatarUri}
-									seed={player.id}
-									size={32}
-								/>
-								<Text style={styles.chartCardName}>{player.name}</Text>
-							</View>
-							<CategoryPieChart categories={categories} values={values} />
-						</View>
-					);
-				})}
-
-				<SectionTitle style={styles.sectionTitle}>Comparaison par catégorie</SectionTitle>
-				{categories.map((category) => (
-					<View key={category} style={styles.chartCard}>
-						<CategoryComparisonChart category={category} players={gamePlayers} scores={ranking} />
-					</View>
-				))}
+				<CaptureFrame ref={chartsRef} capturing={capturing === "charts"} style={styles.capture}>
+					<ShareableRanking
+						ref={rankingRef}
+						capturing={capturing === "ranking"}
+						game={game}
+						ranking={ranking}
+						players={allPlayers}
+					/>
+					<GameCharts categories={categories} players={gamePlayers} ranking={ranking} />
+				</CaptureFrame>
 			</ScrollView>
 
 			<Button label="Terminer et enregistrer la partie" onPress={confirmFinish} />
@@ -126,7 +101,7 @@ export default function ResultsScreen() {
 				visible={shareVisible}
 				onClose={() => setShareVisible(false)}
 				game={game}
-				rankingRef={rankingRef}
+				shareImage={shareImage}
 			/>
 		</ScreenContainer>
 	);
@@ -147,27 +122,10 @@ function useStyles(colors: ThemeColors) {
 					marginBottom: SPACING.md,
 				},
 				list: {
-					gap: SPACING.sm,
 					paddingBottom: SPACING.md,
 				},
-				sectionTitle: {
-					marginTop: SPACING.sm,
-				},
-				chartCard: {
-					...cardSurface(colors),
-					borderRadius: RADIUS.md,
-					padding: SPACING.md,
+				capture: {
 					gap: SPACING.sm,
-				},
-				chartCardHeader: {
-					flexDirection: "row",
-					alignItems: "center",
-					gap: SPACING.sm,
-				},
-				chartCardName: {
-					color: colors.text,
-					fontSize: 15,
-					fontWeight: "700",
 				},
 			}),
 		[colors],

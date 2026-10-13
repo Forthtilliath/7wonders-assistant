@@ -1,15 +1,19 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo, useRef, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, type View } from "react-native";
+import { useMemo, useState } from "react";
+import { Alert, Pressable, ScrollView, StyleSheet, Text } from "react-native";
+import { GameCharts } from "@/components/game/GameCharts";
 import { ShareableRanking } from "@/components/game/ShareableRanking";
 import { ShareGameSheet } from "@/components/game/ShareGameSheet";
 import { Button } from "@/components/ui/Button";
+import { CaptureFrame } from "@/components/ui/CaptureFrame";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { getOrderedCategories } from "@/constants/categories";
 import { MIN_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { useGameCapture } from "@/hooks/useGameCapture";
 import { getGameRanking } from "@/lib/scoring/game";
 import { useGameStore } from "@/stores/gameStore";
 import { useHistoryStore } from "@/stores/historyStore";
@@ -25,8 +29,9 @@ export default function GameDetailScreen() {
 	const removeGame = useHistoryStore((s) => s.removeGame);
 	const players = usePlayersStore((s) => s.players);
 	const startNewGame = useGameStore((s) => s.startNewGame);
-	const rankingRef = useRef<View>(null);
+	const { rankingRef, chartsRef, capturing, shareImage } = useGameCapture();
 	const [shareVisible, setShareVisible] = useState(false);
+	const [chartsVisible, setChartsVisible] = useState(false);
 
 	if (!game) {
 		return (
@@ -37,6 +42,9 @@ export default function GameDetailScreen() {
 	}
 
 	const ranking = getGameRanking(game);
+	const gamePlayers = game.playerIds
+		.map((pid) => players.find((p) => p.id === pid))
+		.filter((p): p is NonNullable<typeof p> => p != null);
 
 	const confirmDelete = () => {
 		Alert.alert("Supprimer cette partie ?", "Cette action est irréversible.", [
@@ -104,7 +112,30 @@ export default function GameDetailScreen() {
 				}}
 			/>
 			<ScrollView contentContainerStyle={styles.list}>
-				<ShareableRanking ref={rankingRef} game={game} ranking={ranking} players={players} />
+				<CaptureFrame ref={chartsRef} capturing={capturing === "charts"} style={styles.capture}>
+					<ShareableRanking
+						ref={rankingRef}
+						capturing={capturing === "ranking"}
+						game={game}
+						ranking={ranking}
+						players={players}
+					/>
+					{/* Pendant la capture avec graphiques : graphiques affichés même masqués, sans le bouton. */}
+					{capturing !== "charts" && (
+						<Button
+							label={chartsVisible ? "Masquer les graphiques" : "Voir les graphiques"}
+							variant="ghost"
+							onPress={() => setChartsVisible((v) => !v)}
+						/>
+					)}
+					{(chartsVisible || capturing === "charts") && (
+						<GameCharts
+							categories={getOrderedCategories(game.extensions)}
+							players={gamePlayers}
+							ranking={ranking}
+						/>
+					)}
+				</CaptureFrame>
 			</ScrollView>
 			<Button
 				label="Rejouer avec les mêmes joueurs"
@@ -117,7 +148,7 @@ export default function GameDetailScreen() {
 				visible={shareVisible}
 				onClose={() => setShareVisible(false)}
 				game={game}
-				rankingRef={rankingRef}
+				shareImage={shareImage}
 			/>
 		</ScreenContainer>
 	);
@@ -130,6 +161,9 @@ function useStyles(colors: ThemeColors) {
 				list: {
 					paddingTop: SPACING.sm,
 					paddingBottom: SPACING.md,
+				},
+				capture: {
+					gap: SPACING.sm,
 				},
 				replayButton: {
 					marginBottom: SPACING.sm,

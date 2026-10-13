@@ -1,11 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
-import { shareViewAsImage } from "@forthtilliath/react-native-kit/utils/helpers/shareViewAsImage";
-import { type RefObject, useMemo } from "react";
+import { useMemo } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import type { CaptureTarget } from "@/hooks/useGameCapture";
 import { exportGameCsv } from "@/lib/backup";
 import { shareGameText } from "@/lib/shareGame";
 import { usePlayersStore } from "@/stores/playersStore";
@@ -15,8 +15,8 @@ type Props = {
 	visible: boolean;
 	onClose: () => void;
 	game: Game;
-	/** Vue du classement à capturer pour le partage en image (voir `ShareableRanking`). */
-	rankingRef: RefObject<View | null>;
+	/** Partage en image (voir `useGameCapture`). */
+	shareImage: (target: CaptureTarget) => Promise<void>;
 };
 
 type Option = {
@@ -26,8 +26,8 @@ type Option = {
 	share: () => Promise<void>;
 };
 
-/** Choix du format de partage d'une partie : texte, image du classement ou CSV. */
-export function ShareGameSheet({ visible, onClose, game, rankingRef }: Props) {
+/** Choix du format de partage d'une partie : texte, image (avec ou sans graphiques) ou CSV. */
+export function ShareGameSheet({ visible, onClose, game, shareImage }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 
@@ -42,7 +42,13 @@ export function ShareGameSheet({ visible, onClose, game, rankingRef }: Props) {
 			icon: "image-outline",
 			label: "Image",
 			description: "Une capture du classement avec le détail des points",
-			share: () => shareViewAsImage(rankingRef, { dialogTitle: "Partager le classement" }),
+			share: () => shareImage("ranking"),
+		},
+		{
+			icon: "pie-chart-outline",
+			label: "Image avec graphiques",
+			description: "Le classement suivi de la répartition des points et des comparaisons",
+			share: () => shareImage("charts"),
 		},
 		{
 			icon: "grid-outline",
