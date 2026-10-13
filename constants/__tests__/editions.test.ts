@@ -10,10 +10,10 @@ describe("éditions du jeu", () => {
 			"leaders",
 			"cities",
 			"babel",
-			"edifice",
 			"armada",
+			"edifice",
 		]);
-		expect(getAvailableExtensions("second")).toEqual(["leaders", "cities", "edifice", "armada"]);
+		expect(getAvailableExtensions("second")).toEqual(["leaders", "cities", "armada", "edifice"]);
 	});
 
 	it("retire d'une sélection les extensions absentes de l'édition", () => {

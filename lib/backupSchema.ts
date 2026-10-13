@@ -115,7 +115,7 @@ export function isBackupDataShape(data: unknown): data is BackupData {
 	);
 }
 
-const extensionIdSchema = z.enum(["leaders", "cities", "babel", "edifice", "armada"]);
+const extensionIdSchema = z.enum(["leaders", "cities", "babel", "armada", "edifice"]);
 
 // Bornes de chaque champ importé : un fichier modifié à la main ne doit ni faire planter l'app, ni la
 // geler (les compteurs de sciences pilotent des boucles, voir lib/scoring/science.ts), ni remplir le
