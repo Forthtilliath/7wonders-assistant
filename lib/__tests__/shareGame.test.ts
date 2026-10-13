@@ -34,10 +34,27 @@ describe("buildGameShareText", () => {
 			"7 Wonders · 11 octobre 2026",
 			"",
 			"🥇 Alice — 62 pts",
+			"   Civil 62",
 			"🥈 Bob — 55 pts",
+			"   Civil 55",
 			"🥉 Chloé — 48 pts",
+			"   Civil 48",
 			"4. David — 40 pts",
+			"   Civil 40",
 		]);
+	});
+
+	it("détaille les scores par catégorie, sans celles à zéro", () => {
+		const game = makeGame({ Alice: 20, Bob: 0 }, ["leaders"]);
+		game.entries.Alice.military = { points: -3 };
+		game.entries.Alice.leaders = { points: 7 };
+
+		const lines = buildGameShareText(game, players).split("\n");
+		expect(lines[lines.indexOf("🥇 Alice — 24 pts") + 1]).toBe(
+			"   Militaire -3 · Civil 20 · Leaders 7",
+		);
+		// Un joueur sans aucun point n'a pas de ligne de détail.
+		expect(lines.at(-1)).toBe("🥈 Bob — 0 pts");
 	});
 
 	it("mentionne les extensions et la merveille jouée", () => {
