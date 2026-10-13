@@ -52,7 +52,8 @@ export default function GameDetailScreen() {
 	};
 
 	const replay = (playerIds: string[]) => {
-		startNewGame(playerIds, game.extensions);
+		// Les parties enregistrées avant le choix de l'édition retombent sur la 1re (défaut du store).
+		startNewGame(playerIds, game.extensions, game.edition);
 		router.push("/game/score/military");
 	};
 
