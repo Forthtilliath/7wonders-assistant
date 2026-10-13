@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_POINTS, MAX_SCIENCE_SYMBOLS } from "@/constants/game";
 import type { Game, Player, PlayerGroup } from "@/types/game";
 
 export const APP_ID = "7wonders-assistant";
@@ -22,6 +23,11 @@ export type BackupData = {
 	players: Player[];
 	history: Game[];
 	groups: PlayerGroup[];
+	/** Photos des joueurs en JPEG base64, par id de joueur. Absent des sauvegardes plus anciennes, qui
+	 * ne contenaient que l'URI locale de la photo (inutilisable sur un autre téléphone) : champ
+	 * facultatif plutôt que nouvelle `DATA_VERSION`, une app plus ancienne importe ainsi toujours la
+	 * sauvegarde, simplement sans les photos. */
+	avatars?: Record<string, string>;
 };
 
 export class ImportError extends Error {}
@@ -88,30 +94,42 @@ export function isBackupDataShape(data: unknown): data is BackupData {
 
 const extensionIdSchema = z.enum(["leaders", "cities", "armada"]);
 
+// Bornes de chaque champ importé : un fichier modifié à la main ne doit ni faire planter l'app, ni la
+// geler (les compteurs de sciences pilotent des boucles, voir lib/scoring/science.ts), ni remplir le
+// stockage. Larges par rapport à une vraie partie, pour ne jamais refuser une sauvegarde légitime.
+/** Une vignette de 256 px fait quelques dizaines de Ko en base64 : 1 Mo laisse une large marge. */
+const MAX_AVATAR_BASE64_LENGTH = 1_000_000;
+
+const idSchema = z.string().min(1).max(64);
+const nameSchema = z.string().min(1).max(100);
+const timestampSchema = z.number().int().nonnegative();
+
 const playerSchema = z.object({
-	id: z.string().min(1),
-	name: z.string().min(1),
-	avatarUri: z.string().optional(),
+	id: idSchema,
+	name: nameSchema,
+	avatarUri: z.string().max(2048).optional(),
 	isFavorite: z.boolean(),
 	isArchived: z.boolean(),
-	createdAt: z.number(),
+	createdAt: timestampSchema,
 });
 
-const pointsSchema = z.object({ points: z.number() });
+const pointsSchema = z.object({ points: z.number().int().min(-MAX_POINTS).max(MAX_POINTS) });
+
+const symbolCountSchema = z.number().int().min(0).max(MAX_SCIENCE_SYMBOLS);
 
 const scienceInputSchema = z.object({
-	compass: z.number(),
-	tablet: z.number(),
-	gear: z.number(),
-	wildcards: z.number(),
-	maxSymbols: z.number(),
+	compass: symbolCountSchema,
+	tablet: symbolCountSchema,
+	gear: symbolCountSchema,
+	wildcards: symbolCountSchema,
+	maxSymbols: symbolCountSchema,
 });
 
 const playerGameEntrySchema = z.object({
-	playerId: z.string().min(1),
+	playerId: idSchema,
 	military: pointsSchema,
 	treasury: pointsSchema,
-	wonder: z.object({ name: z.string(), side: z.enum(["A", "B"]).nullable() }),
+	wonder: z.object({ name: z.string().max(100), side: z.enum(["A", "B"]).nullable() }),
 	wonders: pointsSchema,
 	civilians: pointsSchema,
 	commercials: pointsSchema,
@@ -123,32 +141,46 @@ const playerGameEntrySchema = z.object({
 	islands: pointsSchema,
 });
 
+/** Objet indexé par id, au nombre d'entrées borné (`z.record` seul n'en limite pas le nombre). */
+function boundedRecord<T extends z.ZodType>(value: T, maxEntries: number) {
+	return z.record(idSchema, value).refine((record) => Object.keys(record).length <= maxEntries, {
+		message: `${maxEntries} entrées au maximum`,
+	});
+}
+
 const gameSchema = z.object({
-	id: z.string().min(1),
-	createdAt: z.number(),
-	finishedAt: z.number().optional(),
-	extensions: z.array(extensionIdSchema),
-	playerIds: z.array(z.string()),
-	entries: z.record(z.string(), playerGameEntrySchema),
+	id: idSchema,
+	createdAt: timestampSchema,
+	finishedAt: timestampSchema.optional(),
+	extensions: z.array(extensionIdSchema).max(10),
+	playerIds: z.array(idSchema).max(20),
+	entries: boundedRecord(playerGameEntrySchema, 20),
 });
 
 const playerGroupSchema = z.object({
-	id: z.string().min(1),
-	name: z.string().min(1),
-	playerIds: z.array(z.string()),
+	id: idSchema,
+	name: nameSchema,
+	playerIds: z.array(idSchema).max(100),
 	isFavorite: z.boolean(),
 	isArchived: z.boolean(),
-	createdAt: z.number(),
+	createdAt: timestampSchema,
 });
 
 /** Schéma complet (contenu de chaque joueur/partie/groupe compris), appliqué après migration. */
 const backupDataSchema = z.object({
 	app: z.literal(APP_ID),
-	dataVersion: z.number(),
-	exportedAt: z.number(),
-	players: z.array(playerSchema),
-	history: z.array(gameSchema),
-	groups: z.array(playerGroupSchema),
+	dataVersion: z.number().int(),
+	exportedAt: timestampSchema,
+	players: z.array(playerSchema).max(1000),
+	history: z.array(gameSchema).max(100_000),
+	groups: z.array(playerGroupSchema).max(1000),
+	avatars: boundedRecord(
+		z
+			.string()
+			.max(MAX_AVATAR_BASE64_LENGTH)
+			.regex(/^[A-Za-z0-9+/]+={0,2}$/, "image base64 attendue"),
+		1000,
+	).optional(),
 });
 
 /**
