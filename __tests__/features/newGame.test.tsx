@@ -99,17 +99,61 @@ describe("Onglet Jouer : lancer une partie", () => {
 		expect(screen.getByRole("checkbox", { name: "Chloé" })).toBeChecked();
 	});
 
-	it("limite la sélection à 7 joueurs", async () => {
+	it("limite la sélection à 7 joueurs, 8 avec l'extension Cités", async () => {
 		const user = userEvent.setup();
-		seedPlayers(["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]);
+		const names = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"];
+		seedPlayers(names);
 		await render(<NewGameTab />);
 
-		for (const name of ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]) {
+		for (const name of names) {
 			await user.press(screen.getByRole("checkbox", { name }));
 		}
-
 		expect(screen.getByText("Joueurs (7/7)")).toBeOnTheScreen();
 		expect(screen.getByRole("checkbox", { name: "A8" })).not.toBeChecked();
+
+		await user.press(screen.getByRole("checkbox", { name: "Cités" }));
+		await user.press(screen.getByRole("checkbox", { name: "A8" }));
+		await user.press(screen.getByRole("checkbox", { name: "A9" }));
+		expect(screen.getByText("Joueurs (8/8)")).toBeOnTheScreen();
+		expect(screen.getByRole("checkbox", { name: "A9" })).not.toBeChecked();
+	});
+
+	it("bloque le lancement si Cités est décochée avec 8 joueurs", async () => {
+		const user = userEvent.setup();
+		const names = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"];
+		seedPlayers(names);
+		usePreferencesStore.setState({ defaultExtensions: ["cities"] });
+		await render(<NewGameTab />);
+
+		for (const name of names) {
+			await user.press(screen.getByRole("checkbox", { name }));
+		}
+		await user.press(screen.getByRole("checkbox", { name: "Cités" }));
+
+		expect(screen.getByText("Joueurs (8/7)")).toBeOnTheScreen();
+		expect(screen.getByText(/active l'extension Cités ou/)).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Lancer la partie" })).toBeDisabled();
+	});
+
+	it("désactive les groupes de 8 joueurs sans l'extension Cités", async () => {
+		const user = userEvent.setup();
+		seedPlayers(["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]);
+		useGroupsStore.setState({
+			groups: [
+				makeGroup("g1", "Grand", ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"]),
+				makeGroup("g2", "Petit", ["p1", "p2"]),
+			],
+		});
+		await render(<NewGameTab />);
+
+		const big = screen.getByRole("button", { name: "Sélectionner le groupe Grand" });
+		expect(big).toBeDisabled();
+		expect(screen.getByRole("button", { name: "Sélectionner le groupe Petit" })).toBeEnabled();
+
+		await user.press(screen.getByRole("checkbox", { name: "Cités" }));
+		expect(big).toBeEnabled();
+		await user.press(big);
+		expect(screen.getByText("Joueurs (8/8)")).toBeOnTheScreen();
 	});
 
 	it("bloque la création tant qu'une partie est en cours, avec reprise ou abandon", async () => {
