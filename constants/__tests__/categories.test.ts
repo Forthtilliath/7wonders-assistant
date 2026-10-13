@@ -41,8 +41,23 @@ describe("getOrderedCategories", () => {
 		]);
 	});
 
+	it("place Babel après Leaders et Cités, avant le plateau Armada", () => {
+		expect(getOrderedCategories(["babel", "leaders", "cities"])).toEqual([
+			"military",
+			"treasury",
+			"wonders",
+			"civilians",
+			"commercials",
+			"scientifics",
+			"guilds",
+			"leaders",
+			"cities",
+			"babel",
+		]);
+	});
+
 	it("combine toutes les extensions dans l'ordre officiel, Maritime après Militaire et Armada en dernier", () => {
-		expect(getOrderedCategories(["leaders", "cities", "armada"])).toEqual([
+		expect(getOrderedCategories(["leaders", "cities", "babel", "armada"])).toEqual([
 			"military",
 			"naval",
 			"treasury",
@@ -53,6 +68,7 @@ describe("getOrderedCategories", () => {
 			"guilds",
 			"leaders",
 			"cities",
+			"babel",
 			"armada",
 		]);
 	});

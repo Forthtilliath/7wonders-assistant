@@ -13,11 +13,11 @@ export const BASE_CATEGORY_ORDER: BaseCategoryId[] = [
 	"guilds",
 ];
 
-export const EXTENSION_ORDER: ExtensionId[] = ["leaders", "cities", "armada"];
+export const EXTENSION_ORDER: ExtensionId[] = ["leaders", "cities", "babel", "armada"];
 
 /** Sous-ensemble de `CategoryId` qui n'existe que grâce à une extension (donc "réinitialisable"
  * quand celle-ci est désactivée), par opposition aux 7 catégories de base toujours présentes. */
-export type ExtensionCategoryId = "leaders" | "cities" | "naval" | "armada";
+export type ExtensionCategoryId = "leaders" | "cities" | "babel" | "naval" | "armada";
 
 export type CategoryMeta = {
 	label: string;
@@ -96,6 +96,14 @@ export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
 		isComputed: false,
 		icon: "city",
 	},
+	// Tuiles Babel posées sur la tour (barème fixe selon leur nombre).
+	babel: {
+		label: "Babel",
+		shortLabel: "Babel",
+		color: "#9a5b3f",
+		isComputed: true,
+		icon: "pyramid",
+	},
 	// Jetons de conflit naval de l'extension Armada.
 	naval: {
 		label: "Maritime",
@@ -117,6 +125,7 @@ export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
 export const EXTENSION_LABELS: Record<ExtensionId, string> = {
 	leaders: "Leaders",
 	cities: "Cités",
+	babel: "Babel",
 	armada: "Armada",
 };
 
@@ -128,6 +137,7 @@ export const EXTENSION_LABELS: Record<ExtensionId, string> = {
 export const EXTENSION_CATEGORIES: Record<ExtensionId, ExtensionCategoryId[]> = {
 	leaders: ["leaders"],
 	cities: ["cities"],
+	babel: ["babel"],
 	armada: ["naval", "armada"],
 };
 
@@ -136,7 +146,8 @@ export const EXTENSION_CATEGORIES: Record<ExtensionId, ExtensionCategoryId[]> = 
  * Les 7 catégories de base sont toujours présentes, avec "Maritime" (jetons de conflit naval)
  * inséré juste après "Militaire" quand Armada est active — pas à la fin avec les autres
  * extensions, puisqu'on compte ses jetons dans la foulée du militaire au moment d'y jouer. Les
- * autres extensions s'ajoutent à la suite, et le plateau Armada + Îles ("armada") ferme la marche.
+ * autres extensions s'ajoutent à la suite (Leaders, Cités puis Babel), et le plateau Armada + Îles
+ * ("armada") ferme la marche.
  */
 export function getOrderedCategories(extensions: ExtensionId[]): CategoryId[] {
 	const categories: CategoryId[] = [];
@@ -148,6 +159,7 @@ export function getOrderedCategories(extensions: ExtensionId[]): CategoryId[] {
 	}
 	if (extensions.includes("leaders")) categories.push("leaders");
 	if (extensions.includes("cities")) categories.push("cities");
+	if (extensions.includes("babel")) categories.push("babel");
 	if (extensions.includes("armada")) categories.push("armada");
 	return categories;
 }

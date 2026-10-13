@@ -1,6 +1,9 @@
-export type ExtensionId = "leaders" | "cities" | "armada";
+export type ExtensionId = "leaders" | "cities" | "babel" | "armada";
 
-export const ALL_EXTENSIONS: ExtensionId[] = ["leaders", "cities", "armada"];
+export const ALL_EXTENSIONS: ExtensionId[] = ["leaders", "cities", "babel", "armada"];
+
+/** Tuiles Babel posées par un joueur au cours de la partie (3 au maximum). */
+export type BabelTileCount = 0 | 1 | 2 | 3;
 
 export type Player = {
 	id: string;
@@ -81,6 +84,9 @@ export type PlayerGameEntry = {
 	guilds: { points: number };
 	leaders: { points: number };
 	cities: { points: number };
+	/** Onglet Babel : nombre de tuiles posées sur la tour, converti en points par un barème fixe
+	 * (lib/scoring/babel.ts) plutôt que saisi en points. */
+	babel: { tiles: BabelTileCount };
 	/** Onglet Maritime : total des jetons de conflit naval (Armada), séparés des jetons militaires
 	 * terrestres. */
 	naval: { points: number };
@@ -112,6 +118,7 @@ export function createEmptyPlayerGameEntry(playerId: string): PlayerGameEntry {
 		guilds: { points: 0 },
 		leaders: { points: 0 },
 		cities: { points: 0 },
+		babel: { tiles: 0 },
 		naval: { points: 0 },
 		armada: { points: 0 },
 	};
