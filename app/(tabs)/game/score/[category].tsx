@@ -109,85 +109,88 @@ export default function CategoryScoreScreen() {
 
 	return (
 		<GestureDetector gesture={swipeGesture}>
-			<ScreenContainer padded={false}>
-				<Stack.Screen
-					options={{
-						title: meta.label,
-						headerRight: () => (
-							<View style={styles.headerActions}>
-								<Pressable
-									onPress={() => setExtensionsSheetVisible(true)}
-									hitSlop={12}
-									accessibilityRole="button"
-									accessibilityLabel="Modifier les extensions de la partie"
-								>
-									<Ionicons name="options-outline" size={24} color={colors.text} />
-								</Pressable>
-								<Pressable
-									onPress={goNext}
-									hitSlop={12}
-									accessibilityRole="button"
-									accessibilityLabel={isLast ? "Voir les résultats" : "Étape suivante"}
-								>
-									<Ionicons
-										name={isLast ? "trophy" : "arrow-forward"}
-										size={24}
-										color={colors.text}
-									/>
-								</Pressable>
-							</View>
-						),
-					}}
-				/>
-
-				<EditExtensionsSheet
-					visible={extensionsSheetVisible}
-					onClose={() => setExtensionsSheetVisible(false)}
-					currentExtensions={extensions}
-					edition={edition}
-					playerCount={playerIds.length}
-					onConfirm={updateExtensions}
-				/>
-
-				<View style={[styles.progressBar, { backgroundColor: meta.color }]} />
-				<Text style={styles.progress}>
-					Étape {stepIndex + 1} / {flow.length}
-				</Text>
-				{hint && <Text style={styles.hint}>{hint}</Text>}
-
-				<ScrollView contentContainerStyle={styles.list}>
-					{gamePlayers.map((player) => {
-						const entry = entries[player.id];
-						if (!entry) return null;
-						return (
-							<CategoryEntryRow
-								key={player.id}
-								category={category}
-								player={player}
-								entry={entry}
-								color={meta.color}
-								onChange={(patch) => updateEntry(player.id, patch)}
-								onCountTokens={tokens ? () => setTokenSheetPlayerId(player.id) : undefined}
-							/>
-						);
-					})}
-				</ScrollView>
-
-				{tokens && (
-					<TokenCounterSheet
-						visible={tokenSheetPlayerId != null}
-						onClose={() => setTokenSheetPlayerId(null)}
-						title={category === "military" ? "Jetons militaires" : "Jetons maritimes"}
-						tokens={tokens}
-						accentColor={meta.color}
-						onConfirm={(total) => {
-							if (tokenSheetPlayerId) {
-								updateEntry(tokenSheetPlayerId, (e) => ({ ...e, [category]: { points: total } }));
-							}
+			{/* Sans `collapsable={false}`, Android peut aplatir la vue racine et le swipe se dérègle. */}
+			<View collapsable={false} style={styles.gestureRoot}>
+				<ScreenContainer padded={false}>
+					<Stack.Screen
+						options={{
+							title: meta.label,
+							headerRight: () => (
+								<View style={styles.headerActions}>
+									<Pressable
+										onPress={() => setExtensionsSheetVisible(true)}
+										hitSlop={12}
+										accessibilityRole="button"
+										accessibilityLabel="Modifier les extensions de la partie"
+									>
+										<Ionicons name="options-outline" size={24} color={colors.text} />
+									</Pressable>
+									<Pressable
+										onPress={goNext}
+										hitSlop={12}
+										accessibilityRole="button"
+										accessibilityLabel={isLast ? "Voir les résultats" : "Étape suivante"}
+									>
+										<Ionicons
+											name={isLast ? "trophy" : "arrow-forward"}
+											size={24}
+											color={colors.text}
+										/>
+									</Pressable>
+								</View>
+							),
 						}}
 					/>
-				)}
-			</ScreenContainer>
+
+					<EditExtensionsSheet
+						visible={extensionsSheetVisible}
+						onClose={() => setExtensionsSheetVisible(false)}
+						currentExtensions={extensions}
+						edition={edition}
+						playerCount={playerIds.length}
+						onConfirm={updateExtensions}
+					/>
+
+					<View style={[styles.progressBar, { backgroundColor: meta.color }]} />
+					<Text style={styles.progress}>
+						Étape {stepIndex + 1} / {flow.length}
+					</Text>
+					{hint && <Text style={styles.hint}>{hint}</Text>}
+
+					<ScrollView contentContainerStyle={styles.list}>
+						{gamePlayers.map((player) => {
+							const entry = entries[player.id];
+							if (!entry) return null;
+							return (
+								<CategoryEntryRow
+									key={player.id}
+									category={category}
+									player={player}
+									entry={entry}
+									color={meta.color}
+									onChange={(patch) => updateEntry(player.id, patch)}
+									onCountTokens={tokens ? () => setTokenSheetPlayerId(player.id) : undefined}
+								/>
+							);
+						})}
+					</ScrollView>
+
+					{tokens && (
+						<TokenCounterSheet
+							visible={tokenSheetPlayerId != null}
+							onClose={() => setTokenSheetPlayerId(null)}
+							title={category === "military" ? "Jetons militaires" : "Jetons maritimes"}
+							tokens={tokens}
+							accentColor={meta.color}
+							onConfirm={(total) => {
+								if (tokenSheetPlayerId) {
+									updateEntry(tokenSheetPlayerId, (e) => ({ ...e, [category]: { points: total } }));
+								}
+							}}
+						/>
+					)}
+				</ScreenContainer>
+			</View>
 		</GestureDetector>
 	);
 }
@@ -196,6 +199,9 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
+				gestureRoot: {
+					flex: 1,
+				},
 				headerActions: {
 					flexDirection: "row",
 					alignItems: "center",

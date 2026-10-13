@@ -132,56 +132,63 @@ export default function NewGameTab() {
 
 	return (
 		<GestureDetector gesture={swipeGesture}>
-			<ScreenContainer>
-				<ScrollView contentContainerStyle={styles.content}>
-					<BackupReminderBanner />
-					{sortedGroups.length > 0 && (
-						<>
-							<SectionTitle style={styles.sectionTitle}>Groupes</SectionTitle>
-							<GroupChips
-								groups={sortedGroups}
-								activePlayerIds={activePlayers.map((p) => p.id)}
-								selectedIds={selectedIds}
-								maxPlayers={maxPlayers}
-								onSelect={applyGroup}
-							/>
-						</>
-					)}
+			{/* Sans `collapsable={false}`, Android peut aplatir la vue racine et le swipe se dérègle. */}
+			<View collapsable={false} style={styles.gestureRoot}>
+				<ScreenContainer>
+					<ScrollView contentContainerStyle={styles.content}>
+						<BackupReminderBanner />
+						{sortedGroups.length > 0 && (
+							<>
+								<SectionTitle style={styles.sectionTitle}>Groupes</SectionTitle>
+								<GroupChips
+									groups={sortedGroups}
+									activePlayerIds={activePlayers.map((p) => p.id)}
+									selectedIds={selectedIds}
+									maxPlayers={maxPlayers}
+									onSelect={applyGroup}
+								/>
+							</>
+						)}
 
-					<SectionTitle style={styles.sectionTitle}>
-						Joueurs ({selectedIds.length}/{maxPlayers})
-					</SectionTitle>
-					{tooManyPlayers && (
-						<Text style={styles.warning}>
-							Au-delà de {maxPlayers} joueurs, active l'extension {EXTENSION_LABELS.cities} ou
-							retire un joueur.
-						</Text>
-					)}
-					<View style={styles.grid}>
-						{activePlayers.map((player) => (
-							<SelectablePlayerCard
-								key={player.id}
-								playerId={player.id}
-								name={player.name}
-								avatarUri={player.avatarUri}
-								isFavorite={player.isFavorite}
-								selected={selectedIds.includes(player.id)}
-								onPress={() => toggleSelected(player.id)}
-							/>
-						))}
-					</View>
-					{activePlayers.length === 0 && (
-						<Text style={styles.empty}>
-							Aucun joueur disponible. Crée d'abord des joueurs dans l'onglet Joueurs.
-						</Text>
-					)}
+						<SectionTitle style={styles.sectionTitle}>
+							Joueurs ({selectedIds.length}/{maxPlayers})
+						</SectionTitle>
+						{tooManyPlayers && (
+							<Text style={styles.warning}>
+								Au-delà de {maxPlayers} joueurs, active l'extension {EXTENSION_LABELS.cities} ou
+								retire un joueur.
+							</Text>
+						)}
+						<View style={styles.grid}>
+							{activePlayers.map((player) => (
+								<SelectablePlayerCard
+									key={player.id}
+									playerId={player.id}
+									name={player.name}
+									avatarUri={player.avatarUri}
+									isFavorite={player.isFavorite}
+									selected={selectedIds.includes(player.id)}
+									onPress={() => toggleSelected(player.id)}
+								/>
+							))}
+						</View>
+						{activePlayers.length === 0 && (
+							<Text style={styles.empty}>
+								Aucun joueur disponible. Crée d'abord des joueurs dans l'onglet Joueurs.
+							</Text>
+						)}
 
-					<SectionTitle style={styles.sectionTitle}>Édition et extensions</SectionTitle>
-					<ExtensionsPicker edition={edition} extensions={extensions} onChange={changeExtensions} />
-				</ScrollView>
+						<SectionTitle style={styles.sectionTitle}>Édition et extensions</SectionTitle>
+						<ExtensionsPicker
+							edition={edition}
+							extensions={extensions}
+							onChange={changeExtensions}
+						/>
+					</ScrollView>
 
-				<Button label="Lancer la partie" disabled={!canStart} onPress={startGame} />
-			</ScreenContainer>
+					<Button label="Lancer la partie" disabled={!canStart} onPress={startGame} />
+				</ScreenContainer>
+			</View>
 		</GestureDetector>
 	);
 }
@@ -190,6 +197,9 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
+				gestureRoot: {
+					flex: 1,
+				},
 				content: {
 					gap: SPACING.md,
 					paddingBottom: SPACING.md,
