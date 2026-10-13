@@ -1,4 +1,5 @@
 import {
+	deleteFileQuietly,
 	fileExists,
 	getAppDirectory,
 	pruneAppDirectory,
@@ -28,6 +29,17 @@ export function isStoredAvatar(uri: string): boolean {
 /** Réduit l'image choisie en vignette et la range dans le dossier persistant. Renvoie sa nouvelle URI. */
 export function storeAvatar(sourceUri: string): Promise<string> {
 	return saveImageThumbnail(sourceUri, AVATARS);
+}
+
+/**
+ * Comme `storeAvatar`, pour une photo prise avec l'appareil photo : efface ensuite la prise de vue
+ * d'origine, en pleine résolution dans le cache de l'app, pour ne garder que la vignette. Les photos
+ * de la galerie ne sont pas concernées : on ne touche jamais à un fichier qui n'est pas à l'app.
+ */
+export async function storeCameraAvatar(sourceUri: string): Promise<string> {
+	const uri = await storeAvatar(sourceUri);
+	deleteFileQuietly(sourceUri);
+	return uri;
 }
 
 /** Lit les photos des joueurs pour une sauvegarde. Une photo illisible est simplement omise. */

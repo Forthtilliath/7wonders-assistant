@@ -64,6 +64,7 @@ import {
 	pruneUnusedAvatars,
 	restoreAvatars,
 	storeAvatar,
+	storeCameraAvatar,
 } from "@/lib/avatarFiles";
 
 const files = (File as unknown as { __files: Map<string, string> }).__files;
@@ -89,6 +90,17 @@ describe("storeAvatar", () => {
 		expect(ImageManipulator.manipulate(CACHE_URI).resize).toHaveBeenCalledWith({ width: 256 });
 		expect(uri.startsWith(AVATARS)).toBe(true);
 		expect(files.get(uri)).toBe("VIGNETTE");
+	});
+});
+
+describe("storeCameraAvatar", () => {
+	it("garde la vignette et efface la prise de vue d'origine du cache", async () => {
+		files.set(CACHE_URI, "ORIGINAL");
+
+		const uri = await storeCameraAvatar(CACHE_URI);
+
+		expect(files.get(uri)).toBe("VIGNETTE");
+		expect(files.has(CACHE_URI)).toBe(false);
 	});
 });
 
