@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { EXTENSION_CATEGORIES } from "@/constants/categories";
+import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/armadaMigration";
 import { createId } from "@/lib/uuid";
 import {
 	createEmptyPlayerGameEntry,
@@ -40,13 +41,24 @@ export const initialGameState: State = {
 	startedAt: null,
 };
 
-// Bump on any breaking change to PlayerGameEntry's shape. A version mismatch just discards the
-// in-progress game rather than crashing on stale/incompatible data.
-export const GAME_STORE_VERSION = 5;
+// Bump on any breaking change to PlayerGameEntry's shape. A version without a migration step just
+// discards the in-progress game rather than crashing on stale/incompatible data.
+export const GAME_STORE_VERSION = 6;
 
 /** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
 export function migrateGameStoreData(persistedState: unknown, version: number): State {
-	return version === GAME_STORE_VERSION ? (persistedState as State) : initialGameState;
+	if (version === GAME_STORE_VERSION) return persistedState as State;
+
+	if (version === 5) {
+		// v5 -> v6 : renommage des catégories Armada ("armada" -> "naval", "islands" -> "armada"),
+		// sans perdre la partie en cours.
+		const old = persistedState as Omit<State, "entries"> & {
+			entries: Record<string, LegacyArmadaEntry>;
+		};
+		return { ...old, entries: renameArmadaCategoriesInEntries(old.entries) };
+	}
+
+	return initialGameState;
 }
 
 export const useGameStore = create<State & Actions>()(

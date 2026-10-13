@@ -66,9 +66,10 @@ describe("migrateBackupData", () => {
 		]);
 	});
 
-	it("migre une sauvegarde v3 (entrées sans catégorie islands) vers la version courante", () => {
-		// Une vraie sauvegarde v3 n'a jamais eu de champ `islands` du tout (ajouté en v4).
-		const { islands: _islands, ...v3Entry } = createEmptyPlayerGameEntry("p1");
+	it("migre une sauvegarde v3 (sans plateau Armada) vers la version courante", () => {
+		// En v3, "armada" contenait les jetons navals et le plateau ("islands" en v4) n'existait pas.
+		const { naval: _naval, ...rest } = createEmptyPlayerGameEntry("p1");
+		const v3Entry = { ...rest, armada: { points: 4 } };
 		const v3Data = {
 			app: "7wonders-assistant",
 			dataVersion: 3,
@@ -89,7 +90,34 @@ describe("migrateBackupData", () => {
 		const migrated = migrateBackupData(v3Data);
 
 		expect(migrated.dataVersion).toBe(DATA_VERSION);
-		expect(migrated.history[0].entries.p1.islands).toEqual({ points: 0 });
+		expect(migrated.history[0].entries.p1.naval).toEqual({ points: 4 });
+		expect(migrated.history[0].entries.p1.armada).toEqual({ points: 0 });
+		expect(() => validateMigratedBackupData(migrated)).not.toThrow();
+	});
+
+	it("migre une sauvegarde v4 en renommant les catégories Armada", () => {
+		const { naval: _naval, armada: _armada, ...rest } = createEmptyPlayerGameEntry("p1");
+		const v4Entry = { ...rest, armada: { points: 4 }, islands: { points: 6 } };
+		const v4Data = {
+			...makeBackup(4),
+			history: [
+				{
+					id: "g1",
+					createdAt: 0,
+					extensions: ["armada"],
+					playerIds: ["p1"],
+					entries: { p1: v4Entry },
+				},
+			],
+		} as unknown as BackupData;
+
+		const migrated = validateMigratedBackupData(migrateBackupData(v4Data));
+
+		expect(migrated.history[0].entries.p1).toEqual({
+			...rest,
+			naval: { points: 4 },
+			armada: { points: 6 },
+		});
 	});
 
 	it("rejette une sauvegarde à une version antérieure sans étape de migration disponible", () => {

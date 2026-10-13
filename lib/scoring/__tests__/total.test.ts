@@ -21,8 +21,8 @@ describe("computePlayerScore", () => {
 			guilds: { points: 7 },
 			leaders: { points: 1 },
 			cities: { points: 2 },
-			armada: { points: 3 },
-			islands: { points: 4 },
+			naval: { points: 3 },
+			armada: { points: 4 },
 			scientifics: { compass: 2, tablet: 2, gear: 2, wildcards: 0, maxSymbols: 0 },
 		});
 
@@ -30,7 +30,8 @@ describe("computePlayerScore", () => {
 
 		// science: 2²+2²+2² + 7×2 = 12+14 = 26
 		expect(breakdown.scientifics).toBe(26);
-		expect(breakdown.islands).toBe(4);
+		expect(breakdown.naval).toBe(3);
+		expect(breakdown.armada).toBe(4);
 		expect(breakdown.total).toBe(3 + 4 + 5 + 6 + 2 + 26 + 7 + 1 + 2 + 3 + 4);
 		expect(breakdown.playerId).toBe("p1");
 	});
@@ -94,8 +95,8 @@ describe("getCategoryScore", () => {
 				guilds: { points: 7 },
 				leaders: { points: 1 },
 				cities: { points: 2 },
-				armada: { points: 8 },
-				islands: { points: 9 },
+				naval: { points: 8 },
+				armada: { points: 9 },
 			}),
 		);
 
@@ -107,8 +108,8 @@ describe("getCategoryScore", () => {
 		expect(getCategoryScore(score, "guilds")).toBe(7);
 		expect(getCategoryScore(score, "leaders")).toBe(1);
 		expect(getCategoryScore(score, "cities")).toBe(2);
-		expect(getCategoryScore(score, "armada")).toBe(8);
-		expect(getCategoryScore(score, "islands")).toBe(9);
+		expect(getCategoryScore(score, "naval")).toBe(8);
+		expect(getCategoryScore(score, "armada")).toBe(9);
 	});
 });
 
@@ -117,8 +118,8 @@ describe("filterActiveCategories", () => {
 		expect(filterActiveCategories(["leaders", "armada"])).toEqual({
 			leaders: true,
 			cities: false,
+			naval: true,
 			armada: true,
-			islands: true,
 		});
 	});
 
@@ -126,8 +127,8 @@ describe("filterActiveCategories", () => {
 		expect(filterActiveCategories([])).toEqual({
 			leaders: false,
 			cities: false,
+			naval: false,
 			armada: false,
-			islands: false,
 		});
 	});
 });

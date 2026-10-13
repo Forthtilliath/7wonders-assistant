@@ -151,7 +151,7 @@ describe("Saisie des scores par catégorie", () => {
 	});
 
 	it("intègre les catégories des extensions au parcours", async () => {
-		await renderCategory("armada", ["armada"]);
+		await renderCategory("naval", ["armada"]);
 
 		// Base (7) + Armada (jetons navals, juste après le militaire, et score de plateau en fin).
 		expect(screen.getByText("Maritime")).toBeOnTheScreen();
@@ -167,7 +167,7 @@ describe("Saisie des scores par catégorie", () => {
 		const alert = mockAlert();
 		await renderCategory("military", ["armada"]);
 		await act(() => {
-			useGameStore.getState().updateEntry("p1", (e) => ({ ...e, armada: { points: 4 } }));
+			useGameStore.getState().updateEntry("p1", (e) => ({ ...e, naval: { points: 4 } }));
 		});
 
 		await user.press(screen.getByRole("button", { name: "Modifier les extensions de la partie" }));
@@ -184,7 +184,7 @@ describe("Saisie des scores par catégorie", () => {
 
 		expect(useGameStore.getState().extensions).toEqual(["leaders"]);
 		// Les points des catégories retirées sont remis à zéro.
-		expect(entryOf("p1").armada.points).toBe(0);
+		expect(entryOf("p1").naval.points).toBe(0);
 	});
 
 	it("refuse de retirer Cités d'une partie à 8 joueurs", async () => {

@@ -16,14 +16,14 @@ describe("getOrderedCategories", () => {
 	it("insère Maritime juste après Militaire, et Armada (plateau) en dernier, quand Armada est active", () => {
 		expect(getOrderedCategories(["armada"])).toEqual([
 			"military",
-			"armada",
+			"naval",
 			"treasury",
 			"wonders",
 			"civilians",
 			"commercials",
 			"scientifics",
 			"guilds",
-			"islands",
+			"armada",
 		]);
 	});
 
@@ -44,7 +44,7 @@ describe("getOrderedCategories", () => {
 	it("combine toutes les extensions dans l'ordre officiel, Maritime après Militaire et Armada en dernier", () => {
 		expect(getOrderedCategories(["leaders", "cities", "armada"])).toEqual([
 			"military",
-			"armada",
+			"naval",
 			"treasury",
 			"wonders",
 			"civilians",
@@ -53,7 +53,7 @@ describe("getOrderedCategories", () => {
 			"guilds",
 			"leaders",
 			"cities",
-			"islands",
+			"armada",
 		]);
 	});
 });

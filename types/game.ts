@@ -48,10 +48,10 @@ export type BaseCategoryId = (typeof BASE_CATEGORIES)[number];
 
 /**
  * Catégories de score liées à une extension mais distinctes de l'extension elle-même : Armada
- * apporte deux scores séparés (jetons maritimes ET cartes Îles + plateau individuel Armada), pas
- * un seul comme Leaders/Cités.
+ * apporte deux scores séparés, pas un seul comme Leaders/Cités. Le plateau Armada + cartes Îles
+ * porte l'id de l'extension ("armada"), les jetons de conflit naval ont leur propre id ("naval").
  */
-export const EXTRA_CATEGORIES = ["islands"] as const;
+export const EXTRA_CATEGORIES = ["naval"] as const;
 export type ExtraCategoryId = (typeof EXTRA_CATEGORIES)[number];
 
 export type CategoryId = BaseCategoryId | ExtensionId | ExtraCategoryId;
@@ -81,12 +81,13 @@ export type PlayerGameEntry = {
 	guilds: { points: number };
 	leaders: { points: number };
 	cities: { points: number };
-	/** Total des jetons de conflit naval (Armada), séparés des jetons militaires terrestres. */
+	/** Onglet Maritime : total des jetons de conflit naval (Armada), séparés des jetons militaires
+	 * terrestres. */
+	naval: { points: number };
+	/** Onglet Armada : cartes Îles + bonus du plateau individuel Armada (construction navale), saisis
+	 * à part des jetons de conflit naval puisqu'ils ne se déduisent pas d'une formule (dépend des
+	 * cartes/du plateau réellement joués). */
 	armada: { points: number };
-	/** Cartes Îles + bonus du plateau individuel Armada (construction navale), saisis à part des
-	 * jetons de conflit naval puisqu'ils ne se déduisent pas d'une formule (dépend des cartes/du
-	 * plateau réellement joués). */
-	islands: { points: number };
 };
 
 export type Game = {
@@ -111,7 +112,7 @@ export function createEmptyPlayerGameEntry(playerId: string): PlayerGameEntry {
 		guilds: { points: 0 },
 		leaders: { points: 0 },
 		cities: { points: 0 },
+		naval: { points: 0 },
 		armada: { points: 0 },
-		islands: { points: 0 },
 	};
 }

@@ -17,7 +17,7 @@ export const EXTENSION_ORDER: ExtensionId[] = ["leaders", "cities", "armada"];
 
 /** Sous-ensemble de `CategoryId` qui n'existe que grâce à une extension (donc "réinitialisable"
  * quand celle-ci est désactivée), par opposition aux 7 catégories de base toujours présentes. */
-export type ExtensionCategoryId = "leaders" | "cities" | "armada" | "islands";
+export type ExtensionCategoryId = "leaders" | "cities" | "naval" | "armada";
 
 export type CategoryMeta = {
 	label: string;
@@ -96,18 +96,16 @@ export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
 		isComputed: false,
 		icon: "city",
 	},
-	armada: {
+	// Jetons de conflit naval de l'extension Armada.
+	naval: {
 		label: "Maritime",
 		shortLabel: "Maritime",
 		color: "#1c8aa6",
 		isComputed: false,
 		icon: "sail-boat",
 	},
-	islands: {
-		// Cartes Îles + bonus du plateau individuel Armada : catégorie interne toujours nommée
-		// "islands" (pas de migration de données pour un simple libellé), mais affichée "Armada" —
-		// le jeu ne distingue pas "îles" du reste du score de plateau, la case jetons s'appelant déjà
-		// "Maritime" pour le conflit naval.
+	// Plateau individuel Armada + cartes Îles (le jeu ne les distingue pas dans le score).
+	armada: {
 		label: "Armada",
 		shortLabel: "Armada",
 		color: "#4fae9b",
@@ -123,14 +121,14 @@ export const EXTENSION_LABELS: Record<ExtensionId, string> = {
 };
 
 /** Catégories de score qu'une extension seule/qu'elle seule apporte, dans l'esprit de
- * `getOrderedCategories` : Armada apporte deux catégories ("armada" les jetons de conflit naval,
- * "islands" le score de plateau), pas une seule comme Leaders/Cités. Sert à la fois à décrire
+ * `getOrderedCategories` : Armada apporte deux catégories ("naval" les jetons de conflit naval,
+ * "armada" le plateau + les Îles), pas une seule comme Leaders/Cités. Sert à la fois à décrire
  * l'impact d'activer/désactiver une extension (écran de modification en cours de partie) et à
  * savoir quels champs de saisie remettre à zéro quand une extension est retirée. */
 export const EXTENSION_CATEGORIES: Record<ExtensionId, ExtensionCategoryId[]> = {
 	leaders: ["leaders"],
 	cities: ["cities"],
-	armada: ["armada", "islands"],
+	armada: ["naval", "armada"],
 };
 
 /**
@@ -138,19 +136,18 @@ export const EXTENSION_CATEGORIES: Record<ExtensionId, ExtensionCategoryId[]> = 
  * Les 7 catégories de base sont toujours présentes, avec "Maritime" (jetons de conflit naval)
  * inséré juste après "Militaire" quand Armada est active — pas à la fin avec les autres
  * extensions, puisqu'on compte ses jetons dans la foulée du militaire au moment d'y jouer. Les
- * autres extensions s'ajoutent à la suite, et le score de plateau Armada ("islands", affiché
- * "Armada") ferme la marche.
+ * autres extensions s'ajoutent à la suite, et le plateau Armada + Îles ("armada") ferme la marche.
  */
 export function getOrderedCategories(extensions: ExtensionId[]): CategoryId[] {
 	const categories: CategoryId[] = [];
 	for (const category of BASE_CATEGORY_ORDER) {
 		categories.push(category);
 		if (category === "military" && extensions.includes("armada")) {
-			categories.push("armada");
+			categories.push("naval");
 		}
 	}
 	if (extensions.includes("leaders")) categories.push("leaders");
 	if (extensions.includes("cities")) categories.push("cities");
-	if (extensions.includes("armada")) categories.push("islands");
+	if (extensions.includes("armada")) categories.push("armada");
 	return categories;
 }
