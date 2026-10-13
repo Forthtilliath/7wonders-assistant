@@ -1,8 +1,9 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import type { GlobalRecords } from "@/lib/stats";
 import type { Player } from "@/types/game";
@@ -34,7 +35,7 @@ export function RecordsSection({ records, players }: Props) {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.sectionTitle}>Records</Text>
+			<SectionTitle>Records</SectionTitle>
 			<View style={styles.row}>
 				{records.bestScore && bestScorePlayer && (
 					<View style={styles.card}>
@@ -78,12 +79,6 @@ function useStyles(colors: ThemeColors) {
 				container: {
 					gap: SPACING.sm,
 				},
-				sectionTitle: {
-					color: colors.textMuted,
-					fontSize: 14,
-					textTransform: "uppercase",
-					letterSpacing: 0.5,
-				},
 				row: {
 					flexDirection: "row",
 					gap: SPACING.sm,
@@ -91,7 +86,7 @@ function useStyles(colors: ThemeColors) {
 				card: {
 					flex: 1,
 					minWidth: 90,
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					paddingVertical: SPACING.md,
 					paddingHorizontal: SPACING.xs,
@@ -101,7 +96,7 @@ function useStyles(colors: ThemeColors) {
 				value: {
 					color: colors.text,
 					fontSize: 18,
-					fontWeight: "800",
+					fontFamily: FONTS.displayBold,
 					marginTop: 4,
 				},
 				label: {

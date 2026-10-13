@@ -4,7 +4,7 @@ import { StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import type { ThemeColors } from "@/constants/theme";
-import { SPACING } from "@/constants/theme";
+import { FONTS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 type Props = { children: ReactNode };
@@ -75,7 +75,7 @@ function useStyles(colors: ThemeColors) {
 				title: {
 					color: colors.text,
 					fontSize: 20,
-					fontWeight: "800",
+					fontFamily: FONTS.displayBold,
 				},
 				message: {
 					color: colors.textMuted,

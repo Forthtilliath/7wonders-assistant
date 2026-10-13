@@ -9,6 +9,7 @@ import { WonderRankingRow } from "@/components/stats/WonderRankingRow";
 import { Button } from "@/components/ui/Button";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import { EXTENSION_ORDER, getOrderedCategories } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
@@ -154,7 +155,7 @@ export default function StatsScreen() {
 
 						{leaderboard.length > 0 && (
 							<>
-								<Text style={styles.sectionTitle}>Taux de victoire</Text>
+								<SectionTitle>Taux de victoire</SectionTitle>
 								<View style={styles.wonderList}>
 									{leaderboard.map((entry, index) => {
 										const player = playersWithGames.find((p) => p.id === entry.playerId);
@@ -174,7 +175,7 @@ export default function StatsScreen() {
 
 						{viewMode === "table" ? (
 							<>
-								<Text style={styles.sectionTitle}>Moyenne de points par catégorie</Text>
+								<SectionTitle>Moyenne de points par catégorie</SectionTitle>
 								<ScoreTable
 									players={playersWithGames}
 									categories={allCategories}
@@ -213,7 +214,7 @@ export default function StatsScreen() {
 
 				{bestWonders.length > 0 && (
 					<>
-						<Text style={styles.sectionTitle}>Top 5 des meilleures merveilles</Text>
+						<SectionTitle>Top 5 des meilleures merveilles</SectionTitle>
 						<View style={styles.wonderList}>
 							{bestWonders.map((wonder, index) => (
 								<WonderRankingRow
@@ -224,7 +225,7 @@ export default function StatsScreen() {
 							))}
 						</View>
 
-						<Text style={styles.sectionTitle}>Top 5 des pires merveilles</Text>
+						<SectionTitle>Top 5 des pires merveilles</SectionTitle>
 						<View style={styles.wonderList}>
 							{worstWonders.map((wonder, index) => (
 								<WonderRankingRow
@@ -269,12 +270,6 @@ function useStyles(colors: ThemeColors) {
 				emptyFilterState: {
 					gap: SPACING.sm,
 					alignItems: "center",
-				},
-				sectionTitle: {
-					color: colors.textMuted,
-					fontSize: 14,
-					textTransform: "uppercase",
-					letterSpacing: 0.5,
 				},
 				wonderList: {
 					gap: SPACING.xs,

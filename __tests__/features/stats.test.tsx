@@ -30,7 +30,8 @@ function seedHistory() {
 }
 
 /** Contenu de la feuille de filtres, repérée par le titre de sa section joueurs. */
-const playerPicker = (title = "Joueur") => within(screen.getByText(title).parent!);
+// Texte → ligne du `SectionTitle` → contenu de la feuille.
+const playerPicker = (title = "Joueur") => within(screen.getByText(title).parent!.parent!);
 
 /** Ferme la feuille comme le bouton retour d'Android (`onRequestClose` de la modale ouverte). */
 const closeSheet = async () => {

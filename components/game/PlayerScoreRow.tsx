@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import type { Player } from "@/types/game";
 
@@ -39,7 +39,7 @@ function useStyles(colors: ThemeColors) {
 		() =>
 			StyleSheet.create({
 				card: {
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					padding: SPACING.md,
 					gap: SPACING.sm,

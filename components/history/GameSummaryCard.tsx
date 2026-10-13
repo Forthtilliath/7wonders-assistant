@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { EXTENSION_LABELS } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { formatDate } from "@/lib/date";
 import { getGameRanking } from "@/lib/scoring/game";
@@ -62,7 +62,7 @@ function useStyles(colors: ThemeColors) {
 		() =>
 			StyleSheet.create({
 				card: {
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					padding: SPACING.md,
 					gap: SPACING.sm,

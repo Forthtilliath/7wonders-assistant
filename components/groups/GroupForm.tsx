@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard";
 import { Button } from "@/components/ui/Button";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import { TextField } from "@/components/ui/TextField";
 import { MAX_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
@@ -50,9 +51,9 @@ export function GroupForm({
 				autoFocus
 			/>
 
-			<Text style={styles.sectionTitle}>
+			<SectionTitle>
 				Membres ({selectedIds.length}/{MAX_PLAYERS})
-			</Text>
+			</SectionTitle>
 			<ScrollView style={styles.scroll} contentContainerStyle={styles.grid}>
 				{activePlayers.map((player) => (
 					<SelectablePlayerCard
@@ -89,12 +90,6 @@ function useStyles(colors: ThemeColors) {
 				container: {
 					flex: 1,
 					gap: SPACING.md,
-				},
-				sectionTitle: {
-					color: colors.textMuted,
-					fontSize: 14,
-					textTransform: "uppercase",
-					letterSpacing: 0.5,
 				},
 				scroll: {
 					flex: 1,

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 type Props = {
@@ -28,7 +28,7 @@ function useStyles(colors: ThemeColors) {
 				tile: {
 					flex: 1,
 					minWidth: 90,
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					paddingVertical: SPACING.md,
 					alignItems: "center",
@@ -37,7 +37,7 @@ function useStyles(colors: ThemeColors) {
 				value: {
 					color: colors.gold,
 					fontSize: 22,
-					fontWeight: "800",
+					fontFamily: FONTS.displayBold,
 				},
 				label: {
 					color: colors.textMuted,

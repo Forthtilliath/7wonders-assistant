@@ -2,7 +2,7 @@ import { tapFeedback } from "@forthtilliath/react-native-kit/utils/helpers/hapti
 import { useMemo } from "react";
 import { Pressable, type StyleProp, StyleSheet, Text, type ViewStyle } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 type Variant = "primary" | "secondary" | "danger" | "ghost";
@@ -27,6 +27,7 @@ export function Button({
 }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
+	const labelVariant = LABEL_VARIANT[variant];
 
 	return (
 		<Pressable
@@ -46,10 +47,19 @@ export function Button({
 			accessibilityLabel={accessibilityLabel ?? label}
 			accessibilityState={{ disabled: !!disabled }}
 		>
-			<Text style={[styles.label, variant === "ghost" && styles.ghostLabel]}>{label}</Text>
+			<Text style={[styles.label, labelVariant && styles[labelVariant]]}>{label}</Text>
 		</Pressable>
 	);
 }
+
+// Libellé sur `primaryText` par défaut (fonds bronze et rouge) ; les variantes sans fond plein
+// reprennent une couleur lisible sur la surface.
+const LABEL_VARIANT = {
+	primary: null,
+	danger: null,
+	secondary: "secondaryLabel",
+	ghost: "ghostLabel",
+} as const;
 
 function useStyles(colors: ThemeColors) {
 	return useMemo(
@@ -59,16 +69,23 @@ function useStyles(colors: ThemeColors) {
 					paddingVertical: SPACING.md,
 					paddingHorizontal: SPACING.lg,
 					borderRadius: RADIUS.md,
+					borderWidth: 1,
+					borderColor: "transparent",
 					alignItems: "center",
 					justifyContent: "center",
 				},
 				label: {
 					color: colors.primaryText,
+					fontFamily: FONTS.displayBold,
 					fontSize: 16,
-					fontWeight: "600",
+					letterSpacing: 0.6,
+					textAlign: "center",
+				},
+				secondaryLabel: {
+					color: colors.text,
 				},
 				ghostLabel: {
-					color: colors.text,
+					color: colors.primary,
 				},
 				pressed: {
 					opacity: 0.75,
@@ -76,10 +93,11 @@ function useStyles(colors: ThemeColors) {
 				disabled: {
 					opacity: 0.4,
 				},
-				primary: { backgroundColor: colors.primary },
-				secondary: { backgroundColor: colors.surfaceAlt },
+				// Liseré doré : la plaque de bronze ressort même sur un fond proche.
+				primary: { backgroundColor: colors.primary, borderColor: colors.gold },
+				secondary: { backgroundColor: colors.surfaceAlt, borderColor: colors.border },
 				danger: { backgroundColor: colors.danger },
-				ghost: { backgroundColor: "transparent", borderWidth: 1, borderColor: colors.border },
+				ghost: { backgroundColor: "transparent", borderColor: colors.primary },
 			}),
 		[colors],
 	);

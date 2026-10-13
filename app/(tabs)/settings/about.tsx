@@ -3,10 +3,11 @@ import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import { UpdateChecker } from "@/components/settings/UpdateChecker";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import { APP_INFO } from "@/constants/app";
 import { CHANGELOG } from "@/constants/changelog";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { formatDate } from "@/lib/date";
 
@@ -25,7 +26,7 @@ export default function AboutSettingsScreen() {
 				</View>
 
 				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Soutenir le projet</Text>
+					<SectionTitle>Soutenir le projet</SectionTitle>
 					<Text style={styles.sectionText}>
 						L'app est gratuite, sans publicité et sans compte à créer. Si elle te rend service, un
 						petit coup de pouce est toujours apprécié 🙂
@@ -38,7 +39,7 @@ export default function AboutSettingsScreen() {
 				</View>
 
 				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Nouveautés</Text>
+					<SectionTitle>Nouveautés</SectionTitle>
 					{CHANGELOG.map((entry) => (
 						<View key={entry.version} style={styles.changelogEntry}>
 							<View style={styles.changelogHeader}>
@@ -56,7 +57,7 @@ export default function AboutSettingsScreen() {
 				</View>
 
 				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Infos</Text>
+					<SectionTitle>Infos</SectionTitle>
 					<Text style={styles.sectionText}>
 						Toutes les données (joueurs, parties, statistiques) sont stockées sur cet appareil, sans
 						compte à créer. Seule la sauvegarde Google Drive, si tu l'actives, en envoie une copie
@@ -83,23 +84,17 @@ function useStyles(colors: ThemeColors) {
 				appName: {
 					color: colors.text,
 					fontSize: 20,
-					fontWeight: "800",
+					fontFamily: FONTS.displayBold,
 				},
 				appVersion: {
 					color: colors.textMuted,
 					fontSize: 13,
 				},
 				section: {
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					padding: SPACING.md,
 					gap: SPACING.sm,
-				},
-				sectionTitle: {
-					color: colors.textMuted,
-					fontSize: 14,
-					textTransform: "uppercase",
-					letterSpacing: 0.5,
 				},
 				sectionText: {
 					color: colors.text,

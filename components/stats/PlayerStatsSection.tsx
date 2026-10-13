@@ -5,6 +5,7 @@ import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
 import { StatTile } from "@/components/stats/StatTile";
 import { WonderRankingRow } from "@/components/stats/WonderRankingRow";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import { CATEGORY_META, EXTENSION_ORDER, getOrderedCategories } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
@@ -65,7 +66,7 @@ export function PlayerStatsSection({ player, games }: Props) {
 						<StatTile label="Meilleur score" value={String(stats.bestTotal)} />
 					</View>
 
-					<Text style={styles.sectionTitle}>Points moyens par catégorie</Text>
+					<SectionTitle>Points moyens par catégorie</SectionTitle>
 					<View style={styles.chartWrapper}>
 						<BarChart
 							data={chartData}
@@ -85,12 +86,12 @@ export function PlayerStatsSection({ player, games }: Props) {
 						/>
 					</View>
 
-					<Text style={styles.sectionTitle}>Répartition des points</Text>
+					<SectionTitle>Répartition des points</SectionTitle>
 					<CategoryPieChart categories={categories} values={stats.averageByCategory} />
 
 					{bestWonders.length > 0 && (
 						<>
-							<Text style={styles.sectionTitle}>Ses meilleures merveilles</Text>
+							<SectionTitle>Ses meilleures merveilles</SectionTitle>
 							<View style={styles.wonderList}>
 								{bestWonders.map((wonder, index) => (
 									<WonderRankingRow
@@ -101,7 +102,7 @@ export function PlayerStatsSection({ player, games }: Props) {
 								))}
 							</View>
 
-							<Text style={styles.sectionTitle}>Ses pires merveilles</Text>
+							<SectionTitle>Ses pires merveilles</SectionTitle>
 							<View style={styles.wonderList}>
 								{worstWonders.map((wonder, index) => (
 									<WonderRankingRow
@@ -139,12 +140,6 @@ function useStyles(colors: ThemeColors) {
 				tilesRow: {
 					flexDirection: "row",
 					gap: SPACING.sm,
-				},
-				sectionTitle: {
-					color: colors.textMuted,
-					fontSize: 14,
-					textTransform: "uppercase",
-					letterSpacing: 0.5,
 				},
 				chartWrapper: {
 					paddingVertical: SPACING.md,

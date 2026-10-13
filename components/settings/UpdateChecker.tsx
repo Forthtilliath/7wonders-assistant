@@ -8,7 +8,7 @@ import { Alert, StyleSheet } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { APP_INFO } from "@/constants/app";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 const REPO = { owner: "Forthtilliath", repo: "7wonders-assistant" };
@@ -87,8 +87,7 @@ function useStyles(colors: ThemeColors) {
 				},
 				card: {
 					alignSelf: "stretch",
-					backgroundColor: colors.surface,
-					borderColor: colors.border,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 				},
 				title: {

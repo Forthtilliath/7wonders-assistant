@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import type { PropsWithChildren } from "react";
 import { useMemo } from "react";
 import { StyleSheet, View, type ViewProps } from "react-native";
@@ -20,7 +21,7 @@ type Props = PropsWithChildren<
 // explicitement.
 const DEFAULT_EDGES: Edge[] = ["left", "right"];
 
-/** Conteneur d'écran standard : fond de thème + zone sûre + padding par défaut. */
+/** Conteneur d'écran standard : fond de thème en dégradé + zone sûre + padding par défaut. */
 export function ScreenContainer({
 	children,
 	style,
@@ -32,11 +33,13 @@ export function ScreenContainer({
 	const styles = useStyles(colors);
 
 	return (
-		<SafeAreaView style={styles.root} edges={edges}>
-			<View style={[styles.container, padded && styles.padded, style]} {...rest}>
-				{children}
-			</View>
-		</SafeAreaView>
+		<LinearGradient colors={colors.backgroundGradient} style={styles.root}>
+			<SafeAreaView style={styles.safeArea} edges={edges}>
+				<View style={[styles.container, padded && styles.padded, style]} {...rest}>
+					{children}
+				</View>
+			</SafeAreaView>
+		</LinearGradient>
 	);
 }
 
@@ -47,6 +50,9 @@ function useStyles(colors: ThemeColors) {
 				root: {
 					flex: 1,
 					backgroundColor: colors.background,
+				},
+				safeArea: {
+					flex: 1,
 				},
 				container: {
 					flex: 1,

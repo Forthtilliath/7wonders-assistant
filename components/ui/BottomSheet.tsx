@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 type Props = PropsWithChildren<{
@@ -41,11 +41,14 @@ function useStyles(colors: ThemeColors) {
 		() =>
 			StyleSheet.create({
 				overlay: {
-					backgroundColor: "rgba(0,0,0,0.6)",
+					// Voile brun nuit plutôt que noir pur, dans la teinte du thème.
+					backgroundColor: "rgba(12,8,4,0.65)",
 				},
 				sheet: {
 					maxHeight: "75%",
 					backgroundColor: colors.surface,
+					borderTopWidth: 1,
+					borderColor: colors.gold,
 					borderTopLeftRadius: RADIUS.lg,
 					borderTopRightRadius: RADIUS.lg,
 					padding: SPACING.md,
@@ -59,9 +62,9 @@ function useStyles(colors: ThemeColors) {
 					marginBottom: SPACING.sm,
 				},
 				title: {
-					color: colors.text,
-					fontSize: 16,
-					fontWeight: "700",
+					color: colors.gold,
+					fontFamily: FONTS.displayBold,
+					fontSize: 17,
 					marginBottom: SPACING.sm,
 				},
 			}),

@@ -5,6 +5,7 @@ import { GroupListItem } from "@/components/groups/GroupListItem";
 import { PlayerListItem } from "@/components/players/PlayerListItem";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import { TextField } from "@/components/ui/TextField";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
@@ -47,7 +48,7 @@ export default function PlayersScreen() {
 				ListHeaderComponent={
 					query.length === 0 ? (
 						<View style={styles.groupsSection}>
-							<Text style={styles.sectionTitle}>Groupes</Text>
+							<SectionTitle>Groupes</SectionTitle>
 							{sortedGroups.map((group) => (
 								<GroupListItem
 									key={group.id}
@@ -62,7 +63,7 @@ export default function PlayersScreen() {
 								variant="ghost"
 								onPress={() => router.push("/groups/new")}
 							/>
-							<Text style={styles.sectionTitle}>Joueurs</Text>
+							<SectionTitle>Joueurs</SectionTitle>
 						</View>
 					) : null
 				}
@@ -112,12 +113,6 @@ function useStyles(colors: ThemeColors) {
 				groupsSection: {
 					gap: SPACING.sm,
 					marginBottom: SPACING.sm,
-				},
-				sectionTitle: {
-					color: colors.textMuted,
-					fontSize: 14,
-					textTransform: "uppercase",
-					letterSpacing: 0.5,
 				},
 			}),
 		[colors],

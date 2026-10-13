@@ -2,8 +2,10 @@ import { Image } from "expo-image";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
+import { FONTS, ON_COLOR } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { getAvatarColor } from "@/lib/avatarColor";
+import { pickReadableText } from "@/lib/contrast";
 
 type Props = {
 	name: string;
@@ -27,10 +29,11 @@ export function PlayerAvatar({ name, avatarUri, size = 56, seed }: Props) {
 	}
 
 	const backgroundColor = getAvatarColor(seed || name);
+	const color = pickReadableText(backgroundColor, ON_COLOR.light, ON_COLOR.dark);
 
 	return (
 		<View style={[styles.placeholder, dimension, { backgroundColor }]}>
-			<Text style={[styles.initials, { fontSize: size * 0.36 }]}>{initials}</Text>
+			<Text style={[styles.initials, { color, fontSize: size * 0.36 }]}>{initials}</Text>
 		</View>
 	);
 }
@@ -55,8 +58,7 @@ function useStyles(colors: ThemeColors) {
 					justifyContent: "center",
 				},
 				initials: {
-					color: colors.text,
-					fontWeight: "700",
+					fontFamily: FONTS.displayBold,
 				},
 			}),
 		[colors],

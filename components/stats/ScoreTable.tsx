@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { CATEGORY_META } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
-import { SPACING } from "@/constants/theme";
+import { cardSurface, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import type { PlayerStats } from "@/lib/stats";
 import type { CategoryId, Player } from "@/types/game";
@@ -93,7 +93,7 @@ function useStyles(colors: ThemeColors) {
 					borderBottomColor: colors.border,
 				},
 				totalRow: {
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 				},
 				cell: {
 					alignItems: "center",
