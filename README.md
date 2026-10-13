@@ -6,11 +6,12 @@
 
 **L'appli qui compte les points de 7 Wonders à ta place, pendant que tu profites de la partie.**
 
+[![Dernière version](https://img.shields.io/github/v/release/Forthtilliath/7wonders-assistant?label=version)](https://github.com/Forthtilliath/7wonders-assistant/releases/latest)
+[![Platform: Android](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)](https://github.com/Forthtilliath/7wonders-assistant/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](./LICENSE)
-[![Made with Expo](https://img.shields.io/badge/made%20with-Expo-000020?logo=expo&logoColor=white)](https://expo.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Platform: Android](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)](#)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/forthtilliath)
+
+[**📥 Télécharger l'APK**](https://github.com/Forthtilliath/7wonders-assistant/releases/latest)
 
 </div>
 
@@ -47,89 +48,65 @@ Fini les additions au dos de la feuille de score. **7 Wonders: Assistant** calcu
 
 ## ✨ Fonctionnalités
 
+### Pendant la partie
+
 - 🧮 **Calcul automatique des scores** — Sciences (optimisation des jokers comprise), Militaire et Trésor sont calculés à partir de ce que tu saisis, pas juste additionnés à la main.
-- 🃏 **Extensions gérées** — Meneurs, Cités et Armada s'activent par partie, avec leurs propres catégories de score.
 - 🔢 **Compteur de jetons** — pour le militaire et le maritime, compte les jetons un par un plutôt que de calculer le total toi-même.
-- 👥 **Joueurs & groupes** — profils avec avatar et favoris, groupes réutilisables pour lancer une partie habituelle en un tap.
-- 📜 **Historique complet** — chaque partie est enregistrée avec son classement et le détail par catégorie.
-- 📊 **Statistiques** — meilleur score, plus longue série de victoires, taux de victoire par joueur, répartition des points par catégorie.
-- 📤 **Partage d'une partie** — le classement en texte (pour une messagerie), en image ou en CSV, directement depuis les résultats ou l'historique.
-- ☁️ **Sauvegarde automatique Google Drive (optionnelle)** — une fois ton compte relié, tes données sont envoyées après chaque partie dans un dossier privé de l'app sur ton Drive, et restaurables sur un nouveau téléphone.
-- 💾 **Sauvegarde & export** — export/import JSON pour changer d'appareil (avec annulation de la dernière restauration), chiffrement optionnel des sauvegardes, export CSV pour ouvrir tes scores dans un tableur, et un rappel discret quand des parties n'ont pas été sauvegardées.
-- 🔄 **Mises à jour intégrées** — Réglages ▸ À propos vérifie la dernière version publiée sur GitHub, la télécharge et la confie à l'installeur d'Android.
-- 📴 **Hors ligne** — aucun compte obligatoire, aucun serveur : sans Google Drive, toutes les données restent sur le téléphone.
+- 🃏 **Extensions** — Meneurs, Cités et Armada s'activent partie par partie, avec leurs propres catégories de score.
+- 👥 **Joueurs & groupes** — profils avec avatar et favoris, groupes réutilisables pour lancer ta partie habituelle en un tap.
+
+### Après la partie
+
+- 🏆 **Résultats détaillés** — classement final et répartition des points par catégorie.
+- 📤 **Partage** — le classement en texte (pour une messagerie), en image ou en CSV, depuis les résultats ou l'historique.
+- 📜 **Historique** — chaque partie est enregistrée avec son classement et son détail.
+- 📊 **Statistiques** — meilleur score, plus longue série de victoires, taux de victoire par joueur, points moyens par catégorie.
+
+### Tes données
+
+- ☁️ **Sauvegarde automatique sur Google Drive (optionnelle)** — une fois ton compte relié, tes données sont envoyées après chaque partie dans un dossier privé réservé à l'appli, et se restaurent sur un nouveau téléphone.
+- 💾 **Export & import** — fichier de sauvegarde à garder où tu veux, chiffrement optionnel par mot de passe, annulation de la dernière restauration, export CSV pour ouvrir tes scores dans un tableur, et un rappel discret quand tes données n'ont pas été sauvegardées depuis un moment.
+- 🔄 **Mises à jour intégrées** — *Réglages ▸ À propos* vérifie s'il existe une nouvelle version, la télécharge et lance l'installation.
 - 🌗 **Thème clair / sombre**.
 
-## 🛠️ Stack technique
+## 📥 Installation
 
-[Expo](https://expo.dev) (React Native) · [TypeScript](https://www.typescriptlang.org/) · [Expo Router](https://docs.expo.dev/router/introduction/) · [Zustand](https://github.com/pmndrs/zustand) · AsyncStorage · [Biome](https://biomejs.dev/) · Jest · [Testing Library](https://callstack.github.io/react-native-testing-library/)
+L'appli est disponible pour **Android**, en dehors du Play Store.
 
-## 🚀 Démarrer le projet
+1. Sur ton téléphone, ouvre la [dernière version](https://github.com/Forthtilliath/7wonders-assistant/releases/latest) et télécharge le fichier `.apk`.
+2. Ouvre le fichier téléchargé. Si Android le demande, autorise ton navigateur (ou ton gestionnaire de fichiers) à **installer des applis inconnues**.
+3. Lance **7 Wonders: Assistant**, ajoute tes joueurs, et c'est parti.
 
-Prérequis : [Node.js](https://nodejs.org/), un émulateur Android ou un téléphone en debug USB.
+Les versions suivantes s'installent directement depuis l'appli : *Réglages ▸ À propos ▸ Vérifier les mises à jour*.
 
-```bash
-# Installer les dépendances
-npm install
+> [!IMPORTANT]
+> **Tu as installé une des toutes premières versions ?** Les nouvelles versions sont signées avec une nouvelle clé, et Android refuse de les installer par-dessus l'ancienne. Avant de mettre à jour : fais une sauvegarde (Google Drive ou export dans *Réglages*), désinstalle l'appli, installe la nouvelle version, puis restaure ta sauvegarde.
 
-# Lancer le serveur de dev
-npx expo start
+## 🔒 Confidentialité
 
-# Ou build + installer directement sur un appareil/émulateur Android connecté
-npx expo run:android
-```
+- **Aucun compte, aucun serveur, aucune publicité, aucun traceur.** Tes joueurs, parties et statistiques sont stockés uniquement sur ton téléphone.
+- **Google Drive, seulement si tu le choisis.** L'appli n'a accès qu'à son propre dossier caché sur ton Drive : elle ne voit pas tes autres fichiers. Tu peux lui retirer cet accès à tout moment depuis les [autorisations de ton compte Google](https://myaccount.google.com/connections).
+- **Connexion Internet utilisée pour** : la sauvegarde Google Drive (si activée) et la recherche de mises à jour sur GitHub. Rien d'autre.
+- **Permission demandée** : l'installation d'applis, uniquement pour pouvoir installer les mises à jour que tu télécharges depuis l'appli.
 
-Autres commandes utiles :
+## 🎯 Ce que l'appli calcule (et ce qu'elle ne calcule pas)
 
-```bash
-npm test     # tests unitaires et fonctionnels (Jest + Testing Library)
-npm run lint # vérification du code (Biome)
-```
+Toutes les catégories ne se saisissent pas de la même façon, et c'est voulu :
 
-### Configurer la sauvegarde Google Drive
-
-La sauvegarde automatique utilise [Google Sign-In](https://react-native-google-signin.github.io/) et l'API Google Drive (scope `drive.appdata` : l'app n'accède qu'à son propre dossier caché, jamais aux autres fichiers du Drive). Pas de serveur ni de clé dans le code, mais un client OAuth doit être déclaré une fois dans la [console Google Cloud](https://console.cloud.google.com/) :
-
-1. Créer un projet, puis activer l'**API Google Drive** (*API et services ▸ Bibliothèque*).
-2. Configurer l'**écran de consentement OAuth** (type *Externe*), ajouter le scope `.../auth/drive.appdata`, puis le **publier en production** : en mode *Test*, l'accès expire au bout de 7 jours et seuls les testeurs déclarés peuvent se connecter.
-3. Créer un **ID client OAuth de type Android** avec le nom de package `com.forth.reactnative7wondersassistant` et l'empreinte **SHA-1 de la clé qui signe l'APK** (`cd android && ./gradlew signingReport`). Une empreinte par clé de signature : en ajouter un second si les APK de dev et de release sont signés différemment.
-
-Aucun identifiant à recopier dans l'app : Google reconnaît le client à partir du package et de la signature de l'APK. Un client mal configuré se traduit par l'erreur « La connexion à Google a échoué » au moment de relier le compte.
-
-La clé de debug étant publique (la même dans tous les projets React Native), le client OAuth qui porte sa SHA-1 n'est à garder que pour le développement : n'importe qui peut signer un APK avec cette clé.
-
-### Signer l'APK de release
-
-L'APK de release est signé avec une clé propre au projet, jamais avec le `debug.keystore` public de React Native (plugin `withReleaseSigning` de [`@forthtilliath/expo-config-plugins`](https://www.npmjs.com/package/@forthtilliath/expo-config-plugins)). Sans cette clé, `gradlew assembleRelease` échoue (« Keystore file not set »).
-
-1. Générer la clé une seule fois, **hors du dépôt**, et la sauvegarder (gestionnaire de mots de passe, stockage chiffré) : la perdre empêche toute mise à jour de l'app installée.
-
-   ```bash
-   keytool -genkeypair -v -storetype PKCS12 -keyalg RSA -keysize 2048 -validity 10000 -alias sevenwonders-upload -keystore ~/keys/sevenwonders-upload.keystore
-   ```
-
-2. Déclarer son emplacement et ses mots de passe dans `~/.gradle/gradle.properties` (jamais dans `android/gradle.properties`, régénéré par `expo prebuild`) :
-
-   ```properties
-   SEVENWONDERS_UPLOAD_STORE_FILE=C:/Users/<toi>/keys/sevenwonders-upload.keystore
-   SEVENWONDERS_UPLOAD_STORE_PASSWORD=...
-   SEVENWONDERS_UPLOAD_KEY_ALIAS=sevenwonders-upload
-   SEVENWONDERS_UPLOAD_KEY_PASSWORD=...
-   ```
-
-   En CI, les mêmes valeurs passent par des variables d'environnement `ORG_GRADLE_PROJECT_SEVENWONDERS_UPLOAD_…`.
-
-3. Ajouter la SHA-1 de cette clé (`keytool -list -v -keystore <fichier>` ou `cd android && ./gradlew signingReport`) à un client OAuth Android dans la console Google Cloud (voir ci-dessus).
-
-Android refuse d'installer par-dessus une app signée avec une autre clé : le passage à la clé de release oblige à désinstaller l'ancienne version (données locales effacées). Faire une sauvegarde (Google Drive ou export JSON) avant, puis la restaurer.
-
-## 🎯 Périmètre
-
-Toutes les catégories ne se calculent pas de la même façon, et c'est voulu : Sciences, Militaire et Trésor sont calculés automatiquement à partir de ce que tu comptes sur ton plateau ; Civil, Commerce, Guildes et Merveille restent en saisie directe du total, car ils dépendent des cartes précises jouées — pas de deuxième jeu de règles à maintenir en synchro avec les vraies cartes. Les extensions Babel et Édifices ne sont pas gérées.
+| Catégorie | Saisie |
+| --- | --- |
+| Sciences, Militaire, Trésor | **Calculées** à partir de ce que tu comptes sur ton plateau (symboles, jetons, pièces) |
+| Civil, Commerce, Guildes, Merveille | **Total direct** : ils dépendent des cartes précises jouées, l'appli ne reproduit pas tout le jeu de cartes |
+| Extensions Meneurs, Cités, Armada | Gérées, avec leurs catégories propres |
+| Extensions Babel, Édifices | Non gérées |
 
 ## ☕ Soutenir le projet
 
-Si l'appli te fait gagner du temps en soirée jeux, tu peux [m'offrir un café](https://buymeacoffee.com/forthtilliath).
+Si l'appli te fait gagner du temps en soirée jeux, tu peux [m'offrir un café](https://buymeacoffee.com/forthtilliath). Un bug, une idée ? [Ouvre une issue](https://github.com/Forthtilliath/7wonders-assistant/issues).
+
+## 🛠️ Contribuer
+
+Installation du projet, architecture, configuration de Google Drive et publication d'une version : voir la [documentation développeur](./docs/README.md).
 
 ## 📄 Licence
 
