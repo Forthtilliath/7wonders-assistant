@@ -17,8 +17,8 @@ export default function DonateSettingsScreen() {
 			<View style={styles.section}>
 				<SectionTitle>Soutenir le projet</SectionTitle>
 				<Text style={styles.sectionText}>
-					L'app est gratuite, sans publicité et sans compte à créer. Si elle te rend service, un
-					petit coup de pouce est toujours apprécié 🙂
+					L'app est gratuite et sans publicité, et tout y est inclus : aucune option payante. Si
+					elle te rend service, un petit coup de pouce est toujours apprécié 🙂
 				</Text>
 				<Button
 					label="Faire un don"
