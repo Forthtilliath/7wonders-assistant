@@ -13,7 +13,7 @@ export const BASE_CATEGORY_ORDER: BaseCategoryId[] = [
 	"guilds",
 ];
 
-export const EXTENSION_ORDER: ExtensionId[] = ["leaders", "cities", "babel", "armada"];
+export const EXTENSION_ORDER: ExtensionId[] = ["leaders", "cities", "babel", "edifice", "armada"];
 
 /** Sous-ensemble de `CategoryId` qui n'existe que grâce à une extension (donc "réinitialisable"
  * quand celle-ci est désactivée), par opposition aux 7 catégories de base toujours présentes. */
@@ -126,6 +126,7 @@ export const EXTENSION_LABELS: Record<ExtensionId, string> = {
 	leaders: "Leaders",
 	cities: "Cités",
 	babel: "Babel",
+	edifice: "Edifice",
 	armada: "Armada",
 };
 
@@ -138,6 +139,8 @@ export const EXTENSION_CATEGORIES: Record<ExtensionId, ExtensionCategoryId[]> = 
 	leaders: ["leaders"],
 	cities: ["cities"],
 	babel: ["babel"],
+	// Aucune étape de score : les gains et pertes des projets Edifice se comptent avec les pièces.
+	edifice: [],
 	armada: ["naval", "armada"],
 };
 
