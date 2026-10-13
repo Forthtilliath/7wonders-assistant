@@ -7,6 +7,7 @@ import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { APP_INFO } from "@/constants/app";
 import { EXTENSION_LABELS } from "@/constants/categories";
 import { CHANGELOG } from "@/constants/changelog";
+import { EDITION_LABELS } from "@/constants/editions";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -20,12 +21,15 @@ export default function SettingsScreen() {
 	const router = useRouter();
 	const mode = useThemeStore((s) => s.mode);
 	const defaultExtensions = usePreferencesStore((s) => s.defaultExtensions);
+	const defaultEdition = usePreferencesStore((s) => s.defaultEdition);
 	const cloudConnected = useBackupState(backup).cloudAccount != null;
 
-	const defaultExtensionsPreview =
-		defaultExtensions.length > 0
-			? defaultExtensions.map((ext) => EXTENSION_LABELS[ext]).join(", ")
-			: "Aucune";
+	const defaultExtensionsPreview = [
+		EDITION_LABELS[defaultEdition],
+		...(defaultExtensions.length > 0
+			? defaultExtensions.map((ext) => EXTENSION_LABELS[ext])
+			: ["aucune extension"]),
+	].join(", ");
 
 	return (
 		<ScreenContainer style={styles.container}>
@@ -37,7 +41,7 @@ export default function SettingsScreen() {
 			/>
 			<SettingsRow
 				icon="options"
-				label="Extensions par défaut"
+				label="Édition et extensions"
 				value={defaultExtensionsPreview}
 				onPress={() => router.push("/settings/new-game")}
 			/>

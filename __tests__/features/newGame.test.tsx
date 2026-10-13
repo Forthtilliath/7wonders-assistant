@@ -71,7 +71,32 @@ describe("Onglet Jouer : lancer une partie", () => {
 		const game = useGameStore.getState();
 		expect(game.playerIds).toEqual(["p1", "p2"]);
 		expect(game.extensions).toEqual(["armada"]);
+		expect(game.edition).toBe("first");
 		expect(mockRouter.push).toHaveBeenCalledWith("/game/score/military");
+	});
+
+	it("filtre les extensions selon l'édition choisie et signale Babel + Edifice", async () => {
+		const user = userEvent.setup();
+		seedPlayers(["Alice", "Bob"]);
+		usePreferencesStore.setState({ defaultEdition: "first", defaultExtensions: ["babel"] });
+		await render(<NewGameTab />);
+
+		await user.press(screen.getByRole("checkbox", { name: "Edifice" }));
+		expect(screen.getByText(/Edifice remplace Babel/)).toBeOnTheScreen();
+
+		// La 2e édition ne propose pas Babel : elle disparaît et se décoche.
+		await user.press(screen.getByRole("radio", { name: "2e édition" }));
+		expect(screen.queryByRole("checkbox", { name: "Babel" })).not.toBeOnTheScreen();
+		expect(screen.queryByText(/Edifice remplace Babel/)).not.toBeOnTheScreen();
+
+		await user.press(screen.getByRole("checkbox", { name: "Alice" }));
+		await user.press(screen.getByRole("checkbox", { name: "Bob" }));
+		await user.press(screen.getByRole("button", { name: "Lancer la partie" }));
+
+		expect(useGameStore.getState()).toMatchObject({
+			edition: "second",
+			extensions: ["edifice"],
+		});
 	});
 
 	it("n'affiche pas les joueurs archivés", async () => {
