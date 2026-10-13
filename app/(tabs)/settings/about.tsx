@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
-import { Alert, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useMemo } from "react";
+import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { UpdateChecker } from "@/components/settings/UpdateChecker";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { APP_INFO } from "@/constants/app";
@@ -8,49 +9,19 @@ import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { formatDate } from "@/lib/date";
-import { checkForUpdate } from "@/lib/updates";
 
 const DONATION_URL = "https://buymeacoffee.com/forthtilliath";
 
 export default function AboutSettingsScreen() {
 	const colors = useColors();
 	const styles = useStyles(colors);
-	const [checkingUpdate, setCheckingUpdate] = useState(false);
-
-	const handleCheckForUpdate = async () => {
-		setCheckingUpdate(true);
-		const result = await checkForUpdate();
-		setCheckingUpdate(false);
-
-		if (result.status === "update-available") {
-			Alert.alert(
-				"Mise à jour disponible",
-				`Version ${result.version} disponible (tu as la ${APP_INFO.version}).`,
-				[
-					{ text: "Plus tard", style: "cancel" },
-					{ text: "Télécharger", onPress: () => Linking.openURL(result.url) },
-				],
-			);
-		} else if (result.status === "up-to-date") {
-			Alert.alert("À jour", "Tu as déjà la dernière version.");
-		} else {
-			Alert.alert("Erreur", "Impossible de vérifier les mises à jour pour le moment.");
-		}
-	};
-
 	return (
 		<ScreenContainer>
 			<ScrollView contentContainerStyle={styles.content}>
 				<View style={styles.appHeader}>
 					<Text style={styles.appName}>{APP_INFO.name}</Text>
 					<Text style={styles.appVersion}>Version {APP_INFO.version}</Text>
-					<Button
-						label={checkingUpdate ? "Vérification…" : "Vérifier les mises à jour"}
-						variant="ghost"
-						onPress={handleCheckForUpdate}
-						disabled={checkingUpdate}
-						style={styles.updateButton}
-					/>
+					<UpdateChecker />
 				</View>
 
 				<View style={styles.section}>
@@ -87,8 +58,9 @@ export default function AboutSettingsScreen() {
 				<View style={styles.section}>
 					<Text style={styles.sectionTitle}>Infos</Text>
 					<Text style={styles.sectionText}>
-						Toutes les données (joueurs, parties, statistiques) restent stockées uniquement sur cet
-						appareil : aucun compte, aucun serveur.
+						Toutes les données (joueurs, parties, statistiques) sont stockées sur cet appareil, sans
+						compte à créer. Seule la sauvegarde Google Drive, si tu l'actives, en envoie une copie
+						dans un dossier privé de ton Drive, invisible pour les autres applications.
 					</Text>
 				</View>
 			</ScrollView>
@@ -107,9 +79,6 @@ function useStyles(colors: ThemeColors) {
 				appHeader: {
 					alignItems: "center",
 					gap: SPACING.xs,
-				},
-				updateButton: {
-					marginTop: SPACING.xs,
 				},
 				appName: {
 					color: colors.text,

@@ -1,12 +1,13 @@
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { useBackupState } from "@forthtilliath/expo-backup-ui/hooks";
+import { downloadAndInstallApk } from "@forthtilliath/expo-release-updates/downloadAndInstallApk";
+import { fetchLatestRelease } from "@forthtilliath/expo-release-updates/githubReleases";
+import { act, render, screen, userEvent } from "@testing-library/react-native";
 import { Linking } from "react-native";
 import AboutSettingsScreen from "@/app/(tabs)/settings/about";
 import AppearanceSettingsScreen from "@/app/(tabs)/settings/appearance";
 import DangerZoneSettingsScreen from "@/app/(tabs)/settings/danger-zone";
 import SettingsScreen from "@/app/(tabs)/settings/index";
 import NewGameSettingsScreen from "@/app/(tabs)/settings/new-game";
-import { checkForUpdate } from "@/lib/updates";
-import { useBackupStore } from "@/stores/backupStore";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
@@ -22,7 +23,17 @@ import {
 	seedPlayers,
 } from "@/test-utils/fixtures";
 
-jest.mock("@/lib/updates", () => ({ checkForUpdate: jest.fn() }));
+jest.mock("@forthtilliath/expo-release-updates/githubReleases", () => ({
+	fetchLatestRelease: jest.fn(),
+}));
+jest.mock("@forthtilliath/expo-release-updates/downloadAndInstallApk", () => ({
+	downloadAndInstallApk: jest.fn(async () => {}),
+}));
+// État des sauvegardes (expo-backup) : seul le compte Drive relié est lu par le menu.
+jest.mock("@/lib/backup", () => ({ backup: {} }));
+jest.mock("@forthtilliath/expo-backup-ui/hooks", () => ({
+	useBackupState: jest.fn(() => ({ cloudAccount: null })),
+}));
 
 describe("Réglages", () => {
 	beforeEach(() => {
@@ -33,7 +44,7 @@ describe("Réglages", () => {
 	it("résume chaque réglage et ouvre son écran", async () => {
 		const user = userEvent.setup();
 		usePreferencesStore.setState({ defaultExtensions: ["leaders", "armada"] });
-		useBackupStore.getState().connectCloud("a@b.c");
+		jest.mocked(useBackupState).mockReturnValue({ cloudAccount: { email: "a@b.c" } } as never);
 		await render(<SettingsScreen />);
 
 		await user.press(screen.getByRole("button", { name: "Apparence, Sombre" }));
@@ -116,37 +127,48 @@ describe("Réglages", () => {
 	});
 
 	describe("à propos", () => {
-		it("propose de télécharger une nouvelle version", async () => {
+		it("télécharge et installe une nouvelle version après confirmation", async () => {
 			const user = userEvent.setup();
 			const alert = mockAlert();
-			const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-			jest.mocked(checkForUpdate).mockResolvedValue({
-				status: "update-available",
+			jest.mocked(fetchLatestRelease).mockResolvedValue({
 				version: "99.0.0",
-				url: "https://github.com/release",
+				notes: "",
+				apkUrl:
+					"https://github.com/Forthtilliath/7wonders-assistant/releases/download/v99.0.0/app.apk",
 			});
 			await render(<AboutSettingsScreen />);
 
 			await user.press(screen.getByRole("button", { name: "Vérifier les mises à jour" }));
+			expect(fetchLatestRelease).toHaveBeenCalledWith({
+				owner: "Forthtilliath",
+				repo: "7wonders-assistant",
+			});
 			expect(alert.mock.calls[0][0]).toBe("Mise à jour disponible");
-			await pressAlertButton(alert, "Télécharger");
+			await pressAlertButton(alert, "Installer");
+			await act(async () => {});
 
-			expect(openURL).toHaveBeenCalledWith("https://github.com/release");
+			expect(downloadAndInstallApk).toHaveBeenCalledWith(
+				expect.objectContaining({
+					apkUrl:
+						"https://github.com/Forthtilliath/7wonders-assistant/releases/download/v99.0.0/app.apk",
+				}),
+			);
 		});
 
 		it("confirme que l'app est à jour, ou signale l'échec de la vérification", async () => {
 			const user = userEvent.setup();
 			const alert = mockAlert();
 			jest
-				.mocked(checkForUpdate)
-				.mockResolvedValueOnce({ status: "up-to-date" })
-				.mockResolvedValueOnce({ status: "error" });
+				.mocked(fetchLatestRelease)
+				.mockResolvedValueOnce({ version: "0.0.1", notes: "", apkUrl: "https://github.com/a.apk" })
+				.mockRejectedValueOnce(new Error("GitHub responded with 503"));
 			await render(<AboutSettingsScreen />);
 
 			await user.press(screen.getByRole("button", { name: "Vérifier les mises à jour" }));
 			await user.press(screen.getByRole("button", { name: "Vérifier les mises à jour" }));
 
 			expect(alert.mock.calls.map(([title]) => title)).toEqual(["À jour", "Erreur"]);
+			expect(downloadAndInstallApk).not.toHaveBeenCalled();
 		});
 
 		it("affiche les nouveautés et ouvre la page de dons", async () => {
