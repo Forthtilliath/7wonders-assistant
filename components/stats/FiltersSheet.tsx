@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import { EXTENSION_LABELS, EXTENSION_ORDER } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
@@ -44,7 +45,7 @@ export function FiltersSheet({
 	return (
 		<BottomSheet visible={visible} onClose={onClose} title="Filtres">
 			<View style={styles.content}>
-				<Text style={styles.sectionTitle}>Extensions</Text>
+				<SectionTitle style={styles.sectionTitle}>Extensions</SectionTitle>
 				<CheckboxGroup<ExtensionId>
 					options={EXTENSION_OPTIONS}
 					values={extensionFilter}
@@ -53,7 +54,7 @@ export function FiltersSheet({
 
 				{players && (
 					<>
-						<Text style={styles.sectionTitle}>{playerSectionTitle}</Text>
+						<SectionTitle style={styles.sectionTitle}>{playerSectionTitle}</SectionTitle>
 						{players.map((player) => {
 							const selected = player.id === selectedPlayerId;
 							return (
@@ -94,10 +95,6 @@ function useStyles(colors: ThemeColors) {
 					paddingBottom: SPACING.md,
 				},
 				sectionTitle: {
-					color: colors.textMuted,
-					fontSize: 13,
-					textTransform: "uppercase",
-					letterSpacing: 0.5,
 					marginTop: SPACING.sm,
 				},
 				playerRow: {

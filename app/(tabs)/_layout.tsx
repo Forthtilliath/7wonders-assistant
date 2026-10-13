@@ -1,6 +1,16 @@
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+import type { ColorValue } from "react-native";
+import { headerTitleStyle } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+
+type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
+
+function tabIcon(name: IconName) {
+	return ({ color, size }: { color: ColorValue; size: number }) => (
+		<MaterialCommunityIcons name={name} color={color} size={size} />
+	);
+}
 
 export default function TabsLayout() {
 	const colors = useColors();
@@ -8,11 +18,16 @@ export default function TabsLayout() {
 	return (
 		<Tabs
 			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTintColor: colors.text,
-				headerTitleStyle: { color: colors.text },
+				headerStyle: {
+					backgroundColor: colors.surface,
+					borderBottomWidth: 1,
+					borderBottomColor: colors.border,
+				},
+				headerShadowVisible: false,
+				headerTintColor: colors.gold,
+				headerTitleStyle: headerTitleStyle(colors),
 				tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
-				tabBarActiveTintColor: colors.primary,
+				tabBarActiveTintColor: colors.gold,
 				tabBarInactiveTintColor: colors.textMuted,
 			}}
 		>
@@ -21,39 +36,24 @@ export default function TabsLayout() {
 				options={{
 					title: "7 Wonders",
 					tabBarLabel: "Jouer",
-					tabBarIcon: ({ color, size }) => <Ionicons name="play" color={color} size={size} />,
+					tabBarIcon: tabIcon("pillar"),
 				}}
 			/>
 			<Tabs.Screen
 				name="players"
-				options={{
-					title: "Joueurs",
-					tabBarIcon: ({ color, size }) => <Ionicons name="people" color={color} size={size} />,
-				}}
+				options={{ title: "Joueurs", tabBarIcon: tabIcon("account-group") }}
 			/>
 			<Tabs.Screen
 				name="history"
-				options={{
-					title: "Historique",
-					tabBarIcon: ({ color, size }) => <Ionicons name="time" color={color} size={size} />,
-				}}
+				options={{ title: "Historique", tabBarIcon: tabIcon("script-text-outline") }}
 			/>
 			<Tabs.Screen
 				name="stats"
-				options={{
-					title: "Statistiques",
-					tabBarIcon: ({ color, size }) => (
-						<Ionicons name="stats-chart" color={color} size={size} />
-					),
-				}}
+				options={{ title: "Statistiques", tabBarIcon: tabIcon("chart-bar") }}
 			/>
 			<Tabs.Screen
 				name="settings"
-				options={{
-					title: "Réglages",
-					headerShown: false,
-					tabBarIcon: ({ color, size }) => <Ionicons name="settings" color={color} size={size} />,
-				}}
+				options={{ title: "Réglages", headerShown: false, tabBarIcon: tabIcon("cog") }}
 			/>
 			<Tabs.Screen
 				name="game"

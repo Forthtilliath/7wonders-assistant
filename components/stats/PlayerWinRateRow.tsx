@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import type { PlayerLeaderboardEntry } from "@/lib/stats";
 import type { Player } from "@/types/game";
@@ -42,7 +42,7 @@ function useStyles(colors: ThemeColors) {
 					flexDirection: "row",
 					alignItems: "center",
 					gap: SPACING.sm,
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					padding: SPACING.sm,
 				},
@@ -65,7 +65,7 @@ function useStyles(colors: ThemeColors) {
 				},
 				winRate: {
 					color: colors.gold,
-					fontWeight: "800",
+					fontFamily: FONTS.displayBold,
 					fontSize: 16,
 				},
 			}),

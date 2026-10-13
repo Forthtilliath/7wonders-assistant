@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 type Props = {
@@ -51,7 +51,7 @@ function useStyles(colors: ThemeColors) {
 					flexDirection: "row",
 					alignItems: "center",
 					gap: SPACING.md,
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					padding: SPACING.md,
 				},

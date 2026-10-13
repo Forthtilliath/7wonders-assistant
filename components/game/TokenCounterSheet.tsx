@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { NumberStepper } from "@/components/ui/NumberStepper";
 import { MAX_SCIENCE_SYMBOLS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
-import { SPACING } from "@/constants/theme";
+import { FONTS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { computeTokensTotal, type TokenDenomination } from "@/lib/scoring/tokens";
 
@@ -112,7 +112,7 @@ function useStyles(colors: ThemeColors) {
 				},
 				totalValue: {
 					fontSize: 20,
-					fontWeight: "800",
+					fontFamily: FONTS.displayBold,
 				},
 			}),
 		[colors],

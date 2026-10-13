@@ -5,7 +5,7 @@ import { SettingsCard, SettingsCardHint } from "@/components/settings/SettingsCa
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { backup, describeBackup, exportGamesCsv } from "@/lib/backup";
 
@@ -52,8 +52,7 @@ function useBackupScreenStyles(colors: ThemeColors): BackupScreenStyles {
 		() => ({
 			container: { gap: SPACING.md },
 			section: {
-				backgroundColor: colors.surface,
-				borderWidth: 0,
+				...cardSurface(colors),
 				borderRadius: RADIUS.md,
 				padding: SPACING.md,
 				gap: SPACING.sm,

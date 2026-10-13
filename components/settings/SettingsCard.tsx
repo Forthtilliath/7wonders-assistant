@@ -8,7 +8,7 @@ import type { PropsWithChildren, ReactNode } from "react";
 import { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -70,7 +70,7 @@ function useStyles(colors: ThemeColors) {
 		() =>
 			StyleSheet.create({
 				card: {
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					borderWidth: 0,
 					padding: SPACING.md,
@@ -81,8 +81,8 @@ function useStyles(colors: ThemeColors) {
 				},
 				title: {
 					color: colors.text,
+					fontFamily: FONTS.displayBold,
 					fontSize: 16,
-					fontWeight: "700",
 				},
 				statusRow: {
 					gap: SPACING.sm,

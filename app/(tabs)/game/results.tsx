@@ -9,9 +9,10 @@ import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import { getOrderedCategories } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { getGameRanking } from "@/lib/scoring/game";
 import { getCategoryScore } from "@/lib/scoring/total";
@@ -88,7 +89,7 @@ export default function ResultsScreen() {
 			<ScrollView contentContainerStyle={styles.list}>
 				<ShareableRanking ref={rankingRef} game={game} ranking={ranking} players={allPlayers} />
 
-				<Text style={styles.sectionTitle}>Répartition par joueur</Text>
+				<SectionTitle style={styles.sectionTitle}>Répartition par joueur</SectionTitle>
 				{gamePlayers.map((player) => {
 					const score = ranking.find((s) => s.playerId === player.id);
 					if (!score) return null;
@@ -112,7 +113,7 @@ export default function ResultsScreen() {
 					);
 				})}
 
-				<Text style={styles.sectionTitle}>Comparaison par catégorie</Text>
+				<SectionTitle style={styles.sectionTitle}>Comparaison par catégorie</SectionTitle>
 				{categories.map((category) => (
 					<View key={category} style={styles.chartCard}>
 						<CategoryComparisonChart category={category} players={gamePlayers} scores={ranking} />
@@ -142,7 +143,7 @@ function useStyles(colors: ThemeColors) {
 				title: {
 					color: colors.text,
 					fontSize: 22,
-					fontWeight: "800",
+					fontFamily: FONTS.displayBold,
 					marginBottom: SPACING.md,
 				},
 				list: {
@@ -150,14 +151,10 @@ function useStyles(colors: ThemeColors) {
 					paddingBottom: SPACING.md,
 				},
 				sectionTitle: {
-					color: colors.textMuted,
-					fontSize: 14,
-					textTransform: "uppercase",
-					letterSpacing: 0.5,
 					marginTop: SPACING.sm,
 				},
 				chartCard: {
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					padding: SPACING.md,
 					gap: SPACING.sm,

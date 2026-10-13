@@ -2,8 +2,9 @@ import { tapFeedback } from "@forthtilliath/react-native-kit/utils/helpers/hapti
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS } from "@/constants/theme";
+import { ON_COLOR, RADIUS } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { pickReadableText } from "@/lib/contrast";
 
 type Props = {
 	value: number;
@@ -89,6 +90,11 @@ export function NumberStepper({
 	const colors = useColors();
 	const styles = useStyles(colors);
 	const color = accentColor ?? colors.primary;
+	// Les couleurs de catégorie vont du jaune pièce d'or au bleu nuit : +/- en encre ou en ivoire.
+	const glyphStyle = [
+		styles.buttonLabel,
+		{ color: pickReadableText(color, ON_COLOR.light, ON_COLOR.dark) },
+	];
 	// "number-pad" a un clavier purement numérique, sans touche "-" sur Android. Dès qu'un
 	// négatif est possible, on bascule sur "numeric" qui affiche le signe.
 	const allowsNegative = min !== undefined && min < 0;
@@ -116,7 +122,7 @@ export function NumberStepper({
 				accessibilityRole="button"
 				accessibilityLabel={label ? `Diminuer ${label}` : "Diminuer"}
 			>
-				<Text style={styles.buttonLabel}>–</Text>
+				<Text style={glyphStyle}>–</Text>
 			</Pressable>
 
 			<TextInput
@@ -140,7 +146,7 @@ export function NumberStepper({
 				accessibilityRole="button"
 				accessibilityLabel={label ? `Augmenter ${label}` : "Augmenter"}
 			>
-				<Text style={styles.buttonLabel}>+</Text>
+				<Text style={glyphStyle}>+</Text>
 			</Pressable>
 		</View>
 	);
@@ -163,7 +169,6 @@ function useStyles(colors: ThemeColors) {
 					justifyContent: "center",
 				},
 				buttonLabel: {
-					color: colors.primaryText,
 					fontSize: 20,
 					fontWeight: "700",
 				},

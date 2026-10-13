@@ -1,20 +1,13 @@
 import { Stack } from "expo-router";
-import { useColors } from "@/hooks/useColors";
+import { useStackScreenOptions } from "@/hooks/useStackScreenOptions";
 
 // Stack imbriqué dans l'onglet "Réglages" (au lieu de Stack.Screen racine) pour que la barre
 // d'onglets reste visible sur les sous-pages, au lieu de disparaître.
 export default function SettingsLayout() {
-	const colors = useColors();
+	const screenOptions = useStackScreenOptions();
 
 	return (
-		<Stack
-			screenOptions={{
-				headerStyle: { backgroundColor: colors.surface },
-				headerTintColor: colors.text,
-				headerTitleStyle: { color: colors.text },
-				contentStyle: { backgroundColor: colors.background },
-			}}
-		>
+		<Stack screenOptions={screenOptions}>
 			<Stack.Screen name="index" options={{ title: "Réglages" }} />
 			<Stack.Screen name="appearance" options={{ title: "Apparence" }} />
 			<Stack.Screen name="new-game" options={{ title: "Extensions par défaut" }} />

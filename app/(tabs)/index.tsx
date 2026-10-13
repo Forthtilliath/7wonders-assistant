@@ -8,10 +8,11 @@ import { BackupReminderBanner } from "@/components/backup/BackupReminderBanner";
 import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import { EXTENSION_LABELS, EXTENSION_ORDER } from "@/constants/categories";
 import { MAX_PLAYERS, MIN_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { useGameStore } from "@/stores/gameStore";
 import { selectSortedGroups, useGroupsStore } from "@/stores/groupsStore";
@@ -137,7 +138,7 @@ export default function NewGameTab() {
 					<BackupReminderBanner />
 					{sortedGroups.length > 0 && (
 						<>
-							<Text style={styles.sectionTitle}>Groupes</Text>
+							<SectionTitle style={styles.sectionTitle}>Groupes</SectionTitle>
 							<View style={styles.chipsRow}>
 								{sortedGroups.map((group) => {
 									const active = isGroupActive(group);
@@ -160,9 +161,9 @@ export default function NewGameTab() {
 						</>
 					)}
 
-					<Text style={styles.sectionTitle}>
+					<SectionTitle style={styles.sectionTitle}>
 						Joueurs ({selectedIds.length}/{MAX_PLAYERS})
-					</Text>
+					</SectionTitle>
 					<View style={styles.grid}>
 						{activePlayers.map((player) => (
 							<SelectablePlayerCard
@@ -182,7 +183,7 @@ export default function NewGameTab() {
 						</Text>
 					)}
 
-					<Text style={styles.sectionTitle}>Extensions</Text>
+					<SectionTitle style={styles.sectionTitle}>Extensions</SectionTitle>
 					<View style={styles.chipsRow}>
 						{EXTENSION_ORDER.map((ext) => {
 							const active = extensions.includes(ext);
@@ -219,10 +220,6 @@ function useStyles(colors: ThemeColors) {
 					paddingBottom: SPACING.md,
 				},
 				sectionTitle: {
-					color: colors.textMuted,
-					fontSize: 14,
-					textTransform: "uppercase",
-					letterSpacing: 0.5,
 					marginTop: SPACING.sm,
 				},
 				grid: {
@@ -266,7 +263,7 @@ function useStyles(colors: ThemeColors) {
 				onboardingTitle: {
 					color: colors.text,
 					fontSize: 22,
-					fontWeight: "800",
+					fontFamily: FONTS.displayBold,
 				},
 				onboardingText: {
 					color: colors.textMuted,

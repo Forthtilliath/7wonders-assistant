@@ -5,7 +5,7 @@ import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { CATEGORY_META, getOrderedCategories } from "@/constants/categories";
 import { RANK_MEDALS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { getCategoryScore, type RankedPlayerScore } from "@/lib/scoring/total";
 import type { ExtensionId, Player } from "@/types/game";
@@ -60,7 +60,7 @@ function useStyles(colors: ThemeColors) {
 		() =>
 			StyleSheet.create({
 				card: {
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					padding: SPACING.md,
 					gap: SPACING.sm,
@@ -88,7 +88,7 @@ function useStyles(colors: ThemeColors) {
 				total: {
 					color: colors.gold,
 					fontSize: 22,
-					fontWeight: "800",
+					fontFamily: FONTS.displayBold,
 				},
 				breakdown: {
 					flexDirection: "row",

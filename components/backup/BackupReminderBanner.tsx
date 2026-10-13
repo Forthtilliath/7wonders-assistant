@@ -9,7 +9,7 @@ import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { backup } from "@/lib/backup";
 import { useBackupStore } from "@/stores/backupStore";
@@ -75,7 +75,7 @@ function useStyles(colors: ThemeColors) {
 		() =>
 			StyleSheet.create({
 				banner: {
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					borderWidth: 1,
 					borderColor: colors.gold,

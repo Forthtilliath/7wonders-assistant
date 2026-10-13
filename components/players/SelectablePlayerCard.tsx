@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 type Props = {
@@ -42,7 +42,7 @@ export function SelectablePlayerCard({
 				<PlayerAvatar name={name} avatarUri={avatarUri} seed={playerId} size={56} />
 				{isFavorite && (
 					<View style={styles.favoriteBadge}>
-						<Ionicons name="star" size={11} color="#fff" />
+						<Ionicons name="star" size={11} color={colors.primaryText} />
 					</View>
 				)}
 			</View>
@@ -61,14 +61,13 @@ function useStyles(colors: ThemeColors) {
 					width: 84,
 					alignItems: "center",
 					gap: SPACING.xs,
-					backgroundColor: colors.surface,
+					...cardSurface(colors),
 					borderRadius: RADIUS.md,
 					borderWidth: 2,
-					borderColor: "transparent",
 					paddingVertical: SPACING.sm,
 				},
 				cardSelected: {
-					borderColor: colors.primary,
+					borderColor: colors.gold,
 				},
 				avatarWrapper: {
 					width: 56,
