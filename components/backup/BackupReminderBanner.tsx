@@ -1,11 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
+import {
+	getUnsavedDates,
+	shouldShowBackupReminder,
+	snoozeBackupReminder,
+} from "@forthtilliath/expo-backup/backupReminder";
+import { useBackupState } from "@forthtilliath/expo-backup-ui/hooks";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import { getUnsavedGames, shouldShowBackupReminder, snoozeUntil } from "@/lib/backupReminder";
+import { backup } from "@/lib/backup";
 import { useBackupStore } from "@/stores/backupStore";
 import { useHistoryStore } from "@/stores/historyStore";
 
@@ -19,16 +25,18 @@ export function BackupReminderBanner() {
 	const colors = useColors();
 	const styles = useStyles(colors);
 	const games = useHistoryStore((s) => s.games);
-	const lastBackupAt = useBackupStore((s) => s.lastBackupAt);
+	const { hydrated, lastBackupAt, cloudAccount } = useBackupState(backup);
 	const snoozedUntil = useBackupStore((s) => s.reminderSnoozedUntil);
-	const cloudConnected = useBackupStore((s) => s.cloudAccount != null);
 	const snoozeReminder = useBackupStore((s) => s.snoozeReminder);
 
+	// Avant la lecture de l'état des sauvegardes, `lastBackupAt` vaut null : le rappel s'afficherait à tort.
+	if (!hydrated) return null;
 	const now = Date.now();
-	if (!shouldShowBackupReminder({ games, lastBackupAt, snoozedUntil, now })) return null;
+	const itemDates = games.map((game) => game.finishedAt ?? game.createdAt);
+	if (!shouldShowBackupReminder({ itemDates, lastBackupAt, snoozedUntil, now })) return null;
 
-	const unsavedCount = getUnsavedGames(games, lastBackupAt).length;
-	const message = cloudConnected
+	const unsavedCount = getUnsavedDates(itemDates, lastBackupAt).length;
+	const message = cloudAccount
 		? "La sauvegarde automatique sur Google Drive n'a pas pu se faire depuis un moment."
 		: "Exporte une sauvegarde ou active la sauvegarde automatique Google Drive pour ne rien perdre en changeant de téléphone.";
 
@@ -44,7 +52,7 @@ export function BackupReminderBanner() {
 			<Text style={styles.message}>{message}</Text>
 			<View style={styles.actions}>
 				<Pressable
-					onPress={() => snoozeReminder(snoozeUntil(now))}
+					onPress={() => snoozeReminder(snoozeBackupReminder(now))}
 					hitSlop={8}
 					accessibilityRole="button"
 				>

@@ -15,6 +15,12 @@ import {
 	seedPlayers,
 } from "@/test-utils/fixtures";
 
+// État des sauvegardes (expo-backup) lu par le rappel : chargé, jamais sauvegardé, aucun compte Drive.
+jest.mock("@/lib/backup", () => ({ backup: {} }));
+jest.mock("@forthtilliath/expo-backup-ui/hooks", () => ({
+	useBackupState: () => ({ hydrated: true, lastBackupAt: null, cloudAccount: null }),
+}));
+
 describe("Onglet Jouer : lancer une partie", () => {
 	beforeEach(() => {
 		resetAllStores();

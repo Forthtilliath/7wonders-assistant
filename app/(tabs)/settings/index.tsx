@@ -1,3 +1,4 @@
+import { useBackupState } from "@forthtilliath/expo-backup-ui/hooks";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import { StyleSheet, Text } from "react-native";
@@ -8,7 +9,7 @@ import { EXTENSION_LABELS } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import { useBackupStore } from "@/stores/backupStore";
+import { backup } from "@/lib/backup";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { useThemeStore } from "@/stores/themeStore";
 
@@ -18,7 +19,7 @@ export default function SettingsScreen() {
 	const router = useRouter();
 	const mode = useThemeStore((s) => s.mode);
 	const defaultExtensions = usePreferencesStore((s) => s.defaultExtensions);
-	const cloudConnected = useBackupStore((s) => s.cloudAccount != null);
+	const cloudConnected = useBackupState(backup).cloudAccount != null;
 
 	const defaultExtensionsPreview =
 		defaultExtensions.length > 0

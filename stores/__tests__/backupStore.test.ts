@@ -10,44 +10,24 @@ describe("useBackupStore", () => {
 		useBackupStore.setState(initialBackupState);
 	});
 
-	it("markBackedUp ne recule jamais la date de dernière sauvegarde", () => {
-		useBackupStore.getState().markBackedUp(200);
-		useBackupStore.getState().markBackedUp(100);
-		expect(useBackupStore.getState().lastBackupAt).toBe(200);
-	});
-
-	it("un envoi Drive réussi compte comme sauvegarde et efface attente et erreur", () => {
-		useBackupStore.getState().markCloudPending();
-		useBackupStore.getState().setCloudError("Hors ligne");
-		useBackupStore.getState().markCloudBackedUp(300);
-
-		expect(useBackupStore.getState()).toMatchObject({
-			lastBackupAt: 300,
-			lastCloudBackupAt: 300,
-			cloudSyncPending: false,
-			cloudError: null,
-		});
-	});
-
-	it("disconnectCloud oublie le compte et l'envoi en attente", () => {
-		useBackupStore.getState().connectCloud("a@b.c");
-		useBackupStore.getState().markCloudPending();
-		useBackupStore.getState().disconnectCloud();
-
-		expect(useBackupStore.getState()).toMatchObject({
-			cloudAccount: null,
-			cloudSyncPending: false,
-		});
+	it("snoozeReminder masque le rappel jusqu'à la date donnée", () => {
+		useBackupStore.getState().snoozeReminder(500);
+		expect(useBackupStore.getState().reminderSnoozedUntil).toBe(500);
 	});
 });
 
 describe("migrateBackupStoreData", () => {
 	it("garde les données à la version courante", () => {
-		const state = { ...initialBackupState, lastBackupAt: 1 };
+		const state = { reminderSnoozedUntil: 1 };
 		expect(migrateBackupStoreData(state, BACKUP_STORE_VERSION)).toBe(state);
 	});
 
-	it("réinitialise sur une version incompatible", () => {
-		expect(migrateBackupStoreData({ autre: true }, 0)).toEqual(initialBackupState);
+	it("ne garde de la v1 que le report du rappel (le reste est repris par expo-backup)", () => {
+		const v1 = { cloudAccount: { email: "a@b.c" }, lastBackupAt: 1, reminderSnoozedUntil: 99 };
+		expect(migrateBackupStoreData(v1, 1)).toEqual({ reminderSnoozedUntil: 99 });
+	});
+
+	it("réinitialise sur des données illisibles", () => {
+		expect(migrateBackupStoreData(null, 0)).toEqual(initialBackupState);
 	});
 });
