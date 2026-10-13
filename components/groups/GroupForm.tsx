@@ -4,7 +4,8 @@ import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard"
 import { Button } from "@/components/ui/Button";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { TextField } from "@/components/ui/TextField";
-import { MAX_PLAYERS } from "@/constants/game";
+import { EXTENSION_LABELS } from "@/constants/categories";
+import { BASE_MAX_PLAYERS, MAX_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -54,6 +55,12 @@ export function GroupForm({
 			<SectionTitle>
 				Membres ({selectedIds.length}/{MAX_PLAYERS})
 			</SectionTitle>
+			{selectedIds.length > BASE_MAX_PLAYERS && (
+				<Text style={styles.hint}>
+					Au-delà de {BASE_MAX_PLAYERS} joueurs, ce groupe ne sera sélectionnable qu'avec
+					l'extension {EXTENSION_LABELS.cities}.
+				</Text>
+			)}
 			<ScrollView style={styles.scroll} contentContainerStyle={styles.grid}>
 				{activePlayers.map((player) => (
 					<SelectablePlayerCard
@@ -102,6 +109,10 @@ function useStyles(colors: ThemeColors) {
 				},
 				empty: {
 					color: colors.textMuted,
+				},
+				hint: {
+					color: colors.textMuted,
+					fontSize: 13,
 				},
 				submit: {
 					marginTop: SPACING.sm,
