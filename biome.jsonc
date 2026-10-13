@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
 	"files": {
 		"ignoreUnknown": false,
 		"includes": ["**", "!.claude"]
@@ -40,8 +40,8 @@
 		}
 	},
 	"vcs": {
-		"enabled": false,
+		"enabled": true,
 		"clientKind": "git",
-		"useIgnoreFile": false
+		"useIgnoreFile": true
 	}
 }
