@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { NumberStepper } from "@/components/ui/NumberStepper";
+import { MAX_SCIENCE_SYMBOLS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -34,6 +35,7 @@ export function ScienceFields({ value, onChange }: Props) {
 						value={value[symbol.key]}
 						onChange={(n) => onChange({ ...value, [symbol.key]: n })}
 						min={0}
+						max={MAX_SCIENCE_SYMBOLS}
 						accentColor={colors.success}
 					/>
 				</View>
