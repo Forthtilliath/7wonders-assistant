@@ -31,7 +31,7 @@ export type CategoryMeta = {
 };
 
 // Couleurs reprises des cartes du jeu (rouge militaire, bleu civil, vert science, violet guildes,
-// blanc Leaders, noir Cités…), patinées pour rester lisibles sur papyrus comme sur basalte.
+// blanc Leaders, noir Cities…), patinées pour rester lisibles sur papyrus comme sur basalte.
 export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
 	military: {
 		label: "Militaire",
@@ -90,8 +90,8 @@ export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
 		icon: "crown",
 	},
 	cities: {
-		label: "Cités",
-		shortLabel: "Cités",
+		label: "Cities",
+		shortLabel: "Cities",
 		color: "#6e6660",
 		isComputed: false,
 		icon: "city",
@@ -124,7 +124,7 @@ export const CATEGORY_META: Record<CategoryId, CategoryMeta> = {
 
 export const EXTENSION_LABELS: Record<ExtensionId, string> = {
 	leaders: "Leaders",
-	cities: "Cités",
+	cities: "Cities",
 	babel: "Babel",
 	edifice: "Edifice",
 	armada: "Armada",
@@ -132,7 +132,7 @@ export const EXTENSION_LABELS: Record<ExtensionId, string> = {
 
 /** Catégories de score qu'une extension seule/qu'elle seule apporte, dans l'esprit de
  * `getOrderedCategories` : Armada apporte deux catégories ("naval" les jetons de conflit naval,
- * "armada" le plateau + les Îles), pas une seule comme Leaders/Cités. Sert à la fois à décrire
+ * "armada" le plateau + les Îles), pas une seule comme Leaders/Cities. Sert à la fois à décrire
  * l'impact d'activer/désactiver une extension (écran de modification en cours de partie) et à
  * savoir quels champs de saisie remettre à zéro quand une extension est retirée. */
 export const EXTENSION_CATEGORIES: Record<ExtensionId, ExtensionCategoryId[]> = {
@@ -149,7 +149,7 @@ export const EXTENSION_CATEGORIES: Record<ExtensionId, ExtensionCategoryId[]> = 
  * Les 7 catégories de base sont toujours présentes, avec "Maritime" (jetons de conflit naval)
  * inséré juste après "Militaire" quand Armada est active — pas à la fin avec les autres
  * extensions, puisqu'on compte ses jetons dans la foulée du militaire au moment d'y jouer. Les
- * autres extensions s'ajoutent à la suite (Leaders, Cités puis Babel), et le plateau Armada + Îles
+ * autres extensions s'ajoutent à la suite (Leaders, Cities puis Babel), et le plateau Armada + Îles
  * ("armada") ferme la marche.
  */
 export function getOrderedCategories(extensions: ExtensionId[]): CategoryId[] {

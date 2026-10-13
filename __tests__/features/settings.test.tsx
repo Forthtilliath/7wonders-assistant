@@ -91,9 +91,9 @@ describe("Réglages", () => {
 		const user = userEvent.setup();
 		await render(<NewGameSettingsScreen />);
 
-		await user.press(screen.getByRole("checkbox", { name: "Cités" }));
+		await user.press(screen.getByRole("checkbox", { name: "Cities" }));
 		await user.press(screen.getByRole("checkbox", { name: "Armada" }));
-		await user.press(screen.getByRole("checkbox", { name: "Cités" }));
+		await user.press(screen.getByRole("checkbox", { name: "Cities" }));
 
 		expect(usePreferencesStore.getState().defaultExtensions).toEqual(["armada"]);
 		expect(screen.getByRole("checkbox", { name: "Armada" })).toBeChecked();

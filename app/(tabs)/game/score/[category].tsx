@@ -22,7 +22,7 @@ import type { CategoryId } from "@/types/game";
 // ont besoin.
 const CATEGORY_HINTS: Partial<Record<CategoryId, string>> = {
 	military: "Additionne tes jetons militaires : Victoire (+1/+3/+5) et Défaite (-1).",
-	treasury: "Compte tes pièces ÷ 3, moins tes éventuels jetons de dette (extension Cités).",
+	treasury: "Compte tes pièces ÷ 3, moins tes éventuels jetons de dette (extension Cities).",
 	naval: "Additionne tes jetons navals : Victoire (+1 à +7) et Défaite (-1/-2/-3).",
 	babel: "Tuiles Babel posées : 1 tuile = 2 pts, 2 tuiles = 5 pts, 3 tuiles = 10 pts.",
 };
@@ -30,7 +30,7 @@ const CATEGORY_HINTS: Partial<Record<CategoryId, string>> = {
 /** Complète le rappel du Trésor : Edifice n'a pas d'étape à elle, ses pions Participation et ses
  * jetons Dette se comptent avec le trésor. */
 const EDIFICE_TREASURY_HINT =
-	"Edifice : ajoute tes pions Participation ; ses jetons Dette se retirent comme ceux de Cités.";
+	"Edifice : ajoute tes pions Participation ; ses jetons Dette se retirent comme ceux de Cities.";
 
 export default function CategoryScoreScreen() {
 	const router = useRouter();
@@ -94,7 +94,7 @@ export default function CategoryScoreScreen() {
 		.filter((p): p is NonNullable<typeof p> => p != null);
 
 	// Seules ces deux catégories se comptent avec des jetons physiques ; les autres (Trésor,
-	// Merveille, Cités...) sont des totaux à lire directement sur le plateau/les cartes.
+	// Merveille, Cities...) sont des totaux à lire directement sur le plateau/les cartes.
 	const tokens =
 		category === "military" ? MILITARY_TOKENS : category === "naval" ? NAVAL_TOKENS : null;
 

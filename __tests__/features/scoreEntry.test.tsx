@@ -134,7 +134,7 @@ describe("Saisie des scores par catégorie", () => {
 		expect(entryOf("p1").wonders.points).toBe(1);
 	});
 
-	it("compte les tuiles Babel posées, après Leaders et Cités", async () => {
+	it("compte les tuiles Babel posées, après Leaders et Cities", async () => {
 		const user = userEvent.setup();
 		await renderCategory("babel", ["leaders", "cities", "babel"]);
 
@@ -250,7 +250,7 @@ describe("Saisie des scores par catégorie", () => {
 		expect(sheet.queryByRole("checkbox", { name: "Babel" })).not.toBeOnTheScreen();
 	});
 
-	it("refuse de retirer Cités d'une partie à 8 joueurs", async () => {
+	it("refuse de retirer Cities d'une partie à 8 joueurs", async () => {
 		const user = userEvent.setup();
 		const ids = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"];
 		seedPlayers(["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]);
@@ -260,7 +260,7 @@ describe("Saisie des scores par catégorie", () => {
 
 		await user.press(screen.getByRole("button", { name: "Modifier les extensions de la partie" }));
 		const sheet = within(screen.getByText("Extensions de la partie").parent!);
-		await user.press(sheet.getByRole("checkbox", { name: "Cités" }));
+		await user.press(sheet.getByRole("checkbox", { name: "Cities" }));
 
 		expect(sheet.getByText(/8 joueurs dans la partie/)).toBeOnTheScreen();
 		expect(sheet.getByRole("button", { name: "Valider" })).toBeDisabled();

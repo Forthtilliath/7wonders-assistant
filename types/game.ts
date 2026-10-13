@@ -55,7 +55,7 @@ export type BaseCategoryId = (typeof BASE_CATEGORIES)[number];
 
 /**
  * Catégories de score liées à une extension mais distinctes de l'extension elle-même : Armada
- * apporte deux scores séparés, pas un seul comme Leaders/Cités. Le plateau Armada + cartes Îles
+ * apporte deux scores séparés, pas un seul comme Leaders/Cities. Le plateau Armada + cartes Îles
  * porte l'id de l'extension ("armada"), les jetons de conflit naval ont leur propre id ("naval").
  */
 export const EXTRA_CATEGORIES = ["naval"] as const;
@@ -76,7 +76,7 @@ export type PlayerGameEntry = {
 	/** Total des jetons de conflit terrestre (Victoire +1/+3/+5, Défaite -1) déjà additionnés. */
 	military: { points: number };
 	/**
-	 * Total en points déjà calculé (pièces ÷ 3, moins les éventuels jetons de dette de Cités) :
+	 * Total en points déjà calculé (pièces ÷ 3, moins les éventuels jetons de dette de Cities) :
 	 * les dettes réduisent les PV sans passer par les pièces restantes, une simple formule sur le
 	 * nombre de pièces ne suffit donc pas à retrouver ce total.
 	 */

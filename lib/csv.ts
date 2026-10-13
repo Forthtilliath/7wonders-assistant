@@ -19,7 +19,7 @@ const HEADER = [
 	"Science",
 	"Guildes",
 	"Leaders",
-	"Cités",
+	"Cities",
 	"Babel",
 	"Armada",
 	"Total",

@@ -13,7 +13,7 @@ const withWonder =
 	});
 
 /**
- * Alice gagne 2 parties sur 3 (30-20 puis 40-10), Bob gagne la seule partie avec Cités (26-25).
+ * Alice gagne 2 parties sur 3 (30-20 puis 40-10), Bob gagne la seule partie avec Cities (26-25).
  * Alice joue toujours Rhodes A, Bob Gizeh B.
  */
 function seedHistory() {
@@ -78,7 +78,7 @@ describe("Statistiques", () => {
 		await render(<StatsScreen />);
 
 		await user.press(screen.getByRole("button", { name: "Filtres" }));
-		await user.press(screen.getByRole("checkbox", { name: "Cités" }));
+		await user.press(screen.getByRole("checkbox", { name: "Cities" }));
 		await closeSheet();
 
 		expect(screen.getByRole("button", { name: "Filtres (1)" })).toBeOnTheScreen();
@@ -128,8 +128,8 @@ describe("Statistiques", () => {
 		const totalRow = within(screen.getByText("Total").parent!.parent!);
 		expect(totalRow.getByText("32")).toBeOnTheScreen();
 		expect(totalRow.getByText("19")).toBeOnTheScreen();
-		// Cités apparaît : une partie de l'historique utilise l'extension.
-		expect(screen.getByText("Cités")).toBeOnTheScreen();
+		// Cities apparaît : une partie de l'historique utilise l'extension.
+		expect(screen.getByText("Cities")).toBeOnTheScreen();
 
 		// En vue tableau, les filtres ne proposent pas de choisir un joueur.
 		await user.press(screen.getByRole("button", { name: "Filtres" }));

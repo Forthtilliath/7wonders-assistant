@@ -39,7 +39,7 @@ describe("Groupes de joueurs", () => {
 		expect(mockRouter.back).toHaveBeenCalled();
 	});
 
-	it("accepte jusqu'à 8 membres (extension Cités)", async () => {
+	it("accepte jusqu'à 8 membres (extension Cities)", async () => {
 		const user = userEvent.setup();
 		const names = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"];
 		seedPlayers(names);
@@ -50,7 +50,7 @@ describe("Groupes de joueurs", () => {
 		}
 
 		expect(screen.getByText("Membres (8/8)")).toBeOnTheScreen();
-		expect(screen.getByText(/qu'avec l'extension Cités/)).toBeOnTheScreen();
+		expect(screen.getByText(/qu'avec l'extension Cities/)).toBeOnTheScreen();
 		expect(screen.getByRole("checkbox", { name: "A8" })).toBeChecked();
 		expect(screen.getByRole("checkbox", { name: "A9" })).not.toBeChecked();
 	});

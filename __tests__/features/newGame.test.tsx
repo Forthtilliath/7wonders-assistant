@@ -142,7 +142,7 @@ describe("Onglet Jouer : lancer une partie", () => {
 		expect(screen.getByRole("checkbox", { name: "Chloé" })).toBeChecked();
 	});
 
-	it("limite la sélection à 7 joueurs, 8 avec l'extension Cités", async () => {
+	it("limite la sélection à 7 joueurs, 8 avec l'extension Cities", async () => {
 		const user = userEvent.setup();
 		const names = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"];
 		seedPlayers(names);
@@ -154,14 +154,14 @@ describe("Onglet Jouer : lancer une partie", () => {
 		expect(screen.getByText("Joueurs (7/7)")).toBeOnTheScreen();
 		expect(screen.getByRole("checkbox", { name: "A8" })).not.toBeChecked();
 
-		await user.press(screen.getByRole("checkbox", { name: "Cités" }));
+		await user.press(screen.getByRole("checkbox", { name: "Cities" }));
 		await user.press(screen.getByRole("checkbox", { name: "A8" }));
 		await user.press(screen.getByRole("checkbox", { name: "A9" }));
 		expect(screen.getByText("Joueurs (8/8)")).toBeOnTheScreen();
 		expect(screen.getByRole("checkbox", { name: "A9" })).not.toBeChecked();
 	});
 
-	it("bloque le lancement si Cités est décochée avec 8 joueurs", async () => {
+	it("bloque le lancement si Cities est décochée avec 8 joueurs", async () => {
 		const user = userEvent.setup();
 		const names = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"];
 		seedPlayers(names);
@@ -171,14 +171,14 @@ describe("Onglet Jouer : lancer une partie", () => {
 		for (const name of names) {
 			await user.press(screen.getByRole("checkbox", { name }));
 		}
-		await user.press(screen.getByRole("checkbox", { name: "Cités" }));
+		await user.press(screen.getByRole("checkbox", { name: "Cities" }));
 
 		expect(screen.getByText("Joueurs (8/7)")).toBeOnTheScreen();
-		expect(screen.getByText(/active l'extension Cités ou/)).toBeOnTheScreen();
+		expect(screen.getByText(/active l'extension Cities ou/)).toBeOnTheScreen();
 		expect(screen.getByRole("button", { name: "Lancer la partie" })).toBeDisabled();
 	});
 
-	it("désactive les groupes de 8 joueurs sans l'extension Cités", async () => {
+	it("désactive les groupes de 8 joueurs sans l'extension Cities", async () => {
 		const user = userEvent.setup();
 		seedPlayers(["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]);
 		useGroupsStore.setState({
@@ -193,7 +193,7 @@ describe("Onglet Jouer : lancer une partie", () => {
 		expect(big).toBeDisabled();
 		expect(screen.getByRole("button", { name: "Sélectionner le groupe Petit" })).toBeEnabled();
 
-		await user.press(screen.getByRole("checkbox", { name: "Cités" }));
+		await user.press(screen.getByRole("checkbox", { name: "Cities" }));
 		expect(big).toBeEnabled();
 		await user.press(big);
 		expect(screen.getByText("Joueurs (8/8)")).toBeOnTheScreen();

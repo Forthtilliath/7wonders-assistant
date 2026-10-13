@@ -17,7 +17,7 @@ type Props = {
 
 /**
  * Raccourcis de sélection des groupes sur l'écran de nouvelle partie. Un groupe trop grand pour
- * les extensions cochées (8 joueurs sans Cités) reste visible mais désactivé.
+ * les extensions cochées (8 joueurs sans Cities) reste visible mais désactivé.
  */
 export function GroupChips({ groups, activePlayerIds, selectedIds, maxPlayers, onSelect }: Props) {
 	const colors = useColors();

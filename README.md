@@ -52,7 +52,7 @@ Fini les additions au dos de la feuille de score. **7 Wonders: Assistant** calcu
 
 - 🧮 **Calcul automatique des scores** — Sciences (optimisation des jokers comprise), Militaire et Trésor sont calculés à partir de ce que tu saisis, pas juste additionnés à la main.
 - 🔢 **Compteur de jetons** — pour le militaire et le maritime, compte les jetons un par un plutôt que de calculer le total toi-même.
-- 🃏 **Extensions** — Meneurs, Cités, Babel, Edifice et Armada s'activent partie par partie, avec leurs propres catégories de score (Edifice se compte avec le trésor). Le choix de l'édition du jeu (1re ou 2e) ne propose que les extensions compatibles.
+- 🃏 **Extensions** — Leaders, Cities, Babel, Edifice et Armada s'activent partie par partie, avec leurs propres catégories de score (Edifice se compte avec le trésor). Le choix de l'édition du jeu (1re ou 2e) ne propose que les extensions compatibles.
 - 👥 **Joueurs & groupes** — profils avec avatar et favoris, groupes réutilisables pour lancer ta partie habituelle en un tap.
 
 ### Après la partie
@@ -97,7 +97,7 @@ Toutes les catégories ne se saisissent pas de la même façon, et c'est voulu :
 | --- | --- |
 | Sciences, Militaire, Trésor | **Calculées** à partir de ce que tu comptes sur ton plateau (symboles, jetons, pièces) |
 | Civil, Commerce, Guildes, Merveille | **Total direct** : ils dépendent des cartes précises jouées, l'appli ne reproduit pas tout le jeu de cartes |
-| Extensions Meneurs, Cités, Babel, Armada | Gérées, avec leurs catégories propres |
+| Extensions Leaders, Cities, Babel, Armada | Gérées, avec leurs catégories propres |
 | Extension Edifice | Gérée, comptée avec le trésor (pas de catégorie à part) |
 
 ## ☕ Soutenir le projet
