@@ -30,6 +30,7 @@ export function currentBackupData(): BackupData {
 		history: useHistoryStore.getState().games,
 		groups: useGroupsStore.getState().groups,
 		customWonders: useWondersStore.getState().customWonders,
+		customWonderPacks: useWondersStore.getState().packs,
 		avatars: collectAvatars(players),
 	};
 }
@@ -65,12 +66,12 @@ export function parseBackupContent(content: string): BackupData {
 }
 
 /** Remplace toutes les données locales (joueurs avec leurs photos, historique, groupes, merveilles
- * perso). */
+ * perso et extensions non officielles). */
 export function replaceAllData(data: BackupData): void {
 	usePlayersStore.getState().replaceAll(restoreAvatars(data.players, data.avatars));
 	useHistoryStore.getState().replaceAll(data.history);
 	useGroupsStore.getState().replaceAll(data.groups);
-	useWondersStore.getState().replaceAll(data.customWonders ?? []);
+	useWondersStore.getState().replaceAll(data.customWonders ?? [], data.customWonderPacks ?? []);
 }
 
 /**

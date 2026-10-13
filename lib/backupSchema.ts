@@ -1,9 +1,14 @@
 import { z } from "zod";
 import { MAX_POINTS, MAX_SCIENCE_SYMBOLS, MIN_POINTS } from "@/constants/game";
-import { MAX_WONDER_NAME_LENGTH } from "@/constants/wonders";
+import {
+	MAX_CUSTOM_WONDERS,
+	MAX_WONDER_NAME_LENGTH,
+	MAX_WONDER_PACK_NAME_LENGTH,
+	MAX_WONDER_PACKS,
+} from "@/constants/wonders";
 import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/armadaMigration";
 import { addBabelCategoryToEntries, type PreBabelEntry } from "@/lib/babelMigration";
-import type { CustomWonder, Game, Player, PlayerGroup } from "@/types/game";
+import type { CustomWonder, CustomWonderPack, Game, Player, PlayerGroup } from "@/types/game";
 
 export const APP_ID = "7wonders-assistant";
 
@@ -34,6 +39,8 @@ export type BackupData = {
 	/** Merveilles ajoutées par l'utilisateur. Facultatif pour la même raison que `avatars` : absent des
 	 * sauvegardes plus anciennes, et ignoré sans erreur par une app plus ancienne. */
 	customWonders?: CustomWonder[];
+	/** Extensions non officielles de l'utilisateur. Facultatif pour la même raison. */
+	customWonderPacks?: CustomWonderPack[];
 };
 
 export class ImportError extends Error {}
@@ -202,26 +209,49 @@ const playerGroupSchema = z.object({
 const customWonderSchema = z.object({
 	id: idSchema,
 	name: z.string().trim().min(1).max(MAX_WONDER_NAME_LENGTH),
+	packId: idSchema.optional(),
+	createdAt: timestampSchema,
+});
+
+const customWonderPackSchema = z.object({
+	id: idSchema,
+	name: z.string().trim().min(1).max(MAX_WONDER_PACK_NAME_LENGTH),
+	enabled: z.boolean(),
 	createdAt: timestampSchema,
 });
 
 /** Schéma complet (contenu de chaque joueur/partie/groupe compris), appliqué après migration. */
-const backupDataSchema = z.object({
-	app: z.literal(APP_ID),
-	dataVersion: z.number().int(),
-	exportedAt: timestampSchema,
-	players: z.array(playerSchema).max(1000),
-	history: z.array(gameSchema).max(100_000),
-	groups: z.array(playerGroupSchema).max(1000),
-	customWonders: z.array(customWonderSchema).max(1000).optional(),
-	avatars: boundedRecord(
-		z
-			.string()
-			.max(MAX_AVATAR_BASE64_LENGTH)
-			.regex(/^[A-Za-z0-9+/]+={0,2}$/, "image base64 attendue"),
-		1000,
-	).optional(),
-});
+const backupDataSchema = z
+	.object({
+		app: z.literal(APP_ID),
+		dataVersion: z.number().int(),
+		exportedAt: timestampSchema,
+		players: z.array(playerSchema).max(1000),
+		history: z.array(gameSchema).max(100_000),
+		groups: z.array(playerGroupSchema).max(1000),
+		customWonders: z.array(customWonderSchema).max(MAX_CUSTOM_WONDERS).optional(),
+		customWonderPacks: z.array(customWonderPackSchema).max(MAX_WONDER_PACKS).optional(),
+		avatars: boundedRecord(
+			z
+				.string()
+				.max(MAX_AVATAR_BASE64_LENGTH)
+				.regex(/^[A-Za-z0-9+/]+={0,2}$/, "image base64 attendue"),
+			1000,
+		).optional(),
+	})
+	.superRefine((data, ctx) => {
+		// Une merveille rangée dans une extension absente du fichier : sauvegarde incohérente.
+		const packIds = new Set((data.customWonderPacks ?? []).map((p) => p.id));
+		(data.customWonders ?? []).forEach((wonder, i) => {
+			if (wonder.packId && !packIds.has(wonder.packId)) {
+				ctx.addIssue({
+					code: "custom",
+					path: ["customWonders", i, "packId"],
+					message: "extension inconnue",
+				});
+			}
+		});
+	});
 
 /**
  * Valide en profondeur le contenu d'une sauvegarde déjà migrée vers `DATA_VERSION`. Rejette avec un
