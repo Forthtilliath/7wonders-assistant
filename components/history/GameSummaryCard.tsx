@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { EXTENSION_LABELS } from "@/constants/categories";
+import { RANK_MEDALS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -20,8 +21,6 @@ export function GameSummaryCard({ game, players, onPress }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 	const ranking = getGameRanking(game);
-	const winnerScore = ranking[0];
-	const winner = players.find((p) => p.id === winnerScore?.playerId);
 	const packs = useWondersStore((s) => s.packs);
 	// Une extension non officielle supprimée depuis n'est plus affichée.
 	const packLabels = packs.filter((p) => game.wonderPacks?.includes(p.id)).map((p) => p.name);
@@ -34,20 +33,29 @@ export function GameSummaryCard({ game, players, onPress }: Props) {
 				<Text style={styles.playerCount}>{game.playerIds.length} joueurs</Text>
 			</View>
 
-			{winner && winnerScore && (
-				<View style={styles.winnerRow}>
-					<PlayerAvatar
-						name={winner.name}
-						avatarUri={winner.avatarUri}
-						seed={winner.id}
-						size={36}
-					/>
-					<Text style={styles.winnerName} numberOfLines={1}>
-						🏆 {winner.name}
-					</Text>
-					<Text style={styles.winnerScore}>{winnerScore.total} pts</Text>
-				</View>
-			)}
+			<View style={styles.playersRow}>
+				{ranking.map((score) => {
+					// Un joueur supprimé depuis n'a plus ni nom ni avatar à afficher.
+					const player = players.find((p) => p.id === score.playerId);
+					if (!player) return null;
+					return (
+						<View key={player.id} style={styles.player}>
+							<PlayerAvatar
+								name={player.name}
+								avatarUri={player.avatarUri}
+								seed={player.id}
+								size={36}
+							/>
+							<Text style={styles.playerName} numberOfLines={1}>
+								{player.name}
+							</Text>
+							<Text style={[styles.playerScore, score.rank === 1 && styles.winnerScore]}>
+								{RANK_MEDALS[score.rank] ?? `${score.rank}e`} {score.total}
+							</Text>
+						</View>
+					);
+				})}
+			</View>
 
 			{labels.length > 0 && (
 				<View style={styles.extensionsRow}>
@@ -85,16 +93,26 @@ function useStyles(colors: ThemeColors) {
 					color: colors.textMuted,
 					fontSize: 13,
 				},
-				winnerRow: {
+				// Largeur fixe : jusqu'à 7 joueurs tiennent sur une ligne, au-delà ils passent à la suivante.
+				playersRow: {
 					flexDirection: "row",
-					alignItems: "center",
-					gap: SPACING.sm,
+					flexWrap: "wrap",
+					gap: SPACING.xs,
 				},
-				winnerName: {
-					flex: 1,
+				player: {
+					width: 44,
+					alignItems: "center",
+					gap: 2,
+				},
+				playerName: {
 					color: colors.text,
-					fontSize: 16,
-					fontWeight: "700",
+					fontSize: 11,
+					fontWeight: "600",
+				},
+				playerScore: {
+					color: colors.textMuted,
+					fontSize: 11,
+					fontVariant: ["tabular-nums"],
 				},
 				winnerScore: {
 					color: colors.gold,
