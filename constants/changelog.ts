@@ -12,6 +12,20 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.3.0",
+		date: Date.UTC(2026, 9, 14),
+		items: [
+			"Merveilles officielles proposées pendant la saisie, selon l'édition et les extensions de la partie : jusqu'à 5 suggestions dès les premières lettres tapées.",
+			"Merveilles personnalisées et extensions non officielles (avec ajout de plusieurs merveilles d'un coup), gérées dans Réglages ▸ Merveilles et incluses dans les sauvegardes.",
+			"Extensions non officielles choisies à chaque partie, avec une sélection par défaut dans les réglages, et conservées dans l'historique.",
+			"Statistiques des merveilles filtrables par extension.",
+			"Historique : chaque partie affiche tous ses joueurs avec leur médaille et leur score, et son détail montre les mêmes graphiques qu'en fin de partie.",
+			"Partage enrichi : une image avec les graphiques en plus du classement seul, et les scores par catégorie dans le partage en texte.",
+			"Rejouer une partie de l'historique reprend aussi son édition.",
+			"Les barres de comparaison par catégorie s'affichent correctement, y compris pour les scores négatifs.",
+		],
+	},
+	{
 		version: "1.2.0",
 		date: Date.UTC(2026, 9, 13),
 		items: [
