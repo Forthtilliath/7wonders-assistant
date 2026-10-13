@@ -1,4 +1,5 @@
 import type { CategoryId, ExtensionId, PlayerGameEntry } from "@/types/game";
+import { computeBabelScore } from "./babel";
 import { computeScienceScore } from "./science";
 
 export type PlayerScoreBreakdown = {
@@ -12,6 +13,7 @@ export type PlayerScoreBreakdown = {
 	guilds: number;
 	leaders: number;
 	cities: number;
+	babel: number;
 	naval: number;
 	armada: number;
 	total: number;
@@ -28,6 +30,7 @@ export function computePlayerScore(entry: PlayerGameEntry): PlayerScoreBreakdown
 	const guilds = entry.guilds.points;
 	const leaders = entry.leaders.points;
 	const cities = entry.cities.points;
+	const babel = computeBabelScore(entry.babel.tiles);
 	const naval = entry.naval.points;
 	const armada = entry.armada.points;
 
@@ -41,6 +44,7 @@ export function computePlayerScore(entry: PlayerGameEntry): PlayerScoreBreakdown
 		guilds +
 		leaders +
 		cities +
+		babel +
 		naval +
 		armada;
 
@@ -55,6 +59,7 @@ export function computePlayerScore(entry: PlayerGameEntry): PlayerScoreBreakdown
 		guilds,
 		leaders,
 		cities,
+		babel,
 		naval,
 		armada,
 		total,
@@ -86,6 +91,8 @@ export function getCategoryScore(score: PlayerScoreBreakdown, category: Category
 			return score.leaders;
 		case "cities":
 			return score.cities;
+		case "babel":
+			return score.babel;
 		case "naval":
 			return score.naval;
 		case "armada":
@@ -123,6 +130,7 @@ export function filterActiveCategories(extensions: ExtensionId[]) {
 	return {
 		leaders: extensions.includes("leaders"),
 		cities: extensions.includes("cities"),
+		babel: extensions.includes("babel"),
 		naval: extensions.includes("armada"),
 		armada: extensions.includes("armada"),
 	};
