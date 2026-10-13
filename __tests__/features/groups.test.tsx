@@ -31,12 +31,28 @@ describe("Groupes de joueurs", () => {
 
 		await user.press(screen.getByRole("checkbox", { name: "Alice" }));
 		await user.press(screen.getByRole("checkbox", { name: "Chloé" }));
-		expect(screen.getByText("Membres (2/7)")).toBeOnTheScreen();
+		expect(screen.getByText("Membres (2/8)")).toBeOnTheScreen();
 		await user.press(submit);
 
 		expect(groups()).toHaveLength(1);
 		expect(groups()[0]).toMatchObject({ name: "Jeudi", playerIds: ["p1", "p3"] });
 		expect(mockRouter.back).toHaveBeenCalled();
+	});
+
+	it("accepte jusqu'à 8 membres (extension Cités)", async () => {
+		const user = userEvent.setup();
+		const names = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"];
+		seedPlayers(names);
+		await render(<NewGroupScreen />);
+
+		for (const name of names) {
+			await user.press(screen.getByRole("checkbox", { name }));
+		}
+
+		expect(screen.getByText("Membres (8/8)")).toBeOnTheScreen();
+		expect(screen.getByText(/qu'avec l'extension Cités/)).toBeOnTheScreen();
+		expect(screen.getByRole("checkbox", { name: "A8" })).toBeChecked();
+		expect(screen.getByRole("checkbox", { name: "A9" })).not.toBeChecked();
 	});
 
 	it("ne propose pas les joueurs archivés comme membres", async () => {
