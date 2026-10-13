@@ -38,6 +38,32 @@ describe("NumberStepper", () => {
 		expect(screen.getByDisplayValue("12")).toBeOnTheScreen();
 	});
 
+	it("n'emballe pas la répétition quand un appui recommence sans relâchement", async () => {
+		await render(<Stepper />);
+		const plus = screen.getByRole("button", { name: "Augmenter Pièces" });
+
+		// Second appui avant le début de la répétition : le délai du premier ne doit pas survivre.
+		await fireEvent(plus, "pressIn");
+		await act(() => jest.advanceTimersByTime(200));
+		await fireEvent(plus, "pressIn");
+		await fireEvent(plus, "pressOut");
+		const afterRelease = screen.getByLabelText("Pièces").props.value;
+
+		await act(() => jest.advanceTimersByTime(2000));
+		expect(screen.getByLabelText("Pièces").props.value).toBe(afterRelease);
+	});
+
+	it("arrête la répétition à la borne, même sans relâchement", async () => {
+		const onChange = jest.fn();
+		await render(<NumberStepper value={9} onChange={onChange} max={10} label="Pièces" />);
+
+		await fireEvent(screen.getByRole("button", { name: "Augmenter Pièces" }), "pressIn");
+		await act(() => jest.advanceTimersByTime(5000));
+
+		// Un seul pas utile (9 -> 10), puis plus aucun appel une fois la borne atteinte.
+		expect(onChange).toHaveBeenCalledTimes(1);
+	});
+
 	it("reste dans les bornes min et max", async () => {
 		await render(<Stepper initial={9} min={0} max={10} />);
 
