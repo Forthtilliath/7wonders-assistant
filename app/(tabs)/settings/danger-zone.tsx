@@ -9,6 +9,7 @@ import { useColors } from "@/hooks/useColors";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
+import { useWondersStore } from "@/stores/wondersStore";
 
 export default function DangerZoneSettingsScreen() {
 	const colors = useColors();
@@ -17,6 +18,7 @@ export default function DangerZoneSettingsScreen() {
 	const clearPlayers = usePlayersStore((s) => s.replaceAll);
 	const clearHistory = useHistoryStore((s) => s.replaceAll);
 	const clearGroups = useGroupsStore((s) => s.replaceAll);
+	const clearCustomWonders = useWondersStore((s) => s.replaceAll);
 
 	const confirmClearData = () => {
 		Alert.alert(
@@ -31,6 +33,7 @@ export default function DangerZoneSettingsScreen() {
 						clearPlayers([]);
 						clearHistory([]);
 						clearGroups([]);
+						clearCustomWonders([]);
 						router.back();
 					},
 				},
@@ -41,8 +44,8 @@ export default function DangerZoneSettingsScreen() {
 	return (
 		<ScreenContainer style={styles.container}>
 			<Text style={styles.hint}>
-				Supprime définitivement tous les joueurs, groupes et l'historique de parties de cet
-				appareil. Pense à exporter une sauvegarde avant si tu n'es pas sûr.
+				Supprime définitivement tous les joueurs, groupes, merveilles perso et l'historique de
+				parties de cet appareil. Pense à exporter une sauvegarde avant si tu n'es pas sûr.
 			</Text>
 			<Button label="Effacer toutes les données" variant="danger" onPress={confirmClearData} />
 		</ScreenContainer>

@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { MAX_POINTS, MAX_SCIENCE_SYMBOLS, MIN_POINTS } from "@/constants/game";
+import { MAX_WONDER_NAME_LENGTH } from "@/constants/wonders";
 import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/armadaMigration";
 import { addBabelCategoryToEntries, type PreBabelEntry } from "@/lib/babelMigration";
-import type { Game, Player, PlayerGroup } from "@/types/game";
+import type { CustomWonder, Game, Player, PlayerGroup } from "@/types/game";
 
 export const APP_ID = "7wonders-assistant";
 
@@ -30,6 +31,9 @@ export type BackupData = {
 	 * facultatif plutôt que nouvelle `DATA_VERSION`, une app plus ancienne importe ainsi toujours la
 	 * sauvegarde, simplement sans les photos. */
 	avatars?: Record<string, string>;
+	/** Merveilles ajoutées par l'utilisateur. Facultatif pour la même raison que `avatars` : absent des
+	 * sauvegardes plus anciennes, et ignoré sans erreur par une app plus ancienne. */
+	customWonders?: CustomWonder[];
 };
 
 export class ImportError extends Error {}
@@ -152,7 +156,10 @@ const playerGameEntrySchema = z.object({
 	playerId: idSchema,
 	military: pointsSchema,
 	treasury: pointsSchema,
-	wonder: z.object({ name: z.string().max(100), side: z.enum(["A", "B"]).nullable() }),
+	wonder: z.object({
+		name: z.string().max(MAX_WONDER_NAME_LENGTH),
+		side: z.enum(["A", "B"]).nullable(),
+	}),
 	wonders: pointsSchema,
 	civilians: pointsSchema,
 	commercials: pointsSchema,
@@ -192,6 +199,12 @@ const playerGroupSchema = z.object({
 	createdAt: timestampSchema,
 });
 
+const customWonderSchema = z.object({
+	id: idSchema,
+	name: z.string().trim().min(1).max(MAX_WONDER_NAME_LENGTH),
+	createdAt: timestampSchema,
+});
+
 /** Schéma complet (contenu de chaque joueur/partie/groupe compris), appliqué après migration. */
 const backupDataSchema = z.object({
 	app: z.literal(APP_ID),
@@ -200,6 +213,7 @@ const backupDataSchema = z.object({
 	players: z.array(playerSchema).max(1000),
 	history: z.array(gameSchema).max(100_000),
 	groups: z.array(playerGroupSchema).max(1000),
+	customWonders: z.array(customWonderSchema).max(1000).optional(),
 	avatars: boundedRecord(
 		z
 			.string()
