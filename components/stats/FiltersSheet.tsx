@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useMemo } from "react";
-import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
@@ -43,7 +43,7 @@ export function FiltersSheet({
 
 	return (
 		<BottomSheet visible={visible} onClose={onClose} title="Filtres">
-			<ScrollView contentContainerStyle={styles.content}>
+			<View style={styles.content}>
 				<Text style={styles.sectionTitle}>Extensions</Text>
 				<CheckboxGroup<ExtensionId>
 					options={EXTENSION_OPTIONS}
@@ -80,7 +80,7 @@ export function FiltersSheet({
 						})}
 					</>
 				)}
-			</ScrollView>
+			</View>
 		</BottomSheet>
 	);
 }

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 import { NumberStepper } from "@/components/ui/NumberStepper";
+import { MAX_SCIENCE_SYMBOLS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -43,7 +44,7 @@ export function TokenCounterSheet({
 
 	return (
 		<BottomSheet visible={visible} onClose={onClose} title={title}>
-			<ScrollView contentContainerStyle={styles.list}>
+			<View style={styles.list}>
 				{tokens.map((token, index) => (
 					<View key={token.label} style={styles.row}>
 						<Text style={styles.label}>{token.label}</Text>
@@ -51,12 +52,13 @@ export function TokenCounterSheet({
 							value={counts[index] ?? 0}
 							onChange={(n) => setCounts((current) => current.map((c, i) => (i === index ? n : c)))}
 							min={0}
+							max={MAX_SCIENCE_SYMBOLS}
 							accentColor={accentColor}
 							label={token.label}
 						/>
 					</View>
 				))}
-			</ScrollView>
+			</View>
 
 			<View style={styles.totalRow}>
 				<Text style={styles.totalLabel}>Total</Text>
