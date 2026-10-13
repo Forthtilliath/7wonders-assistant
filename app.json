@@ -40,7 +40,8 @@
 					"propertyPrefix": "SEVENWONDERS"
 				}
 			],
-			"@forthtilliath/expo-config-plugins/withAndroidAbis"
+			"@forthtilliath/expo-config-plugins/withAndroidAbis",
+			"expo-font"
 		]
 	}
 }
