@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { ScrollView, StyleSheet, Text } from "react-native";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { CustomWondersSection } from "@/components/wonders/CustomWondersSection";
+import { WonderPacksSection } from "@/components/wonders/WonderPacksSection";
 import { WonderSourceSection } from "@/components/wonders/WonderSourceSection";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
@@ -43,6 +44,7 @@ export default function WondersSettingsScreen() {
 						names={OFFICIAL_WONDERS.filter((w) => w.source === source).map((w) => w.name)}
 					/>
 				))}
+				<WonderPacksSection />
 				<CustomWondersSection />
 			</ScrollView>
 		</ScreenContainer>
