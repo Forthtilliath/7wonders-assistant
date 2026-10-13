@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { UpdateBanner } from "@/components/updates/UpdateBanner";
+import { WonderPacksPicker } from "@/components/wonders/WonderPacksPicker";
 import { EXTENSION_LABELS } from "@/constants/categories";
 import { getMaxPlayers, MIN_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
@@ -22,6 +23,7 @@ import { useGameStore } from "@/stores/gameStore";
 import { selectSortedGroups, useGroupsStore } from "@/stores/groupsStore";
 import { selectSortedPlayers, usePlayersStore } from "@/stores/playersStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
+import { useWondersStore } from "@/stores/wondersStore";
 import type { ExtensionId, GameEdition } from "@/types/game";
 
 export default function NewGameTab() {
@@ -32,6 +34,13 @@ export default function NewGameTab() {
 	const groups = useGroupsStore((s) => s.groups);
 	const defaultExtensions = usePreferencesStore((s) => s.defaultExtensions);
 	const defaultEdition = usePreferencesStore((s) => s.defaultEdition);
+	// Chaîne plutôt que tableau : une valeur stable entre deux rendus, pour l'effet plus bas.
+	const defaultPackKey = useWondersStore((s) =>
+		s.packs
+			.filter((p) => p.selectedByDefault)
+			.map((p) => p.id)
+			.join(","),
+	);
 	const startNewGame = useGameStore((s) => s.startNewGame);
 	const resetGame = useGameStore((s) => s.resetGame);
 	const hasOngoingGame = useGameStore((s) => s.hasOngoingGame());
@@ -49,12 +58,16 @@ export default function NewGameTab() {
 	// ensuite.
 	const [edition, setEdition] = useState<GameEdition>(() => defaultEdition);
 	const [extensions, setExtensions] = useState<ExtensionId[]>(() => defaultExtensions);
+	const [wonderPacks, setWonderPacks] = useState<string[]>([]);
 	// L'onglet reste monté : sans ça, il garderait les réglages lus à sa première ouverture, avant
 	// le rechargement des préférences enregistrées ou une modification faite ensuite dans Réglages.
 	useEffect(() => {
 		setEdition(defaultEdition);
 		setExtensions(defaultExtensions);
 	}, [defaultEdition, defaultExtensions]);
+	useEffect(() => {
+		setWonderPacks(defaultPackKey ? defaultPackKey.split(",") : []);
+	}, [defaultPackKey]);
 	const maxPlayers = getMaxPlayers(extensions);
 	const tooManyPlayers = selectedIds.length > maxPlayers;
 
@@ -81,7 +94,7 @@ export default function NewGameTab() {
 	const canStart = selectedIds.length >= MIN_PLAYERS && !tooManyPlayers;
 
 	const startGame = () => {
-		startNewGame(selectedIds, extensions, edition);
+		startNewGame(selectedIds, extensions, edition, wonderPacks);
 		router.push("/game/score/military");
 	};
 
@@ -188,6 +201,7 @@ export default function NewGameTab() {
 							extensions={extensions}
 							onChange={changeExtensions}
 						/>
+						<WonderPacksPicker values={wonderPacks} onChange={setWonderPacks} />
 					</ScrollView>
 
 					<Button label="Lancer la partie" disabled={!canStart} onPress={startGame} />

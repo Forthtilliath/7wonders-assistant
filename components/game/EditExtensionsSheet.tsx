@@ -3,6 +3,7 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
+import { WonderPacksPicker } from "@/components/wonders/WonderPacksPicker";
 import { CATEGORY_META, EXTENSION_CATEGORIES, EXTENSION_LABELS } from "@/constants/categories";
 import { getAvailableExtensions, getExtensionsWarning } from "@/constants/editions";
 import { getMaxPlayers } from "@/constants/game";
@@ -15,10 +16,12 @@ type Props = {
 	visible: boolean;
 	onClose: () => void;
 	currentExtensions: ExtensionId[];
+	/** Extensions non officielles cochées : elles ne changent que les merveilles proposées. */
+	currentWonderPacks: string[];
 	/** Édition de la partie : seules les extensions qu'elle propose sont listées. */
 	edition: GameEdition;
 	playerCount: number;
-	onConfirm: (extensions: ExtensionId[]) => void;
+	onConfirm: (extensions: ExtensionId[], wonderPacks: string[]) => void;
 };
 
 /**
@@ -33,6 +36,7 @@ export function EditExtensionsSheet({
 	visible,
 	onClose,
 	currentExtensions,
+	currentWonderPacks,
 	edition,
 	playerCount,
 	onConfirm,
@@ -40,14 +44,21 @@ export function EditExtensionsSheet({
 	const colors = useColors();
 	const styles = useStyles(colors);
 	const [pending, setPending] = useState<ExtensionId[]>(currentExtensions);
+	const [pendingPacks, setPendingPacks] = useState<string[]>(currentWonderPacks);
 
 	useEffect(() => {
-		if (visible) setPending(currentExtensions);
-	}, [visible, currentExtensions]);
+		if (visible) {
+			setPending(currentExtensions);
+			setPendingPacks(currentWonderPacks);
+		}
+	}, [visible, currentExtensions, currentWonderPacks]);
 
 	const added = pending.filter((ext) => !currentExtensions.includes(ext));
 	const removed = currentExtensions.filter((ext) => !pending.includes(ext));
-	const hasChanges = added.length > 0 || removed.length > 0;
+	const packsChanged =
+		pendingPacks.length !== currentWonderPacks.length ||
+		pendingPacks.some((id) => !currentWonderPacks.includes(id));
+	const hasChanges = added.length > 0 || removed.length > 0 || packsChanged;
 	const maxPlayers = getMaxPlayers(pending);
 	const tooManyPlayers = playerCount > maxPlayers;
 	const warning = getExtensionsWarning(pending);
@@ -57,6 +68,12 @@ export function EditExtensionsSheet({
 
 	const handleConfirm = () => {
 		if (!hasChanges || tooManyPlayers) return;
+		// Seules les merveilles proposées changent : rien à confirmer.
+		if (added.length === 0 && removed.length === 0) {
+			onConfirm(pending, pendingPacks);
+			onClose();
+			return;
+		}
 
 		const lines: string[] = [];
 		if (addedCategories.length > 0) {
@@ -77,7 +94,7 @@ export function EditExtensionsSheet({
 				text: "Confirmer",
 				style: removedCategories.length > 0 ? "destructive" : "default",
 				onPress: () => {
-					onConfirm(pending);
+					onConfirm(pending, pendingPacks);
 					onClose();
 				},
 			},
@@ -94,6 +111,7 @@ export function EditExtensionsSheet({
 				values={pending}
 				onChange={setPending}
 			/>
+			<WonderPacksPicker values={pendingPacks} onChange={setPendingPacks} style={styles.packs} />
 
 			{tooManyPlayers && (
 				<Text style={styles.warning}>
@@ -134,6 +152,9 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
+				packs: {
+					marginTop: SPACING.md,
+				},
 				preview: {
 					gap: SPACING.xs,
 					marginTop: SPACING.md,
