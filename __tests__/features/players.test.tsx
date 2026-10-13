@@ -4,7 +4,7 @@ import { Linking } from "react-native";
 import PlayersScreen from "@/app/(tabs)/players";
 import EditPlayerScreen from "@/app/players/[id]";
 import NewPlayerScreen from "@/app/players/new";
-import { storeAvatar } from "@/lib/avatarFiles";
+import { storeAvatar, storeCameraAvatar } from "@/lib/avatarFiles";
 import { usePlayersStore } from "@/stores/playersStore";
 import { mockRouter, setSearchParams } from "@/test-utils/expoRouter";
 import { mockAlert, pressAlertButton, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
@@ -12,10 +12,13 @@ import { mockAlert, pressAlertButton, resetAllStores, seedPlayers } from "@/test
 jest.mock("expo-image-picker", () => ({
 	requestMediaLibraryPermissionsAsync: jest.fn(),
 	launchImageLibraryAsync: jest.fn(),
+	requestCameraPermissionsAsync: jest.fn(),
+	launchCameraAsync: jest.fn(),
 }));
 
 jest.mock("@/lib/avatarFiles", () => ({
 	storeAvatar: jest.fn(async () => "file:///documents/avatars/stored.jpg"),
+	storeCameraAvatar: jest.fn(async () => "file:///documents/avatars/camera.jpg"),
 }));
 
 const players = () => usePlayersStore.getState().players;
@@ -131,11 +134,56 @@ describe("Joueurs", () => {
 			await render(<NewPlayerScreen />);
 
 			await user.press(screen.getByRole("button", { name: "Changer la photo" }));
+			await user.press(screen.getByRole("button", { name: "Choisir dans la galerie" }));
 			await user.type(screen.getByPlaceholderText("Ex : Alex"), "Alice");
 			await user.press(screen.getByRole("button", { name: "Créer le joueur" }));
 
 			expect(storeAvatar).toHaveBeenCalledWith("file:///avatar.jpg");
 			expect(players()[0].avatarUri).toBe("file:///documents/avatars/stored.jpg");
+		});
+
+		it("prend le joueur en photo avec l'appareil photo", async () => {
+			const user = userEvent.setup();
+			jest.mocked(ImagePicker.requestCameraPermissionsAsync).mockResolvedValue({
+				granted: true,
+			} as ImagePicker.CameraPermissionResponse);
+			jest.mocked(ImagePicker.launchCameraAsync).mockResolvedValue({
+				canceled: false,
+				assets: [{ uri: "file:///cache/capture.jpg" }],
+			} as ImagePicker.ImagePickerResult);
+			await render(<NewPlayerScreen />);
+
+			// Pas encore de photo : rien à retirer.
+			await user.press(screen.getByRole("button", { name: "Changer la photo" }));
+			expect(screen.queryByRole("button", { name: "Retirer la photo" })).not.toBeOnTheScreen();
+			await user.press(screen.getByRole("button", { name: "Prendre une photo" }));
+			await user.type(screen.getByPlaceholderText("Ex : Alex"), "Alice");
+			await user.press(screen.getByRole("button", { name: "Créer le joueur" }));
+
+			expect(ImagePicker.launchCameraAsync).toHaveBeenCalledWith(
+				expect.objectContaining({ allowsEditing: true, aspect: [1, 1] }),
+			);
+			expect(storeCameraAvatar).toHaveBeenCalledWith("file:///cache/capture.jpg");
+			expect(players()[0].avatarUri).toBe("file:///documents/avatars/camera.jpg");
+		});
+
+		it("propose d'ouvrir les réglages si l'accès à l'appareil photo est bloqué", async () => {
+			const user = userEvent.setup();
+			const alert = mockAlert();
+			const openSettings = jest.spyOn(Linking, "openSettings").mockResolvedValue();
+			jest.mocked(ImagePicker.requestCameraPermissionsAsync).mockResolvedValue({
+				granted: false,
+				canAskAgain: false,
+			} as ImagePicker.CameraPermissionResponse);
+			await render(<NewPlayerScreen />);
+
+			await user.press(screen.getByRole("button", { name: "Changer la photo" }));
+			await user.press(screen.getByRole("button", { name: "Prendre une photo" }));
+			expect(alert.mock.calls[0][0]).toBe("Accès à l'appareil photo refusé");
+			await pressAlertButton(alert, "Ouvrir les réglages");
+
+			expect(openSettings).toHaveBeenCalled();
+			expect(ImagePicker.launchCameraAsync).not.toHaveBeenCalled();
 		});
 
 		it("propose d'ouvrir les réglages si l'accès aux photos est bloqué", async () => {
@@ -149,6 +197,7 @@ describe("Joueurs", () => {
 			await render(<NewPlayerScreen />);
 
 			await user.press(screen.getByRole("button", { name: "Changer la photo" }));
+			await user.press(screen.getByRole("button", { name: "Choisir dans la galerie" }));
 			await pressAlertButton(alert, "Ouvrir les réglages");
 
 			expect(openSettings).toHaveBeenCalled();
@@ -170,6 +219,22 @@ describe("Joueurs", () => {
 
 			expect(players()[0].name).toBe("Alicia");
 			expect(mockRouter.back).toHaveBeenCalled();
+		});
+
+		it("retire la photo du joueur", async () => {
+			const user = userEvent.setup();
+			seedPlayers(["Alice"]);
+			usePlayersStore
+				.getState()
+				.updatePlayer("p1", { avatarUri: "file:///documents/avatars/a.jpg" });
+			setSearchParams({ id: "p1" });
+			await render(<EditPlayerScreen />);
+
+			await user.press(screen.getByRole("button", { name: "Changer la photo" }));
+			await user.press(screen.getByRole("button", { name: "Retirer la photo" }));
+			await user.press(screen.getByRole("button", { name: "Enregistrer" }));
+
+			expect(players()[0].avatarUri).toBeUndefined();
 		});
 
 		it("supprime le joueur après confirmation", async () => {
