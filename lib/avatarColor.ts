@@ -1,25 +1,27 @@
-// Palette de couleurs saturées, choisies pour rester lisibles avec du texte blanc dessus, aussi
-// bien en thème sombre que clair. 18 teintes réparties sur tout le cercle chromatique (au lieu de
-// 10) pour que deux joueurs distincts se ressemblent moins souvent, même dans un groupe nombreux.
+// Pigments antiques (terres, ocres, malachite, lapis, pourpre de Tyr…), assez soutenus pour se
+// détacher du papyrus comme du basalte ; les initiales choisissent ivoire ou encre selon le fond.
+// 18 teintes réparties sur tout le cercle chromatique pour que deux joueurs distincts se
+// ressemblent moins souvent, même dans un groupe nombreux. Garder ce nombre : chaque joueur
+// conserve ainsi sa position de teinte d'une palette à l'autre.
 const AVATAR_PALETTE = [
-	"#ef4444", // rouge
-	"#f97316", // orange
-	"#f59e0b", // ambre
-	"#ca8a04", // jaune (foncé, pour rester lisible en blanc dessus)
-	"#84cc16", // citron vert
-	"#22c55e", // vert
-	"#10b981", // émeraude
-	"#14b8a6", // sarcelle
-	"#06b6d4", // cyan
-	"#0ea5e9", // bleu ciel
-	"#3b82f6", // bleu
-	"#6366f1", // indigo
-	"#8b5cf6", // violet
-	"#a855f7", // pourpre
-	"#d946ef", // fuchsia
-	"#ec4899", // rose vif
-	"#f43f5e", // rose rouge
-	"#78716c", // pierre (neutre, pour varier des teintes vives)
+	"#b23a2e", // cinabre
+	"#c0612b", // terre cuite
+	"#b7812a", // ocre
+	"#9c7a1c", // or vieilli
+	"#6f7d2a", // olive
+	"#4a7a3a", // vert de feuille
+	"#2f7a5c", // malachite
+	"#2a7470", // turquoise
+	"#2b7488", // bleu égyptien clair
+	"#2f6a9a", // bleu égyptien
+	"#2c4f8f", // lapis-lazuli
+	"#3d3f86", // indigo
+	"#5b3f86", // améthyste
+	"#6e2f7a", // pourpre de Tyr
+	"#8a2f6a", // garance
+	"#a23a5a", // grenade
+	"#8f2f3a", // grenat
+	"#6b5d4f", // basalte (neutre, pour varier des teintes vives)
 ] as const;
 
 /**
