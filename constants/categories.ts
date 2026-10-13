@@ -13,7 +13,7 @@ export const BASE_CATEGORY_ORDER: BaseCategoryId[] = [
 	"guilds",
 ];
 
-export const EXTENSION_ORDER: ExtensionId[] = ["leaders", "cities", "babel", "edifice", "armada"];
+export const EXTENSION_ORDER: ExtensionId[] = ["leaders", "cities", "babel", "armada", "edifice"];
 
 /** Sous-ensemble de `CategoryId` qui n'existe que grâce à une extension (donc "réinitialisable"
  * quand celle-ci est désactivée), par opposition aux 7 catégories de base toujours présentes. */

@@ -15,8 +15,8 @@ export const EDITION_LABELS: Record<GameEdition, string> = {
  * deux éditions.
  */
 const EDITION_EXTENSIONS: Record<GameEdition, readonly ExtensionId[]> = {
-	first: ["leaders", "cities", "babel", "edifice", "armada"],
-	second: ["leaders", "cities", "edifice", "armada"],
+	first: ["leaders", "cities", "babel", "armada", "edifice"],
+	second: ["leaders", "cities", "armada", "edifice"],
 };
 
 /** Extensions proposées pour une édition, dans l'ordre d'affichage. */

@@ -1,6 +1,6 @@
-export type ExtensionId = "leaders" | "cities" | "babel" | "edifice" | "armada";
+export type ExtensionId = "leaders" | "cities" | "babel" | "armada" | "edifice";
 
-export const ALL_EXTENSIONS: ExtensionId[] = ["leaders", "cities", "babel", "edifice", "armada"];
+export const ALL_EXTENSIONS: ExtensionId[] = ["leaders", "cities", "babel", "armada", "edifice"];
 
 /** Édition du jeu de base : la 2e (2020) a changé le dos des cartes, certaines extensions ne se
  * jouent donc qu'avec l'une des deux (cf. constants/editions.ts). */
