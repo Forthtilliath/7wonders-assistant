@@ -34,7 +34,7 @@ describe("catalogue des merveilles officielles", () => {
 
 describe("getAvailableWonders", () => {
 	it("propose les 7 merveilles du jeu de base, sans celles des extensions inactives", () => {
-		const available = getAvailableWonders("second", [], []);
+		const available = getAvailableWonders("second", [], [], []);
 		expect(names(available)).toEqual([
 			"Alexandrie",
 			"Babylone",
@@ -48,13 +48,13 @@ describe("getAvailableWonders", () => {
 	});
 
 	it("ajoute les merveilles des extensions actives", () => {
-		const available = names(getAvailableWonders("second", ["leaders", "cities", "armada"], []));
+		const available = names(getAvailableWonders("second", ["leaders", "cities", "armada"], [], []));
 		expect(available).toEqual(expect.arrayContaining(["Rome", "Byzance", "Pétra", "Syracuse"]));
 	});
 
 	it("propose le Wonder Pack en 1re édition seulement", () => {
-		expect(names(getAvailableWonders("first", [], []))).toContain("Stonehenge");
-		expect(names(getAvailableWonders("second", [], []))).not.toContain("Stonehenge");
+		expect(names(getAvailableWonders("first", [], [], []))).toContain("Stonehenge");
+		expect(names(getAvailableWonders("second", [], [], []))).not.toContain("Stonehenge");
 	});
 
 	it("termine par les merveilles perso, triées, sans doublon d'une officielle", () => {
@@ -62,6 +62,7 @@ describe("getAvailableWonders", () => {
 			"second",
 			[],
 			[custom("Ys"), custom("Atlantide"), custom("rhodes")],
+			[],
 		);
 		expect(available.slice(-2)).toEqual([
 			{ name: "Atlantide", source: "custom" },
@@ -69,10 +70,25 @@ describe("getAvailableWonders", () => {
 		]);
 		expect(names(available).filter((n) => normalizeWonderName(n) === "rhodes")).toEqual(["Rhodes"]);
 	});
+
+	it("écarte les merveilles des extensions non officielles désactivées", () => {
+		const packs = [
+			{ id: "on", name: "Wonders Box", enabled: true, createdAt: 0 },
+			{ id: "off", name: "Brouillons", enabled: false, createdAt: 0 },
+		];
+		const wonders = [
+			{ ...custom("Atlantide"), packId: "on" },
+			{ ...custom("Ys"), packId: "off" },
+			custom("Lémurie"),
+		];
+		const available = names(getAvailableWonders("second", [], wonders, packs));
+		expect(available).toEqual(expect.arrayContaining(["Atlantide", "Lémurie"]));
+		expect(available).not.toContain("Ys");
+	});
 });
 
 describe("getWonderNameSuggestions", () => {
-	const options = getAvailableWonders("second", [], []);
+	const options = getAvailableWonders("second", [], [], []);
 
 	it("propose toutes les merveilles jouables tant que rien n'est tapé", () => {
 		expect(getWonderNameSuggestions({ options, games: [], query: "  " })).toEqual(names(options));

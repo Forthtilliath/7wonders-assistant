@@ -29,11 +29,22 @@ export type PlayerGroup = {
 	createdAt: number;
 };
 
+/** Extension non officielle créée par l'utilisateur (ex. Wonders Box, ses propres créations) pour
+ * regrouper des merveilles perso. Désactivée, ses merveilles ne sont plus proposées à la saisie. */
+export type CustomWonderPack = {
+	id: string;
+	name: string;
+	enabled: boolean;
+	createdAt: number;
+};
+
 /** Merveille ajoutée par l'utilisateur, rattachée à aucune extension officielle (contenu
- * communautaire, promo absente du catalogue…), proposée dans toutes les parties. */
+ * communautaire, promo absente du catalogue…). Sans `packId`, elle est proposée dans toutes les
+ * parties ; sinon, tant que son extension non officielle est activée. */
 export type CustomWonder = {
 	id: string;
 	name: string;
+	packId?: string;
 	createdAt: number;
 };
 

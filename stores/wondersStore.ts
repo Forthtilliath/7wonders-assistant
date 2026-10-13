@@ -2,42 +2,102 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { createId } from "@/lib/uuid";
-import { getCustomWonderNameError } from "@/lib/wonders";
-import type { CustomWonder } from "@/types/game";
+import {
+	type CustomWondersPlan,
+	getWonderPackNameError,
+	planCustomWonders,
+} from "@/lib/wonderPacks";
+import type { CustomWonder, CustomWonderPack } from "@/types/game";
 
 type State = {
 	customWonders: CustomWonder[];
+	packs: CustomWonderPack[];
 };
 
 type Actions = {
-	/** Ajoute une merveille perso ; `null` si le nom est refusé (cf. getCustomWonderNameError). */
-	addCustomWonder: (name: string) => CustomWonder | null;
+	/** Ajoute une merveille perso ; `null` si le nom est refusé (cf. planCustomWonders). */
+	addCustomWonder: (name: string, packId?: string) => CustomWonder | null;
+	/** Ajoute plusieurs merveilles d'un coup (liste collée) ; renvoie celles ajoutées et écartées. */
+	addCustomWonders: (names: readonly string[], packId?: string) => CustomWondersPlan;
 	/** Les parties déjà jouées avec cette merveille gardent son nom (stocké dans chaque saisie). */
 	removeCustomWonder: (id: string) => void;
-	replaceAll: (customWonders: CustomWonder[]) => void;
+	/** Crée une extension non officielle, activée ; `null` si le nom est refusé. */
+	addPack: (name: string) => CustomWonderPack | null;
+	/** Renomme une extension ; `false` si le nom est refusé. */
+	renamePack: (id: string, name: string) => boolean;
+	setPackEnabled: (id: string, enabled: boolean) => void;
+	/** Supprime l'extension et ses merveilles (les parties jouées gardent leurs noms). */
+	removePack: (id: string) => void;
+	replaceAll: (customWonders: CustomWonder[], packs: CustomWonderPack[]) => void;
 };
 
-// Bump on any breaking change to CustomWonder's shape.
+// Bump on any breaking change to CustomWonder's or CustomWonderPack's shape.
 export const WONDERS_STORE_VERSION = 1;
 
 export const useWondersStore = create<State & Actions>()(
 	persist(
 		(set, get) => ({
 			customWonders: [],
+			packs: [],
 
-			addCustomWonder: (name) => {
-				const { customWonders } = get();
-				if (getCustomWonderNameError(name, customWonders)) return null;
-				const wonder: CustomWonder = { id: createId(), name: name.trim(), createdAt: Date.now() };
-				set({ customWonders: [...customWonders, wonder] });
-				return wonder;
+			addCustomWonder: (name, packId) => {
+				const { accepted } = get().addCustomWonders([name], packId);
+				return accepted.length > 0 ? (get().customWonders.at(-1) ?? null) : null;
+			},
+
+			addCustomWonders: (names, packId) => {
+				const { customWonders, packs } = get();
+				// Une extension inconnue (supprimée entre-temps) range les merveilles hors extension.
+				const validPackId = packs.some((p) => p.id === packId) ? packId : undefined;
+				const plan = planCustomWonders(names, customWonders);
+				const now = Date.now();
+				const added: CustomWonder[] = plan.accepted.map((wonderName) => ({
+					id: createId(),
+					name: wonderName,
+					...(validPackId && { packId: validPackId }),
+					createdAt: now,
+				}));
+				if (added.length > 0) set({ customWonders: [...customWonders, ...added] });
+				return plan;
 			},
 
 			removeCustomWonder: (id) => {
 				set({ customWonders: get().customWonders.filter((w) => w.id !== id) });
 			},
 
-			replaceAll: (customWonders) => set({ customWonders }),
+			addPack: (name) => {
+				const { packs } = get();
+				if (getWonderPackNameError(name, packs)) return null;
+				const pack: CustomWonderPack = {
+					id: createId(),
+					name: name.trim(),
+					enabled: true,
+					createdAt: Date.now(),
+				};
+				set({ packs: [...packs, pack] });
+				return pack;
+			},
+
+			renamePack: (id, name) => {
+				const { packs } = get();
+				if (getWonderPackNameError(name, packs, id)) return false;
+				set({ packs: packs.map((p) => (p.id === id ? { ...p, name: name.trim() } : p)) });
+				return true;
+			},
+
+			setPackEnabled: (id, enabled) => {
+				set({ packs: get().packs.map((p) => (p.id === id ? { ...p, enabled } : p)) });
+			},
+
+			removePack: (id) => {
+				const { packs, customWonders } = get();
+				set({
+					packs: packs.filter((p) => p.id !== id),
+					customWonders: customWonders.filter((w) => w.packId !== id),
+				});
+			},
+
+			replaceAll: (customWonders, packs) => set({ customWonders, packs }),
 		}),
 		{
 			name: "wonders-store",

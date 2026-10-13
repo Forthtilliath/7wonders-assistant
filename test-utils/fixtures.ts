@@ -23,7 +23,7 @@ export function resetAllStores() {
 	usePlayersStore.setState({ players: [] });
 	useGroupsStore.setState({ groups: [] });
 	useHistoryStore.setState({ games: [] });
-	useWondersStore.setState({ customWonders: [] });
+	useWondersStore.setState({ customWonders: [], packs: [] });
 	useGameStore.setState({ ...initialGameState });
 	useBackupStore.setState({ ...initialBackupState });
 	usePreferencesStore.setState({ defaultExtensions: [], defaultEdition: "first" });

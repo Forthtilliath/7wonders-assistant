@@ -1,5 +1,5 @@
 import { MAX_WONDER_NAME_LENGTH, OFFICIAL_WONDERS, type WonderSource } from "@/constants/wonders";
-import type { CustomWonder, ExtensionId, Game, GameEdition } from "@/types/game";
+import type { CustomWonder, CustomWonderPack, ExtensionId, Game, GameEdition } from "@/types/game";
 
 /** Merveille proposée à la saisie, avec son origine. */
 export type WonderOption = {
@@ -14,13 +14,15 @@ export function normalizeWonderName(name: string): string {
 
 /**
  * Merveilles jouables dans une partie : les plateaux officiels de l'édition choisie (jeu de base,
- * extensions actives, Wonder Pack) puis celles de l'utilisateur, par ordre alphabétique. Une
- * merveille perso homonyme d'une officielle n'est pas répétée.
+ * extensions actives, Wonder Pack) puis celles de l'utilisateur hors extensions non officielles
+ * désactivées, par ordre alphabétique. Une merveille perso homonyme d'une officielle n'est pas
+ * répétée.
  */
 export function getAvailableWonders(
 	edition: GameEdition,
 	extensions: readonly ExtensionId[],
 	customWonders: readonly CustomWonder[],
+	packs: readonly CustomWonderPack[],
 ): WonderOption[] {
 	const official: WonderOption[] = OFFICIAL_WONDERS.filter(
 		(wonder) =>
@@ -31,7 +33,9 @@ export function getAvailableWonders(
 	).map(({ name, source }) => ({ name, source }));
 
 	const officialKeys = new Set(official.map((w) => normalizeWonderName(w.name)));
+	const enabledPackIds = new Set(packs.filter((p) => p.enabled).map((p) => p.id));
 	const custom: WonderOption[] = customWonders
+		.filter((w) => !w.packId || enabledPackIds.has(w.packId))
 		.filter((w) => !officialKeys.has(normalizeWonderName(w.name)))
 		.map((w) => ({ name: w.name, source: "custom" as const }))
 		.sort((a, b) => a.name.localeCompare(b.name));
@@ -99,7 +103,7 @@ export function getWonderNameSuggestions({
  */
 export function getCustomWonderNameError(
 	name: string,
-	customWonders: readonly CustomWonder[],
+	customWonders: readonly Pick<CustomWonder, "name">[],
 ): string | null {
 	const trimmed = name.trim();
 	if (!trimmed) return "Indique le nom de la merveille.";
