@@ -19,7 +19,7 @@ const wonder = (name: string, packId?: string): CustomWonder => ({
 const pack = (id: string, name: string): CustomWonderPack => ({
 	id,
 	name,
-	enabled: true,
+	selectedByDefault: true,
 	createdAt: 0,
 });
 const stat = (name: string): WonderStats => ({

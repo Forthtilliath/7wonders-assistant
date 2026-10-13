@@ -77,7 +77,7 @@ describe("Statistiques", () => {
 		const user = userEvent.setup();
 		seedPlayers(["Alice", "Bob"]);
 		useWondersStore.setState({
-			packs: [{ id: "box", name: "Wonders Box", enabled: true, createdAt: 0 }],
+			packs: [{ id: "box", name: "Wonders Box", selectedByDefault: true, createdAt: 0 }],
 			customWonders: [{ id: "w1", name: "Atlantide", packId: "box", createdAt: 0 }],
 		});
 		const patch = withWonder({

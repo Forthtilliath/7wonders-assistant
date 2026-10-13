@@ -19,19 +19,28 @@ type State = {
 	extensions: ExtensionId[];
 	/** Filtre les extensions proposées en cours de partie (cf. constants/editions.ts). */
 	edition: GameEdition;
+	/** Extensions non officielles cochées : seules leurs merveilles perso sont proposées. */
+	wonderPacks: string[];
 	playerIds: string[];
 	entries: Record<string, PlayerGameEntry>;
 	startedAt: number | null;
 };
 
 type Actions = {
-	startNewGame: (playerIds: string[], extensions: ExtensionId[], edition?: GameEdition) => void;
+	startNewGame: (
+		playerIds: string[],
+		extensions: ExtensionId[],
+		edition?: GameEdition,
+		wonderPacks?: string[],
+	) => void;
 	updateEntry: (playerId: string, patch: (entry: PlayerGameEntry) => PlayerGameEntry) => void;
 	/** Change les extensions actives d'une partie en cours (oubli à la création, par exemple). Les
 	 * catégories perdues par une extension désactivée sont remises à zéro pour tous les joueurs :
 	 * sinon des points déjà saisis pour une catégorie qui n'est plus affichée continueraient à
 	 * compter dans le total final. */
 	updateExtensions: (extensions: ExtensionId[]) => void;
+	/** Change les extensions non officielles cochées : sans étape de score, rien à remettre à zéro. */
+	updateWonderPacks: (wonderPacks: string[]) => void;
 	toGame: () => Game;
 	finishGame: () => Game;
 	resetGame: () => void;
@@ -43,6 +52,8 @@ export const initialGameState: State = {
 	// 1re édition, qui propose toutes les extensions : une partie en cours enregistrée avant le choix
 	// de l'édition la reçoit par la fusion de `persist`, sans migration ni extension masquée.
 	edition: "first",
+	// Une partie en cours enregistrée avant les extensions non officielles la reçoit par la fusion.
+	wonderPacks: [],
 	playerIds: [],
 	entries: {},
 	startedAt: null,
@@ -76,12 +87,12 @@ export const useGameStore = create<State & Actions>()(
 		(set, get) => ({
 			...initialGameState,
 
-			startNewGame: (playerIds, extensions, edition = "first") => {
+			startNewGame: (playerIds, extensions, edition = "first", wonderPacks = []) => {
 				const entries: Record<string, PlayerGameEntry> = {};
 				for (const playerId of playerIds) {
 					entries[playerId] = createEmptyPlayerGameEntry(playerId);
 				}
-				set({ playerIds, extensions, edition, entries, startedAt: Date.now() });
+				set({ playerIds, extensions, edition, wonderPacks, entries, startedAt: Date.now() });
 			},
 
 			updateEntry: (playerId, patch) => {
@@ -114,13 +125,16 @@ export const useGameStore = create<State & Actions>()(
 				set({ extensions, entries: nextEntries });
 			},
 
+			updateWonderPacks: (wonderPacks) => set({ wonderPacks }),
+
 			toGame: () => {
-				const { extensions, edition, playerIds, entries, startedAt } = get();
+				const { extensions, edition, wonderPacks, playerIds, entries, startedAt } = get();
 				return {
 					id: "",
 					createdAt: startedAt ?? Date.now(),
 					edition,
 					extensions,
+					wonderPacks,
 					playerIds,
 					entries,
 				};

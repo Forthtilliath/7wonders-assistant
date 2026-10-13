@@ -25,7 +25,8 @@ type Actions = {
 	addPack: (name: string) => CustomWonderPack | null;
 	/** Renomme une extension ; `false` si le nom est refusé. */
 	renamePack: (id: string, name: string) => boolean;
-	setPackEnabled: (id: string, enabled: boolean) => void;
+	/** Extensions cochées d'office au lancement d'une partie (les autres sont décochées). */
+	setDefaultPackIds: (ids: readonly string[]) => void;
 	/** Supprime l'extension et ses merveilles (les parties jouées gardent leurs noms). */
 	removePack: (id: string) => void;
 	replaceAll: (customWonders: CustomWonder[], packs: CustomWonderPack[]) => void;
@@ -71,7 +72,7 @@ export const useWondersStore = create<State & Actions>()(
 				const pack: CustomWonderPack = {
 					id: createId(),
 					name: name.trim(),
-					enabled: true,
+					selectedByDefault: false,
 					createdAt: Date.now(),
 				};
 				set({ packs: [...packs, pack] });
@@ -85,8 +86,10 @@ export const useWondersStore = create<State & Actions>()(
 				return true;
 			},
 
-			setPackEnabled: (id, enabled) => {
-				set({ packs: get().packs.map((p) => (p.id === id ? { ...p, enabled } : p)) });
+			setDefaultPackIds: (ids) => {
+				set({
+					packs: get().packs.map((p) => ({ ...p, selectedByDefault: ids.includes(p.id) })),
+				});
 			},
 
 			removePack: (id) => {

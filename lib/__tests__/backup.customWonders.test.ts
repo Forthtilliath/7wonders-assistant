@@ -44,7 +44,9 @@ describe("validateMigratedBackupData — merveilles perso", () => {
 	it("accepte des extensions non officielles et les merveilles qui y sont rangées", () => {
 		const data: BackupData = {
 			...makeBackup(),
-			customWonderPacks: [{ id: "box", name: "Wonders Box", enabled: false, createdAt: 0 }],
+			customWonderPacks: [
+				{ id: "box", name: "Wonders Box", selectedByDefault: false, createdAt: 0 },
+			],
 			customWonders: [{ id: "w1", name: "Atlantide", packId: "box", createdAt: 0 }],
 		};
 		expect(validateMigratedBackupData(data)).toEqual(data);
@@ -65,7 +67,9 @@ describe("validateMigratedBackupData — merveilles perso", () => {
 			({ ...makeBackup(), customWonderPacks: [pack] }) as unknown as BackupData;
 
 		expect(() =>
-			validateMigratedBackupData(withPack({ id: "p", name: " ", enabled: true, createdAt: 0 })),
+			validateMigratedBackupData(
+				withPack({ id: "p", name: " ", selectedByDefault: true, createdAt: 0 }),
+			),
 		).toThrow(ImportError);
 		expect(() =>
 			validateMigratedBackupData(withPack({ id: "p", name: "Box", createdAt: 0 })),
