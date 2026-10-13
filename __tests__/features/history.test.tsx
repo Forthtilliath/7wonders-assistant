@@ -37,13 +37,16 @@ describe("Historique des parties", () => {
 			});
 		});
 
-		it("résume chaque partie avec son vainqueur", async () => {
+		it("résume chaque partie avec ses joueurs classés", async () => {
 			await render(<HistoryScreen />);
 
-			expect(screen.getByText("🏆 Alice")).toBeOnTheScreen();
-			expect(screen.getByText("30 pts")).toBeOnTheScreen();
+			expect(screen.getByText("🥇 30")).toBeOnTheScreen();
+			expect(screen.getByText("🥈 20")).toBeOnTheScreen();
 			expect(screen.getByText("Cities")).toBeOnTheScreen();
-			expect(screen.getByText("🏆 Chloé")).toBeOnTheScreen();
+			expect(screen.getByText("🥇 25")).toBeOnTheScreen();
+			expect(screen.getByText("🥉 5")).toBeOnTheScreen();
+			expect(screen.getAllByText("Alice")).toHaveLength(2);
+			expect(screen.getAllByText("Chloé")).toHaveLength(1);
 			expect(screen.getByText("3 joueurs")).toBeOnTheScreen();
 		});
 
@@ -52,8 +55,8 @@ describe("Historique des parties", () => {
 			await render(<HistoryScreen />);
 
 			await user.type(screen.getByPlaceholderText("Rechercher par joueur..."), "chlo");
-			expect(screen.getByText("🏆 Chloé")).toBeOnTheScreen();
-			expect(screen.queryByText("🏆 Alice")).not.toBeOnTheScreen();
+			expect(screen.getByText("🥇 25")).toBeOnTheScreen();
+			expect(screen.queryByText("🥇 30")).not.toBeOnTheScreen();
 
 			await user.clear(screen.getByPlaceholderText("Rechercher par joueur..."));
 			await user.type(screen.getByPlaceholderText("Rechercher par joueur..."), "inconnu");
@@ -64,7 +67,7 @@ describe("Historique des parties", () => {
 			const user = userEvent.setup();
 			await render(<HistoryScreen />);
 
-			await user.press(screen.getByText("🏆 Chloé"));
+			await user.press(screen.getByText("🥇 25"));
 
 			expect(mockRouter.push).toHaveBeenCalledWith("/history/g1");
 		});
