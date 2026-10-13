@@ -14,8 +14,10 @@ export function getMaxPlayers(extensions: readonly ExtensionId[]): number {
 /** Médailles affichées pour les trois premières places (classement, partage). */
 export const RANK_MEDALS: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
 
-/** Points saisis par catégorie, en positif comme en négatif : bien au-delà d'une vraie partie. */
-export const MAX_POINTS = 10_000;
+/** Points saisis par catégorie : 100 est déjà rare, 200 laisse de la marge sans valeur absurde. */
+export const MAX_POINTS = 200;
+/** Plancher des catégories qui acceptent un score négatif (militaire, merveilles…). */
+export const MIN_POINTS = -30;
 
 /**
  * Symboles de sciences par compteur (et jetons par valeur) : au-delà, la répartition optimale des

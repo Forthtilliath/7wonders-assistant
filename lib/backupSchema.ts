@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MAX_POINTS, MAX_SCIENCE_SYMBOLS } from "@/constants/game";
+import { MAX_POINTS, MAX_SCIENCE_SYMBOLS, MIN_POINTS } from "@/constants/game";
 import type { Game, Player, PlayerGroup } from "@/types/game";
 
 export const APP_ID = "7wonders-assistant";
@@ -113,7 +113,7 @@ const playerSchema = z.object({
 	createdAt: timestampSchema,
 });
 
-const pointsSchema = z.object({ points: z.number().int().min(-MAX_POINTS).max(MAX_POINTS) });
+const pointsSchema = z.object({ points: z.number().int().min(MIN_POINTS).max(MAX_POINTS) });
 
 const symbolCountSchema = z.number().int().min(0).max(MAX_SCIENCE_SYMBOLS);
 

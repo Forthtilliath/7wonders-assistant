@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { CATEGORY_META } from "@/constants/categories";
+import { MIN_POINTS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -223,7 +224,7 @@ export default function CategoryScoreScreen() {
 									<ManualPointsFields
 										points={entry.wonders.points}
 										color={meta.color}
-										min={NEGATIVE_ALLOWED.wonders ? -30 : 0}
+										min={NEGATIVE_ALLOWED.wonders ? MIN_POINTS : 0}
 										onChange={(points) =>
 											updateEntry(player.id, (e) => ({ ...e, wonders: { points } }))
 										}
@@ -239,7 +240,7 @@ export default function CategoryScoreScreen() {
 									<ManualPointsFields
 										points={current.points}
 										color={meta.color}
-										min={NEGATIVE_ALLOWED[category] ? -30 : 0}
+										min={NEGATIVE_ALLOWED[category] ? MIN_POINTS : 0}
 										onChange={(points) =>
 											updateEntry(player.id, (e) => ({
 												...e,
