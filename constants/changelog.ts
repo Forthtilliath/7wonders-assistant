@@ -22,6 +22,7 @@ export const CHANGELOG: ChangelogEntry[] = [
 			"Photo d'un joueur prise directement avec l'appareil photo, pratique pour distinguer deux joueurs du même nom. La photo peut aussi être retirée.",
 			"Les points saisis par catégorie sont limités à des valeurs réalistes, pour éviter les fautes de frappe.",
 			"Réglages réorganisés : Nouveautés, Dons et À propos ont chacun leur page.",
+			"Les nouvelles versions sont annoncées par un bandeau sur l'onglet Jouer : installation en un geste, ou « Ignorer » pour ne plus voir cette version.",
 			"Tes données ne sont plus copiées dans la sauvegarde automatique d'Android : utilise la sauvegarde de l'app (export ou Google Drive) pour changer de téléphone.",
 		],
 	},
