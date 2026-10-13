@@ -13,6 +13,8 @@ export default function SettingsLayout() {
 			<Stack.Screen name="new-game" options={{ title: "Extensions par défaut" }} />
 			<Stack.Screen name="backup" options={{ title: "Gestion des sauvegardes" }} />
 			<Stack.Screen name="danger-zone" options={{ title: "Zone dangereuse" }} />
+			<Stack.Screen name="changelog" options={{ title: "Nouveautés" }} />
+			<Stack.Screen name="donate" options={{ title: "Dons" }} />
 			<Stack.Screen name="about" options={{ title: "À propos" }} />
 		</Stack>
 	);

@@ -6,7 +6,7 @@ export type ChangelogEntry = {
 };
 
 /**
- * Nouveautés destinées à l'utilisateur (page Réglages ▸ À propos), la plus récente en premier —
+ * Nouveautés destinées à l'utilisateur (page Réglages ▸ Nouveautés), la plus récente en premier —
  * distinct d'IMPROVEMENTS.md qui est un journal technique pour le développement. À compléter à
  * chaque changement notable côté utilisateur.
  */
