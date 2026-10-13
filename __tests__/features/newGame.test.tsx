@@ -1,4 +1,4 @@
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { act, render, screen, userEvent } from "@testing-library/react-native";
 import NewGameTab from "@/app/(tabs)/index";
 import { useGameStore } from "@/stores/gameStore";
 import { useGroupsStore } from "@/stores/groupsStore";
@@ -73,6 +73,20 @@ describe("Onglet Jouer : lancer une partie", () => {
 		expect(game.extensions).toEqual(["armada"]);
 		expect(game.edition).toBe("first");
 		expect(mockRouter.push).toHaveBeenCalledWith("/game/score/military");
+	});
+
+	it("reprend l'édition et les extensions par défaut modifiées après l'ouverture de l'onglet", async () => {
+		seedPlayers(["Alice", "Bob"]);
+		await render(<NewGameTab />);
+
+		// Préférences rechargées après coup, ou changées dans Réglages pendant que l'onglet reste monté.
+		await act(() => {
+			usePreferencesStore.setState({ defaultEdition: "second", defaultExtensions: ["edifice"] });
+		});
+
+		expect(screen.getByRole("radio", { name: "2e édition" })).toBeSelected();
+		expect(screen.getByRole("checkbox", { name: "Edifice" })).toBeChecked();
+		expect(screen.queryByRole("checkbox", { name: "Babel" })).not.toBeOnTheScreen();
 	});
 
 	it("filtre les extensions selon l'édition choisie et signale Babel + Edifice", async () => {
