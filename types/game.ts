@@ -29,6 +29,14 @@ export type PlayerGroup = {
 	createdAt: number;
 };
 
+/** Merveille ajoutée par l'utilisateur, rattachée à aucune extension officielle (contenu
+ * communautaire, promo absente du catalogue…), proposée dans toutes les parties. */
+export type CustomWonder = {
+	id: string;
+	name: string;
+	createdAt: number;
+};
+
 /** Compteurs de symboles scientifiques bruts saisis par le joueur. */
 export type ScienceInput = {
 	compass: number;
@@ -82,10 +90,10 @@ export type PlayerGameEntry = {
 	 */
 	treasury: { points: number };
 	/**
-	 * Merveille jouée : nom libre (texte plutôt qu'une liste fermée — entre les extensions
-	 * officielles, le contenu communautaire et les futurs ajouts, aucune liste figée ne suffirait
-	 * pour l'instant) + face A/B. Chaîne vide / null = non renseigné. Pure info, sans impact sur
-	 * le calcul du score.
+	 * Merveille jouée : nom libre + face A/B. Le catalogue (constants/wonders.ts) et les merveilles
+	 * de l'utilisateur ne servent que de suggestions : on stocke le nom plutôt qu'un id, pour garder
+	 * lisibles les parties jouées avec une merveille supprimée depuis. Chaîne vide / null = non
+	 * renseigné. Pure info, sans impact sur le calcul du score.
 	 */
 	wonder: { name: string; side: "A" | "B" | null };
 	wonders: { points: number };
