@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { useAvatarStorage } from "@/hooks/useAvatarStorage";
 import { useCloudAutoBackup } from "@/hooks/useCloudAutoBackup";
 import { useColors } from "@/hooks/useColors";
 import { useThemeStore } from "@/stores/themeStore";
@@ -11,6 +12,7 @@ export default function RootLayout() {
 	const colors = useColors();
 	const mode = useThemeStore((s) => s.mode);
 	useCloudAutoBackup();
+	useAvatarStorage();
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
