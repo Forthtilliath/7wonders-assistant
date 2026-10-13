@@ -19,7 +19,7 @@ import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { getCategoryFlow } from "@/lib/categoryFlow";
 import { computeScienceScore } from "@/lib/scoring/science";
-import { ARMADA_TOKENS, MILITARY_TOKENS } from "@/lib/scoring/tokens";
+import { MILITARY_TOKENS, NAVAL_TOKENS } from "@/lib/scoring/tokens";
 import { useGameStore } from "@/stores/gameStore";
 import { usePlayersStore } from "@/stores/playersStore";
 import type { CategoryId } from "@/types/game";
@@ -35,8 +35,8 @@ const MANUAL_CATEGORIES = [
 	"guilds",
 	"leaders",
 	"cities",
+	"naval",
 	"armada",
-	"islands",
 ] as const;
 
 // Catégories dont le total peut légitimement être négatif (jetons de défaite, dettes...).
@@ -45,7 +45,7 @@ const NEGATIVE_ALLOWED: Partial<Record<(typeof MANUAL_CATEGORIES)[number], boole
 	treasury: true,
 	wonders: true,
 	cities: true,
-	armada: true,
+	naval: true,
 };
 
 // Rappel affiché une seule fois en haut de l'écran (pas par joueur) pour les catégories qui en
@@ -53,7 +53,7 @@ const NEGATIVE_ALLOWED: Partial<Record<(typeof MANUAL_CATEGORIES)[number], boole
 const CATEGORY_HINTS: Partial<Record<CategoryId, string>> = {
 	military: "Additionne tes jetons militaires : Victoire (+1/+3/+5) et Défaite (-1).",
 	treasury: "Compte tes pièces ÷ 3, moins tes éventuels jetons de dette (extension Cités).",
-	armada: "Additionne tes jetons navals : Victoire (+1 à +7) et Défaite (-1/-2/-3).",
+	naval: "Additionne tes jetons navals : Victoire (+1 à +7) et Défaite (-1/-2/-3).",
 };
 
 type ManualCategoryId = (typeof MANUAL_CATEGORIES)[number];
@@ -73,7 +73,7 @@ export default function CategoryScoreScreen() {
 	const updateEntry = useGameStore((s) => s.updateEntry);
 	const updateExtensions = useGameStore((s) => s.updateExtensions);
 	const allPlayers = usePlayersStore((s) => s.players);
-	// Joueur pour lequel le compteur de jetons est ouvert (military/armada uniquement) ; se
+	// Joueur pour lequel le compteur de jetons est ouvert (military/naval uniquement) ; se
 	// réinitialise à chaque changement de catégorie via la key posée sur le composant plus bas.
 	const [tokenSheetPlayerId, setTokenSheetPlayerId] = useState<string | null>(null);
 	const [extensionsSheetVisible, setExtensionsSheetVisible] = useState(false);
@@ -105,7 +105,7 @@ export default function CategoryScoreScreen() {
 	// Seules ces deux catégories se comptent avec des jetons physiques ; les autres (Trésor,
 	// Merveille, Cités...) sont des totaux à lire directement sur le plateau/les cartes.
 	const tokens =
-		category === "military" ? MILITARY_TOKENS : category === "armada" ? ARMADA_TOKENS : null;
+		category === "military" ? MILITARY_TOKENS : category === "naval" ? NAVAL_TOKENS : null;
 
 	const goNext = () => {
 		if (isLast) {

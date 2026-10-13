@@ -11,6 +11,7 @@ const HEADER = [
 	"Merveille",
 	"Face",
 	"Militaire",
+	"Maritime",
 	"Trésor",
 	"Merveille (pts)",
 	"Civils",
@@ -19,8 +20,7 @@ const HEADER = [
 	"Guildes",
 	"Leaders",
 	"Cités",
-	"Maritime",
-	"Îles",
+	"Armada",
 	"Total",
 	"Classement",
 ];
@@ -52,6 +52,7 @@ export function buildGamesCsv(games: Game[], players: Player[]): string {
 				entry?.wonder.name ?? "",
 				entry?.wonder.side ?? "",
 				String(score.military),
+				String(score.naval),
 				String(score.treasury),
 				String(score.wonders),
 				String(score.civilians),
@@ -61,7 +62,6 @@ export function buildGamesCsv(games: Game[], players: Player[]): string {
 				String(score.leaders),
 				String(score.cities),
 				String(score.armada),
-				String(score.islands),
 				String(score.total),
 				String(score.rank),
 			]);

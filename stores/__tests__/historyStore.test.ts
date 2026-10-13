@@ -50,16 +50,40 @@ describe("migrateHistoryStoreData", () => {
 		expect(migrateHistoryStoreData(state, HISTORY_STORE_VERSION)).toBe(state);
 	});
 
-	it("ajoute la catégorie islands à chaque entrée venant de la v4, sans perdre l'historique", () => {
-		const { islands: _islands, ...v4Entry } = createEmptyPlayerGameEntry("p1");
+	it("migre la v4 (sans plateau Armada) jusqu'à la version courante, sans perdre l'historique", () => {
+		// En v4, "armada" contenait les jetons navals et le plateau n'existait pas encore.
+		const { naval: _naval, ...v4Entry } = { ...createEmptyPlayerGameEntry("p1") };
 		const v4State = {
-			games: [{ ...makeGame("1"), extensions: ["armada"], entries: { p1: v4Entry } }],
+			games: [
+				{
+					...makeGame("1"),
+					extensions: ["armada"],
+					entries: { p1: { ...v4Entry, armada: { points: 4 } } },
+				},
+			],
 		};
 
 		const migrated = migrateHistoryStoreData(v4State, 4);
 
-		expect(migrated.games[0].entries.p1.islands).toEqual({ points: 0 });
+		expect(migrated.games[0].entries.p1.naval).toEqual({ points: 4 });
+		expect(migrated.games[0].entries.p1.armada).toEqual({ points: 0 });
 		expect(migrated.games[0].id).toBe("1");
+	});
+
+	it("renomme les catégories Armada venant de la v5 (jetons navals et plateau)", () => {
+		const { naval: _naval, armada: _armada, ...rest } = createEmptyPlayerGameEntry("p1");
+		const v5Entry = { ...rest, armada: { points: 4 }, islands: { points: 6 } };
+		const v5State = {
+			games: [{ ...makeGame("1"), extensions: ["armada"], entries: { p1: v5Entry } }],
+		};
+
+		const migrated = migrateHistoryStoreData(v5State, 5);
+
+		expect(migrated.games[0].entries.p1).toEqual({
+			...rest,
+			naval: { points: 4 },
+			armada: { points: 6 },
+		});
 	});
 
 	it("réinitialise sur une version plus ancienne encore, sans étape de migration connue", () => {

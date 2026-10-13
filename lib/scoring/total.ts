@@ -12,8 +12,8 @@ export type PlayerScoreBreakdown = {
 	guilds: number;
 	leaders: number;
 	cities: number;
+	naval: number;
 	armada: number;
-	islands: number;
 	total: number;
 };
 
@@ -28,8 +28,8 @@ export function computePlayerScore(entry: PlayerGameEntry): PlayerScoreBreakdown
 	const guilds = entry.guilds.points;
 	const leaders = entry.leaders.points;
 	const cities = entry.cities.points;
+	const naval = entry.naval.points;
 	const armada = entry.armada.points;
-	const islands = entry.islands.points;
 
 	const total =
 		military +
@@ -41,8 +41,8 @@ export function computePlayerScore(entry: PlayerGameEntry): PlayerScoreBreakdown
 		guilds +
 		leaders +
 		cities +
-		armada +
-		islands;
+		naval +
+		armada;
 
 	return {
 		playerId: entry.playerId,
@@ -55,8 +55,8 @@ export function computePlayerScore(entry: PlayerGameEntry): PlayerScoreBreakdown
 		guilds,
 		leaders,
 		cities,
+		naval,
 		armada,
-		islands,
 		total,
 	};
 }
@@ -86,10 +86,10 @@ export function getCategoryScore(score: PlayerScoreBreakdown, category: Category
 			return score.leaders;
 		case "cities":
 			return score.cities;
+		case "naval":
+			return score.naval;
 		case "armada":
 			return score.armada;
-		case "islands":
-			return score.islands;
 	}
 }
 
@@ -123,7 +123,7 @@ export function filterActiveCategories(extensions: ExtensionId[]) {
 	return {
 		leaders: extensions.includes("leaders"),
 		cities: extensions.includes("cities"),
+		naval: extensions.includes("armada"),
 		armada: extensions.includes("armada"),
-		islands: extensions.includes("armada"),
 	};
 }

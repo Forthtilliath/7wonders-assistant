@@ -16,7 +16,7 @@ describe("getCategoryFlow", () => {
 	it("ajoute les extensions actives à la suite, dans l'ordre officiel", () => {
 		expect(getCategoryFlow(["armada", "leaders"])).toEqual([
 			"military",
-			"armada",
+			"naval",
 			"treasury",
 			"wonders",
 			"civilians",
@@ -24,15 +24,15 @@ describe("getCategoryFlow", () => {
 			"scientifics",
 			"guilds",
 			"leaders",
-			"islands",
+			"armada",
 		]);
 	});
 
 	it("Armada apporte deux catégories distinctes : Maritime juste après Militaire, Armada (plateau) en dernier", () => {
 		const flow = getCategoryFlow(["armada"]);
 		expect(flow[0]).toBe("military");
-		expect(flow[1]).toBe("armada");
-		expect(flow.at(-1)).toBe("islands");
+		expect(flow[1]).toBe("naval");
+		expect(flow.at(-1)).toBe("armada");
 	});
 });
 
@@ -51,12 +51,12 @@ describe("getNextCategory", () => {
 	});
 
 	it("insère Maritime juste après Militaire quand Armada est active", () => {
-		expect(getNextCategory("military", ["armada"])).toBe("armada");
-		expect(getNextCategory("armada", ["armada"])).toBe("treasury");
+		expect(getNextCategory("military", ["armada"])).toBe("naval");
+		expect(getNextCategory("naval", ["armada"])).toBe("treasury");
 	});
 
 	it("retourne null si la catégorie n'appartient pas au flux courant", () => {
-		expect(getNextCategory("armada", [])).toBeNull();
+		expect(getNextCategory("naval", [])).toBeNull();
 	});
 });
 
@@ -70,6 +70,6 @@ describe("getPreviousCategory", () => {
 	});
 
 	it("retourne null si la catégorie n'appartient pas au flux courant", () => {
-		expect(getPreviousCategory("armada", [])).toBeNull();
+		expect(getPreviousCategory("naval", [])).toBeNull();
 	});
 });

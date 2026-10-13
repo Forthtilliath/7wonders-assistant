@@ -1,3 +1,4 @@
+import { createEmptyPlayerGameEntry } from "@/types/game";
 import {
 	GAME_STORE_VERSION,
 	initialGameState,
@@ -65,18 +66,18 @@ describe("useGameStore", () => {
 		useGameStore.getState().startNewGame(["p1", "p2"], ["armada"]);
 		useGameStore.getState().updateEntry("p1", (entry) => ({
 			...entry,
-			armada: { points: 5 },
-			islands: { points: 3 },
+			naval: { points: 5 },
+			armada: { points: 3 },
 		}));
-		useGameStore.getState().updateEntry("p2", (entry) => ({ ...entry, armada: { points: 2 } }));
+		useGameStore.getState().updateEntry("p2", (entry) => ({ ...entry, naval: { points: 2 } }));
 
 		useGameStore.getState().updateExtensions([]);
 
 		const state = useGameStore.getState();
 		expect(state.extensions).toEqual([]);
+		expect(state.entries.p1.naval.points).toBe(0);
 		expect(state.entries.p1.armada.points).toBe(0);
-		expect(state.entries.p1.islands.points).toBe(0);
-		expect(state.entries.p2.armada.points).toBe(0);
+		expect(state.entries.p2.naval.points).toBe(0);
 	});
 
 	it("toGame construit un Game sans id à partir de l'état courant", () => {
@@ -115,6 +116,17 @@ describe("migrateGameStoreData", () => {
 	it("garde les données à la version courante", () => {
 		const state = { ...initialGameState, playerIds: ["p1"] };
 		expect(migrateGameStoreData(state, GAME_STORE_VERSION)).toBe(state);
+	});
+
+	it("renomme les catégories Armada d'une partie en cours venant de la v5, sans la perdre", () => {
+		const { naval: _naval, armada: _armada, ...rest } = createEmptyPlayerGameEntry("p1");
+		const v5Entry = { ...rest, armada: { points: 4 }, islands: { points: 6 } };
+		const v5State = { ...initialGameState, playerIds: ["p1"], entries: { p1: v5Entry } };
+
+		const migrated = migrateGameStoreData(v5State, 5);
+
+		expect(migrated.playerIds).toEqual(["p1"]);
+		expect(migrated.entries.p1).toEqual({ ...rest, naval: { points: 4 }, armada: { points: 6 } });
 	});
 
 	it("réinitialise sur une version incompatible plutôt que de garder des données obsolètes", () => {

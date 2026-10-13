@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MAX_POINTS, MAX_SCIENCE_SYMBOLS, MIN_POINTS } from "@/constants/game";
+import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/armadaMigration";
 import type { Game, Player, PlayerGroup } from "@/types/game";
 
 export const APP_ID = "7wonders-assistant";
@@ -14,7 +15,7 @@ export const APP_ID = "7wonders-assistant";
  * (la fonction recalculait la version cible sans transformer les données, et n'était même pas
  * appelée au chargement), les étapes ci-dessous sont réellement exécutées à l'import.
  */
-export const DATA_VERSION = 4;
+export const DATA_VERSION = 5;
 
 export type BackupData = {
 	app: typeof APP_ID;
@@ -60,6 +61,18 @@ const MIGRATIONS: Record<number, (data: BackupData) => BackupData> = {
 					id,
 					{ ...entry, islands: { points: 0 } },
 				]),
+			),
+		})),
+	}),
+	// v4 -> v5 : renommage des catégories Armada, "armada" (jetons navals) devient "naval" et
+	// "islands" (plateau + Îles) devient "armada", comme les onglets Maritime et Armada.
+	4: (data) => ({
+		...data,
+		dataVersion: 5,
+		history: data.history.map((game) => ({
+			...game,
+			entries: renameArmadaCategoriesInEntries(
+				game.entries as unknown as Record<string, LegacyArmadaEntry>,
 			),
 		})),
 	}),
@@ -137,8 +150,8 @@ const playerGameEntrySchema = z.object({
 	guilds: pointsSchema,
 	leaders: pointsSchema,
 	cities: pointsSchema,
+	naval: pointsSchema,
 	armada: pointsSchema,
-	islands: pointsSchema,
 });
 
 /** Objet indexé par id, au nombre d'entrées borné (`z.record` seul n'en limite pas le nombre). */

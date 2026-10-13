@@ -16,7 +16,7 @@ export const MILITARY_TOKENS: TokenDenomination[] = [
 // Jetons de conflit naval (extension Armada) : Défaite -1/-2/-3 selon l'âge ; Victoire +1/+3
 // (Âge I), +3/+5 (Âge II), +3/+5/+7 (Âge III) selon le rang de force navale — d'où ces 4 valeurs
 // de victoire distinctes (+1, +3, +5, +7) à travers la partie.
-export const ARMADA_TOKENS: TokenDenomination[] = [
+export const NAVAL_TOKENS: TokenDenomination[] = [
 	{ value: 1, label: "Victoire (+1)" },
 	{ value: 3, label: "Victoire (+3)" },
 	{ value: 5, label: "Victoire (+5)" },
