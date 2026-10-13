@@ -247,19 +247,24 @@ describe("validateMigratedBackupData — bornes", () => {
 		};
 		expect(() => validateMigratedBackupData(longName)).toThrow(ImportError);
 
-		const hugePoints = {
-			...makeBackup(DATA_VERSION),
-			history: [
-				{
-					id: "g1",
-					createdAt: 0,
-					extensions: [],
-					playerIds: ["p1"],
-					entries: { p1: { ...createEmptyPlayerGameEntry("p1"), military: { points: 1e9 } } },
-				},
-			],
-		} as unknown as BackupData;
-		expect(() => validateMigratedBackupData(hugePoints)).toThrow(ImportError);
+		const withMilitary = (points: number) =>
+			({
+				...makeBackup(DATA_VERSION),
+				history: [
+					{
+						id: "g1",
+						createdAt: 0,
+						extensions: [],
+						playerIds: ["p1"],
+						entries: { p1: { ...createEmptyPlayerGameEntry("p1"), military: { points } } },
+					},
+				],
+			}) as unknown as BackupData;
+		expect(() => validateMigratedBackupData(withMilitary(1e9))).toThrow(ImportError);
+		expect(() => validateMigratedBackupData(withMilitary(201))).toThrow(ImportError);
+		expect(() => validateMigratedBackupData(withMilitary(-31))).toThrow(ImportError);
+		expect(() => validateMigratedBackupData(withMilitary(200))).not.toThrow();
+		expect(() => validateMigratedBackupData(withMilitary(-30))).not.toThrow();
 	});
 
 	it("n'accepte que des photos en base64 de taille raisonnable", () => {
