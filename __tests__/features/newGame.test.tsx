@@ -20,6 +20,10 @@ jest.mock("@/lib/backup", () => ({ backup: {} }));
 jest.mock("@forthtilliath/expo-backup-ui/hooks", () => ({
 	useBackupState: () => ({ hydrated: true, lastBackupAt: null, cloudAccount: null }),
 }));
+// Bandeau de mise à jour : aucune release, et surtout aucun appel réseau vers GitHub.
+jest.mock("@forthtilliath/expo-release-updates/githubReleases", () => ({
+	fetchLatestRelease: jest.fn(async () => null),
+}));
 
 describe("Onglet Jouer : lancer une partie", () => {
 	beforeEach(() => {

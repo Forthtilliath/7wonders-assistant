@@ -11,6 +11,7 @@ import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard"
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { UpdateBanner } from "@/components/updates/UpdateBanner";
 import { EXTENSION_LABELS } from "@/constants/categories";
 import { getMaxPlayers, MIN_PLAYERS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
@@ -138,6 +139,7 @@ export default function NewGameTab() {
 			<View collapsable={false} style={styles.gestureRoot}>
 				<ScreenContainer>
 					<ScrollView contentContainerStyle={styles.content}>
+						<UpdateBanner />
 						<BackupReminderBanner />
 						{sortedGroups.length > 0 && (
 							<>
