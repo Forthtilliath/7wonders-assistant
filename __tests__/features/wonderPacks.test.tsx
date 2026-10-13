@@ -107,7 +107,12 @@ describe("Extensions non officielles", () => {
 			useGameStore.getState().startNewGame(["p1", "p2"], [], "first", ["box"]);
 			await render(<CategoryScoreScreen />);
 
-			expect(screen.getAllByRole("button", { name: "Utiliser le nom Atlantide" })).toHaveLength(2);
+			const user = userEvent.setup();
+			const [aliceName] = screen.getAllByPlaceholderText("Nom de la merveille");
+			await user.type(aliceName, "a");
+			expect(screen.getByRole("button", { name: "Utiliser le nom Atlantide" })).toBeOnTheScreen();
+			await user.clear(aliceName);
+			await user.type(aliceName, "y");
 			expect(screen.queryByRole("button", { name: "Utiliser le nom Ys" })).toBeNull();
 		});
 
@@ -116,6 +121,7 @@ describe("Extensions non officielles", () => {
 			const alert = mockAlert();
 			useGameStore.getState().startNewGame(["p1", "p2"], []);
 			await render(<CategoryScoreScreen />);
+			await user.type(screen.getAllByPlaceholderText("Nom de la merveille")[0], "y");
 			expect(screen.queryByRole("button", { name: "Utiliser le nom Ys" })).toBeNull();
 
 			await user.press(
@@ -127,7 +133,7 @@ describe("Extensions non officielles", () => {
 
 			expect(alert.mock.calls.map(([title]) => title)).not.toContain("Modifier les extensions ?");
 			expect(useGameStore.getState().wonderPacks).toEqual(["mine"]);
-			expect(screen.getAllByRole("button", { name: "Utiliser le nom Ys" })).toHaveLength(2);
+			expect(screen.getByRole("button", { name: "Utiliser le nom Ys" })).toBeOnTheScreen();
 		});
 	});
 });

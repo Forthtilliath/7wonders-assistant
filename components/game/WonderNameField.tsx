@@ -24,10 +24,11 @@ type Props = {
 };
 
 /**
- * Champ de nom de merveille : propose les merveilles jouables dans la partie (édition, extensions
- * actives, merveilles perso des extensions non officielles cochées) encore libres, puis les noms déjà saisis dans l'historique, pour
- * réduire les doublons dus à des fautes de frappe dans les statistiques par merveille. Un nom
- * inconnu peut être ajouté aux merveilles perso, pour le retrouver dans les prochaines parties.
+ * Champ de nom de merveille : dès qu'on tape, propose jusqu'à 5 noms qui contiennent la saisie (sans
+ * casse ni accents) parmi les merveilles jouables dans la partie (édition, extensions actives,
+ * merveilles perso des extensions non officielles cochées) encore libres, puis les noms déjà saisis
+ * dans l'historique, pour réduire les doublons dus à des fautes de frappe dans les statistiques par
+ * merveille. Un nom inconnu peut être ajouté aux merveilles perso, pour le retrouver ensuite.
  */
 export function WonderNameField({ playerId, value, onChange }: Props) {
 	const colors = useColors();

@@ -58,9 +58,10 @@ type SuggestionsInput = {
 
 /**
  * Suggestions de noms pour le champ Merveille, pour éviter les doublons dus à des fautes de frappe
- * dans les statistiques par merveille. Champ vide : toutes les merveilles jouables encore libres.
- * Sinon : celles qui contiennent la recherche, merveilles jouables d'abord puis noms de
- * l'historique (hors merveilles connues non jouables dans la partie), sans répéter le nom déjà tapé.
+ * dans les statistiques par merveille. Rien tant que le champ est vide ; ensuite, les noms qui
+ * contiennent la recherche (sans casse ni accents), ceux qui commencent par elle d'abord, puis
+ * merveilles jouables avant noms de l'historique (hors merveilles connues non jouables dans la
+ * partie), sans répéter le nom déjà tapé.
  */
 export function getWonderNameSuggestions({
 	options,
@@ -68,10 +69,11 @@ export function getWonderNameSuggestions({
 	query,
 	takenNames = [],
 	knownNames = [],
-	limit = 8,
+	limit = 5,
 }: SuggestionsInput): string[] {
 	const excluded = new Set(takenNames.map(normalizeWonderName));
 	const normalizedQuery = normalizeWonderName(query);
+	if (!normalizedQuery) return [];
 
 	// Dédoublonne en ignorant casse et accents, en gardant la première écriture rencontrée.
 	const namesByKey = new Map<string, string>();
@@ -85,24 +87,25 @@ export function getWonderNameSuggestions({
 		knownNames.map(normalizeWonderName).filter((key) => !playableKeys.has(key)),
 	);
 
-	if (!normalizedQuery) {
-		return Array.from(namesByKey.entries())
-			.filter(([key]) => !excluded.has(key))
-			.map(([, name]) => name);
-	}
-
 	const historyNames = games
 		.flatMap((game) => Object.values(game.entries).map((entry) => entry.wonder.name))
 		.filter((name) => name.trim() && !unplayable.has(normalizeWonderName(name)))
 		.sort((a, b) => a.localeCompare(b));
 	for (const name of historyNames) add(name);
 
-	return Array.from(namesByKey.entries())
-		.filter(
-			([key]) => key.includes(normalizedQuery) && key !== normalizedQuery && !excluded.has(key),
-		)
-		.map(([, name]) => name)
-		.slice(0, limit);
+	return (
+		Array.from(namesByKey.entries())
+			.filter(
+				([key]) => key.includes(normalizedQuery) && key !== normalizedQuery && !excluded.has(key),
+			)
+			// Tri stable : l'ordre jouables puis historique est gardé à l'intérieur de chaque groupe.
+			.sort(
+				([a], [b]) =>
+					Number(!a.startsWith(normalizedQuery)) - Number(!b.startsWith(normalizedQuery)),
+			)
+			.map(([, name]) => name)
+			.slice(0, limit)
+	);
 }
 
 /**

@@ -86,31 +86,31 @@ describe("getAvailableWonders", () => {
 describe("getWonderNameSuggestions", () => {
 	const options = getAvailableWonders("second", [], [], []);
 
-	it("propose toutes les merveilles jouables tant que rien n'est tapé", () => {
-		expect(getWonderNameSuggestions({ options, games: [], query: "  " })).toEqual(names(options));
+	it("ne propose rien tant que rien n'est tapé", () => {
+		expect(getWonderNameSuggestions({ options, games: [], query: "  " })).toEqual([]);
 	});
 
 	it("écarte les merveilles déjà prises par les autres joueurs", () => {
 		const suggestions = getWonderNameSuggestions({
 			options,
 			games: [],
-			query: "",
+			query: "e",
 			takenNames: ["rhodes", "Éphèse", ""],
 		});
 		expect(suggestions).not.toContain("Rhodes");
 		expect(suggestions).not.toContain("Éphèse");
-		expect(suggestions).toHaveLength(5);
+		expect(suggestions).toEqual(expect.arrayContaining(["Alexandrie", "Babylone", "Gizeh"]));
 	});
 
 	it("filtre sans tenir compte de la casse ni des accents", () => {
 		expect(getWonderNameSuggestions({ options, games: [], query: "EPH" })).toEqual(["Éphèse"]);
 	});
 
-	it("complète avec les noms de l'historique, après les merveilles jouables", () => {
+	it("met d'abord les noms qui commencent par la saisie, puis les jouables avant l'historique", () => {
 		const games = [makeGame("g1", ["Babel perso", "babylone"]), makeGame("g2", ["Abydos"])];
 		expect(getWonderNameSuggestions({ options, games, query: "ab" })).toEqual([
-			"Babylone",
 			"Abydos",
+			"Babylone",
 			"Babel perso",
 		]);
 	});
@@ -130,7 +130,12 @@ describe("getWonderNameSuggestions", () => {
 		expect(getWonderNameSuggestions({ options, games, query: "giz" })).toEqual(["Gizeh", "Gizah"]);
 	});
 
-	it("limite le nombre de suggestions quand on tape", () => {
+	it("limite à 5 suggestions par défaut", () => {
+		const games = [makeGame("g1", ["A1", "A2", "A3", "A4", "A5", "A6"])];
+		expect(getWonderNameSuggestions({ options, games, query: "a" })).toHaveLength(5);
+	});
+
+	it("accepte une autre limite", () => {
 		const games = [makeGame("g1", ["A1", "A2", "A3", "A4", "A5", "A6"])];
 		expect(getWonderNameSuggestions({ options, games, query: "a", limit: 3 })).toHaveLength(3);
 	});
