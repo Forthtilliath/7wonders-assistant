@@ -5,7 +5,7 @@ import { PlayerStatsSection } from "@/components/stats/PlayerStatsSection";
 import { PlayerWinRateRow } from "@/components/stats/PlayerWinRateRow";
 import { RecordsSection } from "@/components/stats/RecordsSection";
 import { ScoreTable } from "@/components/stats/ScoreTable";
-import { WonderRankingRow } from "@/components/stats/WonderRankingRow";
+import { WonderStatsSection } from "@/components/stats/WonderStatsSection";
 import { Button } from "@/components/ui/Button";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
@@ -15,12 +15,7 @@ import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { type ExtensionFilter, filterGamesByExtension } from "@/lib/gameFilters";
-import {
-	computeGlobalRecords,
-	computePlayerLeaderboard,
-	computePlayerStats,
-	computeWonderStats,
-} from "@/lib/stats";
+import { computeGlobalRecords, computePlayerLeaderboard, computePlayerStats } from "@/lib/stats";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 
@@ -70,12 +65,6 @@ export default function StatsScreen() {
 			playersWithGames.map((p) => [p.id, computePlayerStats(p.id, filteredGames)]),
 		);
 	}, [viewMode, playersWithGames, filteredGames]);
-
-	// Classement global, avec le filtre d'extensions courant, par taux de victoire.
-	const { bestWonders, worstWonders } = useMemo(() => {
-		const sorted = [...computeWonderStats(filteredGames)].sort((a, b) => b.winRate - a.winRate);
-		return { bestWonders: sorted.slice(0, 5), worstWonders: sorted.slice(-5).reverse() };
-	}, [filteredGames]);
 
 	const selectedPlayer = playersWithGames.find((p) => p.id === selectedId);
 	const comparePlayer = playersWithGames.find((p) => p.id === compareId);
@@ -212,31 +201,7 @@ export default function StatsScreen() {
 					</>
 				)}
 
-				{bestWonders.length > 0 && (
-					<>
-						<SectionTitle>Top 5 des meilleures merveilles</SectionTitle>
-						<View style={styles.wonderList}>
-							{bestWonders.map((wonder, index) => (
-								<WonderRankingRow
-									key={`${wonder.name}-${wonder.side}`}
-									rank={index + 1}
-									wonder={wonder}
-								/>
-							))}
-						</View>
-
-						<SectionTitle>Top 5 des pires merveilles</SectionTitle>
-						<View style={styles.wonderList}>
-							{worstWonders.map((wonder, index) => (
-								<WonderRankingRow
-									key={`${wonder.name}-${wonder.side}`}
-									rank={index + 1}
-									wonder={wonder}
-								/>
-							))}
-						</View>
-					</>
-				)}
+				<WonderStatsSection games={filteredGames} />
 			</ScrollView>
 
 			<FiltersSheet
