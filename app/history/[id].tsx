@@ -14,6 +14,7 @@ import { getGameRanking } from "@/lib/scoring/game";
 import { useGameStore } from "@/stores/gameStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
+import { useWondersStore } from "@/stores/wondersStore";
 
 export default function GameDetailScreen() {
 	const router = useRouter();
@@ -53,7 +54,10 @@ export default function GameDetailScreen() {
 
 	const replay = (playerIds: string[]) => {
 		// Les parties enregistrées avant le choix de l'édition retombent sur la 1re (défaut du store).
-		startNewGame(playerIds, game.extensions, game.edition);
+		// Sans les extensions non officielles supprimées depuis.
+		const { packs } = useWondersStore.getState();
+		const wonderPacks = (game.wonderPacks ?? []).filter((id) => packs.some((p) => p.id === id));
+		startNewGame(playerIds, game.extensions, game.edition, wonderPacks);
 		router.push("/game/score/military");
 	};
 
