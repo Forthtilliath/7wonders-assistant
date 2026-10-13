@@ -5,6 +5,7 @@ import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
+import { useWondersStore } from "@/stores/wondersStore";
 import { mockRouter } from "@/test-utils/expoRouter";
 import {
 	makeGame,
@@ -77,6 +78,27 @@ describe("Onglet Jouer : lancer une partie", () => {
 		expect(game.extensions).toEqual(["armada"]);
 		expect(game.edition).toBe("first");
 		expect(mockRouter.push).toHaveBeenCalledWith("/game/score/military");
+	});
+
+	it("lance la partie avec les extensions non officielles cochées, par défaut ou à la main", async () => {
+		const user = userEvent.setup();
+		seedPlayers(["Alice", "Bob"]);
+		useWondersStore.setState({
+			packs: [
+				{ id: "box", name: "Wonders Box", selectedByDefault: true, createdAt: 0 },
+				{ id: "mine", name: "Mes créations", selectedByDefault: false, createdAt: 0 },
+			],
+		});
+		await render(<NewGameTab />);
+
+		expect(screen.getByRole("checkbox", { name: "Wonders Box" })).toBeChecked();
+		await user.press(screen.getByRole("checkbox", { name: "Wonders Box" }));
+		await user.press(screen.getByRole("checkbox", { name: "Mes créations" }));
+		await user.press(screen.getByRole("checkbox", { name: "Alice" }));
+		await user.press(screen.getByRole("checkbox", { name: "Bob" }));
+		await user.press(screen.getByRole("button", { name: "Lancer la partie" }));
+
+		expect(useGameStore.getState().wonderPacks).toEqual(["mine"]);
 	});
 
 	it("reprend l'édition et les extensions par défaut modifiées après l'ouverture de l'onglet", async () => {

@@ -43,6 +43,8 @@ export default function CategoryScoreScreen() {
 	const entries = useGameStore((s) => s.entries);
 	const updateEntry = useGameStore((s) => s.updateEntry);
 	const updateExtensions = useGameStore((s) => s.updateExtensions);
+	const wonderPacks = useGameStore((s) => s.wonderPacks);
+	const updateWonderPacks = useGameStore((s) => s.updateWonderPacks);
 	const allPlayers = usePlayersStore((s) => s.players);
 	// Joueur pour lequel le compteur de jetons est ouvert (military/naval uniquement) ; se
 	// réinitialise à chaque changement de catégorie via la key posée sur le composant plus bas.
@@ -137,9 +139,13 @@ export default function CategoryScoreScreen() {
 						visible={extensionsSheetVisible}
 						onClose={() => setExtensionsSheetVisible(false)}
 						currentExtensions={extensions}
+						currentWonderPacks={wonderPacks}
 						edition={edition}
 						playerCount={playerIds.length}
-						onConfirm={updateExtensions}
+						onConfirm={(nextExtensions, nextPacks) => {
+							updateExtensions(nextExtensions);
+							updateWonderPacks(nextPacks);
+						}}
 					/>
 
 					<View style={[styles.progressBar, { backgroundColor: meta.color }]} />
