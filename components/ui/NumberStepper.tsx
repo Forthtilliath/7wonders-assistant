@@ -71,12 +71,21 @@ export function NumberStepper({
 
 	const stepOnce = (direction: 1 | -1) => {
 		const next = clamp(valueRef.current + direction * step);
-		if (next !== valueRef.current) tapFeedback();
+		// Borne atteinte : on coupe la répétition. Sinon, si le relâchement du bouton n'arrive jamais
+		// (touche annulée par un geste parent), elle tournerait sans fin en réécrivant la même valeur.
+		if (next === valueRef.current) {
+			stopRepeat();
+			return;
+		}
+		tapFeedback();
 		valueRef.current = next;
 		onChange(next);
 	};
 
 	const startPress = (direction: 1 | -1) => {
+		// Un nouvel appui sans relâchement du précédent (touche annulée puis rejouée par un geste
+		// parent) écraserait les minuteries en cours : la répétition orpheline ne s'arrêterait plus.
+		stopRepeat();
 		stepOnce(direction);
 		timers.current.delay = setTimeout(() => {
 			timers.current.interval = setInterval(() => stepOnce(direction), REPEAT_INTERVAL_MS);
