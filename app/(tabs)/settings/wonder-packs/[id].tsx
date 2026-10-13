@@ -22,7 +22,7 @@ export default function WonderPackScreen() {
 	const pack = useWondersStore((s) => s.packs.find((p) => p.id === id));
 	const packs = useWondersStore((s) => s.packs);
 	const renamePack = useWondersStore((s) => s.renamePack);
-	const setPackEnabled = useWondersStore((s) => s.setPackEnabled);
+	const setDefaultPackIds = useWondersStore((s) => s.setDefaultPackIds);
 	const removePack = useWondersStore((s) => s.removePack);
 	const [name, setName] = useState(pack?.name ?? "");
 	const [nameError, setNameError] = useState<string | null>(null);
@@ -77,12 +77,18 @@ export default function WonderPackScreen() {
 				{nameError && <Text style={styles.error}>{nameError}</Text>}
 
 				<View style={styles.toggleRow}>
-					<Text style={styles.toggleLabel}>Proposer ces merveilles à la saisie</Text>
+					<Text style={styles.toggleLabel}>Cochée par défaut pour une nouvelle partie</Text>
 					<Switch
-						value={pack.enabled}
-						onValueChange={(enabled) => setPackEnabled(pack.id, enabled)}
+						value={pack.selectedByDefault}
+						onValueChange={(selected) =>
+							setDefaultPackIds(
+								packs
+									.filter((p) => (p.id === pack.id ? selected : p.selectedByDefault))
+									.map((p) => p.id),
+							)
+						}
 						trackColor={{ true: colors.primary, false: colors.border }}
-						accessibilityLabel="Proposer ces merveilles à la saisie"
+						accessibilityLabel="Cochée par défaut pour une nouvelle partie"
 					/>
 				</View>
 

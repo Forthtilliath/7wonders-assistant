@@ -25,10 +25,10 @@ export function WonderPacksSection() {
 
 	const sorted = useMemo(() => [...packs].sort((a, b) => a.name.localeCompare(b.name)), [packs]);
 
-	const describe = (packId: string, enabled: boolean) => {
+	const describe = (packId: string, selectedByDefault: boolean) => {
 		const count = customWonders.filter((w) => w.packId === packId).length;
 		const wonders = `${count} merveille${count > 1 ? "s" : ""}`;
-		return enabled ? wonders : `${wonders} · désactivée`;
+		return selectedByDefault ? `${wonders} · cochée par défaut` : wonders;
 	};
 
 	const submit = () => {
@@ -47,15 +47,16 @@ export function WonderPacksSection() {
 		<View style={styles.section}>
 			<SectionTitle>Extensions non officielles</SectionTitle>
 			<Text style={styles.note}>
-				Regroupe tes merveilles non officielles (Wonders Box, tes créations…) pour les activer ou
-				les désactiver d'un geste, et comparer leurs statistiques.
+				Regroupe tes merveilles non officielles (Wonders Box, tes créations…). Coche l'extension au
+				lancement d'une partie pour que ses merveilles soient proposées, et compare leurs
+				statistiques.
 			</Text>
 			{sorted.map((pack) => (
 				<SettingsRow
 					key={pack.id}
 					icon="albums"
 					label={pack.name}
-					value={describe(pack.id, pack.enabled)}
+					value={describe(pack.id, pack.selectedByDefault)}
 					onPress={() => router.push(`/settings/wonder-packs/${pack.id}`)}
 				/>
 			))}

@@ -26,13 +26,15 @@ export default function SettingsScreen() {
 	const defaultEdition = usePreferencesStore((s) => s.defaultEdition);
 	const cloudConnected = useBackupState(backup).cloudAccount != null;
 	const customWonderCount = useWondersStore((s) => s.customWonders.length);
-	const packCount = useWondersStore((s) => s.packs.length);
+	const packs = useWondersStore((s) => s.packs);
+	const packCount = packs.length;
 
 	const defaultExtensionsPreview = [
 		EDITION_LABELS[defaultEdition],
 		...(defaultExtensions.length > 0
 			? defaultExtensions.map((ext) => EXTENSION_LABELS[ext])
 			: ["aucune extension"]),
+		...packs.filter((p) => p.selectedByDefault).map((p) => p.name),
 	].join(", ");
 	const wondersPreview = [
 		`${OFFICIAL_WONDERS.length} officielles`,

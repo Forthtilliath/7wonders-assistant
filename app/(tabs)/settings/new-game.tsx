@@ -3,6 +3,7 @@ import { StyleSheet, Text } from "react-native";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { WonderPacksPicker } from "@/components/wonders/WonderPacksPicker";
 import { EXTENSION_LABELS } from "@/constants/categories";
 import {
 	EDITION_LABELS,
@@ -14,6 +15,7 @@ import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { usePreferencesStore } from "@/stores/preferencesStore";
+import { useWondersStore } from "@/stores/wondersStore";
 import type { ExtensionId } from "@/types/game";
 
 const EDITION_OPTIONS = GAME_EDITIONS.map((edition) => ({
@@ -28,6 +30,12 @@ export default function NewGameSettingsScreen() {
 	const defaultExtensions = usePreferencesStore((s) => s.defaultExtensions);
 	const setDefaultEdition = usePreferencesStore((s) => s.setDefaultEdition);
 	const setDefaultExtensions = usePreferencesStore((s) => s.setDefaultExtensions);
+	const packs = useWondersStore((s) => s.packs);
+	const setDefaultPackIds = useWondersStore((s) => s.setDefaultPackIds);
+	const defaultPackIds = useMemo(
+		() => packs.filter((p) => p.selectedByDefault).map((p) => p.id),
+		[packs],
+	);
 	const warning = getExtensionsWarning(defaultExtensions);
 
 	return (
@@ -46,6 +54,11 @@ export default function NewGameSettingsScreen() {
 				onChange={setDefaultExtensions}
 			/>
 			{warning && <Text style={styles.warning}>{warning}</Text>}
+			<WonderPacksPicker
+				values={defaultPackIds}
+				onChange={setDefaultPackIds}
+				style={styles.packs}
+			/>
 		</ScreenContainer>
 	);
 }
@@ -64,6 +77,9 @@ function useStyles(colors: ThemeColors) {
 				warning: {
 					color: colors.danger,
 					fontSize: 13,
+				},
+				packs: {
+					marginTop: SPACING.sm,
 				},
 			}),
 		[colors],
