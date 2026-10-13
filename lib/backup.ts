@@ -15,6 +15,7 @@ import { buildGamesCsv } from "@/lib/csv";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
+import { useWondersStore } from "@/stores/wondersStore";
 import type { Game } from "@/types/game";
 
 export { ImportError };
@@ -28,6 +29,7 @@ export function currentBackupData(): BackupData {
 		players,
 		history: useHistoryStore.getState().games,
 		groups: useGroupsStore.getState().groups,
+		customWonders: useWondersStore.getState().customWonders,
 		avatars: collectAvatars(players),
 	};
 }
@@ -62,11 +64,13 @@ export function parseBackupContent(content: string): BackupData {
 	return validateMigratedBackupData(migrateBackupData(data));
 }
 
-/** Remplace toutes les données locales (joueurs avec leurs photos, historique, groupes). */
+/** Remplace toutes les données locales (joueurs avec leurs photos, historique, groupes, merveilles
+ * perso). */
 export function replaceAllData(data: BackupData): void {
 	usePlayersStore.getState().replaceAll(restoreAvatars(data.players, data.avatars));
 	useHistoryStore.getState().replaceAll(data.history);
 	useGroupsStore.getState().replaceAll(data.groups);
+	useWondersStore.getState().replaceAll(data.customWonders ?? []);
 }
 
 /**

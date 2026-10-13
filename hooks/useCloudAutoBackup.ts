@@ -4,11 +4,13 @@ import { backup } from "@/lib/backup";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
+import { useWondersStore } from "@/stores/wondersStore";
 
 /**
  * Sauvegarde automatique sur Google Drive, sans action de l'utilisateur une fois son compte relié :
  * démarre le gestionnaire (envoi en attente retenté au démarrage et au retour dans l'app) et lui
- * signale chaque modification des données sauvegardées (joueurs, historique, groupes). À monter une
+ * signale chaque modification des données sauvegardées (joueurs, historique, groupes,
+ * merveilles perso). À monter une
  * seule fois, dans le layout racine.
  */
 export function useCloudAutoBackup() {
@@ -30,6 +32,11 @@ export function useCloudAutoBackup() {
 			}),
 			useGroupsStore.subscribe((state, prev) => {
 				if (state.groups !== prev.groups && useGroupsStore.persist.hasHydrated()) {
+					backup.notifyDataChanged();
+				}
+			}),
+			useWondersStore.subscribe((state, prev) => {
+				if (state.customWonders !== prev.customWonders && useWondersStore.persist.hasHydrated()) {
 					backup.notifyDataChanged();
 				}
 			}),

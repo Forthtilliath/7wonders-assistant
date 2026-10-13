@@ -8,6 +8,7 @@ import { usePlayersStore } from "@/stores/playersStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { useThemeStore } from "@/stores/themeStore";
 import { initialUpdateState, useUpdateStore } from "@/stores/updateStore";
+import { useWondersStore } from "@/stores/wondersStore";
 import {
 	createEmptyPlayerGameEntry,
 	type ExtensionId,
@@ -22,6 +23,7 @@ export function resetAllStores() {
 	usePlayersStore.setState({ players: [] });
 	useGroupsStore.setState({ groups: [] });
 	useHistoryStore.setState({ games: [] });
+	useWondersStore.setState({ customWonders: [] });
 	useGameStore.setState({ ...initialGameState });
 	useBackupStore.setState({ ...initialBackupState });
 	usePreferencesStore.setState({ defaultExtensions: [], defaultEdition: "first" });
