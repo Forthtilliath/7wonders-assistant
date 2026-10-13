@@ -10,10 +10,12 @@ import { CHANGELOG } from "@/constants/changelog";
 import { EDITION_LABELS } from "@/constants/editions";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
+import { OFFICIAL_WONDERS } from "@/constants/wonders";
 import { useColors } from "@/hooks/useColors";
 import { backup } from "@/lib/backup";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { useThemeStore } from "@/stores/themeStore";
+import { useWondersStore } from "@/stores/wondersStore";
 
 export default function SettingsScreen() {
 	const colors = useColors();
@@ -23,6 +25,7 @@ export default function SettingsScreen() {
 	const defaultExtensions = usePreferencesStore((s) => s.defaultExtensions);
 	const defaultEdition = usePreferencesStore((s) => s.defaultEdition);
 	const cloudConnected = useBackupState(backup).cloudAccount != null;
+	const customWonderCount = useWondersStore((s) => s.customWonders.length);
 
 	const defaultExtensionsPreview = [
 		EDITION_LABELS[defaultEdition],
@@ -30,6 +33,10 @@ export default function SettingsScreen() {
 			? defaultExtensions.map((ext) => EXTENSION_LABELS[ext])
 			: ["aucune extension"]),
 	].join(", ");
+	const wondersPreview =
+		customWonderCount > 0
+			? `${OFFICIAL_WONDERS.length} officielles, ${customWonderCount} perso`
+			: `${OFFICIAL_WONDERS.length} officielles`;
 
 	return (
 		<ScreenContainer style={styles.container}>
@@ -44,6 +51,12 @@ export default function SettingsScreen() {
 				label="Édition et extensions"
 				value={defaultExtensionsPreview}
 				onPress={() => router.push("/settings/new-game")}
+			/>
+			<SettingsRow
+				icon="business"
+				label="Merveilles"
+				value={wondersPreview}
+				onPress={() => router.push("/settings/wonders")}
 			/>
 			<SettingsRow
 				icon="cloud-upload"

@@ -10,12 +10,14 @@ import DangerZoneSettingsScreen from "@/app/(tabs)/settings/danger-zone";
 import DonateSettingsScreen from "@/app/(tabs)/settings/donate";
 import SettingsScreen from "@/app/(tabs)/settings/index";
 import NewGameSettingsScreen from "@/app/(tabs)/settings/new-game";
+import WondersSettingsScreen from "@/app/(tabs)/settings/wonders";
 import { CHANGELOG } from "@/constants/changelog";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { useThemeStore } from "@/stores/themeStore";
+import { useWondersStore } from "@/stores/wondersStore";
 import { mockRouter } from "@/test-utils/expoRouter";
 import {
 	makeGame,
@@ -54,6 +56,7 @@ describe("Réglages", () => {
 		await user.press(
 			screen.getByRole("button", { name: "Édition et extensions, 1re édition, Leaders, Armada" }),
 		);
+		await user.press(screen.getByRole("button", { name: "Merveilles, 15 officielles" }));
 		await user.press(
 			screen.getByRole("button", {
 				name: "Gestion des sauvegardes, Sauvegarde Google Drive activée",
@@ -67,6 +70,7 @@ describe("Réglages", () => {
 		expect(mockRouter.push.mock.calls.map(([path]) => path)).toEqual([
 			"/settings/appearance",
 			"/settings/new-game",
+			"/settings/wonders",
 			"/settings/backup",
 			"/settings/changelog",
 			"/settings/donate",
@@ -117,14 +121,47 @@ describe("Réglages", () => {
 		expect(screen.queryByText(/Edifice remplace Babel/)).not.toBeOnTheScreen();
 	});
 
+	describe("merveilles", () => {
+		it("liste les merveilles officielles par jeu de base et extension", async () => {
+			await render(<WondersSettingsScreen />);
+
+			expect(screen.getByText("Jeu de base")).toBeOnTheScreen();
+			expect(screen.getByText("Cities")).toBeOnTheScreen();
+			expect(screen.getByText("Pétra")).toBeOnTheScreen();
+			expect(screen.getByText("Stonehenge")).toBeOnTheScreen();
+		});
+
+		it("ajoute une merveille perso, refuse un doublon, puis la supprime", async () => {
+			const user = userEvent.setup();
+			const alert = mockAlert();
+			await render(<WondersSettingsScreen />);
+			const field = screen.getByPlaceholderText("Nouvelle merveille");
+
+			await user.type(field, "Atlantide");
+			await user.press(screen.getByRole("button", { name: "Ajouter la merveille" }));
+			expect(useWondersStore.getState().customWonders.map((w) => w.name)).toEqual(["Atlantide"]);
+			expect(screen.getByText("Atlantide")).toBeOnTheScreen();
+
+			await user.type(field, "rhodes");
+			await user.press(screen.getByRole("button", { name: "Ajouter la merveille" }));
+			expect(screen.getByText("Cette merveille existe déjà.")).toBeOnTheScreen();
+			expect(useWondersStore.getState().customWonders).toHaveLength(1);
+
+			await user.press(screen.getByRole("button", { name: "Supprimer Atlantide" }));
+			await pressAlertButton(alert, "Supprimer");
+			expect(useWondersStore.getState().customWonders).toEqual([]);
+		});
+	});
+
 	describe("zone dangereuse", () => {
 		beforeEach(() => {
 			seedPlayers(["Alice", "Bob"]);
 			useGroupsStore.setState({ groups: [makeGroup("g1", "Jeudi", ["p1", "p2"])] });
 			useHistoryStore.setState({ games: [makeGame("g1", { p1: 1, p2: 2 })] });
+			useWondersStore.setState({ customWonders: [{ id: "w1", name: "Atlantide", createdAt: 0 }] });
 		});
 
-		it("efface joueurs, groupes et historique après confirmation", async () => {
+		it("efface joueurs, groupes, merveilles perso et historique après confirmation", async () => {
 			const user = userEvent.setup();
 			const alert = mockAlert();
 			await render(<DangerZoneSettingsScreen />);
@@ -135,6 +172,7 @@ describe("Réglages", () => {
 			expect(usePlayersStore.getState().players).toEqual([]);
 			expect(useGroupsStore.getState().groups).toEqual([]);
 			expect(useHistoryStore.getState().games).toEqual([]);
+			expect(useWondersStore.getState().customWonders).toEqual([]);
 			expect(mockRouter.back).toHaveBeenCalled();
 		});
 
