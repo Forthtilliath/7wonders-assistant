@@ -1,13 +1,13 @@
-import * as ImagePicker from "expo-image-picker";
 import { useMemo, useState } from "react";
-import { Alert, Linking, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { AvatarSourceSheet } from "@/components/players/AvatarSourceSheet";
 import { Button } from "@/components/ui/Button";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { TextField } from "@/components/ui/TextField";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import { storeAvatar } from "@/lib/avatarFiles";
+import { type AvatarSource, pickAvatar } from "@/lib/pickAvatar";
 
 type Props = {
 	/** Id du joueur en cours de modification, pour que la couleur de son avatar reste la même
@@ -33,40 +33,11 @@ export function PlayerForm({
 	const styles = useStyles(colors);
 	const [name, setName] = useState(initialName);
 	const [avatarUri, setAvatarUri] = useState(initialAvatarUri);
+	const [sourceSheetVisible, setSourceSheetVisible] = useState(false);
 
-	const pickAvatar = async () => {
-		const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-		if (!permission.granted) {
-			if (permission.canAskAgain) {
-				Alert.alert(
-					"Accès aux photos refusé",
-					"Autorise l'accès aux photos pour choisir un avatar.",
-				);
-			} else {
-				Alert.alert(
-					"Accès aux photos refusé",
-					"L'accès aux photos a été refusé. Autorise-le dans les réglages du téléphone pour choisir un avatar.",
-					[
-						{ text: "Annuler", style: "cancel" },
-						{ text: "Ouvrir les réglages", onPress: () => Linking.openSettings() },
-					],
-				);
-			}
-			return;
-		}
-
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ["images"],
-			allowsEditing: true,
-			aspect: [1, 1],
-			quality: 0.7,
-		});
-		if (result.canceled || !result.assets[0]) return;
-		try {
-			setAvatarUri(await storeAvatar(result.assets[0].uri));
-		} catch {
-			Alert.alert("Photo non enregistrée", "Impossible d'enregistrer cette photo. Réessaie.");
-		}
+	const handlePick = async (source: AvatarSource) => {
+		const uri = await pickAvatar(source);
+		if (uri) setAvatarUri(uri);
 	};
 
 	const canSubmit = name.trim().length > 0;
@@ -75,13 +46,20 @@ export function PlayerForm({
 		<View style={styles.container}>
 			<Pressable
 				style={styles.avatarPicker}
-				onPress={pickAvatar}
+				onPress={() => setSourceSheetVisible(true)}
 				accessibilityRole="button"
 				accessibilityLabel="Changer la photo"
 			>
 				<PlayerAvatar name={name || "?"} avatarUri={avatarUri} seed={playerId} size={96} />
 				<Text style={styles.avatarHint}>Changer la photo</Text>
 			</Pressable>
+
+			<AvatarSourceSheet
+				visible={sourceSheetVisible}
+				onClose={() => setSourceSheetVisible(false)}
+				onPick={handlePick}
+				onRemove={avatarUri ? () => setAvatarUri(undefined) : undefined}
+			/>
 
 			<TextField
 				label="Nom du joueur"
