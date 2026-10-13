@@ -56,7 +56,7 @@ La sauvegarde automatique utilise [Google Sign-In](https://react-native-google-s
 
 1. Créer un projet, puis activer l'**API Google Drive** (*API et services ▸ Bibliothèque*).
 2. Configurer l'**écran de consentement OAuth** (type *Externe*), ajouter le scope `.../auth/drive.appdata`, puis le **publier en production** : en mode *Test*, l'accès expire au bout de 7 jours et seuls les testeurs déclarés peuvent se connecter.
-3. Créer un **ID client OAuth de type Android** avec le nom de package `com.forth.reactnative7wondersassistant` et l'empreinte **SHA-1 de la clé qui signe l'APK** (`cd android && ./gradlew signingReport`). Une empreinte par clé de signature : en ajouter un second client si les APK de dev et de release sont signés différemment.
+3. Créer un **ID client OAuth de type Android** avec le nom de package `com.forthtilliath.sevenwondersassistant` et l'empreinte **SHA-1 de la clé qui signe l'APK** (`cd android && ./gradlew signingReport`). Une empreinte par clé de signature : en ajouter un second client si les APK de dev et de release sont signés différemment.
 
 Aucun identifiant à recopier dans l'appli : Google reconnaît le client à partir du package et de la signature de l'APK. Un client mal configuré se traduit par l'erreur « La connexion à Google a échoué » au moment de relier le compte.
 
