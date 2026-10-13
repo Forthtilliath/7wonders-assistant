@@ -9,6 +9,7 @@ import {
 	createEmptyPlayerGameEntry,
 	type ExtensionId,
 	type Game,
+	type GameEdition,
 	type PlayerGameEntry,
 } from "@/types/game";
 import { useHistoryStore } from "./historyStore";
@@ -16,13 +17,15 @@ import { useHistoryStore } from "./historyStore";
 type State = {
 	/** null tant qu'aucune partie n'est en cours. */
 	extensions: ExtensionId[];
+	/** Filtre les extensions proposées en cours de partie (cf. constants/editions.ts). */
+	edition: GameEdition;
 	playerIds: string[];
 	entries: Record<string, PlayerGameEntry>;
 	startedAt: number | null;
 };
 
 type Actions = {
-	startNewGame: (playerIds: string[], extensions: ExtensionId[]) => void;
+	startNewGame: (playerIds: string[], extensions: ExtensionId[], edition?: GameEdition) => void;
 	updateEntry: (playerId: string, patch: (entry: PlayerGameEntry) => PlayerGameEntry) => void;
 	/** Change les extensions actives d'une partie en cours (oubli à la création, par exemple). Les
 	 * catégories perdues par une extension désactivée sont remises à zéro pour tous les joueurs :
@@ -37,6 +40,9 @@ type Actions = {
 
 export const initialGameState: State = {
 	extensions: [],
+	// 1re édition, qui propose toutes les extensions : une partie en cours enregistrée avant le choix
+	// de l'édition la reçoit par la fusion de `persist`, sans migration ni extension masquée.
+	edition: "first",
 	playerIds: [],
 	entries: {},
 	startedAt: null,
@@ -70,12 +76,12 @@ export const useGameStore = create<State & Actions>()(
 		(set, get) => ({
 			...initialGameState,
 
-			startNewGame: (playerIds, extensions) => {
+			startNewGame: (playerIds, extensions, edition = "first") => {
 				const entries: Record<string, PlayerGameEntry> = {};
 				for (const playerId of playerIds) {
 					entries[playerId] = createEmptyPlayerGameEntry(playerId);
 				}
-				set({ playerIds, extensions, entries, startedAt: Date.now() });
+				set({ playerIds, extensions, edition, entries, startedAt: Date.now() });
 			},
 
 			updateEntry: (playerId, patch) => {
@@ -109,10 +115,11 @@ export const useGameStore = create<State & Actions>()(
 			},
 
 			toGame: () => {
-				const { extensions, playerIds, entries, startedAt } = get();
+				const { extensions, edition, playerIds, entries, startedAt } = get();
 				return {
 					id: "",
 					createdAt: startedAt ?? Date.now(),
+					edition,
 					extensions,
 					playerIds,
 					entries,
