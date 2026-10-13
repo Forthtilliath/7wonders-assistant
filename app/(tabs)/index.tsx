@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { selectFeedback } from "@forthtilliath/react-native-kit/utils/helpers/haptics";
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { BackupReminderBanner } from "@/components/backup/BackupReminderBanner";
@@ -47,6 +47,12 @@ export default function NewGameTab() {
 	// ensuite.
 	const [edition, setEdition] = useState<GameEdition>(() => defaultEdition);
 	const [extensions, setExtensions] = useState<ExtensionId[]>(() => defaultExtensions);
+	// L'onglet reste monté : sans ça, il garderait les réglages lus à sa première ouverture, avant
+	// le rechargement des préférences enregistrées ou une modification faite ensuite dans Réglages.
+	useEffect(() => {
+		setEdition(defaultEdition);
+		setExtensions(defaultExtensions);
+	}, [defaultEdition, defaultExtensions]);
 	const maxPlayers = getMaxPlayers(extensions);
 	const tooManyPlayers = selectedIds.length > maxPlayers;
 
