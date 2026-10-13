@@ -15,6 +15,7 @@ export const CHANGELOG: ChangelogEntry[] = [
 		version: "1.2.0",
 		date: Date.UTC(2026, 9, 13),
 		items: [
+			"Extension Babel : une étape de score après Leaders et Cités, où l'on coche le nombre de tuiles posées par chaque joueur (1 tuile = 2 pts, 2 = 5 pts, 3 = 10 pts).",
 			"Parties à 8 joueurs avec l'extension Cités : les groupes peuvent compter jusqu'à 8 membres, et Cités ne peut plus être retirée d'une partie à 8.",
 			"Photo d'un joueur prise directement avec l'appareil photo, pratique pour distinguer deux joueurs du même nom. La photo peut aussi être retirée.",
 			"Les points saisis par catégorie sont limités à des valeurs réalistes, pour éviter les fautes de frappe.",
