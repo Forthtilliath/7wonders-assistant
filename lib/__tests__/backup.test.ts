@@ -68,7 +68,7 @@ describe("migrateBackupData", () => {
 
 	it("migre une sauvegarde v3 (sans plateau Armada) vers la version courante", () => {
 		// En v3, "armada" contenait les jetons navals et le plateau ("islands" en v4) n'existait pas.
-		const { naval: _naval, ...rest } = createEmptyPlayerGameEntry("p1");
+		const { naval: _naval, babel: _babel, ...rest } = createEmptyPlayerGameEntry("p1");
 		const v3Entry = { ...rest, armada: { points: 4 } };
 		const v3Data = {
 			app: "7wonders-assistant",
@@ -96,7 +96,12 @@ describe("migrateBackupData", () => {
 	});
 
 	it("migre une sauvegarde v4 en renommant les catégories Armada", () => {
-		const { naval: _naval, armada: _armada, ...rest } = createEmptyPlayerGameEntry("p1");
+		const {
+			naval: _naval,
+			armada: _armada,
+			babel: _babel,
+			...rest
+		} = createEmptyPlayerGameEntry("p1");
 		const v4Entry = { ...rest, armada: { points: 4 }, islands: { points: 6 } };
 		const v4Data = {
 			...makeBackup(4),
@@ -117,7 +122,25 @@ describe("migrateBackupData", () => {
 			...rest,
 			naval: { points: 4 },
 			armada: { points: 6 },
+			babel: { tiles: 0 },
 		});
+	});
+
+	it("migre une sauvegarde v5 en ajoutant la catégorie Babel", () => {
+		const { babel: _babel, ...v5Entry } = {
+			...createEmptyPlayerGameEntry("p1"),
+			cities: { points: 3 },
+		};
+		const v5Data = {
+			...makeBackup(5),
+			history: [
+				{ id: "g1", createdAt: 0, extensions: [], playerIds: ["p1"], entries: { p1: v5Entry } },
+			],
+		} as unknown as BackupData;
+
+		const migrated = validateMigratedBackupData(migrateBackupData(v5Data));
+
+		expect(migrated.history[0].entries.p1).toEqual({ ...v5Entry, babel: { tiles: 0 } });
 	});
 
 	it("rejette une sauvegarde à une version antérieure sans étape de migration disponible", () => {
@@ -193,7 +216,7 @@ describe("validateMigratedBackupData", () => {
 	it("rejette une extension inconnue", () => {
 		const data = {
 			...makeBackup(DATA_VERSION),
-			history: [{ id: "g1", createdAt: 0, extensions: ["babel"], playerIds: [], entries: {} }],
+			history: [{ id: "g1", createdAt: 0, extensions: ["inconnue"], playerIds: [], entries: {} }],
 		} as unknown as BackupData;
 
 		expect(() => validateMigratedBackupData(data)).toThrow(ImportError);
@@ -307,6 +330,26 @@ describe("validateMigratedBackupData — bornes", () => {
 		expect(() => validateMigratedBackupData(withAvatar("A".repeat(1_000_001)))).toThrow(
 			ImportError,
 		);
+	});
+
+	it("rejette un nombre de tuiles Babel hors du barème", () => {
+		const withBabel = (tiles: number) =>
+			({
+				...makeBackup(DATA_VERSION),
+				history: [
+					{
+						id: "g1",
+						createdAt: 0,
+						extensions: ["babel"],
+						playerIds: ["p1"],
+						entries: { p1: { ...createEmptyPlayerGameEntry("p1"), babel: { tiles } } },
+					},
+				],
+			}) as unknown as BackupData;
+
+		expect(() => validateMigratedBackupData(withBabel(3))).not.toThrow();
+		expect(() => validateMigratedBackupData(withBabel(4))).toThrow(ImportError);
+		expect(() => validateMigratedBackupData(withBabel(1.5))).toThrow(ImportError);
 	});
 
 	it("supprime les clés inconnues", () => {

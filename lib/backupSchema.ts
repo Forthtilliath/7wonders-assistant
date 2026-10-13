@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { MAX_POINTS, MAX_SCIENCE_SYMBOLS, MIN_POINTS } from "@/constants/game";
 import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/armadaMigration";
+import { addBabelCategoryToEntries, type PreBabelEntry } from "@/lib/babelMigration";
 import type { Game, Player, PlayerGroup } from "@/types/game";
 
 export const APP_ID = "7wonders-assistant";
@@ -15,7 +16,7 @@ export const APP_ID = "7wonders-assistant";
  * (la fonction recalculait la version cible sans transformer les données, et n'était même pas
  * appelée au chargement), les étapes ci-dessous sont réellement exécutées à l'import.
  */
-export const DATA_VERSION = 5;
+export const DATA_VERSION = 6;
 
 export type BackupData = {
 	app: typeof APP_ID;
@@ -76,6 +77,15 @@ const MIGRATIONS: Record<number, (data: BackupData) => BackupData> = {
 			),
 		})),
 	}),
+	// v5 -> v6 : ajout de la catégorie Babel (tuiles posées), à zéro pour les parties existantes.
+	5: (data) => ({
+		...data,
+		dataVersion: 6,
+		history: data.history.map((game) => ({
+			...game,
+			entries: addBabelCategoryToEntries(game.entries as unknown as Record<string, PreBabelEntry>),
+		})),
+	}),
 };
 
 export function migrateBackupData(data: BackupData): BackupData {
@@ -105,7 +115,7 @@ export function isBackupDataShape(data: unknown): data is BackupData {
 	);
 }
 
-const extensionIdSchema = z.enum(["leaders", "cities", "armada"]);
+const extensionIdSchema = z.enum(["leaders", "cities", "babel", "armada"]);
 
 // Bornes de chaque champ importé : un fichier modifié à la main ne doit ni faire planter l'app, ni la
 // geler (les compteurs de sciences pilotent des boucles, voir lib/scoring/science.ts), ni remplir le
@@ -150,6 +160,7 @@ const playerGameEntrySchema = z.object({
 	guilds: pointsSchema,
 	leaders: pointsSchema,
 	cities: pointsSchema,
+	babel: z.object({ tiles: z.literal([0, 1, 2, 3]) }),
 	naval: pointsSchema,
 	armada: pointsSchema,
 });

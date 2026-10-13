@@ -80,6 +80,20 @@ describe("useGameStore", () => {
 		expect(state.entries.p2.naval.points).toBe(0);
 	});
 
+	it("updateExtensions remet à zéro les tuiles Babel quand l'extension est retirée", () => {
+		useGameStore.getState().startNewGame(["p1"], ["babel", "leaders"]);
+		useGameStore.getState().updateEntry("p1", (entry) => ({
+			...entry,
+			babel: { tiles: 3 },
+			leaders: { points: 4 },
+		}));
+
+		useGameStore.getState().updateExtensions(["leaders"]);
+
+		expect(useGameStore.getState().entries.p1.babel).toEqual({ tiles: 0 });
+		expect(useGameStore.getState().entries.p1.leaders.points).toBe(4);
+	});
+
 	it("toGame construit un Game sans id à partir de l'état courant", () => {
 		useGameStore.getState().startNewGame(["p1"], ["cities"]);
 
@@ -119,14 +133,36 @@ describe("migrateGameStoreData", () => {
 	});
 
 	it("renomme les catégories Armada d'une partie en cours venant de la v5, sans la perdre", () => {
-		const { naval: _naval, armada: _armada, ...rest } = createEmptyPlayerGameEntry("p1");
+		const {
+			naval: _naval,
+			armada: _armada,
+			babel: _babel,
+			...rest
+		} = createEmptyPlayerGameEntry("p1");
 		const v5Entry = { ...rest, armada: { points: 4 }, islands: { points: 6 } };
 		const v5State = { ...initialGameState, playerIds: ["p1"], entries: { p1: v5Entry } };
 
 		const migrated = migrateGameStoreData(v5State, 5);
 
 		expect(migrated.playerIds).toEqual(["p1"]);
-		expect(migrated.entries.p1).toEqual({ ...rest, naval: { points: 4 }, armada: { points: 6 } });
+		expect(migrated.entries.p1).toEqual({
+			...rest,
+			naval: { points: 4 },
+			armada: { points: 6 },
+			babel: { tiles: 0 },
+		});
+	});
+
+	it("ajoute la catégorie Babel à une partie en cours venant de la v6, sans la perdre", () => {
+		const { babel: _babel, ...v6Entry } = {
+			...createEmptyPlayerGameEntry("p1"),
+			leaders: { points: 5 },
+		};
+		const v6State = { ...initialGameState, playerIds: ["p1"], entries: { p1: v6Entry } };
+
+		const migrated = migrateGameStoreData(v6State, 6);
+
+		expect(migrated.entries.p1).toEqual({ ...v6Entry, babel: { tiles: 0 } });
 	});
 
 	it("réinitialise sur une version incompatible plutôt que de garder des données obsolètes", () => {
