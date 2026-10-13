@@ -41,6 +41,37 @@ describe("validateMigratedBackupData — merveilles perso", () => {
 		).toThrow(ImportError);
 	});
 
+	it("accepte des extensions non officielles et les merveilles qui y sont rangées", () => {
+		const data: BackupData = {
+			...makeBackup(),
+			customWonderPacks: [{ id: "box", name: "Wonders Box", enabled: false, createdAt: 0 }],
+			customWonders: [{ id: "w1", name: "Atlantide", packId: "box", createdAt: 0 }],
+		};
+		expect(validateMigratedBackupData(data)).toEqual(data);
+	});
+
+	it("rejette une merveille rangée dans une extension absente du fichier", () => {
+		const data: BackupData = {
+			...makeBackup(),
+			customWonders: [{ id: "w1", name: "Atlantide", packId: "box", createdAt: 0 }],
+		};
+		expect(() => validateMigratedBackupData(data)).toThrow(
+			'Sauvegarde corrompue (champ "customWonders.0.packId" : extension inconnue).',
+		);
+	});
+
+	it("rejette une extension au nom vide ou sans état d'activation", () => {
+		const withPack = (pack: unknown) =>
+			({ ...makeBackup(), customWonderPacks: [pack] }) as unknown as BackupData;
+
+		expect(() =>
+			validateMigratedBackupData(withPack({ id: "p", name: " ", enabled: true, createdAt: 0 })),
+		).toThrow(ImportError);
+		expect(() =>
+			validateMigratedBackupData(withPack({ id: "p", name: "Box", createdAt: 0 })),
+		).toThrow(ImportError);
+	});
+
 	it("retire les clés inconnues d'une merveille perso", () => {
 		const data = {
 			...makeBackup(),

@@ -36,7 +36,8 @@ export function useCloudAutoBackup() {
 				}
 			}),
 			useWondersStore.subscribe((state, prev) => {
-				if (state.customWonders !== prev.customWonders && useWondersStore.persist.hasHydrated()) {
+				const changed = state.customWonders !== prev.customWonders || state.packs !== prev.packs;
+				if (changed && useWondersStore.persist.hasHydrated()) {
 					backup.notifyDataChanged();
 				}
 			}),

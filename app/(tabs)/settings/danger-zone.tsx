@@ -33,7 +33,7 @@ export default function DangerZoneSettingsScreen() {
 						clearPlayers([]);
 						clearHistory([]);
 						clearGroups([]);
-						clearCustomWonders([]);
+						clearCustomWonders([], []);
 						router.back();
 					},
 				},
@@ -44,8 +44,9 @@ export default function DangerZoneSettingsScreen() {
 	return (
 		<ScreenContainer style={styles.container}>
 			<Text style={styles.hint}>
-				Supprime définitivement tous les joueurs, groupes, merveilles perso et l'historique de
-				parties de cet appareil. Pense à exporter une sauvegarde avant si tu n'es pas sûr.
+				Supprime définitivement tous les joueurs, groupes, merveilles perso (et leurs extensions) et
+				l'historique de parties de cet appareil. Pense à exporter une sauvegarde avant si tu n'es
+				pas sûr.
 			</Text>
 			<Button label="Effacer toutes les données" variant="danger" onPress={confirmClearData} />
 		</ScreenContainer>
