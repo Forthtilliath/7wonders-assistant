@@ -1,110 +1,68 @@
 import { act, renderHook } from "@testing-library/react-native";
-import { AppState, type AppStateStatus } from "react-native";
-import { syncCloudBackupNow } from "@/lib/cloudBackup";
-import { useBackupStore } from "@/stores/backupStore";
+import { backup } from "@/lib/backup";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 import { makeGame, makeGroup, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
 import { useCloudAutoBackup } from "../useCloudAutoBackup";
 
-jest.mock("@/lib/cloudBackup", () => ({ syncCloudBackupNow: jest.fn(async () => true) }));
-
-let appStateListener: (status: AppStateStatus) => void = () => {};
+// Délai, envoi en attente et passage en arrière-plan sont gérés (et testés) par expo-backup : ici,
+// seul compte le branchement des stores de l'app sur le gestionnaire.
+const mockStop = jest.fn();
+jest.mock("@/lib/backup", () => ({
+	backup: { start: jest.fn(() => mockStop), notifyDataChanged: jest.fn() },
+}));
 
 /** Monte le hook avec tous les stores déjà réhydratés (sauf indication contraire). */
 async function mountHook({ hydrated = true } = {}) {
-	for (const store of [usePlayersStore, useHistoryStore, useGroupsStore, useBackupStore]) {
+	for (const store of [usePlayersStore, useHistoryStore, useGroupsStore]) {
 		jest.spyOn(store.persist, "hasHydrated").mockReturnValue(hydrated);
 	}
 	return renderHook(() => useCloudAutoBackup());
 }
 
-const addPlayer = (name: string) => act(() => void usePlayersStore.getState().addPlayer({ name }));
-
 describe("useCloudAutoBackup", () => {
 	beforeEach(() => {
-		jest.useFakeTimers();
 		jest.clearAllMocks();
 		resetAllStores();
-		jest.spyOn(AppState, "addEventListener").mockImplementation((_type, listener) => {
-			appStateListener = listener;
-			return { remove: jest.fn() };
-		});
 	});
 
 	afterEach(() => {
-		jest.useRealTimers();
 		jest.restoreAllMocks();
 	});
 
-	it("ne sauvegarde rien tant qu'aucun compte Google n'est relié", async () => {
-		await mountHook();
+	it("démarre le gestionnaire de sauvegardes et l'arrête une fois démonté", async () => {
+		const { unmount } = await mountHook();
+		expect(backup.start).toHaveBeenCalledTimes(1);
 
-		await addPlayer("Alice");
-		await act(() => jest.advanceTimersByTime(10_000));
-
-		expect(useBackupStore.getState().cloudSyncPending).toBe(false);
-		expect(syncCloudBackupNow).not.toHaveBeenCalled();
+		await unmount();
+		expect(mockStop).toHaveBeenCalledTimes(1);
 	});
 
-	it("regroupe les modifications rapprochées en un seul envoi, 3 s après la dernière", async () => {
-		useBackupStore.getState().connectCloud("a@b.c");
+	it("signale chaque modification des joueurs, de l'historique et des groupes", async () => {
 		await mountHook();
 
-		await addPlayer("Alice");
-		await act(() => jest.advanceTimersByTime(2_000));
+		await act(() => void usePlayersStore.getState().addPlayer({ name: "Alice" }));
 		await act(() => useHistoryStore.getState().addGame(makeGame("g1", { p1: 1 })));
 		await act(() => useGroupsStore.getState().replaceAll([makeGroup("g1", "Jeudi", [])]));
 
-		expect(useBackupStore.getState().cloudSyncPending).toBe(true);
-		await act(() => jest.advanceTimersByTime(2_999));
-		expect(syncCloudBackupNow).not.toHaveBeenCalled();
-
-		await act(() => jest.advanceTimersByTime(1));
-		expect(syncCloudBackupNow).toHaveBeenCalledTimes(1);
+		expect(backup.notifyDataChanged).toHaveBeenCalledTimes(3);
 	});
 
 	it("ignore le chargement initial des données depuis le stockage", async () => {
-		useBackupStore.getState().connectCloud("a@b.c");
 		await mountHook({ hydrated: false });
 
 		await act(() => seedPlayers(["Alice"]));
-		await act(() => jest.advanceTimersByTime(10_000));
 
-		expect(syncCloudBackupNow).not.toHaveBeenCalled();
-	});
-
-	it("retente au démarrage un envoi resté en attente", async () => {
-		useBackupStore.getState().connectCloud("a@b.c");
-		useBackupStore.getState().markCloudPending();
-
-		await mountHook();
-
-		expect(syncCloudBackupNow).toHaveBeenCalledTimes(1);
-	});
-
-	it("envoie immédiatement au passage en arrière-plan, et retente au retour", async () => {
-		useBackupStore.getState().connectCloud("a@b.c");
-		await mountHook();
-
-		await addPlayer("Alice");
-		await act(() => appStateListener("background"));
-		expect(syncCloudBackupNow).toHaveBeenCalledTimes(1);
-
-		// Toujours en attente (envoi raté) : nouvel essai au retour dans l'app.
-		await act(() => appStateListener("active"));
-		expect(syncCloudBackupNow).toHaveBeenCalledTimes(2);
+		expect(backup.notifyDataChanged).not.toHaveBeenCalled();
 	});
 
 	it("arrête de surveiller les données une fois démonté", async () => {
-		useBackupStore.getState().connectCloud("a@b.c");
 		const { unmount } = await mountHook();
 
-		await addPlayer("Alice");
 		await unmount();
-		await act(() => jest.advanceTimersByTime(10_000));
+		await act(() => void usePlayersStore.getState().addPlayer({ name: "Alice" }));
 
-		expect(syncCloudBackupNow).not.toHaveBeenCalled();
+		expect(backup.notifyDataChanged).not.toHaveBeenCalled();
 	});
 });

@@ -11,8 +11,8 @@ jest.mock("expo-file-system", () => {
 
 	class MockFile {
 		uri: string;
-		constructor(_dir: unknown, name: string) {
-			this.uri = name;
+		constructor(dirOrUri: string, name?: string) {
+			this.uri = name ?? dirOrUri;
 		}
 		create() {
 			if (!files.has(this.uri)) files.set(this.uri, "");
@@ -20,20 +20,23 @@ jest.mock("expo-file-system", () => {
 		write(content: string) {
 			files.set(this.uri, content);
 		}
+		delete() {
+			files.delete(this.uri);
+		}
 		get exists() {
 			return files.has(this.uri);
 		}
 		async text() {
 			return files.get(this.uri) ?? "";
 		}
+		base64Sync() {
+			throw new Error("Pas de photo dans ces tests");
+		}
 		static async pickFileAsync() {
 			return pickResult;
 		}
 		static __setPickResult(result: PickResult) {
 			pickResult = result;
-		}
-		static __writeFile(name: string, content: string) {
-			files.set(name, content);
 		}
 		static __getFile(name: string) {
 			return files.get(name);
@@ -44,7 +47,7 @@ jest.mock("expo-file-system", () => {
 		}
 	}
 
-	return { File: MockFile, Paths: { cache: "cache" } };
+	return { File: MockFile, Paths: { cache: "cache", document: "document" } };
 });
 
 jest.mock("expo-sharing", () => ({
@@ -54,21 +57,14 @@ jest.mock("expo-sharing", () => ({
 
 import { File } from "expo-file-system";
 import * as Sharing from "expo-sharing";
-import {
-	exportData,
-	exportGamesCsv,
-	ImportError,
-	importData,
-	restoreSafetyBackup,
-} from "@/lib/backup";
-import { DATA_VERSION } from "@/lib/backupSchema";
+import { backup, exportGamesCsv, ImportError } from "@/lib/backup";
+import { APP_ID, DATA_VERSION } from "@/lib/backupSchema";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
 
 const MockFile = File as unknown as {
 	__setPickResult: (r: PickResult) => void;
-	__writeFile: (name: string, content: string) => void;
 	__getFile: (name: string) => string | undefined;
 	__reset: () => void;
 };
@@ -85,6 +81,21 @@ function makeGame(id: string, playerIds: string[]): Game {
 	return { id, createdAt: 0, extensions: [], playerIds, entries };
 }
 
+function pickFile(content: string) {
+	MockFile.__setPickResult({ canceled: false, result: { text: async () => content } });
+}
+
+function backupFile(players: Player[], dataVersion = DATA_VERSION): string {
+	return JSON.stringify({
+		app: APP_ID,
+		dataVersion,
+		exportedAt: 0,
+		players,
+		history: [],
+		groups: [],
+	});
+}
+
 beforeEach(() => {
 	MockFile.__reset();
 	usePlayersStore.setState({ players: [] });
@@ -93,21 +104,72 @@ beforeEach(() => {
 	jest.clearAllMocks();
 });
 
-describe("exportData", () => {
+describe("backup.exportToFile", () => {
 	it("écrit un JSON avec joueurs/historique/groupes et ouvre le partage", async () => {
 		usePlayersStore.setState({ players: [makePlayer("p1", "Alice")] });
 		useHistoryStore.setState({ games: [makeGame("g1", ["p1"])] });
 
-		await exportData();
+		await backup.exportToFile();
 
 		expect(mockShareAsync).toHaveBeenCalledTimes(1);
 		const [uri, options] = mockShareAsync.mock.calls[0];
+		expect(uri).toMatch(/^7wonders-save-\d{8}-\d{4}\.json$/);
 		expect(options).toMatchObject({ mimeType: "application/json" });
 
 		const data = JSON.parse(MockFile.__getFile(uri) ?? "{}");
-		expect(data.players).toHaveLength(1);
 		expect(data.players[0].name).toBe("Alice");
 		expect(data.history).toHaveLength(1);
+	});
+});
+
+describe("backup.pickBackupFile", () => {
+	it("ne lit rien si l'utilisateur annule la sélection du fichier", async () => {
+		await expect(backup.pickBackupFile()).resolves.toEqual({ status: "cancelled" });
+	});
+
+	it("rejette un fichier qui n'est pas du JSON valide", async () => {
+		pickFile("pas du json");
+		await expect(backup.pickBackupFile()).rejects.toThrow(ImportError);
+	});
+
+	it("rejette une sauvegarde plus récente que la version supportée par l'app", async () => {
+		pickFile(backupFile([], DATA_VERSION + 1));
+		await expect(backup.pickBackupFile()).rejects.toThrow(/version plus récente/);
+	});
+
+	it("rejette tout le fichier à la première entrée invalide, sans rien appliquer", async () => {
+		usePlayersStore.setState({ players: [makePlayer("old", "Ancien")] });
+		pickFile(
+			backupFile([makePlayer("p1", "Alice"), { ...makePlayer("p2", ""), name: 42 } as never]),
+		);
+
+		await expect(backup.pickBackupFile()).rejects.toThrow(ImportError);
+		expect(usePlayersStore.getState().players.map((p) => p.name)).toEqual(["Ancien"]);
+	});
+
+	it("lit une sauvegarde valide sans l'appliquer avant confirmation", async () => {
+		usePlayersStore.setState({ players: [makePlayer("old", "Ancien")] });
+		pickFile(backupFile([makePlayer("p1", "Alice")]));
+
+		const result = await backup.pickBackupFile();
+
+		expect(result.status).toBe("ready");
+		expect(usePlayersStore.getState().players.map((p) => p.name)).toEqual(["Ancien"]);
+	});
+});
+
+describe("backup.restore", () => {
+	it("remplace les données, et la restauration peut être annulée", async () => {
+		usePlayersStore.setState({ players: [makePlayer("old", "Ancien")] });
+		pickFile(backupFile([makePlayer("p1", "Alice")]));
+		const picked = await backup.pickBackupFile();
+		if (picked.status !== "ready") throw new Error("Sauvegarde non lue");
+
+		await backup.restore(picked.data);
+		expect(usePlayersStore.getState().players.map((p) => p.name)).toEqual(["Alice"]);
+
+		await backup.undoLastRestore();
+		expect(usePlayersStore.getState().players.map((p) => p.name)).toEqual(["Ancien"]);
 	});
 });
 
@@ -122,82 +184,5 @@ describe("exportGamesCsv", () => {
 		const [uri, options] = mockShareAsync.mock.calls[0];
 		expect(options).toMatchObject({ mimeType: "text/csv" });
 		expect(MockFile.__getFile(uri)).toContain("Alice");
-	});
-});
-
-describe("importData", () => {
-	it("rejette si l'utilisateur annule la sélection du fichier", async () => {
-		MockFile.__setPickResult({ canceled: true });
-		await expect(importData()).rejects.toThrow(ImportError);
-	});
-
-	it("rejette un fichier qui n'est pas du JSON valide", async () => {
-		MockFile.__setPickResult({ canceled: false, result: { text: async () => "pas du json" } });
-		await expect(importData()).rejects.toThrow(ImportError);
-	});
-
-	it("rejette une sauvegarde plus récente que la version supportée par l'app", async () => {
-		const backup = {
-			app: "7wonders-assistant",
-			dataVersion: DATA_VERSION + 1,
-			exportedAt: 0,
-			players: [],
-			history: [],
-			groups: [],
-		};
-		MockFile.__setPickResult({
-			canceled: false,
-			result: { text: async () => JSON.stringify(backup) },
-		});
-
-		await expect(importData()).rejects.toThrow(ImportError);
-	});
-
-	it("importe une sauvegarde valide et écrit une sauvegarde de secours de l'état précédent", async () => {
-		usePlayersStore.setState({ players: [makePlayer("old", "Ancien")] });
-
-		const backup = {
-			app: "7wonders-assistant",
-			dataVersion: DATA_VERSION,
-			exportedAt: 0,
-			players: [makePlayer("p1", "Alice")],
-			history: [],
-			groups: [],
-		};
-		MockFile.__setPickResult({
-			canceled: false,
-			result: { text: async () => JSON.stringify(backup) },
-		});
-
-		const result = await importData();
-
-		expect(result).toEqual({ players: 1, history: 0, groups: 0 });
-		expect(usePlayersStore.getState().players.map((p) => p.name)).toEqual(["Alice"]);
-
-		const safety = MockFile.__getFile("before-import-safety-backup.json");
-		expect(JSON.parse(safety ?? "{}").players[0].name).toBe("Ancien");
-	});
-});
-
-describe("restoreSafetyBackup", () => {
-	it("rejette s'il n'y a aucune sauvegarde de secours disponible", async () => {
-		await expect(restoreSafetyBackup()).rejects.toThrow(ImportError);
-	});
-
-	it("restaure les données de la sauvegarde de secours", async () => {
-		const backup = {
-			app: "7wonders-assistant",
-			dataVersion: DATA_VERSION,
-			exportedAt: 0,
-			players: [makePlayer("p1", "Alice")],
-			history: [],
-			groups: [],
-		};
-		MockFile.__writeFile("before-import-safety-backup.json", JSON.stringify(backup));
-
-		const result = await restoreSafetyBackup();
-
-		expect(result).toEqual({ players: 1, history: 0, groups: 0 });
-		expect(usePlayersStore.getState().players.map((p) => p.name)).toEqual(["Alice"]);
 	});
 });
