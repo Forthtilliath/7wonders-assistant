@@ -7,6 +7,7 @@ import { GestureDetector } from "react-native-gesture-handler";
 import { BackupReminderBanner } from "@/components/backup/BackupReminderBanner";
 import { ExtensionsPicker } from "@/components/game/ExtensionsPicker";
 import { GroupChips } from "@/components/game/GroupChips";
+import { PlayerOrderList } from "@/components/game/PlayerOrderList";
 import { SelectablePlayerCard } from "@/components/players/SelectablePlayerCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
@@ -70,6 +71,10 @@ export default function NewGameTab() {
 	}, [defaultPackKey]);
 	const maxPlayers = getMaxPlayers(extensions);
 	const tooManyPlayers = selectedIds.length > maxPlayers;
+	// L'ordre de `selectedIds` est celui des joueurs pendant la saisie des scores.
+	const selectedPlayers = selectedIds
+		.map((id) => activePlayers.find((p) => p.id === id))
+		.filter((p): p is NonNullable<typeof p> => p != null);
 
 	const toggleSelected = (id: string) => {
 		setSelectedIds((current) => {
@@ -193,6 +198,13 @@ export default function NewGameTab() {
 							<Text style={styles.empty}>
 								Aucun joueur disponible. Crée d'abord des joueurs dans l'onglet Joueurs.
 							</Text>
+						)}
+
+						{selectedPlayers.length >= MIN_PLAYERS && (
+							<>
+								<SectionTitle style={styles.sectionTitle}>Ordre des joueurs</SectionTitle>
+								<PlayerOrderList players={selectedPlayers} onChange={setSelectedIds} />
+							</>
 						)}
 
 						<SectionTitle style={styles.sectionTitle}>Édition et extensions</SectionTitle>

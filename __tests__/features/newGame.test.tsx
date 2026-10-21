@@ -80,6 +80,25 @@ describe("Onglet Jouer : lancer une partie", () => {
 		expect(mockRouter.push).toHaveBeenCalledWith("/game/score/military");
 	});
 
+	it("permet de changer l'ordre des joueurs avant de lancer", async () => {
+		const user = userEvent.setup();
+		seedPlayers(["Alice", "Bob", "Chloé"]);
+		await render(<NewGameTab />);
+
+		await user.press(screen.getByRole("checkbox", { name: "Alice" }));
+		expect(screen.queryByText("Ordre des joueurs")).not.toBeOnTheScreen();
+		await user.press(screen.getByRole("checkbox", { name: "Bob" }));
+		await user.press(screen.getByRole("checkbox", { name: "Chloé" }));
+
+		expect(screen.getByRole("button", { name: "Monter Alice" })).toBeDisabled();
+		expect(screen.getByRole("button", { name: "Descendre Chloé" })).toBeDisabled();
+		await user.press(screen.getByRole("button", { name: "Monter Chloé" }));
+		await user.press(screen.getByRole("button", { name: "Descendre Alice" }));
+		await user.press(screen.getByRole("button", { name: "Lancer la partie" }));
+
+		expect(useGameStore.getState().playerIds).toEqual(["p3", "p1", "p2"]);
+	});
+
 	it("lance la partie avec les extensions non officielles cochées, par défaut ou à la main", async () => {
 		const user = userEvent.setup();
 		seedPlayers(["Alice", "Bob"]);
