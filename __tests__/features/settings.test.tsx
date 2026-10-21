@@ -241,6 +241,24 @@ describe("Réglages", () => {
 		expect(screen.getAllByText(/^Version \d+\.\d+\.\d+$/)).toHaveLength(CHANGELOG.length);
 	});
 
+	it("vérifie les mises à jour depuis les nouveautés", async () => {
+		const user = userEvent.setup();
+		const alert = mockAlert();
+		jest
+			.mocked(fetchLatestRelease)
+			.mockResolvedValue({ version: "99.0.0", notes: "", apkUrl: "https://github.com/a.apk" });
+		await render(<ChangelogSettingsScreen />);
+
+		expect(screen.getByText(/^Version installée : \d+\.\d+\.\d+$/)).toBeOnTheScreen();
+		await user.press(screen.getByRole("button", { name: "Vérifier les mises à jour" }));
+		await pressAlertButton(alert, "Installer");
+		await act(async () => {});
+
+		expect(downloadAndInstallApk).toHaveBeenCalledWith(
+			expect.objectContaining({ apkUrl: "https://github.com/a.apk" }),
+		);
+	});
+
 	it("ouvre la page de dons", async () => {
 		const user = userEvent.setup();
 		const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
