@@ -12,6 +12,13 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.4.1",
+		date: Date.UTC(2026, 9, 21),
+		items: [
+			"Recherche et installation des mises à jour directement depuis Réglages ▸ Nouveautés, en plus de Réglages ▸ À propos.",
+		],
+	},
+	{
 		version: "1.4.0",
 		date: Date.UTC(2026, 9, 21),
 		items: [
