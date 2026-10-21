@@ -12,6 +12,14 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.4.0",
+		date: Date.UTC(2026, 9, 21),
+		items: [
+			"Ordre des joueurs modifiable avant de lancer une partie, avec des flèches monter/descendre : c'est l'ordre suivi pendant la saisie des scores.",
+			"Images partagées plus lisibles : les cartes sont disposées en grille, dans un format proche du portrait, au lieu d'une longue colonne réduite par les messageries.",
+		],
+	},
+	{
 		version: "1.3.0",
 		date: Date.UTC(2026, 9, 14),
 		items: [
