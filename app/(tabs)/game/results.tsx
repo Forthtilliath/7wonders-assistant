@@ -3,10 +3,10 @@ import { router, Stack } from "expo-router";
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { GameCharts } from "@/components/game/GameCharts";
+import { GameShareImages } from "@/components/game/GameShareImages";
 import { ShareableRanking } from "@/components/game/ShareableRanking";
 import { ShareGameSheet } from "@/components/game/ShareGameSheet";
 import { Button } from "@/components/ui/Button";
-import { CaptureFrame } from "@/components/ui/CaptureFrame";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { getOrderedCategories } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
@@ -84,17 +84,19 @@ export default function ResultsScreen() {
 			/>
 			<Text style={styles.title}>Classement</Text>
 			<ScrollView contentContainerStyle={styles.list}>
-				<CaptureFrame ref={chartsRef} capturing={capturing === "charts"} style={styles.capture}>
-					<ShareableRanking
-						ref={rankingRef}
-						capturing={capturing === "ranking"}
-						game={game}
-						ranking={ranking}
-						players={allPlayers}
-					/>
-					<GameCharts categories={categories} players={gamePlayers} ranking={ranking} />
-				</CaptureFrame>
+				<ShareableRanking game={game} ranking={ranking} players={allPlayers} />
+				<GameCharts categories={categories} players={gamePlayers} ranking={ranking} />
 			</ScrollView>
+			{/* Montées dès l'ouverture du choix de partage : les avatars ont le temps de se charger. */}
+			{(shareVisible || capturing) && (
+				<GameShareImages
+					game={game}
+					ranking={ranking}
+					players={allPlayers}
+					rankingRef={rankingRef}
+					chartsRef={chartsRef}
+				/>
+			)}
 
 			<Button label="Terminer et enregistrer la partie" onPress={confirmFinish} />
 			<ShareGameSheet
@@ -122,10 +124,8 @@ function useStyles(colors: ThemeColors) {
 					marginBottom: SPACING.md,
 				},
 				list: {
-					paddingBottom: SPACING.md,
-				},
-				capture: {
 					gap: SPACING.sm,
+					paddingBottom: SPACING.md,
 				},
 			}),
 		[colors],

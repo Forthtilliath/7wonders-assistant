@@ -18,8 +18,8 @@ function nextFrames() {
 }
 
 /**
- * Partage d'une partie en image. `capturing` indique la cible en cours de capture, le temps que
- * l'écran lui pose son fond (voir `CaptureFrame`) et affiche les graphiques s'ils étaient masqués.
+ * Partage d'une partie en image, capturée dans `GameShareImages`. `capturing` indique la cible en
+ * cours de capture : l'écran garde ces images montées tant qu'il est vrai.
  */
 export function useGameCapture() {
 	const rankingRef = useRef<View>(null);
