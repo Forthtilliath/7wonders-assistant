@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { UpdateChecker } from "@/components/settings/UpdateChecker";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { APP_INFO } from "@/constants/app";
 import { CHANGELOG } from "@/constants/changelog";
 import type { ThemeColors } from "@/constants/theme";
 import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
@@ -13,6 +15,10 @@ export default function ChangelogSettingsScreen() {
 	return (
 		<ScreenContainer>
 			<ScrollView contentContainerStyle={styles.content}>
+				<View style={styles.updateHeader}>
+					<Text style={styles.installedVersion}>Version installée : {APP_INFO.version}</Text>
+					<UpdateChecker />
+				</View>
 				{CHANGELOG.map((entry) => (
 					<View key={entry.version} style={styles.entry}>
 						<View style={styles.header}>
@@ -39,6 +45,14 @@ function useStyles(colors: ThemeColors) {
 				content: {
 					gap: SPACING.lg,
 					paddingBottom: SPACING.lg,
+				},
+				updateHeader: {
+					alignItems: "center",
+					gap: SPACING.xs,
+				},
+				installedVersion: {
+					color: colors.textMuted,
+					fontSize: 13,
 				},
 				entry: {
 					...cardSurface(colors),
