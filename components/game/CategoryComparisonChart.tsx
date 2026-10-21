@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { getInitials } from "@/components/ui/PlayerAvatar";
+import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 import { CATEGORY_META } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
@@ -30,15 +30,17 @@ export function CategoryComparisonChart({ category, players, scores }: Props) {
 	const styles = useStyles(colors);
 	const meta = CATEGORY_META[category];
 
-	const rows = players.map((player) => {
-		const score = scores.find((s) => s.playerId === player.id);
-		return {
-			id: player.id,
-			value: score ? getCategoryScore(score, category) : 0,
-			label: getInitials(player.name),
-			color: getAvatarColor(player.id),
-		};
-	});
+	// Du meilleur score au moins bon ; à égalité, l'ordre de saisie des joueurs est conservé.
+	const rows = players
+		.map((player) => {
+			const score = scores.find((s) => s.playerId === player.id);
+			return {
+				player,
+				value: score ? getCategoryScore(score, category) : 0,
+				color: getAvatarColor(player.id),
+			};
+		})
+		.sort((a, b) => b.value - a.value);
 	const maxPositive = Math.max(0, ...rows.map((r) => r.value));
 	const maxNegative = Math.max(0, ...rows.map((r) => -r.value));
 	// Une seule échelle pour les deux côtés : chaque côté occupe une part de la piste
@@ -52,10 +54,13 @@ export function CategoryComparisonChart({ category, players, scores }: Props) {
 				<Text style={styles.title}>{meta.label}</Text>
 			</View>
 			{rows.map((row) => (
-				<View key={row.id} style={styles.row}>
-					<Text style={styles.label} numberOfLines={1}>
-						{row.label}
-					</Text>
+				<View key={row.player.id} style={styles.row} accessibilityLabel={row.player.name}>
+					<PlayerAvatar
+						name={row.player.name}
+						avatarUri={row.player.avatarUri}
+						seed={row.player.id}
+						size={24}
+					/>
 					<View style={styles.track}>
 						{maxNegative > 0 && (
 							<View style={[styles.side, styles.negativeSide, { flex: maxNegative / range }]}>
@@ -112,12 +117,6 @@ function useStyles(colors: ThemeColors) {
 					flexDirection: "row",
 					alignItems: "center",
 					gap: SPACING.sm,
-				},
-				label: {
-					width: 28,
-					color: colors.textMuted,
-					fontSize: 12,
-					fontWeight: "600",
 				},
 				track: {
 					flex: 1,
