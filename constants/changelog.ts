@@ -12,6 +12,13 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.5.0",
+		date: Date.UTC(2026, 9, 21),
+		items: [
+			"Comparaison par catégorie triée du meilleur au moins bon score, avec l'avatar de chaque joueur au lieu de ses initiales : plus de confusion entre deux joueurs aux initiales identiques.",
+		],
+	},
+	{
 		version: "1.4.1",
 		date: Date.UTC(2026, 9, 21),
 		items: [
