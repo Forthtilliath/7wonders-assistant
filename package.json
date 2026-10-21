@@ -1,6 +1,6 @@
 {
 	"name": "7wonders-assistant",
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"main": "expo-router/entry",
 	"dependencies": {
 		"@expo-google-fonts/cinzel": "^0.4.2",
