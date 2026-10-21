@@ -3,10 +3,10 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text } from "react-native";
 import { GameCharts } from "@/components/game/GameCharts";
+import { GameShareImages } from "@/components/game/GameShareImages";
 import { ShareableRanking } from "@/components/game/ShareableRanking";
 import { ShareGameSheet } from "@/components/game/ShareGameSheet";
 import { Button } from "@/components/ui/Button";
-import { CaptureFrame } from "@/components/ui/CaptureFrame";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { getOrderedCategories } from "@/constants/categories";
 import { MIN_PLAYERS } from "@/constants/game";
@@ -112,31 +112,30 @@ export default function GameDetailScreen() {
 				}}
 			/>
 			<ScrollView contentContainerStyle={styles.list}>
-				<CaptureFrame ref={chartsRef} capturing={capturing === "charts"} style={styles.capture}>
-					<ShareableRanking
-						ref={rankingRef}
-						capturing={capturing === "ranking"}
-						game={game}
+				<ShareableRanking game={game} ranking={ranking} players={players} />
+				<Button
+					label={chartsVisible ? "Masquer les graphiques" : "Voir les graphiques"}
+					variant="ghost"
+					onPress={() => setChartsVisible((v) => !v)}
+				/>
+				{chartsVisible && (
+					<GameCharts
+						categories={getOrderedCategories(game.extensions)}
+						players={gamePlayers}
 						ranking={ranking}
-						players={players}
 					/>
-					{/* Pendant la capture avec graphiques : graphiques affichés même masqués, sans le bouton. */}
-					{capturing !== "charts" && (
-						<Button
-							label={chartsVisible ? "Masquer les graphiques" : "Voir les graphiques"}
-							variant="ghost"
-							onPress={() => setChartsVisible((v) => !v)}
-						/>
-					)}
-					{(chartsVisible || capturing === "charts") && (
-						<GameCharts
-							categories={getOrderedCategories(game.extensions)}
-							players={gamePlayers}
-							ranking={ranking}
-						/>
-					)}
-				</CaptureFrame>
+				)}
 			</ScrollView>
+			{/* Montées dès l'ouverture du choix de partage : les avatars ont le temps de se charger. */}
+			{(shareVisible || capturing) && (
+				<GameShareImages
+					game={game}
+					ranking={ranking}
+					players={players}
+					rankingRef={rankingRef}
+					chartsRef={chartsRef}
+				/>
+			)}
 			<Button
 				label="Rejouer avec les mêmes joueurs"
 				variant="secondary"
@@ -159,11 +158,9 @@ function useStyles(colors: ThemeColors) {
 		() =>
 			StyleSheet.create({
 				list: {
+					gap: SPACING.sm,
 					paddingTop: SPACING.sm,
 					paddingBottom: SPACING.md,
-				},
-				capture: {
-					gap: SPACING.sm,
 				},
 				replayButton: {
 					marginBottom: SPACING.sm,

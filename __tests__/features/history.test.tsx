@@ -204,7 +204,9 @@ describe("Historique des parties", () => {
 			const user = userEvent.setup();
 			let chartsShownDuringCapture = false;
 			jest.mocked(shareViewAsImage).mockImplementationOnce(async () => {
-				chartsShownDuringCapture = screen.queryByText("Répartition par joueur") != null;
+				// Image rendue hors écran, masquée aux lecteurs d'écran.
+				chartsShownDuringCapture =
+					screen.queryByText("Répartition par joueur", { includeHiddenElements: true }) != null;
 			});
 			await render(<GameDetailScreen />);
 
@@ -214,7 +216,9 @@ describe("Historique des parties", () => {
 			expect(shareViewAsImage).toHaveBeenCalled();
 			expect(chartsShownDuringCapture).toBe(true);
 			await waitFor(() =>
-				expect(screen.queryByText("Répartition par joueur")).not.toBeOnTheScreen(),
+				expect(
+					screen.queryByText("Répartition par joueur", { includeHiddenElements: true }),
+				).not.toBeOnTheScreen(),
 			);
 		});
 

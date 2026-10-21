@@ -15,49 +15,57 @@ type Props = {
 	/** Joueurs de la partie, dans l'ordre de saisie (les joueurs supprimés depuis en sont exclus). */
 	players: Player[];
 	ranking: RankedPlayerScore[];
+	/** Cartes de cette largeur, en grille sur plusieurs colonnes (image partagée). Sinon, en liste. */
+	cardWidth?: number;
 };
 
 /**
  * Graphiques d'une partie : répartition des points de chaque joueur, puis comparaison des joueurs
- * catégorie par catégorie. Partagés entre l'écran de résultats et le détail d'une partie de
- * l'historique.
+ * catégorie par catégorie. Partagés entre l'écran de résultats, le détail d'une partie de
+ * l'historique et l'image partagée.
  */
-export function GameCharts({ categories, players, ranking }: Props) {
+export function GameCharts({ categories, players, ranking, cardWidth }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
+	const cardStyle = [styles.chartCard, cardWidth != null && { width: cardWidth }];
+	const sectionStyle = [styles.section, cardWidth != null && styles.grid];
 
 	return (
 		<>
 			<SectionTitle style={styles.sectionTitle}>Répartition par joueur</SectionTitle>
-			{players.map((player) => {
-				const score = ranking.find((s) => s.playerId === player.id);
-				if (!score) return null;
-				const values: Partial<Record<CategoryId, number>> = {};
-				for (const category of categories) {
-					values[category] = getCategoryScore(score, category);
-				}
-				return (
-					<View key={player.id} style={styles.chartCard}>
-						<View style={styles.chartCardHeader}>
-							<PlayerAvatar
-								name={player.name}
-								avatarUri={player.avatarUri}
-								seed={player.id}
-								size={32}
-							/>
-							<Text style={styles.chartCardName}>{player.name}</Text>
+			<View style={sectionStyle}>
+				{players.map((player) => {
+					const score = ranking.find((s) => s.playerId === player.id);
+					if (!score) return null;
+					const values: Partial<Record<CategoryId, number>> = {};
+					for (const category of categories) {
+						values[category] = getCategoryScore(score, category);
+					}
+					return (
+						<View key={player.id} style={cardStyle}>
+							<View style={styles.chartCardHeader}>
+								<PlayerAvatar
+									name={player.name}
+									avatarUri={player.avatarUri}
+									seed={player.id}
+									size={32}
+								/>
+								<Text style={styles.chartCardName}>{player.name}</Text>
+							</View>
+							<CategoryPieChart categories={categories} values={values} />
 						</View>
-						<CategoryPieChart categories={categories} values={values} />
-					</View>
-				);
-			})}
+					);
+				})}
+			</View>
 
 			<SectionTitle style={styles.sectionTitle}>Comparaison par catégorie</SectionTitle>
-			{categories.map((category) => (
-				<View key={category} style={styles.chartCard}>
-					<CategoryComparisonChart category={category} players={players} scores={ranking} />
-				</View>
-			))}
+			<View style={sectionStyle}>
+				{categories.map((category) => (
+					<View key={category} style={cardStyle}>
+						<CategoryComparisonChart category={category} players={players} scores={ranking} />
+					</View>
+				))}
+			</View>
 		</>
 	);
 }
@@ -68,6 +76,14 @@ function useStyles(colors: ThemeColors) {
 			StyleSheet.create({
 				sectionTitle: {
 					marginTop: SPACING.sm,
+				},
+				section: {
+					gap: SPACING.sm,
+				},
+				grid: {
+					flexDirection: "row",
+					flexWrap: "wrap",
+					alignItems: "flex-start",
 				},
 				chartCard: {
 					...cardSurface(colors),

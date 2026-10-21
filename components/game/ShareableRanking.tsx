@@ -1,7 +1,6 @@
-import { type Ref, useMemo } from "react";
-import { StyleSheet, Text, type View } from "react-native";
+import { useMemo } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { RankedPlayerCard } from "@/components/game/RankedPlayerCard";
-import { CaptureFrame } from "@/components/ui/CaptureFrame";
 import { EXTENSION_LABELS } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
@@ -14,37 +13,34 @@ type Props = {
 	game: Game;
 	ranking: RankedPlayerScore[];
 	players: Player[];
-	/** Vue capturée pour le partage en image du classement seul. */
-	ref?: Ref<View>;
-	/** Capture en cours : la vue porte alors son propre fond (voir `CaptureFrame`). */
-	capturing?: boolean;
+	/** Cartes de cette largeur, en grille sur plusieurs colonnes (image partagée). Sinon, en liste. */
+	cardWidth?: number;
 };
 
-/** Classement d'une partie (date, extensions, cartes des joueurs), tel qu'il est partagé en image. */
-export function ShareableRanking({ game, ranking, players, ref, capturing }: Props) {
+/** Classement d'une partie (date, extensions, cartes des joueurs), à l'écran et dans l'image partagée. */
+export function ShareableRanking({ game, ranking, players, cardWidth }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
 	const extensions = game.extensions.map((ext) => EXTENSION_LABELS[ext]).join(", ");
 
 	return (
-		<CaptureFrame ref={ref} capturing={capturing} style={styles.container}>
+		<View style={styles.container}>
 			<Text style={styles.caption}>
 				{formatDate(game.createdAt)}
 				{extensions ? ` · ${extensions}` : ""}
 			</Text>
-			{ranking.map((score) => {
-				const player = players.find((p) => p.id === score.playerId);
-				if (!player) return null;
-				return (
-					<RankedPlayerCard
-						key={score.playerId}
-						player={player}
-						score={score}
-						extensions={game.extensions}
-					/>
-				);
-			})}
-		</CaptureFrame>
+			<View style={[styles.container, cardWidth != null && styles.grid]}>
+				{ranking.map((score) => {
+					const player = players.find((p) => p.id === score.playerId);
+					if (!player) return null;
+					return (
+						<View key={score.playerId} style={cardWidth != null && { width: cardWidth }}>
+							<RankedPlayerCard player={player} score={score} extensions={game.extensions} />
+						</View>
+					);
+				})}
+			</View>
+		</View>
 	);
 }
 
@@ -54,6 +50,11 @@ function useStyles(colors: ThemeColors) {
 			StyleSheet.create({
 				container: {
 					gap: SPACING.sm,
+				},
+				grid: {
+					flexDirection: "row",
+					flexWrap: "wrap",
+					alignItems: "flex-start",
 				},
 				caption: {
 					color: colors.textMuted,
