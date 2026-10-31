@@ -1,5 +1,5 @@
+import { usePersistHydrated } from "@forthtilliath/react-native-kit/hooks/usePersistHydrated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -44,8 +44,8 @@ export const useUpdateStore = create<State & Actions>()(
 
 /** `true` une fois l'état enregistré relu : avant, la vérification ignorerait le délai et la version ignorée. */
 export function useUpdateStoreHydrated(): boolean {
-	return useSyncExternalStore(
-		useUpdateStore.persist.onFinishHydration,
-		useUpdateStore.persist.hasHydrated,
-	);
+	return usePersistHydrated(UPDATE_STORES);
 }
+
+// Tableau stable : un nouveau à chaque rendu réabonnerait le hook.
+const UPDATE_STORES = [useUpdateStore];
