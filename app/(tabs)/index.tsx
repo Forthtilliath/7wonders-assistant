@@ -173,7 +173,7 @@ export default function NewGameTab() {
 						)}
 
 						<SectionTitle style={styles.sectionTitle}>
-							Joueurs ({selectedIds.length}/{maxPlayers})
+							{`Joueurs (${selectedIds.length}/${maxPlayers})`}
 						</SectionTitle>
 						{tooManyPlayers && (
 							<Text style={styles.warning}>
