@@ -1,4 +1,4 @@
-import { act } from "@testing-library/react-native";
+import { act, screen, within } from "@testing-library/react-native";
 import { Alert, type AlertButton } from "react-native";
 import { initialBackupState, useBackupStore } from "@/stores/backupStore";
 import { initialGameState, useGameStore } from "@/stores/gameStore";
@@ -94,4 +94,15 @@ export async function pressAlertButton(alertSpy: ReturnType<typeof mockAlert>, t
 	await act(async () => {
 		await button.onPress?.();
 	});
+}
+
+/**
+ * Requêtes limitées à la feuille (`BottomSheet`) ouverte sous ce titre. Le titre est dans l'en-tête
+ * fixe du kit (titre ▸ bloc des titres ▸ ligne d'en-tête ▸ feuille), le contenu défile à côté.
+ */
+export function withinSheet(title: string) {
+	const heading = screen.getByRole("header", { name: title });
+	const sheet = heading.parent?.parent?.parent;
+	if (!sheet) throw new Error(`Feuille « ${title} » introuvable`);
+	return within(sheet);
 }

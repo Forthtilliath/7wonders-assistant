@@ -1,11 +1,17 @@
-import { fireEvent, render, screen, userEvent, within } from "@testing-library/react-native";
+import { fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import CategoryScoreScreen from "@/app/(tabs)/game/score/[category]";
 import WonderPackScreen from "@/app/(tabs)/settings/wonder-packs/[id]";
 import WondersSettingsScreen from "@/app/(tabs)/settings/wonders";
 import { useGameStore } from "@/stores/gameStore";
 import { useWondersStore } from "@/stores/wondersStore";
 import { mockRouter, resetRouterMock, setSearchParams } from "@/test-utils/expoRouter";
-import { mockAlert, pressAlertButton, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
+import {
+	mockAlert,
+	pressAlertButton,
+	resetAllStores,
+	seedPlayers,
+	withinSheet,
+} from "@/test-utils/fixtures";
 
 const wonderNames = () => useWondersStore.getState().customWonders.map((w) => w.name);
 
@@ -127,7 +133,7 @@ describe("Extensions non officielles", () => {
 			await user.press(
 				screen.getByRole("button", { name: "Modifier les extensions de la partie" }),
 			);
-			const sheet = within(screen.getByText("Extensions de la partie").parent!);
+			const sheet = withinSheet("Extensions de la partie");
 			await user.press(sheet.getByRole("checkbox", { name: "Mes créations" }));
 			await user.press(sheet.getByRole("button", { name: "Valider" }));
 

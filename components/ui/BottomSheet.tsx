@@ -1,7 +1,7 @@
 import { BottomSheet as KitBottomSheet } from "@forthtilliath/react-native-kit/components/overlay/BottomSheet";
 import type { PropsWithChildren } from "react";
 import { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ThemeColors } from "@/constants/theme";
 import { FONTS, RADIUS, SPACING } from "@/constants/theme";
@@ -15,7 +15,8 @@ type Props = PropsWithChildren<{
 
 /**
  * Feuille modale glissant depuis le bas (`BottomSheet` de react-native-kit) aux couleurs de l'app,
- * avec poignée et titre. Le contenu défile déjà : ne pas l'envelopper dans un autre `ScrollView`.
+ * avec poignée et titre, qui restent visibles au défilement. Le contenu défile déjà : ne pas
+ * l'envelopper dans un autre `ScrollView`.
  */
 export function BottomSheet({ visible, onClose, title, children }: Props) {
 	const colors = useColors();
@@ -27,10 +28,11 @@ export function BottomSheet({ visible, onClose, title, children }: Props) {
 			visible={visible}
 			onClose={onClose}
 			bottomInset={bottom}
+			title={title}
+			showHandle
 			styles={{ overlay: styles.overlay, sheet: styles.sheet }}
+			headerStyles={{ handle: styles.handle, header: styles.header, title: styles.title }}
 		>
-			<View style={styles.handle} />
-			{title && <Text style={styles.title}>{title}</Text>}
 			{children}
 		</KitBottomSheet>
 	);
@@ -54,18 +56,20 @@ function useStyles(colors: ThemeColors) {
 					padding: SPACING.md,
 				},
 				handle: {
-					alignSelf: "center",
-					width: 40,
-					height: 4,
 					borderRadius: RADIUS.full,
 					backgroundColor: colors.border,
 					marginBottom: SPACING.sm,
 				},
+				header: {
+					paddingHorizontal: 0,
+					paddingTop: 0,
+					paddingBottom: SPACING.sm,
+				},
 				title: {
 					color: colors.gold,
 					fontFamily: FONTS.displayBold,
+					fontWeight: "normal",
 					fontSize: 17,
-					marginBottom: SPACING.sm,
 				},
 			}),
 		[colors],
