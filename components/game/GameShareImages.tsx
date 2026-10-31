@@ -84,10 +84,11 @@ function useStyles(colors: ThemeColors) {
 					left: -10000,
 					alignItems: "flex-start",
 				},
-				// Fond explicite : sans lui, l'image partagée serait un PNG transparent.
+				// Fond explicite : sans lui, l'image partagée serait un PNG transparent. Marge large : le
+				// contenu ne colle pas aux bords une fois l'image recadrée par une messagerie.
 				frame: {
 					backgroundColor: colors.background,
-					padding: SPACING.md,
+					padding: SPACING.xl,
 				},
 				content: {
 					gap: SPACING.sm,
