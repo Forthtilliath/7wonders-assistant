@@ -1,25 +1,20 @@
-import { downloadAndInstallApk } from "@forthtilliath/expo-release-updates/downloadAndInstallApk";
-import { fetchLatestRelease } from "@forthtilliath/expo-release-updates/githubReleases";
 import type { UpdateAvailableBannerStyles } from "@forthtilliath/expo-release-updates-ui/UpdateAvailableBanner";
 import { UpdateNotifier } from "@forthtilliath/expo-release-updates-ui/UpdateNotifier";
 import { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useUpdateInstallCardStyles } from "@/components/updates/useUpdateInstallCardStyles";
-import { APP_INFO, RELEASES_REPO, UPDATE_APK_FILE_NAME } from "@/constants/app";
+import { APP_INFO } from "@/constants/app";
 import type { ThemeColors } from "@/constants/theme";
 import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { fetchVerifiedLatestRelease, installVerifiedApk } from "@/lib/updates";
 import { useUpdateStore, useUpdateStoreHydrated } from "@/stores/updateStore";
 
 // Les notes d'une release (une quinzaine de lignes) prendraient tout l'onglet : le bandeau s'en
 // tient à la version, les nouveautés restent dans Réglages ▸ Nouveautés une fois l'app à jour.
 async function fetchLatestReleaseWithoutNotes() {
-	const release = await fetchLatestRelease(RELEASES_REPO);
+	const release = await fetchVerifiedLatestRelease();
 	return release && { ...release, notes: "" };
-}
-
-function installApk(apkUrl: string, onProgress?: (fraction: number) => void) {
-	return downloadAndInstallApk({ apkUrl, fileName: UPDATE_APK_FILE_NAME, onProgress });
 }
 
 /**
@@ -43,7 +38,7 @@ export function UpdateBanner() {
 			getLastCheck={() => useUpdateStore.getState()}
 			onChecked={setLastCheckedAt}
 			onDismissVersion={dismissVersion}
-			downloadAndInstallApk={installApk}
+			downloadAndInstallApk={installVerifiedApk}
 			labels={{ banner: { title: (version) => `Nouvelle version ${version} disponible` } }}
 			styles={{ banner: bannerStyles, install: installCardStyles }}
 		/>

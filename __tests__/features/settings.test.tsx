@@ -29,6 +29,7 @@ import {
 } from "@/test-utils/fixtures";
 
 jest.mock("@forthtilliath/expo-release-updates/githubReleases", () => ({
+	...jest.requireActual("@forthtilliath/expo-release-updates/githubReleases"),
 	fetchLatestRelease: jest.fn(),
 }));
 jest.mock("@forthtilliath/expo-release-updates/downloadAndInstallApk", () => ({
@@ -198,6 +199,7 @@ describe("Réglages", () => {
 				notes: "",
 				apkUrl:
 					"https://github.com/Forthtilliath/7wonders-assistant/releases/download/v99.0.0/app.apk",
+				apkSha256: "b".repeat(64),
 			});
 			await render(<AboutSettingsScreen />);
 
@@ -205,6 +207,7 @@ describe("Réglages", () => {
 			expect(fetchLatestRelease).toHaveBeenCalledWith({
 				owner: "Forthtilliath",
 				repo: "7wonders-assistant",
+				requireVerifiedApk: true,
 			});
 			expect(alert.mock.calls[0][0]).toBe("Mise à jour disponible");
 			await pressAlertButton(alert, "Installer");
@@ -214,6 +217,9 @@ describe("Réglages", () => {
 				expect.objectContaining({
 					apkUrl:
 						"https://github.com/Forthtilliath/7wonders-assistant/releases/download/v99.0.0/app.apk",
+					expectedSha256: "b".repeat(64),
+					allowedUrlPrefix:
+						"https://github.com/Forthtilliath/7wonders-assistant/releases/download/",
 				}),
 			);
 		});
@@ -244,9 +250,12 @@ describe("Réglages", () => {
 	it("vérifie les mises à jour depuis les nouveautés", async () => {
 		const user = userEvent.setup();
 		const alert = mockAlert();
-		jest
-			.mocked(fetchLatestRelease)
-			.mockResolvedValue({ version: "99.0.0", notes: "", apkUrl: "https://github.com/a.apk" });
+		jest.mocked(fetchLatestRelease).mockResolvedValue({
+			version: "99.0.0",
+			notes: "",
+			apkUrl: "https://github.com/Forthtilliath/7wonders-assistant/releases/download/v99.0.0/a.apk",
+			apkSha256: "c".repeat(64),
+		});
 		await render(<ChangelogSettingsScreen />);
 
 		expect(screen.getByText(/^Version installée : \d+\.\d+\.\d+$/)).toBeOnTheScreen();
@@ -255,7 +264,7 @@ describe("Réglages", () => {
 		await act(async () => {});
 
 		expect(downloadAndInstallApk).toHaveBeenCalledWith(
-			expect.objectContaining({ apkUrl: "https://github.com/a.apk" }),
+			expect.objectContaining({ expectedSha256: "c".repeat(64) }),
 		);
 	});
 

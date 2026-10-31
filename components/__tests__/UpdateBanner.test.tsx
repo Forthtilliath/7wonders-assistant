@@ -6,6 +6,7 @@ import { useUpdateStore } from "@/stores/updateStore";
 import { resetAllStores } from "@/test-utils/fixtures";
 
 jest.mock("@forthtilliath/expo-release-updates/githubReleases", () => ({
+	...jest.requireActual("@forthtilliath/expo-release-updates/githubReleases"),
 	fetchLatestRelease: jest.fn(),
 }));
 jest.mock("@forthtilliath/expo-release-updates/downloadAndInstallApk", () => ({
@@ -15,10 +16,15 @@ jest.mock("@forthtilliath/expo-release-updates/downloadAndInstallApk", () => ({
 const APK_URL =
 	"https://github.com/Forthtilliath/7wonders-assistant/releases/download/v99.0.0/7WondersAssistant-99.0.0.apk";
 
+const APK_SHA256 = "a".repeat(64);
+
 function mockLatestRelease(version: string) {
-	jest
-		.mocked(fetchLatestRelease)
-		.mockResolvedValue({ version, notes: "### Nouveautés\n- tout", apkUrl: APK_URL });
+	jest.mocked(fetchLatestRelease).mockResolvedValue({
+		version,
+		notes: "### Nouveautés\n- tout",
+		apkUrl: APK_URL,
+		apkSha256: APK_SHA256,
+	});
 }
 
 describe("Bandeau de mise à jour", () => {
@@ -40,8 +46,16 @@ describe("Bandeau de mise à jour", () => {
 		await user.press(screen.getByRole("button", { name: "Installer" }));
 		await act(async () => {});
 
+		expect(fetchLatestRelease).toHaveBeenCalledWith(
+			expect.objectContaining({ requireVerifiedApk: true }),
+		);
 		expect(downloadAndInstallApk).toHaveBeenCalledWith(
-			expect.objectContaining({ apkUrl: APK_URL, fileName: "7wonders-update.apk" }),
+			expect.objectContaining({
+				apkUrl: APK_URL,
+				fileName: "7wonders-update.apk",
+				expectedSha256: APK_SHA256,
+				allowedUrlPrefix: "https://github.com/Forthtilliath/7wonders-assistant/releases/download/",
+			}),
 		);
 	});
 

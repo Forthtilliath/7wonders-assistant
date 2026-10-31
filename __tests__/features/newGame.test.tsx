@@ -23,6 +23,7 @@ jest.mock("@forthtilliath/expo-backup-ui/hooks", () => ({
 }));
 // Bandeau de mise à jour : aucune release, et surtout aucun appel réseau vers GitHub.
 jest.mock("@forthtilliath/expo-release-updates/githubReleases", () => ({
+	...jest.requireActual("@forthtilliath/expo-release-updates/githubReleases"),
 	fetchLatestRelease: jest.fn(async () => null),
 }));
 
