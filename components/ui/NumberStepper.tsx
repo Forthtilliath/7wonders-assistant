@@ -1,4 +1,7 @@
+import { usePressRepeat } from "@forthtilliath/react-native-kit/hooks/usePressRepeat";
 import { tapFeedback } from "@forthtilliath/react-native-kit/utils/helpers/haptics";
+import { parseIntegerInput } from "@forthtilliath/ts-kit/number/parseIntegerInput";
+import { sanitizeIntegerInput } from "@forthtilliath/ts-kit/number/sanitizeIntegerInput";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
@@ -17,13 +20,6 @@ type Props = {
 	 * boutons +/- pour un lecteur d'écran ("Diminuer Roues" plutôt que juste "Diminuer"). */
 	label?: string;
 };
-
-// Réglages de l'accélération en appui long : un premier pas immédiat, puis une répétition qui
-// démarre après INITIAL_DELAY et s'accélère après ACCELERATE_AFTER pour saisir vite les grandes valeurs.
-const INITIAL_DELAY_MS = 450;
-const REPEAT_INTERVAL_MS = 180;
-const ACCELERATE_AFTER_MS = 1200;
-const FAST_INTERVAL_MS = 60;
 
 export function NumberStepper({
 	value,
@@ -48,26 +44,10 @@ export function NumberStepper({
 		valueRef.current = value;
 	}, [value]);
 
-	const timers = useRef<{
-		delay?: ReturnType<typeof setTimeout>;
-		interval?: ReturnType<typeof setInterval>;
-		accelerate?: ReturnType<typeof setTimeout>;
-	}>({});
-
-	const stopRepeat = () => {
-		clearTimeout(timers.current.delay);
-		clearInterval(timers.current.interval);
-		clearTimeout(timers.current.accelerate);
-		timers.current = {};
-	};
-
-	useEffect(() => {
-		return () => {
-			clearTimeout(timers.current.delay);
-			clearInterval(timers.current.interval);
-			clearTimeout(timers.current.accelerate);
-		};
-	}, []);
+	// Un premier pas immédiat, puis une répétition qui démarre après 450 ms et s'accélère après
+	// 1,2 s pour saisir vite les grandes valeurs (`usePressRepeat` du kit, arrêtée au démontage).
+	const repeat = usePressRepeat();
+	const stopRepeat = repeat.stop;
 
 	const stepOnce = (direction: 1 | -1) => {
 		const next = clamp(valueRef.current + direction * step);
@@ -82,19 +62,9 @@ export function NumberStepper({
 		onChange(next);
 	};
 
-	const startPress = (direction: 1 | -1) => {
-		// Un nouvel appui sans relâchement du précédent (touche annulée puis rejouée par un geste
-		// parent) écraserait les minuteries en cours : la répétition orpheline ne s'arrêterait plus.
-		stopRepeat();
-		stepOnce(direction);
-		timers.current.delay = setTimeout(() => {
-			timers.current.interval = setInterval(() => stepOnce(direction), REPEAT_INTERVAL_MS);
-			timers.current.accelerate = setTimeout(() => {
-				clearInterval(timers.current.interval);
-				timers.current.interval = setInterval(() => stepOnce(direction), FAST_INTERVAL_MS);
-			}, ACCELERATE_AFTER_MS);
-		}, INITIAL_DELAY_MS);
-	};
+	// `start` arrête d'abord la répétition en cours : un nouvel appui sans relâchement du précédent
+	// (touche annulée puis rejouée par un geste parent) ne laisse pas de répétition orpheline.
+	const startPress = (direction: 1 | -1) => repeat.start(() => stepOnce(direction));
 
 	const colors = useColors();
 	const styles = useStyles(colors);
@@ -117,9 +87,8 @@ export function NumberStepper({
 	}, [value]);
 
 	const commit = (raw: string) => {
-		if (/^-?\d+$/.test(raw)) {
-			onChange(clamp(Number.parseInt(raw, 10)));
-		}
+		const parsed = parseIntegerInput(raw);
+		if (parsed !== null) onChange(clamp(parsed));
 	};
 
 	return (
@@ -139,7 +108,7 @@ export function NumberStepper({
 				keyboardType={allowsNegative ? "numeric" : "number-pad"}
 				value={text}
 				onChangeText={(raw) => {
-					const cleaned = allowsNegative ? raw.replace(/[^\d-]/g, "") : raw.replace(/\D/g, "");
+					const cleaned = sanitizeIntegerInput(raw, { allowNegative: allowsNegative });
 					setText(cleaned);
 					commit(cleaned);
 				}}
