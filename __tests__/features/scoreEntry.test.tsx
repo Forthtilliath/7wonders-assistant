@@ -1,8 +1,14 @@
-import { act, render, screen, userEvent, within } from "@testing-library/react-native";
+import { act, render, screen, userEvent } from "@testing-library/react-native";
 import CategoryScoreScreen from "@/app/(tabs)/game/score/[category]";
 import { useGameStore } from "@/stores/gameStore";
 import { mockRouter, setSearchParams } from "@/test-utils/expoRouter";
-import { mockAlert, pressAlertButton, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
+import {
+	mockAlert,
+	pressAlertButton,
+	resetAllStores,
+	seedPlayers,
+	withinSheet,
+} from "@/test-utils/fixtures";
 import type { CategoryId, ExtensionId } from "@/types/game";
 
 async function renderCategory(category: CategoryId, extensions: ExtensionId[] = []) {
@@ -162,7 +168,7 @@ describe("Saisie des scores par catégorie", () => {
 		});
 
 		await user.press(screen.getByRole("button", { name: "Modifier les extensions de la partie" }));
-		const sheet = within(screen.getByText("Extensions de la partie").parent!);
+		const sheet = withinSheet("Extensions de la partie");
 		expect(sheet.getByRole("button", { name: "Valider" })).toBeDisabled();
 
 		await user.press(sheet.getByRole("checkbox", { name: "Leaders" }));
@@ -194,7 +200,7 @@ describe("Saisie des scores par catégorie", () => {
 		await render(<CategoryScoreScreen />);
 
 		await user.press(screen.getByRole("button", { name: "Modifier les extensions de la partie" }));
-		const sheet = within(screen.getByText("Extensions de la partie").parent!);
+		const sheet = withinSheet("Extensions de la partie");
 		await user.press(sheet.getByRole("checkbox", { name: "Edifice" }));
 		expect(sheet.getByText(/Edifice remplace Babel/)).toBeOnTheScreen();
 
@@ -214,7 +220,7 @@ describe("Saisie des scores par catégorie", () => {
 		await render(<CategoryScoreScreen />);
 
 		await user.press(screen.getByRole("button", { name: "Modifier les extensions de la partie" }));
-		const sheet = within(screen.getByText("Extensions de la partie").parent!);
+		const sheet = withinSheet("Extensions de la partie");
 		expect(sheet.getByRole("checkbox", { name: "Edifice" })).toBeOnTheScreen();
 		expect(sheet.queryByRole("checkbox", { name: "Babel" })).not.toBeOnTheScreen();
 	});
@@ -228,7 +234,7 @@ describe("Saisie des scores par catégorie", () => {
 		await render(<CategoryScoreScreen />);
 
 		await user.press(screen.getByRole("button", { name: "Modifier les extensions de la partie" }));
-		const sheet = within(screen.getByText("Extensions de la partie").parent!);
+		const sheet = withinSheet("Extensions de la partie");
 		await user.press(sheet.getByRole("checkbox", { name: "Cities" }));
 
 		expect(sheet.getByText(/8 joueurs dans la partie/)).toBeOnTheScreen();
