@@ -1,6 +1,4 @@
-import { shareViewAsImage } from "@forthtilliath/react-native-kit/utils/helpers/shareViewAsImage";
-import { useRef, useState } from "react";
-import type { View } from "react-native";
+import { useViewShare } from "@forthtilliath/react-native-kit/hooks/useViewShare";
 
 /** Ce qui est partagé en image : le classement seul, ou le classement suivi des graphiques. */
 export type CaptureTarget = "ranking" | "charts";
@@ -10,33 +8,28 @@ const DIALOG_TITLES: Record<CaptureTarget, string> = {
 	charts: "Partager la partie",
 };
 
-/** Attend que React ait rendu le dernier changement d'état et que le natif l'ait dessiné. */
-function nextFrames() {
-	return new Promise<void>((resolve) =>
-		requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-	);
+/** L'erreur remonte à l'appelant (qui l'affiche), plutôt que l'alerte par défaut du kit. */
+function rethrow(error: unknown): never {
+	throw error;
 }
 
 /**
- * Partage d'une partie en image, capturée dans `GameShareImages`. `capturing` indique la cible en
- * cours de capture : l'écran garde ces images montées tant qu'il est vrai.
+ * Partage d'une partie en image, capturée dans `GameShareImages` (un `useViewShare` de
+ * react-native-kit par cible). `capturing` indique la cible en cours de capture : l'écran garde ces
+ * images montées tant qu'il est vrai.
  */
 export function useGameCapture() {
-	const rankingRef = useRef<View>(null);
-	const chartsRef = useRef<View>(null);
-	const [capturing, setCapturing] = useState<CaptureTarget | null>(null);
+	const ranking = useViewShare({ dialogTitle: DIALOG_TITLES.ranking, onError: rethrow });
+	const charts = useViewShare({ dialogTitle: DIALOG_TITLES.charts, onError: rethrow });
 
-	const shareImage = async (target: CaptureTarget) => {
-		setCapturing(target);
-		try {
-			await nextFrames();
-			await shareViewAsImage(target === "ranking" ? rankingRef : chartsRef, {
-				dialogTitle: DIALOG_TITLES[target],
-			});
-		} finally {
-			setCapturing(null);
-		}
-	};
+	const capturing: CaptureTarget | null = ranking.capturing
+		? "ranking"
+		: charts.capturing
+			? "charts"
+			: null;
 
-	return { rankingRef, chartsRef, capturing, shareImage };
+	const shareImage = (target: CaptureTarget) =>
+		target === "ranking" ? ranking.share() : charts.share();
+
+	return { rankingRef: ranking.ref, chartsRef: charts.ref, capturing, shareImage };
 }
