@@ -52,9 +52,7 @@ export function GroupForm({
 				autoFocus
 			/>
 
-			<SectionTitle>
-				Membres ({selectedIds.length}/{MAX_PLAYERS})
-			</SectionTitle>
+			<SectionTitle>{`Membres (${selectedIds.length}/${MAX_PLAYERS})`}</SectionTitle>
 			{selectedIds.length > BASE_MAX_PLAYERS && (
 				<Text style={styles.hint}>
 					Au-delà de {BASE_MAX_PLAYERS} joueurs, ce groupe ne sera sélectionnable qu'avec

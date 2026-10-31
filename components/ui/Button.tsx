@@ -1,6 +1,10 @@
+import {
+	type ButtonColors,
+	type ButtonVariant,
+	Button as KitButton,
+} from "@forthtilliath/react-native-kit/components/form/Button";
 import { tapFeedback } from "@forthtilliath/react-native-kit/utils/helpers/haptics";
-import { useMemo } from "react";
-import { Pressable, type StyleProp, StyleSheet, Text, type ViewStyle } from "react-native";
+import type { StyleProp, ViewStyle } from "react-native";
 import type { ThemeColors } from "@/constants/theme";
 import { FONTS, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -17,6 +21,27 @@ type Props = {
 	accessibilityLabel?: string;
 };
 
+/** Variante du kit pour chacune de l'app : le bouton discret est un contour bronze. */
+const KIT_VARIANT: Record<Variant, ButtonVariant> = {
+	primary: "primary",
+	secondary: "secondary",
+	danger: "danger",
+	ghost: "outline",
+};
+
+function kitColors(colors: ThemeColors): ButtonColors {
+	return {
+		primary: colors.primary,
+		onPrimary: colors.primaryText,
+		secondary: colors.surfaceAlt,
+		onSecondary: colors.text,
+		border: colors.border,
+		danger: colors.danger,
+		onDanger: colors.primaryText,
+	};
+}
+
+/** `Button` de react-native-kit aux couleurs et à la police du thème, avec vibration. */
 export function Button({
 	label,
 	onPress,
@@ -26,79 +51,37 @@ export function Button({
 	accessibilityLabel,
 }: Props) {
 	const colors = useColors();
-	const styles = useStyles(colors);
-	const labelVariant = LABEL_VARIANT[variant];
 
 	return (
-		<Pressable
-			disabled={disabled}
+		<KitButton
+			label={label}
 			onPress={() => {
 				tapFeedback();
 				onPress?.();
 			}}
-			style={({ pressed }) => [
-				styles.base,
-				styles[variant],
-				disabled && styles.disabled,
-				pressed && !disabled && styles.pressed,
-				style,
-			]}
-			accessibilityRole="button"
-			accessibilityLabel={accessibilityLabel ?? label}
-			accessibilityState={{ disabled: !!disabled }}
-		>
-			<Text style={[styles.label, labelVariant && styles[labelVariant]]}>{label}</Text>
-		</Pressable>
-	);
-}
-
-// Libellé sur `primaryText` par défaut (fonds bronze et rouge) ; les variantes sans fond plein
-// reprennent une couleur lisible sur la surface.
-const LABEL_VARIANT = {
-	primary: null,
-	danger: null,
-	secondary: "secondaryLabel",
-	ghost: "ghostLabel",
-} as const;
-
-function useStyles(colors: ThemeColors) {
-	return useMemo(
-		() =>
-			StyleSheet.create({
-				base: {
-					paddingVertical: SPACING.md,
-					paddingHorizontal: SPACING.lg,
-					borderRadius: RADIUS.md,
-					borderWidth: 1,
-					borderColor: "transparent",
-					alignItems: "center",
-					justifyContent: "center",
-				},
+			variant={KIT_VARIANT[variant]}
+			disabled={disabled}
+			accessibilityLabel={accessibilityLabel}
+			colors={kitColors(colors)}
+			styles={{
+				button: [
+					{
+						paddingVertical: SPACING.md,
+						paddingHorizontal: SPACING.lg,
+						borderRadius: RADIUS.md,
+						borderWidth: 1,
+					},
+					// Liseré doré : la plaque de bronze ressort même sur un fond proche.
+					variant === "primary" && { borderColor: colors.gold },
+					style,
+				],
 				label: {
-					color: colors.primaryText,
 					fontFamily: FONTS.displayBold,
+					fontWeight: "normal",
 					fontSize: 16,
 					letterSpacing: 0.6,
-					textAlign: "center",
 				},
-				secondaryLabel: {
-					color: colors.text,
-				},
-				ghostLabel: {
-					color: colors.primary,
-				},
-				pressed: {
-					opacity: 0.75,
-				},
-				disabled: {
-					opacity: 0.4,
-				},
-				// Liseré doré : la plaque de bronze ressort même sur un fond proche.
-				primary: { backgroundColor: colors.primary, borderColor: colors.gold },
-				secondary: { backgroundColor: colors.surfaceAlt, borderColor: colors.border },
-				danger: { backgroundColor: colors.danger },
-				ghost: { backgroundColor: "transparent", borderColor: colors.primary },
-			}),
-		[colors],
+			}}
+		/>
 	);
 }
