@@ -45,7 +45,8 @@
 				}
 			],
 			"@forthtilliath/expo-config-plugins/withAndroidAbis",
-			"expo-font"
+			"expo-font",
+			"expo-status-bar"
 		]
 	}
 }
