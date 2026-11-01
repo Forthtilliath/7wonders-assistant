@@ -1,11 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { GestureDetector } from "react-native-gesture-handler";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { CategoryEntryRow } from "@/components/game/CategoryEntryRow";
 import { EditExtensionsSheet } from "@/components/game/EditExtensionsSheet";
 import { TokenCounterSheet } from "@/components/game/TokenCounterSheet";
+import { FocusChainProvider } from "@/components/ui/FocusChain";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { CATEGORY_META } from "@/constants/categories";
 import type { ThemeColors } from "@/constants/theme";
@@ -154,23 +156,30 @@ export default function CategoryScoreScreen() {
 					</Text>
 					{hint && <Text style={styles.hint}>{hint}</Text>}
 
-					<ScrollView contentContainerStyle={styles.list}>
-						{gamePlayers.map((player) => {
-							const entry = entries[player.id];
-							if (!entry) return null;
-							return (
-								<CategoryEntryRow
-									key={player.id}
-									category={category}
-									player={player}
-									entry={entry}
-									color={meta.color}
-									onChange={(patch) => updateEntry(player.id, patch)}
-									onCountTokens={tokens ? () => setTokenSheetPlayerId(player.id) : undefined}
-								/>
-							);
-						})}
-					</ScrollView>
+					{/* Fait défiler la liste pour garder le champ actif au-dessus du clavier. */}
+					<KeyboardAwareScrollView
+						contentContainerStyle={styles.list}
+						bottomOffset={SPACING.lg}
+						keyboardShouldPersistTaps="handled"
+					>
+						<FocusChainProvider>
+							{gamePlayers.map((player) => {
+								const entry = entries[player.id];
+								if (!entry) return null;
+								return (
+									<CategoryEntryRow
+										key={player.id}
+										category={category}
+										player={player}
+										entry={entry}
+										color={meta.color}
+										onChange={(patch) => updateEntry(player.id, patch)}
+										onCountTokens={tokens ? () => setTokenSheetPlayerId(player.id) : undefined}
+									/>
+								);
+							})}
+						</FocusChainProvider>
+					</KeyboardAwareScrollView>
 
 					{tokens && (
 						<TokenCounterSheet
