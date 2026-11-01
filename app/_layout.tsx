@@ -3,6 +3,8 @@ import { Cinzel_700Bold } from "@expo-google-fonts/cinzel/700Bold";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import * as SystemUI from "expo-system-ui";
+import { useEffect } from "react";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -25,6 +27,12 @@ export default function RootLayout() {
 	useCloudAutoBackup();
 	useAvatarStorage();
 	useDataIssuesAlert();
+
+	// Fond de la fenêtre native (entre deux écrans, à l'ouverture du clavier) aux couleurs du thème
+	// choisi dans l'app, plutôt que celui du système : pas d'éclair clair en thème sombre.
+	useEffect(() => {
+		void SystemUI.setBackgroundColorAsync(colors.background);
+	}, [colors.background]);
 
 	if (!fontsLoaded && !fontError) {
 		return <View style={{ flex: 1, backgroundColor: colors.background }} />;
