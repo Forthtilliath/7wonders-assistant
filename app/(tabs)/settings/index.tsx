@@ -86,7 +86,7 @@ export default function SettingsScreen() {
 				<SettingsRow
 					icon="information-circle"
 					label="À propos"
-					value="Mises à jour, infos"
+					value="Données, mises à jour, crédits"
 					onPress={() => router.push("/settings/about")}
 				/>
 				<SettingsRow

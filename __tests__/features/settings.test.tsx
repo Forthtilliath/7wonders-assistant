@@ -27,6 +27,7 @@ import {
 	resetAllStores,
 	seedPlayers,
 } from "@/test-utils/fixtures";
+import type { PlayerGameEntry } from "@/types/game";
 
 jest.mock("@forthtilliath/expo-release-updates/githubReleases", () => ({
 	...jest.requireActual("@forthtilliath/expo-release-updates/githubReleases"),
@@ -115,6 +116,7 @@ describe("Réglages", () => {
 		expect(screen.getByText(/Edifice remplace Babel/)).toBeOnTheScreen();
 
 		await user.press(screen.getByRole("radio", { name: "2e édition" }));
+		expect(screen.getByRole("radio", { name: "2e édition" })).toBeChecked();
 
 		expect(usePreferencesStore.getState()).toMatchObject({
 			defaultEdition: "second",
@@ -154,6 +156,32 @@ describe("Réglages", () => {
 			await pressAlertButton(alert, "Supprimer");
 			expect(useWondersStore.getState().customWonders).toEqual([]);
 		});
+
+		it("corrige le nom d'une merveille perso jusque dans les parties jouées", async () => {
+			const user = userEvent.setup();
+			useWondersStore.setState({ customWonders: [{ id: "w1", name: "Atlantid", createdAt: 0 }] });
+			const patch = (entry: PlayerGameEntry) =>
+				entry.playerId === "p1"
+					? { ...entry, wonder: { name: "atlantid", side: "A" as const } }
+					: entry;
+			useHistoryStore.setState({ games: [makeGame("g1", { p1: 1, p2: 2 }, { patch })] });
+			await render(<WondersSettingsScreen />);
+
+			await user.press(screen.getByRole("button", { name: "Renommer Atlantid" }));
+			const field = screen.getByLabelText("Nouveau nom de Atlantid");
+			await user.clear(field);
+			await user.type(field, "Rhodes");
+			await user.press(screen.getByRole("button", { name: "Enregistrer le nom de Atlantid" }));
+			expect(screen.getByText("Cette merveille existe déjà.")).toBeOnTheScreen();
+
+			await user.clear(field);
+			await user.type(field, "Atlantide");
+			await user.press(screen.getByRole("button", { name: "Enregistrer le nom de Atlantid" }));
+
+			expect(useWondersStore.getState().customWonders[0].name).toBe("Atlantide");
+			expect(useHistoryStore.getState().games[0].entries.p1.wonder.name).toBe("Atlantide");
+			expect(screen.getByText("Atlantide")).toBeOnTheScreen();
+		});
 	});
 
 	describe("zone dangereuse", () => {
@@ -192,7 +220,29 @@ describe("Réglages", () => {
 		});
 	});
 
-	describe("à propos", () => {
+	it("présente l'app sans doubler les mises à jour des nouveautés", async () => {
+		const user = userEvent.setup();
+		const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
+		await render(<AboutSettingsScreen />);
+
+		expect(screen.getByText(/^Version \d+\.\d+\.\d+(-[\w.]+)? · Android$/)).toBeOnTheScreen();
+		expect(screen.getByText(/Antoine Bauza, édité par Repos Production/)).toBeOnTheScreen();
+		expect(
+			screen.queryByRole("button", { name: "Vérifier les mises à jour" }),
+		).not.toBeOnTheScreen();
+		expect(
+			screen.queryByRole("switch", { name: "Recevoir les versions de test" }),
+		).not.toBeOnTheScreen();
+
+		await user.press(screen.getByRole("button", { name: "Nouveautés et mises à jour" }));
+		expect(mockRouter.push).toHaveBeenCalledWith("/settings/changelog");
+		await user.press(screen.getByRole("button", { name: "Signaler un problème" }));
+		expect(openURL).toHaveBeenCalledWith(
+			"https://github.com/Forthtilliath/7wonders-assistant/issues",
+		);
+	});
+
+	describe("mises à jour depuis les nouveautés", () => {
 		it("télécharge et installe une nouvelle version après confirmation", async () => {
 			const user = userEvent.setup();
 			const alert = mockAlert();
@@ -203,7 +253,7 @@ describe("Réglages", () => {
 					"https://github.com/Forthtilliath/7wonders-assistant/releases/download/v99.0.0/app.apk",
 				apkSha256: "b".repeat(64),
 			});
-			await render(<AboutSettingsScreen />);
+			await render(<ChangelogSettingsScreen />);
 
 			await user.press(screen.getByRole("button", { name: "Vérifier les mises à jour" }));
 			expect(fetchLatestRelease).toHaveBeenCalledWith({
@@ -234,7 +284,7 @@ describe("Réglages", () => {
 				.mocked(fetchLatestRelease)
 				.mockResolvedValueOnce({ version: "0.0.1", notes: "", apkUrl: "https://github.com/a.apk" })
 				.mockRejectedValueOnce(new Error("GitHub responded with 503"));
-			await render(<AboutSettingsScreen />);
+			await render(<ChangelogSettingsScreen />);
 
 			await user.press(screen.getByRole("button", { name: "Vérifier les mises à jour" }));
 			await user.press(screen.getByRole("button", { name: "Vérifier les mises à jour" }));
@@ -257,27 +307,6 @@ describe("Réglages", () => {
 		await render(<ChangelogSettingsScreen />);
 
 		expect(screen.getByRole("switch", { name: "Recevoir les versions de test" })).toBeOnTheScreen();
-	});
-
-	it("vérifie les mises à jour depuis les nouveautés", async () => {
-		const user = userEvent.setup();
-		const alert = mockAlert();
-		jest.mocked(fetchLatestRelease).mockResolvedValue({
-			version: "99.0.0",
-			notes: "",
-			apkUrl: "https://github.com/Forthtilliath/7wonders-assistant/releases/download/v99.0.0/a.apk",
-			apkSha256: "c".repeat(64),
-		});
-		await render(<ChangelogSettingsScreen />);
-
-		expect(screen.getByText(/^Version installée : \d+\.\d+\.\d+(-[\w.]+)?$/)).toBeOnTheScreen();
-		await user.press(screen.getByRole("button", { name: "Vérifier les mises à jour" }));
-		await pressAlertButton(alert, "Installer");
-		await act(async () => {});
-
-		expect(downloadAndInstallApk).toHaveBeenCalledWith(
-			expect.objectContaining({ expectedSha256: "c".repeat(64) }),
-		);
 	});
 
 	it("ouvre la page de dons", async () => {
