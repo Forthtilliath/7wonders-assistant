@@ -8,12 +8,16 @@ import type { ThemeColors } from "@/constants/theme";
 import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { fetchVerifiedLatestRelease, installVerifiedApk } from "@/lib/updates";
-import { useUpdateStore, useUpdateStoreHydrated } from "@/stores/updateStore";
+import {
+	getIncludePrereleases,
+	useUpdateStore,
+	useUpdateStoreHydrated,
+} from "@/stores/updateStore";
 
 // Les notes d'une release (une quinzaine de lignes) prendraient tout l'onglet : le bandeau s'en
 // tient à la version, les nouveautés restent dans Réglages ▸ Nouveautés une fois l'app à jour.
 async function fetchLatestReleaseWithoutNotes() {
-	const release = await fetchVerifiedLatestRelease();
+	const release = await fetchVerifiedLatestRelease(getIncludePrereleases());
 	return release && { ...release, notes: "" };
 }
 

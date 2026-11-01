@@ -9,6 +9,7 @@ import { APP_INFO } from "@/constants/app";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { fetchVerifiedLatestRelease, installVerifiedApk } from "@/lib/updates";
+import { useIncludePrereleases } from "@/stores/updateStore";
 
 /**
  * Vérifie la dernière release GitHub et, sur confirmation, télécharge l'APK puis le confie à
@@ -20,11 +21,12 @@ export function UpdateChecker() {
 	const installCardStyles = useUpdateInstallCardStyles(colors);
 	const [checking, setChecking] = useState(false);
 	const install = useApkInstall(installVerifiedApk);
+	const includePrereleases = useIncludePrereleases();
 
 	const handleCheck = async () => {
 		setChecking(true);
 		try {
-			const release = await fetchVerifiedLatestRelease();
+			const release = await fetchVerifiedLatestRelease(includePrereleases);
 			if (!release) {
 				Alert.alert("Erreur", "Impossible de vérifier les mises à jour pour le moment.");
 			} else if (!isUpdateAvailable(APP_INFO.version, release.version)) {

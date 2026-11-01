@@ -12,9 +12,13 @@ const RELEASE_DOWNLOADS = releaseDownloadUrlPrefix(RELEASES_REPO);
 /**
  * Dernière version publiée dont l'APK est vérifiable : une release sans empreinte SHA-256 calculée
  * par GitHub, ou dont l'APK est hors des releases de ce dépôt, est sautée au profit de la suivante.
+ * Avec `includePrereleases`, les alpha/bêta comptent aussi (`/releases/latest` de GitHub ne renvoie
+ * jamais qu'une stable) : la plus haute version parmi les 10 dernières releases l'emporte.
  */
-export function fetchVerifiedLatestRelease(): Promise<LatestRelease | null> {
-	return fetchLatestRelease({ ...RELEASES_REPO, requireVerifiedApk: true });
+export function fetchVerifiedLatestRelease(
+	includePrereleases: boolean,
+): Promise<LatestRelease | null> {
+	return fetchLatestRelease({ ...RELEASES_REPO, requireVerifiedApk: true, includePrereleases });
 }
 
 /**
