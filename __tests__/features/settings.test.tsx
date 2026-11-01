@@ -244,10 +244,19 @@ describe("Réglages", () => {
 		});
 	});
 
-	it("affiche une entrée de nouveautés par version", async () => {
+	it("affiche les nouveautés par tranches de 5 versions", async () => {
 		await render(<ChangelogSettingsScreen />);
 
-		expect(screen.getAllByText(/^Version \d+\.\d+\.\d+(-[\w.]+)?$/)).toHaveLength(CHANGELOG.length);
+		expect(screen.getAllByText(/^Version \d+\.\d+\.\d+(-[\w.]+)?$/)).toHaveLength(
+			Math.min(5, CHANGELOG.length),
+		);
+		expect(screen.getByText(`Version ${CHANGELOG[0].version}`)).toBeOnTheScreen();
+	});
+
+	it("propose l'inscription aux versions de test depuis les nouveautés", async () => {
+		await render(<ChangelogSettingsScreen />);
+
+		expect(screen.getByRole("switch", { name: "Recevoir les versions de test" })).toBeOnTheScreen();
 	});
 
 	it("vérifie les mises à jour depuis les nouveautés", async () => {

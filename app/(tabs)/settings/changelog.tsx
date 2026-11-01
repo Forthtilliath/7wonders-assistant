@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { PrereleaseToggle } from "@/components/settings/PrereleaseToggle";
 import { UpdateChecker } from "@/components/settings/UpdateChecker";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { APP_INFO } from "@/constants/app";
@@ -7,19 +8,22 @@ import { CHANGELOG } from "@/constants/changelog";
 import type { ThemeColors } from "@/constants/theme";
 import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
+import { usePagedList } from "@/hooks/usePagedList";
 import { formatDate } from "@/lib/date";
 
 export default function ChangelogSettingsScreen() {
 	const colors = useColors();
 	const styles = useStyles(colors);
+	const { visibleItems, scrollProps } = usePagedList(CHANGELOG);
 	return (
 		<ScreenContainer>
-			<ScrollView contentContainerStyle={styles.content}>
+			<ScrollView contentContainerStyle={styles.content} {...scrollProps}>
 				<View style={styles.updateHeader}>
 					<Text style={styles.installedVersion}>Version installée : {APP_INFO.version}</Text>
 					<UpdateChecker />
 				</View>
-				{CHANGELOG.map((entry) => (
+				<PrereleaseToggle />
+				{visibleItems.map((entry) => (
 					<View key={entry.version} style={styles.entry}>
 						<View style={styles.header}>
 							<Text style={styles.version}>Version {entry.version}</Text>
