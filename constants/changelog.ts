@@ -12,6 +12,13 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.6.0-alpha.4",
+		date: Date.UTC(2026, 10, 1),
+		items: [
+			"Saisie enchaînée d'une étape à l'autre : valider le dernier champ d'une étape passe à l'étape suivante, et le clavier reste ouvert sur son premier champ. Après la dernière étape, les résultats s'affichent.",
+		],
+	},
+	{
 		version: "1.6.0-alpha.3",
 		date: Date.UTC(2026, 10, 1),
 		items: [
