@@ -2,7 +2,7 @@
 	"expo": {
 		"name": "7 Wonders: Assistant",
 		"slug": "7wonders-assistant",
-		"version": "1.6.0-alpha.2",
+		"version": "1.6.0-alpha.3",
 		"scheme": "sevenwonders",
 		"orientation": "portrait",
 		"icon": "./assets/icon.png",
@@ -13,7 +13,7 @@
 		},
 		"android": {
 			"package": "com.forthtilliath.sevenwondersassistant",
-			"versionCode": 9,
+			"versionCode": 10,
 			"allowBackup": false,
 			"permissions": ["android.permission.REQUEST_INSTALL_PACKAGES"],
 			"blockedPermissions": [
