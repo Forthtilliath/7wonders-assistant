@@ -16,6 +16,7 @@ export const CHANGELOG: ChangelogEntry[] = [
 		date: Date.UTC(2026, 10, 1),
 		items: [
 			"Correction : après « Lancer la partie » ou « Reprendre la partie en cours », la saisie des scores ne s'ouvrait plus et l'app revenait à l'accueil.",
+			"Versions de test : nouveau réglage « Recevoir les versions de test » (Réglages ▸ À propos). Activé, l'app propose aussi les alpha et bêta en mise à jour, à installer directement depuis l'app. Il est activé d'office si tu utilises déjà une version de test.",
 		],
 	},
 	{
