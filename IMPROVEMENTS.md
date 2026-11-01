@@ -47,11 +47,6 @@ statistiques sont mémoïsées._
 
 ## Sécurité / intégrité des données
 
-- **Clé de debug encore déclarée dans le client OAuth Google** : le release est désormais signé avec
-  une clé propre au projet (plugin `withReleaseSigning` de `@forthtilliath/expo-config-plugins`, voir README). Une fois la SHA-1 de
-  release ajoutée, retirer la SHA-1 de debug (`5E:8F:16:06:…:F6:25`, publique) du client OAuth de
-  production, ou la déplacer dans un projet Google Cloud de test.
-
-Pour le reste, rien d'identifié : les données (prénoms, scores, chemins d'images locales) ne sont
+Rien d'identifié : les données (prénoms, scores, chemins d'images locales) ne sont
 pas sensibles, le chiffrement de l'export ou d'AsyncStorage n'apporterait rien. Les imports (fichier
 ou Google Drive) sont validés (zod) et précédés d'une sauvegarde de secours.
