@@ -1,6 +1,7 @@
 import { selectFeedback } from "@forthtilliath/react-native-kit/utils/helpers/haptics";
 import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useFocusChainInput } from "@/components/ui/FocusChain";
 import { TextField } from "@/components/ui/TextField";
 import type { ThemeColors } from "@/constants/theme";
 import { RADIUS, SPACING } from "@/constants/theme";
@@ -40,6 +41,7 @@ export function WonderNameField({ playerId, value, onChange }: Props) {
 	const entries = useGameStore((s) => s.entries);
 	const customWonders = useWondersStore((s) => s.customWonders);
 	const addCustomWonder = useWondersStore((s) => s.addCustomWonder);
+	const focusChain = useFocusChainInput();
 
 	const suggestions = useMemo(() => {
 		const options = getAvailableWonders(edition, extensions, customWonders, wonderPacks);
@@ -61,6 +63,8 @@ export function WonderNameField({ playerId, value, onChange }: Props) {
 	return (
 		<View style={styles.container}>
 			<TextField
+				inputRef={focusChain.ref}
+				{...focusChain.inputProps}
 				placeholder="Nom de la merveille"
 				value={value}
 				onChangeText={onChange}

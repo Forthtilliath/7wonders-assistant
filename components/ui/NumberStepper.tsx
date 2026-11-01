@@ -4,6 +4,7 @@ import { parseIntegerInput } from "@forthtilliath/ts-kit/number/parseIntegerInpu
 import { sanitizeIntegerInput } from "@forthtilliath/ts-kit/number/sanitizeIntegerInput";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useFocusChainInput } from "@/components/ui/FocusChain";
 import type { ThemeColors } from "@/constants/theme";
 import { ON_COLOR, RADIUS } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
@@ -81,6 +82,7 @@ export function NumberStepper({
 	// Texte affiché, distinct de `value` : le temps de taper "-13", l'état intermédiaire ("-",
 	// "-1"...) n'est pas un nombre valide et ne doit pas être écrasé par la valeur committée.
 	const [text, setText] = useState(String(value));
+	const focusChain = useFocusChainInput();
 
 	useEffect(() => {
 		setText(String(value));
@@ -104,6 +106,8 @@ export function NumberStepper({
 			</Pressable>
 
 			<TextInput
+				ref={focusChain.ref}
+				{...focusChain.inputProps}
 				style={styles.value}
 				keyboardType={allowsNegative ? "numeric" : "number-pad"}
 				value={text}
