@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Keyboard, Pressable, StyleSheet, Text, View } from "react-native";
 import { GestureDetector } from "react-native-gesture-handler";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { CategoryEntryRow } from "@/components/game/CategoryEntryRow";
@@ -38,7 +38,9 @@ export default function CategoryScoreScreen() {
 	const router = useRouter();
 	const colors = useColors();
 	const styles = useStyles(colors);
-	const { category } = useLocalSearchParams<{ category: CategoryId }>();
+	// `focus` : on arrive en validant le dernier champ de l'étape précédente, la saisie continue au
+	// clavier sur le premier champ de celle-ci.
+	const { category, focus } = useLocalSearchParams<{ category: CategoryId; focus?: string }>();
 	const extensions = useGameStore((s) => s.extensions);
 	const edition = useGameStore((s) => s.edition);
 	const playerIds = useGameStore((s) => s.playerIds);
@@ -71,20 +73,26 @@ export default function CategoryScoreScreen() {
 	const stepIndex = flow.indexOf(category);
 	const isLast = stepIndex === flow.length - 1;
 
-	const goNext = () => {
+	const goNext = ({ keepTyping = false } = {}) => {
 		if (isLast) {
+			if (keepTyping) Keyboard.dismiss();
 			// replace plutôt que push : si on revient corriger une catégorie depuis Résultats puis
 			// qu'on y retourne, ça remplace l'écran au lieu d'en empiler un nouveau à chaque aller-retour.
 			router.replace("/game/results");
 		} else {
-			router.push(`/game/score/${flow[stepIndex + 1]}`);
+			const next = `/game/score/${flow[stepIndex + 1]}` as const;
+			// Le clavier reste ouvert : l'étape suivante donne elle-même le focus à son premier champ.
+			router.push(keepTyping ? `${next}?focus=1` : next);
 		}
 	};
 
 	// Swipe gauche -> catégorie suivante (comme le bouton "Suivant"), swipe droite -> catégorie
 	// précédente (ou retour au menu depuis la première). `router.back()` réutilise l'écran déjà
 	// empilé par la navigation précédente, ce qui donne gratuitement l'animation de retour inverse.
-	const swipeGesture = useSwipeGesture({ onSwipeLeft: goNext, onSwipeRight: () => router.back() });
+	const swipeGesture = useSwipeGesture({
+		onSwipeLeft: () => goNext(),
+		onSwipeRight: () => router.back(),
+	});
 
 	if (playerIds.length === 0 || !flow.includes(category)) return null;
 
@@ -121,7 +129,7 @@ export default function CategoryScoreScreen() {
 										<Ionicons name="options-outline" size={24} color={colors.text} />
 									</Pressable>
 									<Pressable
-										onPress={goNext}
+										onPress={() => goNext()}
 										hitSlop={12}
 										accessibilityRole="button"
 										accessibilityLabel={isLast ? "Voir les résultats" : "Étape suivante"}
@@ -162,7 +170,10 @@ export default function CategoryScoreScreen() {
 						bottomOffset={SPACING.lg}
 						keyboardShouldPersistTaps="handled"
 					>
-						<FocusChainProvider>
+						<FocusChainProvider
+							onComplete={() => goNext({ keepTyping: true })}
+							autoFocusFirst={focus === "1"}
+						>
 							{gamePlayers.map((player) => {
 								const entry = entries[player.id];
 								if (!entry) return null;
