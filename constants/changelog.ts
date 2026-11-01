@@ -12,6 +12,14 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.6.0-alpha.1",
+		date: Date.UTC(2026, 10, 1),
+		items: [
+			"Saisie des scores enchaînée au clavier : la touche « Suivant » passe directement au champ suivant, d'un joueur à l'autre, et le dernier champ ferme le clavier.",
+			"Le champ en cours de saisie reste visible au-dessus du clavier, y compris dans la feuille « Compter par jetons ».",
+		],
+	},
+	{
 		version: "1.5.0",
 		date: Date.UTC(2026, 9, 21),
 		items: [
