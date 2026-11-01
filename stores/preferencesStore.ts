@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { keepAvailableExtensions } from "@/constants/editions";
+import { createStoreMigrate, type MigrationSteps } from "@/lib/persistedState";
 import type { ExtensionId, GameEdition } from "@/types/game";
 
 type State = {
@@ -21,15 +22,20 @@ type Actions = {
 // enregistrées avant le choix de l'édition (complétées par la fusion de `persist`, sans migration).
 const initialPreferencesState: State = { defaultExtensions: [], defaultEdition: "first" };
 
-// Bump on any breaking change to State's shape.
+// Bump on any breaking change to State's shape, with its step in PREFERENCES_STORE_MIGRATIONS.
 export const PREFERENCES_STORE_VERSION = 1;
 
-/** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
-export function migratePreferencesStoreData(persistedState: unknown, version: number): State {
-	return version === PREFERENCES_STORE_VERSION
-		? (persistedState as State)
-		: initialPreferencesState;
-}
+/** Une étape par version (lib/persistedState) : aucune pour l'instant. */
+export const PREFERENCES_STORE_MIGRATIONS: MigrationSteps = {};
+
+/** Exportée pour être testée isolément. Réglage de l'appareil : rien à signaler s'il est perdu. */
+export const migratePreferencesStoreData = createStoreMigrate(
+	"preferences-store",
+	PREFERENCES_STORE_VERSION,
+	PREFERENCES_STORE_MIGRATIONS,
+	initialPreferencesState,
+	{ report: false },
+);
 
 export const usePreferencesStore = create<State & Actions>()(
 	persist(

@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { createStoreMigrate, type MigrationSteps } from "@/lib/persistedState";
 import { createId } from "@/lib/uuid";
 import type { PlayerGroup } from "@/types/game";
 
@@ -17,23 +18,26 @@ type Actions = {
 	replaceAll: (groups: PlayerGroup[]) => void;
 };
 
-// Bump on any breaking change to PlayerGroup's shape.
+// Bump on any breaking change to PlayerGroup's shape, with its step in GROUPS_STORE_MIGRATIONS.
 export const GROUPS_STORE_VERSION = 2;
 
+/** Une étape par version (lib/persistedState) : les groupes ne sont jamais perdus. */
+export const GROUPS_STORE_MIGRATIONS: MigrationSteps = {
+	// v1 -> v2 : ajout de isFavorite/isArchived, absents des groupes créés avant cette version.
+	1: (state) => ({
+		groups: (state as { groups: Omit<PlayerGroup, "isFavorite" | "isArchived">[] }).groups.map(
+			(g) => ({ ...g, isFavorite: false, isArchived: false }),
+		),
+	}),
+};
+
 /** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
-export function migrateGroupsStoreData(persistedState: unknown, version: number): State {
-	if (version === GROUPS_STORE_VERSION) return persistedState as State;
-
-	if (version === 1) {
-		// v1 -> v2 : ajout de isFavorite/isArchived, absents des groupes créés avant cette version.
-		const old = persistedState as { groups: Omit<PlayerGroup, "isFavorite" | "isArchived">[] };
-		return {
-			groups: old.groups.map((g) => ({ ...g, isFavorite: false, isArchived: false })),
-		};
-	}
-
-	return { groups: [] };
-}
+export const migrateGroupsStoreData = createStoreMigrate<State>(
+	"groups-store",
+	GROUPS_STORE_VERSION,
+	GROUPS_STORE_MIGRATIONS,
+	{ groups: [] },
+);
 
 export const useGroupsStore = create<State & Actions>()(
 	persist(

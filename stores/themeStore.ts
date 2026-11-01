@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { createStoreMigrate, type MigrationSteps } from "@/lib/persistedState";
 
 export type ThemeMode = "dark" | "light";
 
@@ -12,13 +13,20 @@ type Actions = {
 	setMode: (mode: ThemeMode) => void;
 };
 
-// Bump on any breaking change to State's shape.
+// Bump on any breaking change to State's shape, with its step in THEME_STORE_MIGRATIONS.
 export const THEME_STORE_VERSION = 1;
 
-/** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
-export function migrateThemeStoreData(persistedState: unknown, version: number): State {
-	return version === THEME_STORE_VERSION ? (persistedState as State) : { mode: "dark" };
-}
+/** Une étape par version (lib/persistedState) : aucune pour l'instant. */
+export const THEME_STORE_MIGRATIONS: MigrationSteps = {};
+
+/** Exportée pour être testée isolément. Réglage de l'appareil : rien à signaler s'il est perdu. */
+export const migrateThemeStoreData = createStoreMigrate<State>(
+	"theme-store",
+	THEME_STORE_VERSION,
+	THEME_STORE_MIGRATIONS,
+	{ mode: "dark" },
+	{ report: false },
+);
 
 export const useThemeStore = create<State & Actions>()(
 	persist(

@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { createStoreMigrate, type MigrationSteps } from "@/lib/persistedState";
 import { createId } from "@/lib/uuid";
 import {
 	type CustomWondersPlan,
@@ -32,14 +33,19 @@ type Actions = {
 	replaceAll: (customWonders: CustomWonder[], packs: CustomWonderPack[]) => void;
 };
 
-// Bump on any breaking change to CustomWonder's or CustomWonderPack's shape.
+// Bump on any breaking change to CustomWonder's or CustomWonderPack's shape, with its step in
+// WONDERS_STORE_MIGRATIONS.
 export const WONDERS_STORE_VERSION = 1;
+
+/** Une étape par version (lib/persistedState) : aucune pour l'instant. */
+export const WONDERS_STORE_MIGRATIONS: MigrationSteps = {};
+
+const initialWondersState: State = { customWonders: [], packs: [] };
 
 export const useWondersStore = create<State & Actions>()(
 	persist(
 		(set, get) => ({
-			customWonders: [],
-			packs: [],
+			...initialWondersState,
 
 			addCustomWonder: (name, packId) => {
 				const { accepted } = get().addCustomWonders([name], packId);
@@ -106,6 +112,12 @@ export const useWondersStore = create<State & Actions>()(
 			name: "wonders-store",
 			storage: createJSONStorage(() => AsyncStorage),
 			version: WONDERS_STORE_VERSION,
+			migrate: createStoreMigrate(
+				"wonders-store",
+				WONDERS_STORE_VERSION,
+				WONDERS_STORE_MIGRATIONS,
+				initialWondersState,
+			),
 		},
 	),
 );

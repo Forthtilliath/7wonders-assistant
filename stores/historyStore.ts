@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/armadaMigration";
 import { addBabelCategoryToEntries, type PreBabelEntry } from "@/lib/babelMigration";
+import { createStoreMigrate, type MigrationSteps } from "@/lib/persistedState";
 import type { Game } from "@/types/game";
 
 type State = {
@@ -16,7 +17,8 @@ type Actions = {
 	replaceAll: (games: Game[]) => void;
 };
 
-// Bump on any breaking change to Game/PlayerGameEntry's shape.
+// Bump on any breaking change to Game/PlayerGameEntry's shape, with its step in
+// HISTORY_STORE_MIGRATIONS.
 export const HISTORY_STORE_VERSION = 7;
 
 type GameV6 = Omit<Game, "entries"> & { entries: Record<string, PreBabelEntry> };
@@ -25,40 +27,43 @@ type GameV4 = Omit<Game, "entries"> & {
 	entries: Record<string, Omit<LegacyArmadaEntry, "islands">>;
 };
 
-/** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
-export function migrateHistoryStoreData(persistedState: unknown, version: number): State {
-	if (version === HISTORY_STORE_VERSION) return persistedState as State;
-	if (version < 4) return { games: [] };
-
-	if (version === 6) {
-		return { games: addBabelCategoryToHistory((persistedState as { games: GameV6[] }).games) };
-	}
-
-	let games = (persistedState as { games: GameV5[] }).games;
-
-	if (version === 4) {
-		// v4 -> v5 : ajout de la catégorie "islands" sur chaque saisie de chaque partie de
-		// l'historique, plutôt que de perdre tout l'historique pour un simple champ additif.
-		games = (persistedState as { games: GameV4[] }).games.map((g) => ({
-			...g,
-			entries: Object.fromEntries(
-				Object.entries(g.entries).map(([id, entry]) => [id, { ...entry, islands: { points: 0 } }]),
-			),
-		}));
-	}
-
+/** Une étape par version (lib/persistedState) : l'historique n'est jamais perdu. */
+export const HISTORY_STORE_MIGRATIONS: MigrationSteps = {
+	// v4 -> v5 : ajout de la catégorie "islands" sur chaque saisie de chaque partie.
+	4: (state) => ({
+		games: (state as { games: GameV4[] }).games.map(
+			(g): GameV5 => ({
+				...g,
+				entries: Object.fromEntries(
+					Object.entries(g.entries).map(([id, entry]) => [
+						id,
+						{ ...entry, islands: { points: 0 } },
+					]),
+				),
+			}),
+		),
+	}),
 	// v5 -> v6 : renommage des catégories Armada ("armada" -> "naval", "islands" -> "armada").
-	const gamesV6: GameV6[] = games.map((g) => ({
-		...g,
-		entries: renameArmadaCategoriesInEntries(g.entries),
-	}));
+	5: (state) => ({
+		games: (state as { games: GameV5[] }).games.map(
+			(g): GameV6 => ({ ...g, entries: renameArmadaCategoriesInEntries(g.entries) }),
+		),
+	}),
 	// v6 -> v7 : ajout de la catégorie Babel.
-	return { games: addBabelCategoryToHistory(gamesV6) };
-}
+	6: (state) => ({
+		games: (state as { games: GameV6[] }).games.map(
+			(g): Game => ({ ...g, entries: addBabelCategoryToEntries(g.entries) }),
+		),
+	}),
+};
 
-function addBabelCategoryToHistory(games: GameV6[]): Game[] {
-	return games.map((g) => ({ ...g, entries: addBabelCategoryToEntries(g.entries) }));
-}
+/** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
+export const migrateHistoryStoreData = createStoreMigrate<State>(
+	"history-store",
+	HISTORY_STORE_VERSION,
+	HISTORY_STORE_MIGRATIONS,
+	{ games: [] },
+);
 
 export const useHistoryStore = create<State & Actions>()(
 	persist(
