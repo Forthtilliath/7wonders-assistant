@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { PrereleaseToggle } from "@/components/settings/PrereleaseToggle";
 import { UpdateChecker } from "@/components/settings/UpdateChecker";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { SectionTitle } from "@/components/ui/SectionTitle";
@@ -19,6 +20,8 @@ export default function AboutSettingsScreen() {
 					<Text style={styles.appVersion}>Version {APP_INFO.version}</Text>
 					<UpdateChecker />
 				</View>
+
+				<PrereleaseToggle />
 
 				<View style={styles.section}>
 					<SectionTitle>Infos</SectionTitle>
