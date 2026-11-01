@@ -1,3 +1,4 @@
+import { makeGame } from "@/test-utils/fixtures";
 import { createEmptyPlayerGameEntry } from "@/types/game";
 import {
 	GAME_STORE_VERSION,
@@ -6,11 +7,13 @@ import {
 	useGameStore,
 } from "../gameStore";
 import { useHistoryStore } from "../historyStore";
+import { useWondersStore } from "../wondersStore";
 
 describe("useGameStore", () => {
 	beforeEach(() => {
 		useGameStore.setState({ ...initialGameState });
 		useHistoryStore.setState({ games: [] });
+		useWondersStore.setState({ customWonders: [], packs: [] });
 	});
 
 	it("startNewGame initialise une entrée vide par joueur", () => {
@@ -120,6 +123,57 @@ describe("useGameStore", () => {
 		expect(useGameStore.getState().hasOngoingGame()).toBe(false);
 	});
 
+	it("finishGame remplace une partie corrigée à sa place, avec son id et sa date de fin", () => {
+		const older = makeGame("g1", { p1: 10, p2: 20 });
+		const edited = makeGame("g2", { p1: 30, p2: 5 }, { extensions: ["cities"] });
+		useHistoryStore.setState({ games: [edited, older] });
+
+		useGameStore.getState().editFinishedGame(edited);
+		expect(useGameStore.getState()).toMatchObject({
+			editingGameId: "g2",
+			playerIds: ["p1", "p2"],
+			extensions: ["cities"],
+			startedAt: edited.createdAt,
+		});
+		useGameStore.getState().updateEntry("p2", (e) => ({ ...e, civilians: { points: 50 } }));
+		const saved = useGameStore.getState().finishGame();
+
+		const games = useHistoryStore.getState().games;
+		expect(games.map((g) => g.id)).toEqual(["g2", "g1"]);
+		expect(games[0]).toEqual(saved);
+		expect(saved.finishedAt).toBe(edited.finishedAt);
+		expect(saved.entries.p2.civilians.points).toBe(50);
+		expect(games[1]).toBe(older);
+		expect(useGameStore.getState()).toMatchObject(initialGameState);
+	});
+
+	it("finishGame remet une partie corrigée supprimée entre-temps de l'historique", () => {
+		useGameStore.getState().editFinishedGame(makeGame("g1", { p1: 10 }));
+		useHistoryStore.setState({ games: [] });
+
+		useGameStore.getState().finishGame();
+
+		expect(useHistoryStore.getState().games.map((g) => g.id)).toEqual(["g1"]);
+	});
+
+	it("finishGame enregistre l'écriture de référence des merveilles", () => {
+		useWondersStore.setState({ customWonders: [{ id: "w1", name: "Atlantide", createdAt: 0 }] });
+		useGameStore.getState().startNewGame(["p1", "p2", "p3"], []);
+		const setWonder = (playerId: string, name: string) =>
+			useGameStore.getState().updateEntry(playerId, (e) => ({ ...e, wonder: { name, side: "A" } }));
+		setWonder("p1", "rhodos");
+		setWonder("p2", "ATLANTIDE");
+		setWonder("p3", "Lémurie");
+
+		const { entries } = useGameStore.getState().finishGame();
+
+		expect([entries.p1, entries.p2, entries.p3].map((e) => e.wonder.name)).toEqual([
+			"Rhódos",
+			"Atlantide",
+			"Lémurie",
+		]);
+	});
+
 	it("resetGame revient à l'état initial", () => {
 		useGameStore.getState().startNewGame(["p1"], ["armada"]);
 
@@ -166,6 +220,18 @@ describe("migrateGameStoreData", () => {
 		const migrated = migrateGameStoreData(v6State, 6);
 
 		expect(migrated.entries.p1).toEqual({ ...v6Entry, babel: { tiles: 0 } });
+	});
+
+	it("renomme les merveilles du jeu de base d'une partie en cours venant de la v7", () => {
+		const entry = {
+			...createEmptyPlayerGameEntry("p1"),
+			wonder: { name: "Halicarnasse", side: "B" },
+		};
+		const v7State = { ...initialGameState, playerIds: ["p1"], entries: { p1: entry } };
+
+		const migrated = migrateGameStoreData(v7State, 7);
+
+		expect(migrated.entries.p1.wonder).toEqual({ name: "Halikarnassos", side: "B" });
 	});
 
 	it("réinitialise sur une version incompatible plutôt que de garder des données obsolètes", () => {

@@ -4,6 +4,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/armadaMigration";
 import { addBabelCategoryToEntries, type PreBabelEntry } from "@/lib/babelMigration";
 import { createStoreMigrate, type MigrationSteps } from "@/lib/persistedState";
+import { canonicalizeWonderNames, renameWonderInGames } from "@/lib/wonders";
 import type { Game } from "@/types/game";
 
 type State = {
@@ -12,6 +13,10 @@ type State = {
 
 type Actions = {
 	addGame: (game: Game) => void;
+	/** Remplace une partie corrigée, à sa place dans l'historique. */
+	updateGame: (game: Game) => void;
+	/** Corrige le nom d'une merveille dans toutes les parties (merveille perso renommée). */
+	renameWonder: (from: string, to: string) => void;
 	removeGame: (id: string) => void;
 	clearHistory: () => void;
 	replaceAll: (games: Game[]) => void;
@@ -19,7 +24,7 @@ type Actions = {
 
 // Bump on any breaking change to Game/PlayerGameEntry's shape, with its step in
 // HISTORY_STORE_MIGRATIONS.
-export const HISTORY_STORE_VERSION = 7;
+export const HISTORY_STORE_VERSION = 8;
 
 type GameV6 = Omit<Game, "entries"> & { entries: Record<string, PreBabelEntry> };
 type GameV5 = Omit<Game, "entries"> & { entries: Record<string, LegacyArmadaEntry> };
@@ -55,6 +60,13 @@ export const HISTORY_STORE_MIGRATIONS: MigrationSteps = {
 			(g): Game => ({ ...g, entries: addBabelCategoryToEntries(g.entries) }),
 		),
 	}),
+	// v7 -> v8 : merveilles du jeu de base renommées d'après leur plateau ("Rhodes" -> "Rhódos").
+	7: (state) => ({
+		games: (state as State).games.map((g) => ({
+			...g,
+			entries: canonicalizeWonderNames(g.entries),
+		})),
+	}),
 };
 
 /** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
@@ -71,6 +83,10 @@ export const useHistoryStore = create<State & Actions>()(
 			games: [],
 
 			addGame: (game) => set({ games: [game, ...get().games] }),
+
+			updateGame: (game) => set({ games: get().games.map((g) => (g.id === game.id ? game : g)) }),
+
+			renameWonder: (from, to) => set({ games: renameWonderInGames(get().games, from, to) }),
 
 			removeGame: (id) => set({ games: get().games.filter((g) => g.id !== id) }),
 

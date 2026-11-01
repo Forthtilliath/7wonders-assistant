@@ -6,6 +6,7 @@ import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/a
 import { addBabelCategoryToEntries, type PreBabelEntry } from "@/lib/babelMigration";
 import { createStoreMigrate, type MigrationSteps } from "@/lib/persistedState";
 import { createId } from "@/lib/uuid";
+import { canonicalizeWonderNames, renameWonderInEntries } from "@/lib/wonders";
 import {
 	createEmptyPlayerGameEntry,
 	type ExtensionId,
@@ -14,6 +15,7 @@ import {
 	type PlayerGameEntry,
 } from "@/types/game";
 import { useHistoryStore } from "./historyStore";
+import { useWondersStore } from "./wondersStore";
 
 type State = {
 	/** null tant qu'aucune partie n'est en cours. */
@@ -25,6 +27,9 @@ type State = {
 	playerIds: string[];
 	entries: Record<string, PlayerGameEntry>;
 	startedAt: number | null;
+	/** Partie de l'historique en cours de correction : l'enregistrer la remplace au lieu d'en ajouter
+	 * une nouvelle. `null` pour une nouvelle partie. */
+	editingGameId: string | null;
 };
 
 type Actions = {
@@ -42,6 +47,10 @@ type Actions = {
 	updateExtensions: (extensions: ExtensionId[]) => void;
 	/** Change les extensions non officielles cochées : sans étape de score, rien à remettre à zéro. */
 	updateWonderPacks: (wonderPacks: string[]) => void;
+	/** Rouvre une partie terminée pour la corriger, en reprenant toute sa saisie. */
+	editFinishedGame: (game: Game) => void;
+	/** Corrige le nom d'une merveille dans la saisie (merveille perso renommée). */
+	renameWonder: (from: string, to: string) => void;
 	toGame: () => Game;
 	finishGame: () => Game;
 	resetGame: () => void;
@@ -58,10 +67,12 @@ export const initialGameState: State = {
 	playerIds: [],
 	entries: {},
 	startedAt: null,
+	// Une partie en cours enregistrée avant la correction des parties la reçoit par la fusion.
+	editingGameId: null,
 };
 
 // Bump on any breaking change to PlayerGameEntry's shape, with its step in GAME_STORE_MIGRATIONS.
-export const GAME_STORE_VERSION = 7;
+export const GAME_STORE_VERSION = 8;
 
 type StateWithEntries<E> = Omit<State, "entries"> & { entries: Record<string, E> };
 
@@ -76,6 +87,11 @@ export const GAME_STORE_MIGRATIONS: MigrationSteps = {
 	6: (state) => {
 		const old = state as StateWithEntries<PreBabelEntry>;
 		return { ...old, entries: addBabelCategoryToEntries(old.entries) };
+	},
+	// v7 -> v8 : merveilles du jeu de base renommées d'après leur plateau ("Rhodes" -> "Rhódos").
+	7: (state) => {
+		const old = state as State;
+		return { ...old, entries: canonicalizeWonderNames(old.entries) };
 	},
 };
 
@@ -132,6 +148,20 @@ export const useGameStore = create<State & Actions>()(
 
 			updateWonderPacks: (wonderPacks) => set({ wonderPacks }),
 
+			editFinishedGame: (game) =>
+				set({
+					// Les parties enregistrées avant le choix de l'édition retombent sur la 1re.
+					edition: game.edition ?? "first",
+					extensions: game.extensions,
+					wonderPacks: game.wonderPacks ?? [],
+					playerIds: game.playerIds,
+					entries: game.entries,
+					startedAt: game.createdAt,
+					editingGameId: game.id,
+				}),
+
+			renameWonder: (from, to) => set({ entries: renameWonderInEntries(get().entries, from, to) }),
+
 			toGame: () => {
 				const { extensions, edition, wonderPacks, playerIds, entries, startedAt } = get();
 				return {
@@ -146,8 +176,28 @@ export const useGameStore = create<State & Actions>()(
 			},
 
 			finishGame: () => {
-				const game: Game = { ...get().toGame(), id: createId(), finishedAt: Date.now() };
-				useHistoryStore.getState().addGame(game);
+				const { editingGameId } = get();
+				const history = useHistoryStore.getState();
+				const draft = get().toGame();
+				// Même écriture que le catalogue ou les merveilles perso ("rhodos" -> "Rhódos"), pour ne
+				// pas compter une merveille sous deux noms dans les statistiques.
+				const entries = canonicalizeWonderNames(
+					draft.entries,
+					useWondersStore.getState().customWonders,
+				);
+				const original = editingGameId
+					? history.games.find((g) => g.id === editingGameId)
+					: undefined;
+				const game: Game = {
+					...draft,
+					entries,
+					id: editingGameId ?? createId(),
+					// Une partie corrigée garde sa date de fin : elle ne remonte pas en tête de l'historique.
+					finishedAt: original?.finishedAt ?? Date.now(),
+				};
+				// Une partie corrigée supprimée entre-temps de l'historique y est remise.
+				if (original) history.updateGame(game);
+				else history.addGame(game);
 				get().resetGame();
 				return game;
 			},
