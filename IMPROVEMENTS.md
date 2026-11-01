@@ -22,10 +22,6 @@ _Rien en attente pour l'instant._
 
 ## Optimisation du code / maintenance
 
-- **Stub `react-native-worklets`** dans `metro.config.js` (contournement d'un bug amont dans
-  `@expo/ui`/`expo-router`) : si une vraie dépendance à `react-native-worklets` est ajoutée un jour
-  (ex. `react-native-reanimated`), ce stub la cassera silencieusement. À retirer dès qu'une version
-  corrigée d'`expo-router`/`@expo/ui` sort.
 - **Export mort `EXTRA_CATEGORIES`** (`types/game.ts`) : jamais importé ailleurs, seul le type
   `ExtraCategoryId` qu'il sert à dériver est utilisé. À retirer ou à commenter.
 - **Fichiers proches de la limite de 300 lignes** : `app/(tabs)/game/score/[category].tsx` (292),
@@ -40,10 +36,14 @@ _Rien en attente pour l'instant._
 _Rien d'identifié : les listes longues (Historique, Joueurs) utilisent déjà `FlatList` et les
 statistiques sont mémoïsées._
 
-- **Conflit de peer dependencies** préexistant (`react-dom@19.2.8` tiré par `expo-router` exige
-  `react@^19.2.8`, l'app est en `19.2.3`) : `npm install <paquet>` échoue en ERESOLVE. Utiliser
-  `--force` (garde les peers installés) et surtout pas `--legacy-peer-deps`, qui élague
-  `react-native-reanimated`/`worklets` du lockfile. Se règle à la prochaine montée d'Expo SDK.
+- **API de gestes dépréciée** (gesture-handler 3, Expo SDK 58) : `hooks/useSwipeGesture.ts` utilise
+  encore `Gesture.Pan()`, qui fonctionne mais sera retiré dans une prochaine version. Passer à
+  `usePanGesture` (callbacks renommés : `onEnd` → `onDeactivate`…) et revérifier **sur téléphone**
+  l'appui long du `NumberStepper` pendant un swipe, que le geste stable avait corrigé.
+- **Montée d'Expo SDK** : en cas d'ERESOLVE pendant `npx expo install --fix`, passer
+  `-- --force` (et surtout pas `--legacy-peer-deps`, qui élague `react-native-reanimated`/`worklets`
+  du lockfile), puis vérifier qu'un `npm install` simple passe et qu'aucun paquet `expo-*` n'est
+  resté imbriqué sous `node_modules/expo/node_modules` (jest-expo ne le trouverait pas).
 
 ## Sécurité / intégrité des données
 
