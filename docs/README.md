@@ -20,7 +20,7 @@ Tout ce qu'il faut pour faire tourner, comprendre et publier **7 Wonders: Assist
 
 ## 🛠️ Stack
 
-[Expo](https://expo.dev) SDK 57 (React Native 0.86) · [TypeScript](https://www.typescriptlang.org/) · [Expo Router](https://docs.expo.dev/router/introduction/) · [Zustand](https://github.com/pmndrs/zustand) + AsyncStorage · [zod](https://zod.dev/) 4 · [Biome](https://biomejs.dev/) · Jest · [Testing Library](https://callstack.github.io/react-native-testing-library/)
+[Expo](https://expo.dev) SDK 58 (React Native 0.88) · [TypeScript](https://www.typescriptlang.org/) · [Expo Router](https://docs.expo.dev/router/introduction/) · [Zustand](https://github.com/pmndrs/zustand) + AsyncStorage · [zod](https://zod.dev/) 4 · [Biome](https://biomejs.dev/) · Jest · [Testing Library](https://callstack.github.io/react-native-testing-library/)
 
 Paquets maison (tous en import profond, `@forthtilliath/<paquet>/<chemin>`) :
 
@@ -109,7 +109,9 @@ Règles dans [`lib/scoring/`](../lib/scoring/), testées dans `lib/scoring/__tes
 
 ## 💾 État et persistance
 
-- Un store Zustand par domaine (`stores/`), persisté dans AsyncStorage. Chaque store a sa propre `version` de persistance et ses migrations (ex. renommage des catégories Armada dans `gameStore.ts`).
+- Un store Zustand par domaine (`stores/`), persisté dans AsyncStorage. Chaque store a sa propre `version` de persistance et **une étape de conversion par version** (`*_STORE_MIGRATIONS`, ex. renommage des catégories Armada dans `gameStore.ts`), appliquées une à une par `createStoreMigrate` ([`lib/persistedState.ts`](../lib/persistedState.ts)).
+- **Rien n'est effacé en silence** : avant toute conversion, l'état enregistré est copié tel quel dans le dossier `secours/` de l'appli ([`lib/rescueCopies.ts`](../lib/rescueCopies.ts)). Si la conversion est impossible (étape manquante, données d'une version plus récente), le store démarre vide et une alerte au lancement propose d'exporter la copie (`hooks/useDataIssuesAlert.ts`). Les réglages propres à l'appareil (thème, préférences, rappel, mises à jour) reviennent simplement à leur valeur par défaut.
+- Monter la `version` d'un store sans ajouter son étape fait échouer `stores/__tests__/storeMigrations.test.ts`.
 - L'historique est stocké **de la plus récente à la plus ancienne** (`addGame` insère en tête) ; l'écran l'affiche dans cet ordre, sans tri.
 - `usePersistHydrated` (kit) attend la réhydratation avant d'afficher les écrans qui en dépendent.
 - `android.allowBackup: false` (`app.json`) : la sauvegarde automatique d'Android ne copie pas les données hors du téléphone.
@@ -189,6 +191,13 @@ Android refuse d'installer par-dessus une appli signée avec une autre clé : le
    npx expo prebuild --platform android
    cd android && ./gradlew assembleRelease
    ```
+
+   > [!NOTE]
+   > Sous Windows, la compilation C++ de `react-native-worklets` dépasse la limite de 260 caractères des chemins avec le CMake 3.22 par défaut (`ninja: error: mkdir(...): No such file or directory`). Installer CMake 4.x (*SDK Manager ▸ SDK Tools ▸ CMake*) et l'indiquer dans `android/local.properties`, à refaire après chaque `expo prebuild --clean` :
+   >
+   > ```properties
+   > cmake.dir=C\:\\Users\\<toi>\\AppData\\Local\\Android\\Sdk\\cmake\\4.1.2
+   > ```
 
 4. Renommer `android/app/build/outputs/apk/release/app-release.apk` en `7WondersAssistant-<version>.apk`, puis créer la release GitHub avec le tag `v<version>` :
 
