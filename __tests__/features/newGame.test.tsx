@@ -260,6 +260,24 @@ describe("Onglet Jouer : lancer une partie", () => {
 		expect(await screen.findByRole("button", { name: "Lancer la partie" })).toBeOnTheScreen();
 	});
 
+	it("abandonne la correction d'une partie sans toucher à la partie enregistrée", async () => {
+		const user = userEvent.setup();
+		const alert = mockAlert();
+		seedPlayers(["Alice", "Bob"]);
+		const game = makeGame("g1", { p1: 10, p2: 20 });
+		useHistoryStore.setState({ games: [game] });
+		useGameStore.getState().editFinishedGame(game);
+		useGameStore.getState().updateEntry("p1", (e) => ({ ...e, civilians: { points: 99 } }));
+		await render(<NewGameTab />);
+
+		expect(screen.getByText("Une partie est en cours de modification")).toBeOnTheScreen();
+		await user.press(screen.getByRole("button", { name: "Abandonner la modification" }));
+		await pressAlertButton(alert, "Abandonner");
+
+		expect(useGameStore.getState().hasOngoingGame()).toBe(false);
+		expect(useHistoryStore.getState().games).toEqual([game]);
+	});
+
 	it("rappelle de sauvegarder les parties non sauvegardées", async () => {
 		const user = userEvent.setup();
 		seedPlayers(["Alice", "Bob"]);
