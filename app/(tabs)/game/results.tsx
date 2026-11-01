@@ -25,6 +25,8 @@ export default function ResultsScreen() {
 	const entries = useGameStore((s) => s.entries);
 	const startedAt = useGameStore((s) => s.startedAt);
 	const finishGame = useGameStore((s) => s.finishGame);
+	// Correction d'une partie de l'historique : l'enregistrer la remplace.
+	const isEditing = useGameStore((s) => s.editingGameId !== null);
 	const allPlayers = usePlayersStore((s) => s.players);
 	// getRanking() recalcule à chaque appel : le sélectionner directement casserait la stabilité
 	// de référence attendue par le store et provoquerait une boucle de rendu infinie. On calcule
@@ -98,7 +100,10 @@ export default function ResultsScreen() {
 				/>
 			)}
 
-			<Button label="Terminer et enregistrer la partie" onPress={confirmFinish} />
+			<Button
+				label={isEditing ? "Enregistrer les modifications" : "Terminer et enregistrer la partie"}
+				onPress={confirmFinish}
+			/>
 			<ShareGameSheet
 				visible={shareVisible}
 				onClose={() => setShareVisible(false)}
