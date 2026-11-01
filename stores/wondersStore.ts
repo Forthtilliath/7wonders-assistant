@@ -8,6 +8,7 @@ import {
 	getWonderPackNameError,
 	planCustomWonders,
 } from "@/lib/wonderPacks";
+import { getCustomWonderNameError } from "@/lib/wonders";
 import type { CustomWonder, CustomWonderPack } from "@/types/game";
 
 type State = {
@@ -20,6 +21,10 @@ type Actions = {
 	addCustomWonder: (name: string, packId?: string) => CustomWonder | null;
 	/** Ajoute plusieurs merveilles d'un coup (liste collée) ; renvoie celles ajoutées et écartées. */
 	addCustomWonders: (names: readonly string[], packId?: string) => CustomWondersPlan;
+	/** Corrige le nom d'une merveille perso ; `false` si le nom est refusé. Ne touche qu'à ce store :
+	 * passer par `renameCustomWonderEverywhere` (lib/customWonderRename) pour corriger aussi les
+	 * parties. */
+	renameCustomWonder: (id: string, name: string) => boolean;
 	/** Les parties déjà jouées avec cette merveille gardent son nom (stocké dans chaque saisie). */
 	removeCustomWonder: (id: string) => void;
 	/** Crée une extension non officielle, activée ; `null` si le nom est refusé. */
@@ -66,6 +71,15 @@ export const useWondersStore = create<State & Actions>()(
 				}));
 				if (added.length > 0) set({ customWonders: [...customWonders, ...added] });
 				return plan;
+			},
+
+			renameCustomWonder: (id, name) => {
+				const { customWonders } = get();
+				if (getCustomWonderNameError(name, customWonders, id)) return false;
+				set({
+					customWonders: customWonders.map((w) => (w.id === id ? { ...w, name: name.trim() } : w)),
+				});
+				return true;
 			},
 
 			removeCustomWonder: (id) => {
