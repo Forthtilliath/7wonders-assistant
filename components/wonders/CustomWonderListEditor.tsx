@@ -1,13 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
 import type { ThemeColors } from "@/constants/theme";
-import { RADIUS, SPACING } from "@/constants/theme";
+import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { parseWonderNameList } from "@/lib/wonderPacks";
 import { useWondersStore } from "@/stores/wondersStore";
+import { CustomWonderRow } from "./CustomWonderRow";
 
 type Props = {
 	/** Extension non officielle éditée ; absente pour les merveilles perso sans extension. */
@@ -15,7 +15,8 @@ type Props = {
 };
 
 /**
- * Merveilles perso d'une extension non officielle (ou sans extension) : liste avec suppression, et
+ * Merveilles perso d'une extension non officielle (ou sans extension) : liste avec correction du nom et
+ * suppression, et
  * ajout d'une ou plusieurs merveilles à la fois (une par ligne, pratique pour coller la liste d'une
  * grosse extension comme la Wonders Box).
  */
@@ -71,18 +72,13 @@ export function CustomWonderListEditor({ packId }: Props) {
 	return (
 		<View style={styles.container}>
 			{wonders.map((wonder) => (
-				<View key={wonder.id} style={styles.row}>
-					<Text style={styles.rowText}>{wonder.name}</Text>
-					<Pressable
-						onPress={() => confirmRemove(wonder.id, wonder.name)}
-						hitSlop={12}
-						accessibilityRole="button"
-						accessibilityLabel={`Supprimer ${wonder.name}`}
-					>
-						<Ionicons name="trash-outline" size={20} color={colors.textMuted} />
-					</Pressable>
-				</View>
+				<CustomWonderRow
+					key={wonder.id}
+					wonder={wonder}
+					onRemove={() => confirmRemove(wonder.id, wonder.name)}
+				/>
 			))}
+
 			<TextField
 				placeholder="Nouvelles merveilles, une par ligne"
 				value={text}
@@ -107,20 +103,6 @@ function useStyles(colors: ThemeColors) {
 			StyleSheet.create({
 				container: {
 					gap: SPACING.sm,
-				},
-				row: {
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
-					paddingVertical: SPACING.sm,
-					paddingHorizontal: SPACING.md,
-					borderRadius: RADIUS.md,
-					backgroundColor: colors.surface,
-				},
-				rowText: {
-					color: colors.text,
-					fontSize: 15,
-					flexShrink: 1,
 				},
 				input: {
 					minHeight: 80,
