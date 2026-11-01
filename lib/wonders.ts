@@ -1,5 +1,5 @@
 import { MAX_WONDER_NAME_LENGTH, OFFICIAL_WONDERS, type WonderSource } from "@/constants/wonders";
-import type { CustomWonder, ExtensionId, Game, GameEdition } from "@/types/game";
+import type { CustomWonder, ExtensionId, Game, GameEdition, PlayerGameEntry } from "@/types/game";
 
 /** Merveille proposée à la saisie, avec son origine. */
 export type WonderOption = {
@@ -7,9 +7,85 @@ export type WonderOption = {
 	source: WonderSource;
 };
 
-/** Clé de comparaison d'un nom : sans espaces autour, sans casse ni accents ("eph" trouve Éphèse). */
+/** Clé de comparaison d'un nom : sans espaces autour, sans casse ni accents ("rhod" trouve Rhódos). */
 export function normalizeWonderName(name: string): string {
 	return name.trim().normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+}
+
+/** Nom officiel de chaque plateau, par clé de son nom actuel et de ses anciens noms. */
+const OFFICIAL_NAME_BY_KEY = new Map(
+	OFFICIAL_WONDERS.flatMap((wonder) =>
+		[wonder.name, ...(wonder.formerNames ?? [])].map(
+			(name) => [normalizeWonderName(name), wonder.name] as const,
+		),
+	),
+);
+
+/**
+ * Écriture de référence d'un nom saisi : celle du catalogue officiel (y compris pour un ancien nom,
+ * "Alexandrie" → "Alexandria") ou des merveilles perso quand le nom n'en diffère que par la casse,
+ * les accents ou les espaces autour ("rhodos" → "Rhódos"). Un nom inconnu est rendu tel quel. Évite
+ * qu'une même merveille soit comptée sous deux noms dans les statistiques.
+ */
+export function toCanonicalWonderName(
+	name: string,
+	customWonders: readonly Pick<CustomWonder, "name">[] = [],
+): string {
+	const key = normalizeWonderName(name);
+	if (!key) return name;
+	const official = OFFICIAL_NAME_BY_KEY.get(key);
+	if (official) return official;
+	return customWonders.find((w) => normalizeWonderName(w.name) === key)?.name ?? name;
+}
+
+/** `toCanonicalWonderName` appliqué à la merveille de chaque saisie d'une partie. */
+export function canonicalizeWonderNames<E extends Pick<PlayerGameEntry, "wonder">>(
+	entries: Record<string, E>,
+	customWonders: readonly Pick<CustomWonder, "name">[] = [],
+): Record<string, E> {
+	return Object.fromEntries(
+		Object.entries(entries).map(([id, entry]) => {
+			// Données pas encore validées (migration) : une saisie mal formée est laissée telle quelle.
+			const name = entry?.wonder?.name;
+			if (typeof name !== "string") return [id, entry];
+			return [
+				id,
+				{ ...entry, wonder: { ...entry.wonder, name: toCanonicalWonderName(name, customWonders) } },
+			];
+		}),
+	);
+}
+
+/**
+ * Renomme une merveille dans des parties : chaque saisie dont le nom correspond à `from` (sans casse
+ * ni accents) prend `to`. Les parties sans changement gardent leur référence.
+ */
+export function renameWonderInGames(games: readonly Game[], from: string, to: string): Game[] {
+	const key = normalizeWonderName(from);
+	return games.map((game) => {
+		const touched = Object.values(game.entries).some(
+			(entry) => normalizeWonderName(entry.wonder.name) === key,
+		);
+		if (!touched) return game;
+		return { ...game, entries: renameWonderInEntries(game.entries, from, to) };
+	});
+}
+
+/** Comme `renameWonderInGames`, pour les saisies d'une seule partie (la partie en cours). */
+export function renameWonderInEntries(
+	entries: Record<string, PlayerGameEntry>,
+	from: string,
+	to: string,
+): Record<string, PlayerGameEntry> {
+	const key = normalizeWonderName(from);
+	return Object.fromEntries(
+		Object.entries(entries).map(([id, entry]) => [
+			id,
+			normalizeWonderName(entry.wonder.name) === key
+				? { ...entry, wonder: { ...entry.wonder, name: to } }
+				: entry,
+		]),
+	);
 }
 
 /**
@@ -95,8 +171,11 @@ export function getWonderNameSuggestions({
 
 	return (
 		Array.from(namesByKey.entries())
+			// Le nom n'est caché que s'il est déjà tapé à l'identique : "rhodos" propose encore Rhódos,
+			// sinon le nom sans accent serait enregistré tel quel.
 			.filter(
-				([key]) => key.includes(normalizedQuery) && key !== normalizedQuery && !excluded.has(key),
+				([key, name]) =>
+					key.includes(normalizedQuery) && name !== query.trim() && !excluded.has(key),
 			)
 			// Tri stable : l'ordre jouables puis historique est gardé à l'intérieur de chaque groupe.
 			.sort(
@@ -110,11 +189,13 @@ export function getWonderNameSuggestions({
 
 /**
  * Raison pour laquelle `name` ne peut pas devenir une merveille perso (vide, trop long, déjà au
- * catalogue officiel ou dans ses merveilles), `null` s'il est acceptable.
+ * catalogue officiel, même sous un ancien nom, ou dans ses merveilles), `null` s'il est acceptable.
  */
 export function getCustomWonderNameError(
 	name: string,
-	customWonders: readonly Pick<CustomWonder, "name">[],
+	customWonders: readonly (Pick<CustomWonder, "name"> & { id?: string })[],
+	/** Merveille renommée : son nom actuel n'est pas un doublon (correction de casse, d'accent). */
+	ignoredId?: string,
 ): string | null {
 	const trimmed = name.trim();
 	if (!trimmed) return "Indique le nom de la merveille.";
@@ -122,8 +203,12 @@ export function getCustomWonderNameError(
 		return `${MAX_WONDER_NAME_LENGTH} caractères au maximum.`;
 	}
 	const key = normalizeWonderName(trimmed);
-	const known = [...OFFICIAL_WONDERS, ...customWonders].some(
-		(wonder) => normalizeWonderName(wonder.name) === key,
-	);
+	const known =
+		OFFICIAL_NAME_BY_KEY.has(key) ||
+		customWonders.some(
+			(wonder) =>
+				(ignoredId === undefined || wonder.id !== ignoredId) &&
+				normalizeWonderName(wonder.name) === key,
+		);
 	return known ? "Cette merveille existe déjà." : null;
 }

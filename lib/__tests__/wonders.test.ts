@@ -6,6 +6,8 @@ import {
 	getCustomWonderNameError,
 	getWonderNameSuggestions,
 	normalizeWonderName,
+	renameWonderInGames,
+	toCanonicalWonderName,
 	type WonderOption,
 } from "../wonders";
 
@@ -36,13 +38,13 @@ describe("getAvailableWonders", () => {
 	it("propose les 7 merveilles du jeu de base, sans celles des extensions inactives", () => {
 		const available = getAvailableWonders("second", [], [], []);
 		expect(names(available)).toEqual([
-			"Alexandrie",
-			"Babylone",
-			"Éphèse",
-			"Gizeh",
-			"Halicarnasse",
-			"Olympie",
-			"Rhodes",
+			"Alexandria",
+			"Babylon",
+			"Ephesos",
+			"Gizah",
+			"Halikarnassos",
+			"Olympía",
+			"Rhódos",
 		]);
 		expect(available.every((w) => w.source === "base")).toBe(true);
 	});
@@ -61,14 +63,14 @@ describe("getAvailableWonders", () => {
 		const available = getAvailableWonders(
 			"second",
 			[],
-			[custom("Ys"), custom("Atlantide"), custom("rhodes")],
+			[custom("Ys"), custom("Atlantide"), custom("rhodos")],
 			[],
 		);
 		expect(available.slice(-2)).toEqual([
 			{ name: "Atlantide", source: "custom" },
 			{ name: "Ys", source: "custom" },
 		]);
-		expect(names(available).filter((n) => normalizeWonderName(n) === "rhodes")).toEqual(["Rhodes"]);
+		expect(names(available).filter((n) => normalizeWonderName(n) === "rhodos")).toEqual(["Rhódos"]);
 	});
 
 	it("ne propose que les merveilles des extensions non officielles cochées pour la partie", () => {
@@ -94,23 +96,24 @@ describe("getWonderNameSuggestions", () => {
 		const suggestions = getWonderNameSuggestions({
 			options,
 			games: [],
-			query: "e",
-			takenNames: ["rhodes", "Éphèse", ""],
+			query: "a",
+			takenNames: ["rhodos", "Gizah", ""],
 		});
-		expect(suggestions).not.toContain("Rhodes");
-		expect(suggestions).not.toContain("Éphèse");
-		expect(suggestions).toEqual(expect.arrayContaining(["Alexandrie", "Babylone", "Gizeh"]));
+		expect(suggestions).not.toContain("Rhódos");
+		expect(suggestions).not.toContain("Gizah");
+		expect(suggestions).toEqual(expect.arrayContaining(["Alexandria", "Babylon", "Olympía"]));
 	});
 
 	it("filtre sans tenir compte de la casse ni des accents", () => {
-		expect(getWonderNameSuggestions({ options, games: [], query: "EPH" })).toEqual(["Éphèse"]);
+		expect(getWonderNameSuggestions({ options, games: [], query: "OLYMPIA" })).toEqual(["Olympía"]);
+		expect(getWonderNameSuggestions({ options, games: [], query: "rhód" })).toEqual(["Rhódos"]);
 	});
 
 	it("met d'abord les noms qui commencent par la saisie, puis les jouables avant l'historique", () => {
-		const games = [makeGame("g1", ["Babel perso", "babylone"]), makeGame("g2", ["Abydos"])];
+		const games = [makeGame("g1", ["Babel perso", "babylon"]), makeGame("g2", ["Abydos"])];
 		expect(getWonderNameSuggestions({ options, games, query: "ab" })).toEqual([
 			"Abydos",
-			"Babylone",
+			"Babylon",
 			"Babel perso",
 		]);
 	});
@@ -125,9 +128,17 @@ describe("getWonderNameSuggestions", () => {
 	});
 
 	it("n'inclut pas le nom déjà tapé exactement, ni les entrées vides de l'historique", () => {
-		const games = [makeGame("g1", ["", "Gizah"])];
-		expect(getWonderNameSuggestions({ options, games, query: "gizeh" })).toEqual([]);
-		expect(getWonderNameSuggestions({ options, games, query: "giz" })).toEqual(["Gizeh", "Gizah"]);
+		const games = [makeGame("g1", ["", "Gizeh perso"])];
+		expect(getWonderNameSuggestions({ options, games, query: "Gizah" })).toEqual([]);
+		expect(getWonderNameSuggestions({ options, games, query: "giz" })).toEqual([
+			"Gizah",
+			"Gizeh perso",
+		]);
+	});
+
+	it("propose l'écriture exacte d'un nom tapé sans ses accents", () => {
+		expect(getWonderNameSuggestions({ options, games: [], query: "rhodos" })).toEqual(["Rhódos"]);
+		expect(getWonderNameSuggestions({ options, games: [], query: "Rhódos" })).toEqual([]);
 	});
 
 	it("limite à 5 suggestions par défaut", () => {
@@ -151,11 +162,45 @@ describe("getCustomWonderNameError", () => {
 		expect(getCustomWonderNameError("A".repeat(101), [])).not.toBeNull();
 	});
 
-	it("refuse un nom déjà officiel (toutes éditions) ou déjà perso", () => {
-		expect(getCustomWonderNameError("ephese", [])).toBe("Cette merveille existe déjà.");
+	it("refuse un nom déjà officiel (toutes éditions, anciens noms compris) ou déjà perso", () => {
+		expect(getCustomWonderNameError("ephesos", [])).toBe("Cette merveille existe déjà.");
+		expect(getCustomWonderNameError("Éphèse", [])).toBe("Cette merveille existe déjà.");
 		expect(getCustomWonderNameError("Stonehenge", [])).toBe("Cette merveille existe déjà.");
 		expect(getCustomWonderNameError("ATLANTIDE", [custom("Atlantide")])).toBe(
 			"Cette merveille existe déjà.",
 		);
+	});
+
+	it("laisse une merveille renommée garder son nom, à la casse près", () => {
+		expect(getCustomWonderNameError("ATLANTIDE", [custom("Atlantide")], "Atlantide")).toBeNull();
+	});
+});
+
+describe("toCanonicalWonderName", () => {
+	it("rend l'écriture du catalogue, y compris pour un ancien nom", () => {
+		expect(toCanonicalWonderName("Alexandrie")).toBe("Alexandria");
+		expect(toCanonicalWonderName(" rhodes ")).toBe("Rhódos");
+		expect(toCanonicalWonderName("OLYMPIA")).toBe("Olympía");
+		expect(toCanonicalWonderName("Pétra")).toBe("Pétra");
+	});
+
+	it("rend l'écriture d'une merveille perso, et un nom inconnu tel quel", () => {
+		expect(toCanonicalWonderName("atlantide", [custom("Atlantide")])).toBe("Atlantide");
+		expect(toCanonicalWonderName("Lémurie ")).toBe("Lémurie ");
+		expect(toCanonicalWonderName("")).toBe("");
+	});
+});
+
+describe("renameWonderInGames", () => {
+	it("renomme sans tenir compte de la casse et garde les parties non concernées", () => {
+		const touched = makeGame("g1", ["atlantid", "Rhódos"]);
+		const untouched = makeGame("g2", ["Ys"]);
+		const [renamed, same] = renameWonderInGames([touched, untouched], "Atlantid", "Atlantide");
+
+		expect(Object.values(renamed.entries).map((e) => e.wonder.name)).toEqual([
+			"Atlantide",
+			"Rhódos",
+		]);
+		expect(same).toBe(untouched);
 	});
 });

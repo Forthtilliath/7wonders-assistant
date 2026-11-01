@@ -12,6 +12,7 @@ import {
 	validateMigratedBackupData,
 } from "@/lib/backupSchema";
 import { buildGamesCsv } from "@/lib/csv";
+import { canonicalizeWonderNames } from "@/lib/wonders";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { usePlayersStore } from "@/stores/playersStore";
@@ -62,7 +63,16 @@ export function parseBackupContent(content: string): BackupData {
 		);
 	}
 
-	return validateMigratedBackupData(migrateBackupData(data));
+	const valid = validateMigratedBackupData(migrateBackupData(data));
+	// Une sauvegarde d'avant le renommage des merveilles du jeu de base ("Rhodes" -> "Rhódos") :
+	// simple changement de nom, sans nouvelle `DATA_VERSION` qu'une app plus ancienne refuserait.
+	return {
+		...valid,
+		history: valid.history.map((game) => ({
+			...game,
+			entries: canonicalizeWonderNames(game.entries),
+		})),
+	};
 }
 
 /** Remplace toutes les données locales (joueurs avec leurs photos, historique, groupes, merveilles
