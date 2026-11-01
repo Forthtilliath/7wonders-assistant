@@ -62,8 +62,11 @@ export default function TabsLayout() {
 				options={{
 					headerShown: false,
 					// Pas de bouton dédié : cet onglet n'est atteint que via "Lancer la partie" depuis
-					// l'onglet Jouer, mais reste dans le même Tabs pour garder la barre visible.
-					href: null,
+					// l'onglet Jouer, mais reste dans le même Tabs pour garder la barre visible. Surtout pas
+					// `href: null` : depuis expo-router 58, un onglet caché qui prend le focus est redirigé
+					// vers l'onglet initial, la saisie des scores ne s'ouvrirait jamais.
+					tabBarButton: () => null,
+					tabBarItemStyle: { display: "none" },
 				}}
 			/>
 		</Tabs>
