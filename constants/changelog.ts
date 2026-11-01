@@ -12,6 +12,13 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.6.0-alpha.3",
+		date: Date.UTC(2026, 10, 1),
+		items: [
+			"Correction : après « Lancer la partie » ou « Reprendre la partie en cours », la saisie des scores ne s'ouvrait plus et l'app revenait à l'accueil.",
+		],
+	},
+	{
 		version: "1.6.0-alpha.2",
 		date: Date.UTC(2026, 10, 1),
 		items: [
