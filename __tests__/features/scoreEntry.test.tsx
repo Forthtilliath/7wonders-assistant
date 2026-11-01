@@ -1,4 +1,4 @@
-import { act, render, screen, userEvent } from "@testing-library/react-native";
+import { act, screen, userEvent } from "@testing-library/react-native";
 import CategoryScoreScreen from "@/app/(tabs)/game/score/[category]";
 import { useGameStore } from "@/stores/gameStore";
 import { mockRouter, setSearchParams } from "@/test-utils/expoRouter";
@@ -9,6 +9,7 @@ import {
 	seedPlayers,
 	withinSheet,
 } from "@/test-utils/fixtures";
+import { render } from "@/test-utils/render";
 import type { CategoryId, ExtensionId } from "@/types/game";
 
 async function renderCategory(category: CategoryId, extensions: ExtensionId[] = []) {

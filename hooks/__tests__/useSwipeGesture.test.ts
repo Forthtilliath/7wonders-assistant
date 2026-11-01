@@ -1,11 +1,11 @@
 import { renderHook } from "@testing-library/react-native";
-import type { PanGesture } from "react-native-gesture-handler";
+import type { LegacyPanGesture } from "react-native-gesture-handler";
 import { useSwipeGesture } from "../useSwipeGesture";
 
 type Props = { onSwipeLeft: () => void };
 
 /** Simule la fin d'un glissement horizontal de `translationX` px. */
-function endSwipe(gesture: PanGesture, translationX: number) {
+function endSwipe(gesture: LegacyPanGesture, translationX: number) {
 	gesture.handlers.onEnd?.({ translationX } as never, true);
 }
 

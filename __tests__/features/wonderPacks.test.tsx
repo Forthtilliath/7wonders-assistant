@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, userEvent } from "@testing-library/react-native";
+import { fireEvent, screen, userEvent } from "@testing-library/react-native";
 import CategoryScoreScreen from "@/app/(tabs)/game/score/[category]";
 import WonderPackScreen from "@/app/(tabs)/settings/wonder-packs/[id]";
 import WondersSettingsScreen from "@/app/(tabs)/settings/wonders";
@@ -12,6 +12,7 @@ import {
 	seedPlayers,
 	withinSheet,
 } from "@/test-utils/fixtures";
+import { render } from "@/test-utils/render";
 
 const wonderNames = () => useWondersStore.getState().customWonders.map((w) => w.name);
 

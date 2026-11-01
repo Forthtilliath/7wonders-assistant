@@ -272,7 +272,7 @@ describe("Réglages", () => {
 
 	it("ouvre la page de dons", async () => {
 		const user = userEvent.setup();
-		const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+		const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
 		await render(<DonateSettingsScreen />);
 
 		await user.press(screen.getByRole("button", { name: "Faire un don" }));
