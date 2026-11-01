@@ -7,8 +7,10 @@ import { useColors } from "@/hooks/useColors";
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
 function tabIcon(name: IconName) {
+	// Couleurs du thème, toujours des chaînes : le `ColorValue` de RN 0.88 est plus large que celui
+	// attendu par @expo/vector-icons (string | OpaqueColorValue).
 	return ({ color, size }: { color: ColorValue; size: number }) => (
-		<MaterialCommunityIcons name={name} color={color} size={size} />
+		<MaterialCommunityIcons name={name} color={color as string} size={size} />
 	);
 }
 

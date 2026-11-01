@@ -1,4 +1,5 @@
 import {
+	type ComponentRef,
 	createContext,
 	type PropsWithChildren,
 	type RefObject,
@@ -9,7 +10,10 @@ import {
 } from "react";
 import { Keyboard, type TextInput, type TextInputProps } from "react-native";
 
-type InputRef = RefObject<TextInput | null>;
+/** Instance du champ (TextInput est un composant fonction depuis RN 0.88, plus une classe). */
+type TextInputInstance = ComponentRef<typeof TextInput>;
+
+type InputRef = RefObject<TextInputInstance | null>;
 
 type Position = { x: number; y: number };
 
@@ -25,7 +29,7 @@ export function compareReadingOrder(a: Position, b: Position) {
 	return Math.round(a.y) - Math.round(b.y) || a.x - b.x;
 }
 
-function measure(input: TextInput) {
+function measure(input: TextInputInstance) {
 	return new Promise<Position>((resolve) => input.measureInWindow((x, y) => resolve({ x, y })));
 }
 
@@ -73,7 +77,7 @@ export function FocusChainProvider({ children }: PropsWithChildren) {
  */
 export function useFocusChainInput() {
 	const chain = useContext(FocusChainContext);
-	const ref = useRef<TextInput>(null);
+	const ref = useRef<TextInputInstance>(null);
 
 	useEffect(() => chain?.register(ref), [chain]);
 

@@ -1,4 +1,4 @@
-import { type RefObject, useMemo } from "react";
+import { type ComponentRef, type RefObject, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { GameCharts } from "@/components/game/GameCharts";
 import { ShareableRanking } from "@/components/game/ShareableRanking";
@@ -15,8 +15,8 @@ type Props = {
 	ranking: RankedPlayerScore[];
 	/** Tous les joueurs (ceux supprimés depuis la partie en sont absents). */
 	players: Player[];
-	rankingRef: RefObject<View | null>;
-	chartsRef: RefObject<View | null>;
+	rankingRef: RefObject<ComponentRef<typeof View> | null>;
+	chartsRef: RefObject<ComponentRef<typeof View> | null>;
 };
 
 /**
