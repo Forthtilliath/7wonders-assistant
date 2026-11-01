@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
@@ -39,26 +39,28 @@ export default function NewGameSettingsScreen() {
 	const warning = getExtensionsWarning(defaultExtensions);
 
 	return (
-		<ScreenContainer style={styles.container}>
-			<Text style={styles.hint}>
-				Cette édition et ces extensions sont pré-choisies automatiquement à la création d'une
-				nouvelle partie. L'édition filtre les extensions proposées.
-			</Text>
-			<RadioGroup options={EDITION_OPTIONS} value={defaultEdition} onChange={setDefaultEdition} />
-			<CheckboxGroup<ExtensionId>
-				options={getAvailableExtensions(defaultEdition).map((ext) => ({
-					value: ext,
-					label: EXTENSION_LABELS[ext],
-				}))}
-				values={defaultExtensions}
-				onChange={setDefaultExtensions}
-			/>
-			{warning && <Text style={styles.warning}>{warning}</Text>}
-			<WonderPacksPicker
-				values={defaultPackIds}
-				onChange={setDefaultPackIds}
-				style={styles.packs}
-			/>
+		<ScreenContainer>
+			<ScrollView contentContainerStyle={styles.content}>
+				<Text style={styles.hint}>
+					Cette édition et ces extensions sont pré-choisies automatiquement à la création d'une
+					nouvelle partie. L'édition filtre les extensions proposées.
+				</Text>
+				<RadioGroup options={EDITION_OPTIONS} value={defaultEdition} onChange={setDefaultEdition} />
+				<CheckboxGroup<ExtensionId>
+					options={getAvailableExtensions(defaultEdition).map((ext) => ({
+						value: ext,
+						label: EXTENSION_LABELS[ext],
+					}))}
+					values={defaultExtensions}
+					onChange={setDefaultExtensions}
+				/>
+				{warning && <Text style={styles.warning}>{warning}</Text>}
+				<WonderPacksPicker
+					values={defaultPackIds}
+					onChange={setDefaultPackIds}
+					style={styles.packs}
+				/>
+			</ScrollView>
 		</ScreenContainer>
 	);
 }
@@ -67,7 +69,7 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
-				container: {
+				content: {
 					gap: SPACING.sm,
 				},
 				hint: {

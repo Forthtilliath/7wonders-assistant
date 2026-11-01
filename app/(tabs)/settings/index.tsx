@@ -1,7 +1,7 @@
 import { useBackupState } from "@forthtilliath/expo-backup-ui/hooks";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
-import { StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
 import { SettingsRow } from "@/components/settings/SettingsRow";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { APP_INFO } from "@/constants/app";
@@ -43,62 +43,64 @@ export default function SettingsScreen() {
 	].join(", ");
 
 	return (
-		<ScreenContainer style={styles.container}>
-			<SettingsRow
-				icon="contrast"
-				label="Apparence"
-				value={mode === "dark" ? "Sombre" : "Clair"}
-				onPress={() => router.push("/settings/appearance")}
-			/>
-			<SettingsRow
-				icon="options"
-				label="Édition et extensions"
-				value={defaultExtensionsPreview}
-				onPress={() => router.push("/settings/new-game")}
-			/>
-			<SettingsRow
-				icon="business"
-				label="Merveilles"
-				value={wondersPreview}
-				onPress={() => router.push("/settings/wonders")}
-			/>
-			<SettingsRow
-				icon="cloud-upload"
-				label="Gestion des sauvegardes"
-				value={
-					cloudConnected ? "Sauvegarde Google Drive activée" : "Exporter ou restaurer tes données"
-				}
-				onPress={() => router.push("/settings/backup")}
-			/>
-			<SettingsRow
-				icon="sparkles"
-				label="Nouveautés"
-				value={`Version ${CHANGELOG[0].version}`}
-				onPress={() => router.push("/settings/changelog")}
-			/>
-			<SettingsRow
-				icon="heart"
-				label="Dons"
-				value="Soutenir le projet"
-				onPress={() => router.push("/settings/donate")}
-			/>
-			<SettingsRow
-				icon="information-circle"
-				label="À propos"
-				value="Mises à jour, infos"
-				onPress={() => router.push("/settings/about")}
-			/>
-			<SettingsRow
-				icon="warning"
-				label="Zone dangereuse"
-				value="Effacer toutes les données"
-				danger
-				onPress={() => router.push("/settings/danger-zone")}
-			/>
+		<ScreenContainer>
+			<ScrollView contentContainerStyle={styles.content}>
+				<SettingsRow
+					icon="contrast"
+					label="Apparence"
+					value={mode === "dark" ? "Sombre" : "Clair"}
+					onPress={() => router.push("/settings/appearance")}
+				/>
+				<SettingsRow
+					icon="options"
+					label="Édition et extensions"
+					value={defaultExtensionsPreview}
+					onPress={() => router.push("/settings/new-game")}
+				/>
+				<SettingsRow
+					icon="business"
+					label="Merveilles"
+					value={wondersPreview}
+					onPress={() => router.push("/settings/wonders")}
+				/>
+				<SettingsRow
+					icon="cloud-upload"
+					label="Gestion des sauvegardes"
+					value={
+						cloudConnected ? "Sauvegarde Google Drive activée" : "Exporter ou restaurer tes données"
+					}
+					onPress={() => router.push("/settings/backup")}
+				/>
+				<SettingsRow
+					icon="sparkles"
+					label="Nouveautés"
+					value={`Version ${CHANGELOG[0].version}`}
+					onPress={() => router.push("/settings/changelog")}
+				/>
+				<SettingsRow
+					icon="heart"
+					label="Dons"
+					value="Soutenir le projet"
+					onPress={() => router.push("/settings/donate")}
+				/>
+				<SettingsRow
+					icon="information-circle"
+					label="À propos"
+					value="Mises à jour, infos"
+					onPress={() => router.push("/settings/about")}
+				/>
+				<SettingsRow
+					icon="warning"
+					label="Zone dangereuse"
+					value="Effacer toutes les données"
+					danger
+					onPress={() => router.push("/settings/danger-zone")}
+				/>
 
-			<Text style={styles.version}>
-				{APP_INFO.name} · v{APP_INFO.version}
-			</Text>
+				<Text style={styles.version}>
+					{APP_INFO.name} · v{APP_INFO.version}
+				</Text>
+			</ScrollView>
 		</ScreenContainer>
 	);
 }
@@ -107,9 +109,12 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
-				container: {
+				// Le menu dépasse la hauteur d'écran sur un petit téléphone : sans défilement, le bas
+				// restait caché derrière la barre d'onglets. flexGrow garde la version calée en bas
+				// quand tout tient.
+				content: {
+					flexGrow: 1,
 					gap: SPACING.sm,
-					justifyContent: "flex-start",
 				},
 				version: {
 					color: colors.textMuted,
