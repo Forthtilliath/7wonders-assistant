@@ -210,6 +210,7 @@ describe("Réglages", () => {
 				owner: "Forthtilliath",
 				repo: "7wonders-assistant",
 				requireVerifiedApk: true,
+				includePrereleases: expect.any(Boolean),
 			});
 			expect(alert.mock.calls[0][0]).toBe("Mise à jour disponible");
 			await pressAlertButton(alert, "Installer");
