@@ -175,6 +175,50 @@ describe("Historique des parties", () => {
 			expect(useGameStore.getState().hasOngoingGame()).toBe(false);
 		});
 
+		it("rouvre la partie pour la corriger, depuis la première étape", async () => {
+			const user = userEvent.setup();
+			await render(<GameDetailScreen />);
+
+			await user.press(screen.getByRole("button", { name: "Modifier la partie" }));
+
+			expect(useGameStore.getState()).toMatchObject({
+				editingGameId: "g1",
+				playerIds: ["p1", "p2", "p3"],
+				extensions: ["leaders"],
+			});
+			expect(useGameStore.getState().entries.p1.civilians.points).toBe(30);
+			expect(mockRouter.push).toHaveBeenCalledWith("/game/score/military");
+		});
+
+		it("reprend une correction déjà commencée sans perdre ses changements", async () => {
+			const user = userEvent.setup();
+			const game = useHistoryStore.getState().games[0];
+			useGameStore.getState().editFinishedGame(game);
+			useGameStore.getState().updateEntry("p1", (e) => ({ ...e, civilians: { points: 99 } }));
+			await render(<GameDetailScreen />);
+
+			await user.press(screen.getByRole("button", { name: "Modifier la partie" }));
+
+			expect(useGameStore.getState().entries.p1.civilians.points).toBe(99);
+			expect(mockRouter.push).toHaveBeenCalledWith("/game/score/military");
+		});
+
+		it("refuse de corriger une partie tant qu'une autre est en cours", async () => {
+			const user = userEvent.setup();
+			const alert = mockAlert();
+			useGameStore.getState().startNewGame(["p1", "p2"], []);
+			await render(<GameDetailScreen />);
+
+			await user.press(screen.getByRole("button", { name: "Modifier la partie" }));
+
+			expect(alert.mock.calls[0][0]).toBe("Une partie est en cours");
+			expect(useGameStore.getState()).toMatchObject({
+				editingGameId: null,
+				playerIds: ["p1", "p2"],
+			});
+			expect(mockRouter.push).not.toHaveBeenCalled();
+		});
+
 		it("supprime la partie après confirmation", async () => {
 			const user = userEvent.setup();
 			const alert = mockAlert();

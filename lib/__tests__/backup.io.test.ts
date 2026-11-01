@@ -57,7 +57,7 @@ jest.mock("expo-sharing", () => ({
 
 import { File } from "expo-file-system";
 import * as Sharing from "expo-sharing";
-import { backup, exportGamesCsv, ImportError } from "@/lib/backup";
+import { backup, exportGamesCsv, ImportError, parseBackupContent } from "@/lib/backup";
 import { APP_ID, DATA_VERSION } from "@/lib/backupSchema";
 import { useGroupsStore } from "@/stores/groupsStore";
 import { useHistoryStore } from "@/stores/historyStore";
@@ -155,6 +155,16 @@ describe("backup.pickBackupFile", () => {
 
 		expect(result.status).toBe("ready");
 		expect(usePlayersStore.getState().players.map((p) => p.name)).toEqual(["Ancien"]);
+	});
+
+	it("convertit les anciens noms des merveilles du jeu de base", async () => {
+		const game = makeGame("g1", ["p1"]);
+		game.entries.p1.wonder = { name: "Babylone", side: "A" };
+		const data = parseBackupContent(
+			JSON.stringify({ ...JSON.parse(backupFile([makePlayer("p1", "Alice")])), history: [game] }),
+		);
+
+		expect(data.history[0].entries.p1.wonder.name).toBe("Babylon");
 	});
 });
 

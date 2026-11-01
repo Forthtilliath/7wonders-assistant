@@ -1,6 +1,6 @@
 import { fetchLatestRelease } from "@forthtilliath/expo-release-updates/githubReleases";
 import { act, fireEvent, render, screen, userEvent } from "@testing-library/react-native";
-import AboutSettingsScreen from "@/app/(tabs)/settings/about";
+import ChangelogSettingsScreen from "@/app/(tabs)/settings/changelog";
 import { UpdateBanner } from "@/components/updates/UpdateBanner";
 import { useUpdateStore } from "@/stores/updateStore";
 import { mockAlert, resetAllStores } from "@/test-utils/fixtures";
@@ -35,7 +35,7 @@ describe("Versions de test (alpha, bêta)", () => {
 		mockAlert();
 		mockLatestRelease("0.0.1");
 		useUpdateStore.setState({ prereleases: false });
-		await render(<AboutSettingsScreen />);
+		await render(<ChangelogSettingsScreen />);
 
 		expect(screen.getByRole("switch", { name: LABEL })).not.toBeChecked();
 		await user.press(screen.getByRole("button", { name: "Vérifier les mises à jour" }));

@@ -6,7 +6,7 @@ import { shareGameText } from "@/lib/shareGame";
 import { useGameStore } from "@/stores/gameStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { mockRouter } from "@/test-utils/expoRouter";
-import { mockAlert, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
+import { makeGame, mockAlert, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
 
 jest.mock("@/lib/shareGame", () => ({ shareGameText: jest.fn(() => Promise.resolve()) }));
 jest.mock("@forthtilliath/react-native-kit/utils/helpers/shareViewAsImage", () => ({
@@ -57,6 +57,24 @@ describe("Résultats de la partie", () => {
 		expect(saved.entries.p2.civilians.points).toBe(20);
 		expect(saved.finishedAt).toBeDefined();
 		expect(useGameStore.getState().hasOngoingGame()).toBe(false);
+		expect(mockRouter.dismissAll).toHaveBeenCalled();
+	});
+
+	it("enregistre la correction d'une partie terminée à la place de l'originale", async () => {
+		const user = userEvent.setup();
+		seedPlayers(["Alice", "Bob"]);
+		const game = makeGame("g1", { p1: 10, p2: 20 });
+		useHistoryStore.setState({ games: [game] });
+		useGameStore.getState().editFinishedGame(game);
+		useGameStore.getState().updateEntry("p1", (e) => ({ ...e, civilians: { points: 30 } }));
+		await render(<ResultsScreen />);
+
+		await user.press(screen.getByRole("button", { name: "Enregistrer les modifications" }));
+
+		const games = useHistoryStore.getState().games;
+		expect(games).toHaveLength(1);
+		expect(games[0]).toMatchObject({ id: "g1", finishedAt: game.finishedAt });
+		expect(games[0].entries.p1.civilians.points).toBe(30);
 		expect(mockRouter.dismissAll).toHaveBeenCalled();
 	});
 

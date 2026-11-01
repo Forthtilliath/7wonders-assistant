@@ -78,7 +78,7 @@ describe("groupes des statistiques par merveille", () => {
 	const packs = [pack("box", "Wonders Box"), pack("mine", "Mes créations")];
 	const customWonders = [wonder("Atlantide", "box"), wonder("Ys"), wonder("Orphan", "deleted")];
 	const index = buildWonderGroupIndex(customWonders, packs);
-	const stats = [stat("Rhodes"), stat("atlantide"), stat("Ys"), stat("Orphan"), stat("Inconnue")];
+	const stats = [stat("Rhódos"), stat("atlantide"), stat("Ys"), stat("Orphan"), stat("Inconnue")];
 
 	it("ne propose que les groupes joués, extensions par ordre alphabétique", () => {
 		expect(getWonderStatGroups(stats, index, packs).map((g) => g.label)).toEqual([
@@ -93,7 +93,7 @@ describe("groupes des statistiques par merveille", () => {
 	it("filtre par groupe, sans tenir compte de la casse", () => {
 		const names = (key: string) => filterWonderStatsByGroup(stats, index, key).map((s) => s.name);
 		expect(names("all")).toHaveLength(5);
-		expect(names("official")).toEqual(["Rhodes"]);
+		expect(names("official")).toEqual(["Rhódos"]);
 		expect(names("pack:box")).toEqual(["atlantide"]);
 		// Une merveille dont l'extension n'existe plus compte parmi les merveilles perso.
 		expect(names("custom")).toEqual(["Ys", "Orphan"]);

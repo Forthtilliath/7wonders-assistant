@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { GameCharts } from "@/components/game/GameCharts";
 import { GameShareImages } from "@/components/game/GameShareImages";
 import { ShareableRanking } from "@/components/game/ShareableRanking";
@@ -14,6 +14,7 @@ import type { ThemeColors } from "@/constants/theme";
 import { SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 import { useGameCapture } from "@/hooks/useGameCapture";
+import { getCategoryFlow } from "@/lib/categoryFlow";
 import { getGameRanking } from "@/lib/scoring/game";
 import { useGameStore } from "@/stores/gameStore";
 import { useHistoryStore } from "@/stores/historyStore";
@@ -29,6 +30,7 @@ export default function GameDetailScreen() {
 	const removeGame = useHistoryStore((s) => s.removeGame);
 	const players = usePlayersStore((s) => s.players);
 	const startNewGame = useGameStore((s) => s.startNewGame);
+	const editFinishedGame = useGameStore((s) => s.editFinishedGame);
 	const { rankingRef, chartsRef, capturing, shareImage } = useGameCapture();
 	const [shareVisible, setShareVisible] = useState(false);
 	const [chartsVisible, setChartsVisible] = useState(false);
@@ -69,6 +71,21 @@ export default function GameDetailScreen() {
 		router.push("/game/score/military");
 	};
 
+	// Une seule partie à la fois dans la saisie : la partie en cours n'est jamais écrasée.
+	const editGame = () => {
+		const current = useGameStore.getState();
+		if (current.hasOngoingGame() && current.editingGameId !== game.id) {
+			Alert.alert(
+				"Une partie est en cours",
+				"Termine ou abandonne la partie en cours avant de modifier celle-ci.",
+			);
+			return;
+		}
+		// Correction déjà commencée pour cette partie : on la reprend sans perdre ses changements.
+		if (current.editingGameId !== game.id) editFinishedGame(game);
+		router.push(`/game/score/${getCategoryFlow(game.extensions)[0]}`);
+	};
+
 	const confirmReplay = () => {
 		const stillExisting = game.playerIds.filter((pid) => players.some((p) => p.id === pid));
 
@@ -100,14 +117,24 @@ export default function GameDetailScreen() {
 			<Stack.Screen
 				options={{
 					headerRight: () => (
-						<Pressable
-							onPress={() => setShareVisible(true)}
-							hitSlop={12}
-							accessibilityRole="button"
-							accessibilityLabel="Partager la partie"
-						>
-							<Ionicons name="share-social-outline" size={24} color={colors.text} />
-						</Pressable>
+						<View style={styles.headerActions}>
+							<Pressable
+								onPress={() => setShareVisible(true)}
+								hitSlop={12}
+								accessibilityRole="button"
+								accessibilityLabel="Partager la partie"
+							>
+								<Ionicons name="share-social-outline" size={24} color={colors.text} />
+							</Pressable>
+							<Pressable
+								onPress={editGame}
+								hitSlop={12}
+								accessibilityRole="button"
+								accessibilityLabel="Modifier la partie"
+							>
+								<Ionicons name="create-outline" size={24} color={colors.text} />
+							</Pressable>
+						</View>
 					),
 				}}
 			/>
@@ -157,6 +184,10 @@ function useStyles(colors: ThemeColors) {
 	return useMemo(
 		() =>
 			StyleSheet.create({
+				headerActions: {
+					flexDirection: "row",
+					gap: SPACING.lg,
+				},
 				list: {
 					gap: SPACING.sm,
 					paddingTop: SPACING.sm,

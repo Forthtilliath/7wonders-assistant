@@ -102,6 +102,34 @@ describe("migrateHistoryStoreData", () => {
 		expect(migrated.games[0].entries.p1).toEqual({ ...v6Entry, babel: { tiles: 0 } });
 	});
 
+	it("renomme les merveilles du jeu de base des parties venant de la v7, d'après leur plateau", () => {
+		const entry = (playerId: string, name: string) => ({
+			...createEmptyPlayerGameEntry(playerId),
+			wonder: { name, side: "A" as const },
+		});
+		const v7State = {
+			games: [
+				{
+					...makeGame("1"),
+					playerIds: ["p1", "p2", "p3"],
+					entries: {
+						p1: entry("p1", "Éphèse"),
+						p2: entry("p2", "gizeh"),
+						p3: entry("p3", "Pétra"),
+					},
+				},
+			],
+		};
+
+		const migrated = migrateHistoryStoreData(v7State, 7);
+
+		expect(Object.values(migrated.games[0].entries).map((e) => e.wonder.name)).toEqual([
+			"Ephesos",
+			"Gizah",
+			"Pétra",
+		]);
+	});
+
 	it("réinitialise sur une version plus ancienne encore, sans étape de migration connue", () => {
 		expect(migrateHistoryStoreData({ games: ["données obsolètes"] }, 1)).toEqual({ games: [] });
 	});

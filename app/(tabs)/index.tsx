@@ -45,6 +45,7 @@ export default function NewGameTab() {
 	const startNewGame = useGameStore((s) => s.startNewGame);
 	const resetGame = useGameStore((s) => s.resetGame);
 	const hasOngoingGame = useGameStore((s) => s.hasOngoingGame());
+	const isEditing = useGameStore((s) => s.editingGameId !== null);
 
 	const activePlayers = selectSortedPlayers(players.filter((p) => !p.isArchived));
 	const sortedGroups = selectSortedGroups(groups.filter((g) => !g.isArchived));
@@ -104,6 +105,17 @@ export default function NewGameTab() {
 	};
 
 	const confirmAbandon = () => {
+		if (isEditing) {
+			Alert.alert(
+				"Abandonner la modification ?",
+				"Les changements seront perdus, la partie enregistrée reste telle quelle.",
+				[
+					{ text: "Annuler", style: "cancel" },
+					{ text: "Abandonner", style: "destructive", onPress: resetGame },
+				],
+			);
+			return;
+		}
 		Alert.alert("Abandonner la partie en cours ?", "Les scores déjà saisis seront perdus.", [
 			{ text: "Annuler", style: "cancel" },
 			{ text: "Abandonner", style: "destructive", onPress: resetGame },
@@ -138,15 +150,23 @@ export default function NewGameTab() {
 		return (
 			<ScreenContainer style={styles.onboarding}>
 				<MaterialCommunityIcons name="progress-clock" size={48} color={colors.primary} />
-				<Text style={styles.onboardingTitle}>Une partie est en cours</Text>
+				<Text style={styles.onboardingTitle}>
+					{isEditing ? "Une partie est en cours de modification" : "Une partie est en cours"}
+				</Text>
 				<Text style={styles.onboardingText}>
-					Termine ou abandonne la partie en cours avant d'en démarrer une nouvelle.
+					{isEditing
+						? "Enregistre ou abandonne la modification avant de démarrer une nouvelle partie."
+						: "Termine ou abandonne la partie en cours avant d'en démarrer une nouvelle."}
 				</Text>
 				<Button
-					label="Reprendre la partie en cours"
+					label={isEditing ? "Reprendre la modification" : "Reprendre la partie en cours"}
 					onPress={() => router.push("/game/score/military")}
 				/>
-				<Button label="Abandonner la partie en cours" variant="ghost" onPress={confirmAbandon} />
+				<Button
+					label={isEditing ? "Abandonner la modification" : "Abandonner la partie en cours"}
+					variant="ghost"
+					onPress={confirmAbandon}
+				/>
 			</ScreenContainer>
 		);
 	}
