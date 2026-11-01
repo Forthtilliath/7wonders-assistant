@@ -12,6 +12,15 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.6.0-alpha.5",
+		date: Date.UTC(2026, 10, 1),
+		items: [
+			"Le réglage « Recevoir les versions de test » est aussi dans Réglages ▸ Nouveautés, à côté de la recherche de mises à jour.",
+			"Nouveautés affichées 5 versions à la fois : les suivantes arrivent en descendant.",
+			"Correction : le menu Réglages et la page « Édition et extensions » défilent, le bas n'est plus caché derrière la barre d'onglets.",
+		],
+	},
+	{
 		version: "1.6.0-alpha.4",
 		date: Date.UTC(2026, 10, 1),
 		items: [
