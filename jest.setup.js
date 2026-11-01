@@ -9,6 +9,10 @@ jest.mock(
 	() => require("react-native-safe-area-context/jest/mock").default,
 );
 
+jest.mock("react-native-keyboard-controller", () =>
+	require("react-native-keyboard-controller/jest"),
+);
+
 // Graphiques tiers remplacés par des vues vides : leur rendu n'est pas ce qu'on teste, et leurs
 // animations différées (setTimeout) s'exécutent après la fin des tests.
 jest.mock("react-native-gifted-charts", () => {
