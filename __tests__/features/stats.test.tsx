@@ -15,11 +15,11 @@ const withWonder =
 
 /**
  * Alice gagne 2 parties sur 3 (30-20 puis 40-10), Bob gagne la seule partie avec Cities (26-25).
- * Alice joue toujours Rhodes A, Bob Gizeh B.
+ * Alice joue toujours Rhódos A, Bob Gizah B.
  */
 function seedHistory() {
 	seedPlayers(["Alice", "Bob"]);
-	const patch = withWonder({ p1: { name: "Rhodes", side: "A" }, p2: { name: "Gizeh", side: "B" } });
+	const patch = withWonder({ p1: { name: "Rhódos", side: "A" }, p2: { name: "Gizah", side: "B" } });
 	const start = Date.UTC(2026, 8, 1);
 	useHistoryStore.setState({
 		games: [
@@ -69,8 +69,8 @@ describe("Statistiques", () => {
 		await render(<StatsScreen />);
 
 		expect(screen.getByText("Classement par taux de victoire")).toBeOnTheScreen();
-		expect(screen.getAllByText("Rhodes (Face A)").length).toBeGreaterThan(0);
-		expect(screen.getAllByText("Gizeh (Face B)").length).toBeGreaterThan(0);
+		expect(screen.getAllByText("Rhódos (Face A)").length).toBeGreaterThan(0);
+		expect(screen.getAllByText("Gizah (Face B)").length).toBeGreaterThan(0);
 	});
 
 	it("filtre le classement des merveilles par extension non officielle", async () => {
@@ -82,16 +82,16 @@ describe("Statistiques", () => {
 		});
 		const patch = withWonder({
 			p1: { name: "Atlantide", side: "A" },
-			p2: { name: "Gizeh", side: "B" },
+			p2: { name: "Gizah", side: "B" },
 		});
 		useHistoryStore.setState({ games: [makeGame("g1", { p1: 30, p2: 20 }, { patch })] });
 		await render(<StatsScreen />);
 
-		expect(screen.getByText("Gizeh (Face B)")).toBeOnTheScreen();
+		expect(screen.getByText("Gizah (Face B)")).toBeOnTheScreen();
 		await user.press(screen.getByRole("radio", { name: "Wonders Box" }));
 
 		expect(screen.getByText("Atlantide (Face A)")).toBeOnTheScreen();
-		expect(screen.queryByText("Gizeh (Face B)")).not.toBeOnTheScreen();
+		expect(screen.queryByText("Gizah (Face B)")).not.toBeOnTheScreen();
 		await user.press(screen.getByRole("radio", { name: "Officielles" }));
 		expect(screen.queryByText("Atlantide (Face A)")).not.toBeOnTheScreen();
 	});

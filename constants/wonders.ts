@@ -22,6 +22,9 @@ export type OfficialWonder = {
 	source: OfficialWonderSource;
 	/** Éditions du jeu de base avec lesquelles ce plateau existe. */
 	editions: readonly GameEdition[];
+	/** Anciens noms donnés par l'app, encore présents dans l'historique, la partie en cours ou une
+	 * sauvegarde : ils sont convertis vers `name` (lib/wonders.ts, `toCanonicalWonderName`). */
+	formerNames?: readonly string[];
 };
 
 const BOTH_EDITIONS: readonly GameEdition[] = ["first", "second"];
@@ -46,19 +49,28 @@ export const WONDER_SOURCE_LABELS: Record<WonderSource, string> = {
 	custom: "Mes merveilles",
 };
 
+const base = (id: string, name: string, formerName: string): OfficialWonder => ({
+	id,
+	name,
+	source: "base",
+	editions: BOTH_EDITIONS,
+	formerNames: [formerName],
+});
+
 /**
- * Plateaux merveille officiels, sous le nom court de leur cité (celui qu'on annonce à table). Les
- * plateaux du jeu de base, de Leaders, Cities et Armada existent dans les deux éditions ; le Wonder
- * Pack n'a été édité que pour la 1re.
+ * Plateaux merveille officiels, sous le nom court de leur cité (celui qu'on annonce à table). Ceux du
+ * jeu de base portent le nom imprimé sur le plateau, en VO, plutôt qu'une traduction. Les plateaux du
+ * jeu de base, de Leaders, Cities et Armada existent dans les deux éditions ; le Wonder Pack n'a été
+ * édité que pour la 1re.
  */
 export const OFFICIAL_WONDERS: readonly OfficialWonder[] = [
-	{ id: "alexandria", name: "Alexandrie", source: "base", editions: BOTH_EDITIONS },
-	{ id: "babylon", name: "Babylone", source: "base", editions: BOTH_EDITIONS },
-	{ id: "ephesus", name: "Éphèse", source: "base", editions: BOTH_EDITIONS },
-	{ id: "giza", name: "Gizeh", source: "base", editions: BOTH_EDITIONS },
-	{ id: "halicarnassus", name: "Halicarnasse", source: "base", editions: BOTH_EDITIONS },
-	{ id: "olympia", name: "Olympie", source: "base", editions: BOTH_EDITIONS },
-	{ id: "rhodes", name: "Rhodes", source: "base", editions: BOTH_EDITIONS },
+	base("alexandria", "Alexandria", "Alexandrie"),
+	base("babylon", "Babylon", "Babylone"),
+	base("ephesus", "Ephesos", "Éphèse"),
+	base("giza", "Gizah", "Gizeh"),
+	base("halicarnassus", "Halikarnassos", "Halicarnasse"),
+	base("olympia", "Olympía", "Olympie"),
+	base("rhodes", "Rhódos", "Rhodes"),
 	{ id: "roma", name: "Rome", source: "leaders", editions: BOTH_EDITIONS },
 	{ id: "byzantium", name: "Byzance", source: "cities", editions: BOTH_EDITIONS },
 	{ id: "petra", name: "Pétra", source: "cities", editions: BOTH_EDITIONS },

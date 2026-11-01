@@ -28,23 +28,34 @@ describe("Saisie de la merveille jouée", () => {
 				makeGame(
 					"old",
 					{ p1: 1 },
-					{ patch: (e) => ({ ...e, wonder: { name: "Rhodes", side: "A" } }) },
+					{ patch: (e) => ({ ...e, wonder: { name: "Halikarnassos", side: "A" } }) },
 				),
 			],
 		});
 		await renderWonders();
 
 		const [aliceName] = screen.getAllByPlaceholderText("Nom de la merveille");
-		await user.type(aliceName, "Rh");
-		await user.press(screen.getByRole("button", { name: "Utiliser le nom Rhodes" }));
+		// Tapé en entier sans accent : l'écriture du plateau reste proposée.
+		await user.type(aliceName, "rhodos");
+		await user.press(screen.getByRole("button", { name: "Utiliser le nom Rhódos" }));
 		await user.press(screen.getAllByRole("radio", { name: "Face B" })[0]);
 		await user.press(screen.getAllByRole("button", { name: "Augmenter" })[0]);
 
-		expect(entryOf("p1").wonder).toEqual({ name: "Rhodes", side: "B" });
+		expect(entryOf("p1").wonder).toEqual({ name: "Rhódos", side: "B" });
 		expect(entryOf("p1").wonders.points).toBe(1);
-		// Rhodes est prise par Alice : elle n'est plus proposée à Bob.
+		// Rhódos est prise par Alice : elle n'est plus proposée à Bob.
 		await user.type(screen.getAllByPlaceholderText("Nom de la merveille")[1], "rh");
-		expect(screen.queryByRole("button", { name: "Utiliser le nom Rhodes" })).toBeNull();
+		expect(screen.queryByRole("button", { name: "Utiliser le nom Rhódos" })).toBeNull();
+	});
+
+	it("enregistre l'écriture du plateau même quand le nom est tapé sans accent", async () => {
+		const user = userEvent.setup();
+		await renderWonders();
+
+		await user.type(screen.getAllByPlaceholderText("Nom de la merveille")[0], "OLYMPIA");
+		useGameStore.getState().finishGame();
+
+		expect(useHistoryStore.getState().games[0].entries.p1.wonder.name).toBe("Olympía");
 	});
 
 	it("propose les merveilles des extensions actives et ajoute une merveille perso", async () => {
