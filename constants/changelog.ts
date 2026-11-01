@@ -12,6 +12,18 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.6.0-alpha.6",
+		date: Date.UTC(2026, 10, 1),
+		items: [
+			"Une partie terminée se corrige : bouton crayon dans le détail de la partie, puis toute la saisie se reparcourt. L'enregistrement remplace la partie, à sa place dans l'historique.",
+			"Réglages ▸ Édition et extensions : choix par les couvertures des boîtes.",
+			"Merveilles du jeu de base sous le nom imprimé sur leur plateau : Alexandria, Babylon, Ephesos, Gizah, Halikarnassos, Olympía, Rhódos. Les parties déjà jouées et les sauvegardes importées suivent.",
+			"Une merveille perso se renomme (crayon dans Réglages ▸ Merveilles), jusque dans les parties déjà jouées.",
+			"Saisie de la merveille : un nom tapé sans accent (« rhodos ») propose l'écriture du plateau et l'enregistre ainsi.",
+			"À propos : plus d'infos (jeux pris en charge, données, mises à jour, code source, crédits). La recherche de mises à jour et les versions de test restent dans Nouveautés.",
+		],
+	},
+	{
 		version: "1.6.0-alpha.5",
 		date: Date.UTC(2026, 10, 1),
 		items: [
