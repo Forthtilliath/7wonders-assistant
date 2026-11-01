@@ -11,6 +11,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useAvatarStorage } from "@/hooks/useAvatarStorage";
 import { useCloudAutoBackup } from "@/hooks/useCloudAutoBackup";
 import { useColors } from "@/hooks/useColors";
+import { useDataIssuesAlert } from "@/hooks/useDataIssuesAlert";
 import { useStackScreenOptions } from "@/hooks/useStackScreenOptions";
 import { useThemeStore } from "@/stores/themeStore";
 
@@ -23,6 +24,7 @@ export default function RootLayout() {
 	const [fontsLoaded, fontError] = useFonts({ Cinzel_600SemiBold, Cinzel_700Bold });
 	useCloudAutoBackup();
 	useAvatarStorage();
+	useDataIssuesAlert();
 
 	if (!fontsLoaded && !fontError) {
 		return <View style={{ flex: 1, backgroundColor: colors.background }} />;
