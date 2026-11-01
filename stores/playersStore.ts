@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { createStoreMigrate, type MigrationSteps } from "@/lib/persistedState";
 import { createId } from "@/lib/uuid";
 import type { Player } from "@/types/game";
 
@@ -17,13 +18,19 @@ type Actions = {
 	replaceAll: (players: Player[]) => void;
 };
 
-// Bump on any breaking change to Player's shape.
+// Bump on any breaking change to Player's shape, with its step in PLAYERS_STORE_MIGRATIONS.
 export const PLAYERS_STORE_VERSION = 1;
 
+/** Une étape par version (lib/persistedState) : aucune pour l'instant. */
+export const PLAYERS_STORE_MIGRATIONS: MigrationSteps = {};
+
 /** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
-export function migratePlayersStoreData(persistedState: unknown, version: number): State {
-	return version === PLAYERS_STORE_VERSION ? (persistedState as State) : { players: [] };
-}
+export const migratePlayersStoreData = createStoreMigrate<State>(
+	"players-store",
+	PLAYERS_STORE_VERSION,
+	PLAYERS_STORE_MIGRATIONS,
+	{ players: [] },
+);
 
 export const usePlayersStore = create<State & Actions>()(
 	persist(

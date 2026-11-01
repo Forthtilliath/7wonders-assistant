@@ -4,6 +4,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { EXTENSION_CATEGORIES } from "@/constants/categories";
 import { type LegacyArmadaEntry, renameArmadaCategoriesInEntries } from "@/lib/armadaMigration";
 import { addBabelCategoryToEntries, type PreBabelEntry } from "@/lib/babelMigration";
+import { createStoreMigrate, type MigrationSteps } from "@/lib/persistedState";
 import { createId } from "@/lib/uuid";
 import {
 	createEmptyPlayerGameEntry,
@@ -59,28 +60,32 @@ export const initialGameState: State = {
 	startedAt: null,
 };
 
-// Bump on any breaking change to PlayerGameEntry's shape. A version without a migration step just
-// discards the in-progress game rather than crashing on stale/incompatible data.
+// Bump on any breaking change to PlayerGameEntry's shape, with its step in GAME_STORE_MIGRATIONS.
 export const GAME_STORE_VERSION = 7;
 
-/** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
-export function migrateGameStoreData(persistedState: unknown, version: number): State {
-	if (version === GAME_STORE_VERSION) return persistedState as State;
+type StateWithEntries<E> = Omit<State, "entries"> & { entries: Record<string, E> };
 
-	if (version !== 5 && version !== 6) return initialGameState;
-
-	// Étapes enchaînées, sans perdre la partie en cours.
-	const old = persistedState as Omit<State, "entries"> & {
-		entries: Record<string, LegacyArmadaEntry | PreBabelEntry>;
-	};
-	let entries = old.entries as Record<string, PreBabelEntry>;
-	if (version === 5) {
-		// v5 -> v6 : renommage des catégories Armada ("armada" -> "naval", "islands" -> "armada").
-		entries = renameArmadaCategoriesInEntries(old.entries as Record<string, LegacyArmadaEntry>);
-	}
+/** Une étape par version (lib/persistedState) : la partie en cours n'est jamais perdue. */
+export const GAME_STORE_MIGRATIONS: MigrationSteps = {
+	// v5 -> v6 : renommage des catégories Armada ("armada" -> "naval", "islands" -> "armada").
+	5: (state) => {
+		const old = state as StateWithEntries<LegacyArmadaEntry>;
+		return { ...old, entries: renameArmadaCategoriesInEntries(old.entries) };
+	},
 	// v6 -> v7 : ajout de la catégorie Babel (tuiles posées).
-	return { ...old, entries: addBabelCategoryToEntries(entries) };
-}
+	6: (state) => {
+		const old = state as StateWithEntries<PreBabelEntry>;
+		return { ...old, entries: addBabelCategoryToEntries(old.entries) };
+	},
+};
+
+/** Exportée pour être testée isolément, sans instancier tout le store Zustand + AsyncStorage. */
+export const migrateGameStoreData = createStoreMigrate(
+	"current-game-store",
+	GAME_STORE_VERSION,
+	GAME_STORE_MIGRATIONS,
+	initialGameState,
+);
 
 export const useGameStore = create<State & Actions>()(
 	persist(
