@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
+import { FocusChainProvider } from "@/components/ui/FocusChain";
 import { NumberStepper } from "@/components/ui/NumberStepper";
 import { MAX_SCIENCE_SYMBOLS } from "@/constants/game";
 import type { ThemeColors } from "@/constants/theme";
@@ -45,19 +46,23 @@ export function TokenCounterSheet({
 	return (
 		<BottomSheet visible={visible} onClose={onClose} title={title}>
 			<View style={styles.list}>
-				{tokens.map((token, index) => (
-					<View key={token.label} style={styles.row}>
-						<Text style={styles.label}>{token.label}</Text>
-						<NumberStepper
-							value={counts[index] ?? 0}
-							onChange={(n) => setCounts((current) => current.map((c, i) => (i === index ? n : c)))}
-							min={0}
-							max={MAX_SCIENCE_SYMBOLS}
-							accentColor={accentColor}
-							label={token.label}
-						/>
-					</View>
-				))}
+				<FocusChainProvider>
+					{tokens.map((token, index) => (
+						<View key={token.label} style={styles.row}>
+							<Text style={styles.label}>{token.label}</Text>
+							<NumberStepper
+								value={counts[index] ?? 0}
+								onChange={(n) =>
+									setCounts((current) => current.map((c, i) => (i === index ? n : c)))
+								}
+								min={0}
+								max={MAX_SCIENCE_SYMBOLS}
+								accentColor={accentColor}
+								label={token.label}
+							/>
+						</View>
+					))}
+				</FocusChainProvider>
 			</View>
 
 			<View style={styles.totalRow}>
