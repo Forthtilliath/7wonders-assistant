@@ -1,7 +1,8 @@
 import { BottomSheet as KitBottomSheet } from "@forthtilliath/react-native-kit/components/overlay/BottomSheet";
 import type { PropsWithChildren } from "react";
 import { useMemo } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, useWindowDimensions } from "react-native";
+import { useKeyboardState } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ThemeColors } from "@/constants/theme";
 import { FONTS, RADIUS, SPACING } from "@/constants/theme";
@@ -17,20 +18,31 @@ type Props = PropsWithChildren<{
  * Feuille modale glissant depuis le bas (`BottomSheet` de react-native-kit) aux couleurs de l'app,
  * avec poignée et titre, qui restent visibles au défilement. Le contenu défile déjà : ne pas
  * l'envelopper dans un autre `ScrollView`.
+ *
+ * Clavier ouvert, la feuille monte presque en haut de l'écran et réserve la place du clavier en
+ * bas : son contenu défile dans la partie restée visible, qui suit le champ actif.
  */
 export function BottomSheet({ visible, onClose, title, children }: Props) {
 	const colors = useColors();
 	const styles = useStyles(colors);
-	const { bottom } = useSafeAreaInsets();
+	const { top, bottom } = useSafeAreaInsets();
+	const { height: windowHeight } = useWindowDimensions();
+	const keyboardHeight = useKeyboardState((s) => (s.isVisible ? s.height : 0));
+	const keyboardOpen = keyboardHeight > 0;
 
 	return (
 		<KitBottomSheet
 			visible={visible}
 			onClose={onClose}
-			bottomInset={bottom}
+			// La zone de navigation est ajoutée en plus : selon l'appareil, la hauteur rapportée du
+			// clavier l'inclut ou non, mieux vaut un peu de marge qu'un champ à moitié caché.
+			bottomInset={keyboardOpen ? keyboardHeight + bottom : bottom}
 			title={title}
 			showHandle
-			styles={{ overlay: styles.overlay, sheet: styles.sheet }}
+			styles={{
+				overlay: styles.overlay,
+				sheet: [styles.sheet, keyboardOpen && { maxHeight: windowHeight - top - SPACING.lg }],
+			}}
 			headerStyles={{ handle: styles.handle, header: styles.header, title: styles.title }}
 		>
 			{children}
