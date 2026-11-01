@@ -1,4 +1,4 @@
-import { act, render, screen, userEvent } from "@testing-library/react-native";
+import { act, screen, userEvent } from "@testing-library/react-native";
 import NewGameTab from "@/app/(tabs)/index";
 import { useGameStore } from "@/stores/gameStore";
 import { useGroupsStore } from "@/stores/groupsStore";
@@ -15,6 +15,7 @@ import {
 	resetAllStores,
 	seedPlayers,
 } from "@/test-utils/fixtures";
+import { render } from "@/test-utils/render";
 
 // État des sauvegardes (expo-backup) lu par le rappel : chargé, jamais sauvegardé, aucun compte Drive.
 jest.mock("@/lib/backup", () => ({ backup: {} }));

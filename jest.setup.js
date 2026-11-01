@@ -1,5 +1,20 @@
 require("react-native-gesture-handler/jestSetup");
 
+// jest-expo 58 simule `react-native/asset-registry`, mais RN 0.88 sert `AssetRegistry` depuis un
+// module interne non simulé : les fichiers d'assets valent 1 en test, et sans asset n° 1 enregistré
+// le chargement des polices d'icônes (@expo/vector-icons) échoue au montage.
+require("react-native").AssetRegistry.registerAsset({
+	__packager_asset: true,
+	httpServerLocation: "/assets",
+	scales: [1],
+	fileHashes: ["md5"],
+	name: "name",
+	type: "type",
+	hash: "md5",
+	width: 1,
+	height: 1,
+});
+
 jest.mock("@react-native-async-storage/async-storage", () =>
 	require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );

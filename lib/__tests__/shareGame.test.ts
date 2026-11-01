@@ -82,7 +82,9 @@ describe("buildGameShareText", () => {
 
 describe("shareGameText", () => {
 	it("ouvre la feuille de partage du système avec le classement en texte", async () => {
-		const share = jest.spyOn(Share, "share").mockResolvedValue({ action: "sharedAction" });
+		const share = jest
+			.spyOn(Share, "share")
+			.mockResolvedValue({ action: "sharedAction", activityType: undefined });
 		const players = [makePlayer("Alice", "Alice"), makePlayer("Bob", "Bob")];
 
 		await shareGameText(makeGame({ Alice: 10, Bob: 20 }), players);

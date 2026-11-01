@@ -1,10 +1,11 @@
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { screen, userEvent } from "@testing-library/react-native";
 import CategoryScoreScreen from "@/app/(tabs)/game/score/[category]";
 import { useGameStore } from "@/stores/gameStore";
 import { useHistoryStore } from "@/stores/historyStore";
 import { useWondersStore } from "@/stores/wondersStore";
 import { setSearchParams } from "@/test-utils/expoRouter";
 import { makeGame, resetAllStores, seedPlayers } from "@/test-utils/fixtures";
+import { render } from "@/test-utils/render";
 import type { ExtensionId } from "@/types/game";
 
 async function renderWonders(extensions: ExtensionId[] = []) {
