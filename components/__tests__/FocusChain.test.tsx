@@ -64,6 +64,44 @@ describe("FocusChain", () => {
 		dismiss.mockRestore();
 	});
 
+	it("appelle onComplete après le dernier champ, et seulement lui", async () => {
+		const onComplete = jest.fn();
+		await render(
+			<FocusChainProvider onComplete={onComplete}>
+				<Steppers labels={["Roues", "Compas", "Tablettes"]} />
+			</FocusChainProvider>,
+		);
+
+		await act(() => fireEvent(screen.getByLabelText("Compas"), "submitEditing"));
+		expect(onComplete).not.toHaveBeenCalled();
+
+		await act(() => fireEvent(screen.getByLabelText("Tablettes"), "submitEditing"));
+		expect(onComplete).toHaveBeenCalledTimes(1);
+	});
+
+	it("donne le focus au premier champ à l'affichage avec autoFocusFirst", async () => {
+		await render(
+			<FocusChainProvider autoFocusFirst>
+				<Steppers labels={["Compas", "Tablettes", "Roues"]} />
+			</FocusChainProvider>,
+		);
+		await act(async () => {});
+
+		expect(native.focus).toHaveBeenCalledTimes(1);
+		expect(native.focus.mock.contexts[0].props.accessibilityLabel).toBe("Roues");
+	});
+
+	it("ne donne le focus à aucun champ par défaut", async () => {
+		await render(
+			<FocusChainProvider>
+				<Steppers labels={["Roues"]} />
+			</FocusChainProvider>,
+		);
+		await act(async () => {});
+
+		expect(native.focus).not.toHaveBeenCalled();
+	});
+
 	it("laisse le comportement par défaut hors d'un groupe", async () => {
 		await render(<Steppers labels={["Roues"]} />);
 
