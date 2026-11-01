@@ -12,6 +12,15 @@ export type ChangelogEntry = {
  */
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		version: "1.6.0-alpha.2",
+		date: Date.UTC(2026, 10, 1),
+		items: [
+			"Correction d'un plantage possible au lancement ou à l'ouverture du clavier dans la version de test précédente.",
+			"Données mieux protégées lors des mises à jour : une copie est gardée avant chaque conversion, et si une conversion échoue, l'app le signale au lancement et propose d'exporter la copie au lieu d'effacer les données.",
+			"Plus d'éclair blanc en thème sombre : le fond de l'écran suit le thème de l'app.",
+		],
+	},
+	{
 		version: "1.6.0-alpha.1",
 		date: Date.UTC(2026, 10, 1),
 		items: [
