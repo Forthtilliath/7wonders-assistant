@@ -63,7 +63,9 @@ describe("Réglages", () => {
 				name: "Gestion des sauvegardes, Sauvegarde Google Drive activée",
 			}),
 		);
-		await user.press(screen.getByRole("button", { name: /^Nouveautés, Version \d+\.\d+\.\d+$/ }));
+		await user.press(
+			screen.getByRole("button", { name: /^Nouveautés, Version \d+\.\d+\.\d+(-[\w.]+)?$/ }),
+		);
 		await user.press(screen.getByRole("button", { name: /^Dons/ }));
 		await user.press(screen.getByRole("button", { name: /^À propos/ }));
 		await user.press(screen.getByRole("button", { name: /^Zone dangereuse/ }));
@@ -244,7 +246,7 @@ describe("Réglages", () => {
 	it("affiche une entrée de nouveautés par version", async () => {
 		await render(<ChangelogSettingsScreen />);
 
-		expect(screen.getAllByText(/^Version \d+\.\d+\.\d+$/)).toHaveLength(CHANGELOG.length);
+		expect(screen.getAllByText(/^Version \d+\.\d+\.\d+(-[\w.]+)?$/)).toHaveLength(CHANGELOG.length);
 	});
 
 	it("vérifie les mises à jour depuis les nouveautés", async () => {
@@ -258,7 +260,7 @@ describe("Réglages", () => {
 		});
 		await render(<ChangelogSettingsScreen />);
 
-		expect(screen.getByText(/^Version installée : \d+\.\d+\.\d+$/)).toBeOnTheScreen();
+		expect(screen.getByText(/^Version installée : \d+\.\d+\.\d+(-[\w.]+)?$/)).toBeOnTheScreen();
 		await user.press(screen.getByRole("button", { name: "Vérifier les mises à jour" }));
 		await pressAlertButton(alert, "Installer");
 		await act(async () => {});
