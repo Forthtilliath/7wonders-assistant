@@ -1,3 +1,4 @@
+import { usePagedList } from "@forthtilliath/react-native-kit/hooks/usePagedList";
 import { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { PrereleaseToggle } from "@/components/settings/PrereleaseToggle";
@@ -8,7 +9,6 @@ import { CHANGELOG } from "@/constants/changelog";
 import type { ThemeColors } from "@/constants/theme";
 import { cardSurface, RADIUS, SPACING } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
-import { usePagedList } from "@/hooks/usePagedList";
 import { formatDate } from "@/lib/date";
 
 export default function ChangelogSettingsScreen() {
