@@ -6,7 +6,7 @@ import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { WonderPacksPicker } from "@/components/wonders/WonderPacksPicker";
 import { EXTENSION_LABELS } from "@/constants/categories";
-import { EDITION_COVERS, EXTENSION_COVERS } from "@/constants/covers";
+import { EDITION_COVERS, getExtensionCover } from "@/constants/covers";
 import {
 	EDITION_LABELS,
 	GAME_EDITIONS,
@@ -84,7 +84,7 @@ export default function NewGameSettingsScreen() {
 						<BoxCoverOption
 							key={ext}
 							label={EXTENSION_LABELS[ext]}
-							cover={EXTENSION_COVERS[ext]}
+							cover={getExtensionCover(ext, defaultEdition)}
 							height={EXTENSION_COVER_HEIGHT}
 							fallbackAspectRatio={EXTENSION_FALLBACK_RATIO}
 							role="checkbox"
