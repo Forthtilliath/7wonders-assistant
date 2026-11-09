@@ -13,8 +13,9 @@ export type ChangelogEntry = {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		version: "1.6.0-alpha.6",
-		date: Date.UTC(2026, 10, 1),
+		date: Date.UTC(2026, 10, 9),
 		items: [
+			"Sauvegarde : le fichier exporté et la copie de secours faite avant un import sont maintenant bien écrits en entier avant d'être partagés ou utilisés.",
 			"Une partie terminée se corrige : bouton crayon dans le détail de la partie, puis toute la saisie se reparcourt. L'enregistrement remplace la partie, à sa place dans l'historique.",
 			"Réglages ▸ Édition et extensions : choix par les couvertures des boîtes.",
 			"Merveilles du jeu de base sous le nom imprimé sur leur plateau : Alexandria, Babylon, Ephesos, Gizah, Halikarnassos, Olympía, Rhódos. Les parties déjà jouées et les sauvegardes importées suivent.",
